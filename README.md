@@ -19,5 +19,15 @@ SCSS-Mobile is a mobile application developed using Expo and React Native. This 
    ```bash
    git clone https://github.com/FA24SE111-Capstone-GFA24SE27/scss-mobile.git
    cd scss-mobile
-2. ** Install dependencies and build the project::**
+2. **Install dependencies:**
+   Make sure you have Node.js and npm installed. Then, install the necessary packages by running:
+   ```bash
+   npm install
+
+3. **Install Expo CLI globally (if not already installed):**
+   ```bash
+   npm install -g expo-cli
+
+## Running the Application
+   ```bash
    expo start
