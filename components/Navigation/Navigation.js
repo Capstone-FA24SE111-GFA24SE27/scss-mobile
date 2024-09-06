@@ -16,6 +16,7 @@ import SignUp from "../Screen/SignUp";
 import Home from "../Screen/Home";
 import GettingStart from "../Screen/GettingStart";
 import Schedule from "../Screen/Schedule";
+import Notification from "../Screen/Notification";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -171,8 +172,8 @@ export default function Navigation() {
               />
             );
           })}
-          {/* <Tab.Screen name="Notification" component={Notification} options={tabOptions} />
-          <Tab.Screen
+          <Tab.Screen name="Notification" component={Notification} options={tabOptions} />
+          {/* <Tab.Screen
             name="Personal"
             component={Personal}
             options={tabOptions}
