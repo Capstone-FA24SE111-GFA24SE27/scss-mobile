@@ -16,7 +16,10 @@ import SignUp from "../Screen/SignUp";
 import Home from "../Screen/Home";
 import GettingStart from "../Screen/GettingStart";
 import Schedule from "../Screen/Schedule";
+import Personal from "../Screen/Personal";
 import Notification from "../Screen/Notification";
+import Profile from "../Screen/Profile";
+import EditProfile from "../Screen/EditProfile";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -50,6 +53,13 @@ export default function Navigation() {
       active: "calendar",
       inActive: "calendar-outline",
       component: Schedule,
+    },
+    {
+      route: "Personal",
+      label: "Personal",
+      active: "person",
+      inActive: "person-outline",
+      component: Personal,
     },
   ];
 
@@ -95,7 +105,7 @@ export default function Navigation() {
         onPress={onPress}
         activeOpacity={1}
         style={{
-          flex: 1,
+          flex: focused ? 1 : 0.65,
           justifyContent: "center",
           alignItems: "center",
           height: 60,
@@ -119,7 +129,7 @@ export default function Navigation() {
           >
             <Ionicons
               name={item.active}
-              size={24}
+              size={22}
               color={focused ? "white" : "black"}
             />
             <Animated.View style={{ transform: [{ scale: textScaleAnim }] }}>
@@ -127,8 +137,8 @@ export default function Navigation() {
                 <Text
                   style={{
                     color: "white",
-                    paddingHorizontal: 10,
-                    fontSize: 16,
+                    paddingHorizontal: 8,
+                    fontSize: 14,
                     fontWeight: 600,
                   }}
                 >
@@ -173,17 +183,18 @@ export default function Navigation() {
             );
           })}
           <Tab.Screen name="Notification" component={Notification} options={tabOptions} />
-          {/* <Tab.Screen
-            name="Personal"
-            component={Personal}
-            options={tabOptions}
-          />
           <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
           <Tab.Screen
             name="EditProfile"
             component={EditProfile}
             options={tabOptions}
           />
+          {/* <Tab.Screen
+            name="Personal"
+            component={Personal}
+            options={tabOptions}
+          />
+          
           <Tab.Screen
             name="ChangePassword"
             component={ChangePassword}

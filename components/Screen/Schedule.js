@@ -24,18 +24,7 @@ export default function Schedule() {
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
-        <View style={{ flex: 1, paddingTop: 25 }}>
-          <Text
-            style={{
-              alignSelf: "center",
-              fontSize: 24,
-              fontWeight: "bold",
-              marginBottom: 10,
-              paddingHorizontal: 30
-            }}
-          >
-            My Schedule
-          </Text>
+        <View style={{ flex: 1, marginTop: 30 }}>
           {/* <Calendar
             style={{
               marginHorizontal: 12,

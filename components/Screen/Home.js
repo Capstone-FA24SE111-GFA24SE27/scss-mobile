@@ -17,7 +17,7 @@ import { AuthContext } from "../Context/AuthContext";
 export default function Home() {
   const { width, height } = Dimensions.get("screen");
   const navigation = useNavigation();
-  const { logout } = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
   const scrollViewRef = useRef(null);
 
   const workshops = [
@@ -157,7 +157,7 @@ export default function Home() {
             <Text
               style={{ fontSize: 18, fontWeight: "semibold", color: "white" }}
             >
-              Hello, ABC
+              Hello, {JSON.stringify(userData)}
             </Text>
             <Text style={{ fontSize: 26, fontWeight: "bold", color: "white" }}>
               Ready to discover
@@ -197,11 +197,8 @@ export default function Home() {
                 />
               </Animated.View>
             </Pressable>
-            <Pressable onPress={logout}>
-              <Image
-                source={require("../../assets/user.jpg")}
-                style={{ width: 40, height: 40, borderRadius: 30 }}
-              />
+            <Pressable>
+              <Ionicons name="menu" size={40} color="white" />
             </Pressable>
           </View>
         </View>
