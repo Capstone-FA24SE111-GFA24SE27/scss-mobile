@@ -20,6 +20,7 @@ import Personal from "../Screen/Personal";
 import Notification from "../Screen/Notification";
 import Profile from "../Screen/Profile";
 import EditProfile from "../Screen/EditProfile";
+import ResetPassword from "../Screen/ResetPassword";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -66,7 +67,7 @@ export default function Navigation() {
   const TabButton = (props) => {
     const { item, onPress, accessibilityState } = props;
     const focused = accessibilityState.selected;
-    
+
     const viewScaleAnim = useRef(new Animated.Value(focused ? 1 : 0)).current;
     const textScaleAnim = useRef(new Animated.Value(focused ? 1 : 0)).current;
 
@@ -113,7 +114,7 @@ export default function Navigation() {
       >
         <View>
           <Animated.View
-            style={[ StyleSheet.absoluteFillObject, {
+            style={[StyleSheet.absoluteFillObject, {
               transform: [{ scale: viewScaleAnim }],
               backgroundColor: focused ? "#ff469e" : "white",
               borderRadius: 16,
@@ -167,6 +168,7 @@ export default function Navigation() {
           <Stack.Screen name="GettingStart" component={GettingStart} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} />
         </Stack.Navigator>
       ) : (
         <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>

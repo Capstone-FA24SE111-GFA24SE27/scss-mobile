@@ -202,7 +202,7 @@ export default function Login() {
               alignSelf: "center",
             }}
           >
-            <Image source={{ uri: "https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business.png"}} width={24} height={24}/>
+            <Image source={{ uri: "https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business.png" }} width={24} height={24} />
             <Text
               style={{
                 fontSize: 20,
@@ -214,7 +214,10 @@ export default function Login() {
               Continue by Google
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ marginTop: 12, alignItems: "center" }}>
+          <TouchableOpacity
+            style={{ marginTop: 12, alignItems: "center" }}
+            onPress={() => navigation.navigate("ResetPassword")}
+          >
             <Text style={{ fontSize: 18, fontWeight: "bold", opacity: 0.4 }}>
               Forgot Password?
             </Text>
