@@ -14,6 +14,10 @@ const ResetPassword = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            {/* Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="chevron-back-circle-outline" size={32} color="#333" />
+            </TouchableOpacity>
             <Text style={styles.title}>Reset Password</Text>
 
             {/* Email Input */}
@@ -44,6 +48,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#f8f8f8",
         paddingHorizontal: 20,
+    },
+    backButton: {
+        position: "absolute",
+        top: 40, // adjust as needed for your layout
+        left: 20,
     },
     title: {
         fontSize: 24,
