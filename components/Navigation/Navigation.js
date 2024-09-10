@@ -30,8 +30,12 @@ export default function Navigation() {
 
   const screenOptions = () => ({
     headerShown: false,
+
     tabBarStyle: {
       height: 60,
+      backgroundColor: '#F39300',
+      borderTopRightRadius: 20, // Round top right corner
+      borderTopLeftRadius: 20,
       // position: "absolute",
       // margin: 16,
       // borderRadius: 16,
@@ -116,7 +120,7 @@ export default function Navigation() {
           <Animated.View
             style={[StyleSheet.absoluteFillObject, {
               transform: [{ scale: viewScaleAnim }],
-              backgroundColor: focused ? "#ff469e" : "white",
+              backgroundColor: focused ? "white" : "#F39300",
               borderRadius: 16,
             }]}
           />
@@ -131,13 +135,13 @@ export default function Navigation() {
             <Ionicons
               name={item.active}
               size={22}
-              color={focused ? "white" : "black"}
+              color={focused ? "#F39300" : "white"}
             />
             <Animated.View style={{ transform: [{ scale: textScaleAnim }] }}>
               {focused && (
                 <Text
                   style={{
-                    color: "white",
+                    color: "#F39300",
                     paddingHorizontal: 8,
                     fontSize: 14,
                     fontWeight: 600,
