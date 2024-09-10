@@ -110,11 +110,11 @@ export default function Profile() {
             <Text style={{ fontWeight: "bold", fontSize: width * 0.06 }}>
               Mr. ABC
             </Text>
-            <Text style={{ fontWeight: "600", fontSize: width * 0.035, opacity: 0.5}}>abc@gmail.com</Text>
+            <Text style={{ fontWeight: "600", fontSize: width * 0.035, opacity: 0.5 }}>abc@gmail.com</Text>
             <Pressable
               style={{
                 marginTop: 8,
-                backgroundColor: "#ff469e",
+                backgroundColor: "#F39300",
                 borderRadius: 20,
                 alignItems: "center",
                 paddingHorizontal: width * 0.06,
@@ -174,7 +174,7 @@ export default function Profile() {
                   <Ionicons
                     name="information-circle"
                     size={width * 0.065}
-                    style={{ color: "#ff469e", marginRight: 16 }}
+                    style={{ color: "#F39300", marginRight: 16 }}
                   />
                   <Text
                     style={{
@@ -215,7 +215,7 @@ export default function Profile() {
                   <Ionicons
                     name="help-circle"
                     size={width * 0.065}
-                    style={{ color: "#ff469e", marginRight: 16 }}
+                    style={{ color: "#F39300", marginRight: 16 }}
                   />
                   <Text
                     style={{
@@ -275,7 +275,7 @@ export default function Profile() {
                   <Ionicons
                     name="notifications-circle"
                     size={width * 0.065}
-                    style={{ color: "#ff469e", marginRight: 16 }}
+                    style={{ color: "#F39300", marginRight: 16 }}
                   />
                   <Text
                     style={{
@@ -288,7 +288,7 @@ export default function Profile() {
                   </Text>
                 </View>
                 <Switch
-                  trackColor={{ false: "#e3e3e3", true: "#ff469e" }}
+                  trackColor={{ false: "#e3e3e3", true: "#F39300" }}
                   thumbColor={isEnabled ? "white" : "#f5f7fd"}
                   onValueChange={toggleSwitch}
                   value={isEnabled}
@@ -318,7 +318,7 @@ export default function Profile() {
                   <Ionicons
                     name="lock-closed"
                     size={width * 0.06}
-                    style={{ color: "#ff469e", marginRight: 16 }}
+                    style={{ color: "#F39300", marginRight: 16 }}
                   />
                   <Text
                     style={{
@@ -360,11 +360,11 @@ export default function Profile() {
                   <Ionicons
                     name="log-out-outline"
                     size={width * 0.065}
-                    style={{ color: "red", marginRight: 16 }}
+                    style={{ color: "#F39300", marginRight: 16 }}
                   />
                   <Text
                     style={{
-                      color: "red",
+                      color: "#F39300",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}

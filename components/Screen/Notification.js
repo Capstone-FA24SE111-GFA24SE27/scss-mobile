@@ -161,11 +161,11 @@ export default function Notification() {
           }}
         >
           <Text style={{ color: "black", fontWeight: "bold", fontSize: 20 }}>
-              Notification 
-            </Text>
-            
+            Notification
+          </Text>
+
           <TouchableOpacity>
-            <Text style={{ color: "#ff469e", fontWeight: "600", fontSize: 18 }}>
+            <Text style={{ color: "#F39300", fontWeight: "600", fontSize: 18 }}>
               Mark all as read
             </Text>
           </TouchableOpacity>
@@ -187,7 +187,7 @@ export default function Notification() {
               paddingVertical: 4,
               paddingHorizontal: 20,
               fontWeight: "600",
-              backgroundColor: "#ff469e",
+              backgroundColor: "#F39300",
               borderRadius: 10,
             }}
           >

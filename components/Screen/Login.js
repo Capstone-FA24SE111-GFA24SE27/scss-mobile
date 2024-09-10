@@ -66,7 +66,7 @@ export default function Login() {
               fontSize: 28,
               marginTop: 8,
               fontWeight: "bold",
-              color: "#ff469e",
+              color: "#F39300",
               opacity: 0.5,
             }}
           >
@@ -85,7 +85,7 @@ export default function Login() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused1 ? "white" : "#ededed",
-                borderColor: isFocused1 ? "#ff469e" : "gray",
+                borderColor: isFocused1 ? "#F39300" : "gray",
                 alignContent: "center",
               }}
             >
@@ -94,7 +94,7 @@ export default function Login() {
                 size={24}
                 style={{
                   marginRight: 10,
-                  color: isFocused1 ? "#ff469e" : "gray",
+                  color: isFocused1 ? "#F39300" : "gray",
                   opacity: 0.7,
                 }}
               />
@@ -122,7 +122,7 @@ export default function Login() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused2 ? "white" : "#ededed",
-                borderColor: isFocused2 ? "#ff469e" : "gray",
+                borderColor: isFocused2 ? "#F39300" : "gray",
                 alignContent: "center",
               }}
             >
@@ -131,7 +131,7 @@ export default function Login() {
                 size={24}
                 style={{
                   marginRight: 10,
-                  color: isFocused2 ? "#ff469e" : "gray",
+                  color: isFocused2 ? "#F39300" : "gray",
                   opacity: 0.7,
                 }}
               />
@@ -159,7 +159,7 @@ export default function Login() {
                 <Ionicons
                   name={passwordVisible ? "eye-off" : "eye"}
                   size={26}
-                  color={isFocused2 ? "#ff469e" : "gray"}
+                  color={isFocused2 ? "#F39300" : "gray"}
                 />
               </TouchableOpacity>
             </View>
@@ -167,7 +167,7 @@ export default function Login() {
           <TouchableOpacity
             onPress={handleLogin}
             style={{
-              backgroundColor: "#ff469e",
+              backgroundColor: "#F39300",
               paddingVertical: 8,
               borderRadius: 10,
               alignItems: "center",
@@ -260,7 +260,7 @@ export default function Login() {
               }}
             >
               Don't have an account?{" "}
-              <Text style={{ color: "#ff469e", fontWeight: "600" }}>
+              <Text style={{ color: "#F39300", fontWeight: "600" }}>
                 Sign Up Here
               </Text>
             </Text>

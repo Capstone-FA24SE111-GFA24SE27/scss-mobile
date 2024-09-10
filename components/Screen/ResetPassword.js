@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     resetButton: {
-        backgroundColor: "#ff469e",
+        backgroundColor: "#F39300",
         paddingVertical: 14,
         borderRadius: 8,
         alignItems: "center",

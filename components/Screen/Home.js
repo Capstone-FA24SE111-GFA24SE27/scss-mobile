@@ -148,7 +148,7 @@ export default function Home() {
             justifyContent: "space-between",
             paddingHorizontal: 30,
             paddingVertical: 25,
-            backgroundColor: "#ff469e",
+            backgroundColor: "#F39300",
             borderBottomStartRadius: 40,
             borderBottomEndRadius: 40,
           }}
@@ -218,11 +218,11 @@ export default function Home() {
           <Ionicons
             name="search"
             size={24}
-            style={{ marginRight: 10, color: "#ff469e", opacity: 0.7 }}
+            style={{ marginRight: 10, color: "#F39300", opacity: 0.7 }}
           />
           <TextInput
             placeholder="What are you searching for?"
-            placeholderTextColor="#ff469e"
+            placeholderTextColor="#F39300"
             style={{
               fontSize: 18,
               opacity: 0.8,
@@ -331,7 +331,7 @@ export default function Home() {
                     borderWidth: 2,
                     borderColor: "#e3e3e3",
                   }}
-                  // onPress={() => alert(`${counselor.name} clicked`)}
+                // onPress={() => alert(`${counselor.name} clicked`)}
                 >
                   <Image
                     source={counselor.image}
@@ -346,7 +346,7 @@ export default function Home() {
                       position: "absolute",
                       top: 12,
                       right: -12,
-                      backgroundColor: "#ff469e",
+                      backgroundColor: "#F39300",
                       paddingRight: 14,
                       paddingLeft: 4,
                       paddingVertical: 4,
@@ -412,7 +412,7 @@ export default function Home() {
                 <Ionicons
                   name="arrow-forward-circle"
                   size={34}
-                  style={{ color: "#ff469e" }}
+                  style={{ color: "#F39300" }}
                 />
                 <Text
                   style={{ fontSize: 12, fontWeight: "600", marginTop: 10 }}
