@@ -21,6 +21,7 @@ import Notification from "../Screen/Notification";
 import Profile from "../Screen/Profile";
 import EditProfile from "../Screen/EditProfile";
 import ResetPassword from "../Screen/ResetPassword";
+import CounselorProfile from "../Screen/CounselorProfile";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -190,6 +191,7 @@ export default function Navigation() {
           })}
           <Tab.Screen name="Notification" component={Notification} options={tabOptions} />
           <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
+          <Tab.Screen name="CounselorProfile" component={CounselorProfile} options={tabOptions} />
           <Tab.Screen
             name="EditProfile"
             component={EditProfile}
