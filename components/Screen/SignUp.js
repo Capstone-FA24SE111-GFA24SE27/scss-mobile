@@ -64,7 +64,7 @@ export default function SignUp() {
               fontSize: 28,
               marginTop: 8,
               fontWeight: "bold",
-              color: "#ff469e",
+              color: "#F39300",
               opacity: 0.5,
             }}
           >
@@ -83,7 +83,7 @@ export default function SignUp() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused1 ? "white" : "#ededed",
-                borderColor: isFocused1 ? "#ff469e" : "gray",
+                borderColor: isFocused1 ? "#F39300" : "gray",
                 alignContent: "center",
               }}
             >
@@ -92,7 +92,7 @@ export default function SignUp() {
                 size={24}
                 style={{
                   marginRight: 10,
-                  color: isFocused1 ? "#ff469e" : "gray",
+                  color: isFocused1 ? "#F39300" : "gray",
                   opacity: 0.7,
                 }}
               />
@@ -120,7 +120,7 @@ export default function SignUp() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused2 ? "white" : "#ededed",
-                borderColor: isFocused2 ? "#ff469e" : "gray",
+                borderColor: isFocused2 ? "#F39300" : "gray",
                 alignContent: "center",
               }}
             >
@@ -129,7 +129,7 @@ export default function SignUp() {
                 size={24}
                 style={{
                   marginRight: 10,
-                  color: isFocused2 ? "#ff469e" : "gray",
+                  color: isFocused2 ? "#F39300" : "gray",
                   opacity: 0.7,
                 }}
               />
@@ -157,7 +157,7 @@ export default function SignUp() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused3 ? "white" : "#ededed",
-                borderColor: isFocused3 ? "#ff469e" : "gray",
+                borderColor: isFocused3 ? "#F39300" : "gray",
                 alignContent: "center",
               }}
             >
@@ -166,7 +166,7 @@ export default function SignUp() {
                 size={24}
                 style={{
                   marginRight: 10,
-                  color: isFocused3 ? "#ff469e" : "gray",
+                  color: isFocused3 ? "#F39300" : "gray",
                   opacity: 0.7,
                 }}
               />
@@ -194,7 +194,7 @@ export default function SignUp() {
                 <Ionicons
                   name={passwordVisible ? "eye-off" : "eye"}
                   size={26}
-                  color={isFocused3 ? "#ff469e" : "gray"}
+                  color={isFocused3 ? "#F39300" : "gray"}
                 />
               </TouchableOpacity>
             </View>
@@ -202,7 +202,7 @@ export default function SignUp() {
           <TouchableOpacity
             onPress={handleSignUp}
             style={{
-              backgroundColor: "#ff469e",
+              backgroundColor: "#F39300",
               paddingVertical: 8,
               borderRadius: 10,
               alignItems: "center",
@@ -260,7 +260,7 @@ export default function SignUp() {
               }}
             >
               Already have an account?{" "}
-              <Text style={{ color: "#ff469e", fontWeight: "600" }}>
+              <Text style={{ color: "#F39300", fontWeight: "600" }}>
                 Sign In
               </Text>
             </Text>

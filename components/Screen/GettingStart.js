@@ -9,17 +9,17 @@ export default function GettingStart() {
 
   useEffect(() => {
     Animated.parallel([
-    Animated.timing(fadeAnim1, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(fadeAnim2, {
-      toValue: 1,
-      duration: 2000,
-      useNativeDriver: true,
-    })
-  ]).start();
+      Animated.timing(fadeAnim1, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim2, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      })
+    ]).start();
   }, []);
 
   return (
@@ -42,7 +42,7 @@ export default function GettingStart() {
             opacity: fadeAnim1,
             fontSize: 34,
             fontWeight: "bold",
-            color: "#ff469e",
+            color: "#F39300",
           }}
         >
           EduSupport
@@ -70,7 +70,7 @@ export default function GettingStart() {
       <TouchableOpacity
         style={{
           width: "75%",
-          backgroundColor: "#ff469e",
+          backgroundColor: "#F39300",
           paddingVertical: 10,
           borderRadius: 10,
           marginBottom: 20,
@@ -94,14 +94,14 @@ export default function GettingStart() {
           paddingVertical: 8,
           borderRadius: 10,
           borderWidth: 3,
-          borderColor: "#ff469e",
+          borderColor: "#F39300",
           alignItems: "center",
         }}
         onPress={() => navigation.navigate("SignUp")}
       >
         <Text
           style={{
-            color: "#ff469e",
+            color: "#F39300",
             fontSize: 18,
             fontWeight: "600",
           }}

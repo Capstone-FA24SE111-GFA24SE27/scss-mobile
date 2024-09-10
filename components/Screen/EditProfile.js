@@ -35,7 +35,7 @@ export default function EditProfile() {
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }} >
-          <Pressable onPress={() => navigation.navigate("Profile")}>
+            <Pressable onPress={() => navigation.navigate("Profile")}>
               <Ionicons name="return-up-back" size={36} />
             </Pressable>
           </View>
@@ -63,30 +63,30 @@ export default function EditProfile() {
                 borderRadius: 90,
                 marginBottom: 8,
                 borderWidth: 1,
-                borderColor: "#ff469e"
+                borderColor: "#F39300"
               }}
             />
             <Pressable
-                style={{
-                  padding: 5,
-                  backgroundColor: "#ff469e",
-                  borderRadius: 30,
-                  position: "absolute", right: 8, bottom: 8
-                }}
-              >
-                <Ionicons
-                  name="image-outline"
-                  size={24}
-                  style={{ color: "white" }}
-                />
-              </Pressable>
+              style={{
+                padding: 5,
+                backgroundColor: "#F39300",
+                borderRadius: 30,
+                position: "absolute", right: 8, bottom: 8
+              }}
+            >
+              <Ionicons
+                name="image-outline"
+                size={24}
+                style={{ color: "white" }}
+              />
+            </Pressable>
           </View>
           <View style={{ width: "65%", display: "flex" }}>
             <Text
               style={{
                 fontSize: 22,
                 fontWeight: "bold",
-                color: "#ff469e",
+                color: "#F39300",
                 opacity: 0.8,
               }}
             >
@@ -103,7 +103,7 @@ export default function EditProfile() {
                   marginTop: 2,
                   paddingHorizontal: 12,
                   paddingVertical: 8,
-                  backgroundColor: "#ff469e",
+                  backgroundColor: "#F39300",
                   borderRadius: 10,
                   flexDirection: "row",
                 }}
@@ -138,7 +138,7 @@ export default function EditProfile() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused1 ? "white" : "#ededed",
-                borderColor: isFocused1 ? "#ff469e" : "gray",
+                borderColor: isFocused1 ? "#F39300" : "gray",
               }}
             >
               <TextInput
@@ -160,7 +160,7 @@ export default function EditProfile() {
                   size={28}
                   style={{
                     marginRight: 10,
-                    color: isFocused1 ? "#ff469e" : "gray",
+                    color: isFocused1 ? "#F39300" : "gray",
                     opacity: 0.7,
                     display: username !== "" ? "flex" : "none",
                   }}
@@ -180,7 +180,7 @@ export default function EditProfile() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused2 ? "white" : "#ededed",
-                borderColor: isFocused2 ? "#ff469e" : "gray",
+                borderColor: isFocused2 ? "#F39300" : "gray",
               }}
             >
               <TextInput
@@ -200,7 +200,7 @@ export default function EditProfile() {
                   size={28}
                   style={{
                     marginRight: 10,
-                    color: isFocused2 ? "#ff469e" : "gray",
+                    color: isFocused2 ? "#F39300" : "gray",
                     opacity: 0.7,
                     display: username !== "" ? "flex" : "none",
                   }}
@@ -226,7 +226,7 @@ export default function EditProfile() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused3 ? "white" : "#ededed",
-                borderColor: isFocused3 ? "#ff469e" : "gray",
+                borderColor: isFocused3 ? "#F39300" : "gray",
                 alignContent: "center",
                 height: 50,
                 fontSize: 18,
@@ -249,7 +249,7 @@ export default function EditProfile() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused4 ? "white" : "#ededed",
-                borderColor: isFocused4 ? "#ff469e" : "gray",
+                borderColor: isFocused4 ? "#F39300" : "gray",
                 alignContent: "center",
                 height: 50,
                 fontSize: 18,
@@ -268,7 +268,7 @@ export default function EditProfile() {
               style={{
                 paddingHorizontal: 16,
                 paddingVertical: 10,
-                backgroundColor: "#ff469e",
+                backgroundColor: "#F39300",
                 borderRadius: 20,
                 borderWidth: 1,
                 borderColor: "white",

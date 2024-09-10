@@ -84,24 +84,24 @@ export default function Personal() {
                 <Text style={{ fontSize: 22, fontWeight: "bold" }}>
                   Mr. ABC
                 </Text>
-                <View style={{ flexDirection: "row", alignItems: "center"}}>
-                <Animated.View
-                style={{
-                  opacity: blinking,
-                  marginVertical: 4
-                }}
-              >
-                <View
-                  style={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: 20,
-                    backgroundColor: "#ff469e",
-                  }}
-                />
-              </Animated.View>
-              <Text style={{ fontSize: 18, marginLeft: 8}}>Online</Text>
-              </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Animated.View
+                    style={{
+                      opacity: blinking,
+                      marginVertical: 4
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: 20,
+                        backgroundColor: "#F39300",
+                      }}
+                    />
+                  </Animated.View>
+                  <Text style={{ fontSize: 18, marginLeft: 8 }}>Online</Text>
+                </View>
               </View>
             </View>
             <Pressable
@@ -123,7 +123,7 @@ export default function Personal() {
             </View>
             <View style={{ justifyContent: "flex-end" }}>
               <Text
-                style={{ fontSize: 20, color: "#ff469e", fontWeight: "600" }}
+                style={{ fontSize: 20, color: "#F39300", fontWeight: "600" }}
               >
                 View all
               </Text>

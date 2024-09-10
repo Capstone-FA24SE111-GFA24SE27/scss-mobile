@@ -31,27 +31,27 @@ export default function Schedule() {
               padding: 10,
               borderRadius: 20,
               borderWidth: 1,
-              borderColor: "#ff469e",
+              borderColor: "#F39300",
             }}
             enableSwipeMonths
             arrowsHitSlop={4}
             renderArrow={(direction) => {
               return direction === "left" ? (
-                <Ionicons name="caret-back-circle-outline" size={30} color="#ff469e" />
+                <Ionicons name="caret-back-circle-outline" size={30} color="#F39300" />
               ) : (
-                <Ionicons name="caret-forward-circle-outline" size={30} color="#ff469e"/>
+                <Ionicons name="caret-forward-circle-outline" size={30} color="#F39300"/>
               );
             }}
             theme={{
-              monthTextColor: "#ff469e",
+              monthTextColor: "#F39300",
               textMonthFontSize: 24,
               textMonthFontWeight: "bold",
-              // arrowColor: "#ff469e",
+              // arrowColor: "#F39300",
               calendarBackground: "#ffe4ec",
               dayTextColor: "black",
               textInactiveColor: "#adadad",
-              todayTextColor: "#ff469e",
-              textSectionTitleColor: "#ff469e",
+              todayTextColor: "#F39300",
+              textSectionTitleColor: "#F39300",
               textDayHeaderFontSize: 14,
               textDayFontSize: 14,
               textDayFontWeight: "semibold",
@@ -60,22 +60,22 @@ export default function Schedule() {
             markingType="period"
             markedDates={{
               // Default markingType
-              // '2024-09-15': {selected: true, marked: true, selectedColor: '#ff469e'},
+              // '2024-09-15': {selected: true, marked: true, selectedColor: '#F39300'},
 
               // *Multi-dot
-              // '2024-09-16': {selected: true, dots: [{key: 'running', color: 'red', selectedDotColor: 'yellow'}, {key: 'lifting', color: 'blue', selectedDotColor: 'green'}] , selectedColor: "#ff469e", selectedTextColor: "white"},
+              // '2024-09-16': {selected: true, dots: [{key: 'running', color: 'red', selectedDotColor: 'yellow'}, {key: 'lifting', color: 'blue', selectedDotColor: 'green'}] , selectedColor: "#F39300", selectedTextColor: "white"},
 
               // *Period
               "2024-09-22": {
                 startingDay: true,
-                color: "#ff469e",
+                color: "#F39300",
                 textColor: "white",
               },
-              "2024-09-23": { color: "#ff88cc", textColor: "white" },
-              "2024-09-24": { color: "#ff88cc", textColor: "white" },
+              "2024-09-23": { color: "#FA9F54FF", textColor: "white" },
+              "2024-09-24": { color: "#FF9C4BFF", textColor: "white" },
               "2024-09-25": {
                 endingDay: true,
-                color: "#ff469e",
+                color: "#F39300",
                 textColor: "white",
               },
             }}
@@ -96,31 +96,31 @@ export default function Schedule() {
                     borderColor: "lightgrey",
                   }}
                 >
-                  <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
-                  <Text style={{ fontSize: 22, fontWeight: "600" }}>
-                    {item.time}
-                  </Text>
-                  {item.isWorkshop && (
-                    <View 
-                    style={{
-                      backgroundColor: "#ff469e", 
-                      borderRadius: 12, 
-                      paddingVertical: 4, 
-                      paddingHorizontal: 8, 
-                      marginLeft: 10,
-                    }}
-                  >
-                    <Text 
-                      style={{ 
-                        fontSize: 16, 
-                        fontWeight: "bold", 
-                        color: "white" 
-                      }}
-                    >
-                      Workshop
+                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text style={{ fontSize: 22, fontWeight: "600" }}>
+                      {item.time}
                     </Text>
-                  </View>
-                  )}
+                    {item.isWorkshop && (
+                      <View
+                        style={{
+                          backgroundColor: "#F39300",
+                          borderRadius: 12,
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                          marginLeft: 10,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "bold",
+                            color: "white"
+                          }}
+                        >
+                          Workshop
+                        </Text>
+                      </View>
+                    )}
                   </View>
                   <Text style={{ fontSize: 18, marginVertical: 4 }}>
                     {item.name}{"\n"}With {item.counselor}
@@ -152,20 +152,20 @@ export default function Schedule() {
             pastScrollRange={2}
             futureScrollRange={4}
             theme={{
-              calendarBackground: "#ffe4ec",
+              calendarBackground: "#E9BF7FFF",
               agendaDayTextColor: "black",
               agendaDayNumColor: "black",
-              agendaTodayColor: "#ff469e",
-              agendaKnobColor: "#ff469e",
-              monthTextColor: "#ff469e",
-              selectedDayBackgroundColor: "#ff469e",
+              agendaTodayColor: "#F39300",
+              agendaKnobColor: "#F39300",
+              monthTextColor: "#F39300",
+              selectedDayBackgroundColor: "#F39300",
               selectedDayTextColor: "white",
             }}
             renderKnob={() => (
               <Ionicons
                 name="chevron-down-circle-outline"
                 size={20}
-                color="#ff469e"
+                color="#F39300"
               />
             )}
             renderArrow={(direction) => {
@@ -173,13 +173,13 @@ export default function Schedule() {
                 <Ionicons
                   name="caret-back-circle-outline"
                   size={30}
-                  color="#ff469e"
+                  color="#F39300"
                 />
               ) : (
                 <Ionicons
                   name="caret-forward-circle-outline"
                   size={30}
-                  color="#ff469e"
+                  color="#F39300"
                 />
               );
             }}
