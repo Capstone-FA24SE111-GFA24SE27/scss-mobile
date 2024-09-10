@@ -331,7 +331,9 @@ export default function Home() {
                     borderWidth: 2,
                     borderColor: "#e3e3e3",
                   }}
-                // onPress={() => alert(`${counselor.name} clicked`)}
+                  // onPress={() => alert(`${counselor.name} clicked`)}
+                  onPress={() => navigation.navigate("CounselorProfile", { counselor })} // Pass the counselor object
+
                 >
                   <Image
                     source={counselor.image}
