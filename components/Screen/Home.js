@@ -157,7 +157,7 @@ export default function Home() {
             <Text
               style={{ fontSize: 18, fontWeight: "semibold", color: "white" }}
             >
-              Hello, {JSON.stringify(userData)}
+              Hello, {userData.email}
             </Text>
             <Text style={{ fontSize: 26, fontWeight: "bold", color: "white" }}>
               Ready to discover

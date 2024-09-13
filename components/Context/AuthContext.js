@@ -1,5 +1,6 @@
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Tạo context
 export const AuthContext = createContext();
@@ -7,34 +8,31 @@ export const AuthContext = createContext();
 // Tạo provider
 export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
-  //   const [userData, setUserData] = useState(null);
-  //   const [session, setSession] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [session, setSession] = useState(null);
 
-  //   useEffect(() => {
-  //     const checkUserSession = async () => {
-  //       if (isLogin === false) {
-  //         setIsLogin(true);
-  //       }
-  //   const userDataAsync = await AsyncStorage.getItem('userData');
-  //   const sessionAsync = await AsyncStorage.getItem('session');
-  //   if (userDataAsync !== null && sessionAsync !== null) {
-  //     const sessionAfterParse = JSON.parse(sessionAsync);
-  //     const userDataAfterParse = JSON.parse(userDataAsync);
-  //     const currentTime = new Date().getTime();
-  //     console.log(sessionAfterParse.expires_at > currentTime)
-  //     if (sessionAfterParse.expires_at > currentTime) {
-  //       setUserData(userDataAfterParse);
-  //       setSession(sessionAfterParse);
-  //       setIsLogin(true);
-  //     }
-  //   }
-  //   console.log("Async")
-  //   console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4))
-  //   console.log(JSON.stringify(JSON.parse(sessionAsync), undefined, 4))
-  //     };
+  useEffect(() => {
+    // AsyncStorage.clear();
+    const checkUserSession = async () => {
+      const userDataAsync = await AsyncStorage.getItem("userData");
+      const sessionAsync = await AsyncStorage.getItem("session");
+      if (userDataAsync !== null && sessionAsync !== null) {
+        const sessionAfterParse = sessionAsync;
+        const userDataAfterParse = JSON.parse(userDataAsync);
+        // const currentTime = new Date().getTime();
+        // if (sessionAfterParse.expires_at > currentTime) {
+          setUserData(userDataAfterParse);
+          setSession(sessionAfterParse);
+          setIsLogin(true);
+        // }
+      }
+      console.log("Async");
+      console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4));
+      console.log(sessionAsync);
+    };
 
-  //     checkUserSession();
-  //   }, []);
+    checkUserSession();
+  }, []);
 
   //   const login = async (userInfo, sessionInfo) => {
   //     setUserData(userInfo);
@@ -50,11 +48,20 @@ export const AuthProvider = ({ children }) => {
   //     setIsLogin(true);
   //   };
 
-  const login = () => {
+  const login = async (userInfo, sessionInfo) => {
+    setUserData(userInfo);
+    setSession(sessionInfo);
+    await AsyncStorage.setItem("userData", JSON.stringify(userInfo));
+    await AsyncStorage.setItem("session", sessionInfo);
+    const userDataAsync = await AsyncStorage.getItem("userData");
+    const sessionAsync = await AsyncStorage.getItem("session");
+    console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4));
+    console.log(sessionAsync);
     setIsLogin(true);
   };
 
   const logout = () => {
+    AsyncStorage.clear();
     setIsLogin(false);
   };
 
@@ -65,10 +72,10 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         setIsLogin,
-        // userData,
-        // setUserData,
-        // setSession,
-        // session,
+        userData,
+        setUserData,
+        setSession,
+        session,
       }}
     >
       {children}

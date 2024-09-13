@@ -8,13 +8,14 @@ import {
   ScrollView,
   Dimensions,
   Image,
+  Alert,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../Context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Login() {
-  const { width, height } = Dimensions.get("screen")
+  const { width, height } = Dimensions.get("screen");
   const navigation = useNavigation();
   const { login } = useContext(AuthContext);
   const [isFocused1, setIsFocused1] = useState(false);
@@ -23,9 +24,33 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    // Alert.alert("Status", "Login successfully");
-    login();
+  const handleLogin = async () => {
+    try {
+      const response = await fetch(
+        // Replace localhost with 192.168.x.x on local device
+        "http://localhost:8080/api/auth/login/default",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (data && data.status == 200) {
+        Alert.alert("Login", "Login successfully");
+        await login(data.content.account, data.content.accessToken);
+      } else {
+        Alert.alert("Login", "Login falied");
+      }
+    } catch (error) {
+      Alert.alert("Error", "An error occurred. Please try again.");
+      console.log(error)
+    }
   };
 
   return (
@@ -33,7 +58,7 @@ export default function Login() {
       style={{
         flex: 1,
         backgroundColor: "#f5f7fd",
-        paddingHorizontal: 25
+        paddingHorizontal: 25,
       }}
     >
       <View
@@ -104,7 +129,7 @@ export default function Login() {
                 value={email}
                 onFocus={() => setIsFocused1(true)}
                 onBlur={() => setIsFocused1(false)}
-                onChangeText={setEmail}
+                onChangeText={(text) => setEmail(text)}
                 style={{
                   flex: 1,
                   fontSize: 18,
@@ -139,7 +164,7 @@ export default function Login() {
                 placeholder="Enter Password"
                 placeholderTextColor="gray"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => setPassword(text)}
                 onFocus={() => setIsFocused2(true)}
                 onBlur={() => setIsFocused2(false)}
                 keyboardType="default"
@@ -165,7 +190,7 @@ export default function Login() {
             </View>
           </View>
           <TouchableOpacity
-            onPress={handleLogin}
+            onPress={() => handleLogin()}
             style={{
               backgroundColor: "#F39300",
               paddingVertical: 8,
@@ -189,7 +214,7 @@ export default function Login() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={handleLogin}
+            onPress={() => handleLogin()}
             style={{
               backgroundColor: "#f9f9f9",
               paddingVertical: 8,
@@ -202,13 +227,19 @@ export default function Login() {
               alignSelf: "center",
             }}
           >
-            <Image source={{ uri: "https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business.png" }} width={24} height={24} />
+            <Image
+              source={{
+                uri: "https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business.png",
+              }}
+              width={24}
+              height={24}
+            />
             <Text
               style={{
                 fontSize: 20,
                 color: "black",
                 fontWeight: "600",
-                marginLeft: 10
+                marginLeft: 10,
               }}
             >
               Continue by Google

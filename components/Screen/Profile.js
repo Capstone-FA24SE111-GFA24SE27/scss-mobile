@@ -20,7 +20,7 @@ export default function Profile() {
 
   const [isEnabled, setIsEnabled] = useState(false);
   const [open, setIsOpen] = useState(false);
-  const { logout } = useContext(AuthContext);
+  const { userData, logout } = useContext(AuthContext);
   const scrollViewRef = useRef(null);
   const { width, height } = Dimensions.get("window");
 
@@ -110,7 +110,7 @@ export default function Profile() {
             <Text style={{ fontWeight: "bold", fontSize: width * 0.06 }}>
               Mr. ABC
             </Text>
-            <Text style={{ fontWeight: "600", fontSize: width * 0.035, opacity: 0.5 }}>abc@gmail.com</Text>
+            <Text style={{ fontWeight: "600", fontSize: width * 0.035, opacity: 0.5 }}>{userData.email}</Text>
             <Pressable
               style={{
                 marginTop: 8,
