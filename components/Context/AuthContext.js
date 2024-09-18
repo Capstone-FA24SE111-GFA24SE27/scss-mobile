@@ -21,9 +21,9 @@ export const AuthProvider = ({ children }) => {
         const userDataAfterParse = JSON.parse(userDataAsync);
         // const currentTime = new Date().getTime();
         // if (sessionAfterParse.expires_at > currentTime) {
-          setUserData(userDataAfterParse);
-          setSession(sessionAfterParse);
-          setIsLogin(true);
+        setUserData(userDataAfterParse);
+        setSession(sessionAfterParse);
+        setIsLogin(true);
         // }
       }
       console.log("Async");

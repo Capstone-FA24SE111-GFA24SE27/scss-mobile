@@ -9,7 +9,7 @@ export default function App() {
   return (
     <AuthProvider>
       <SafeAreaProvider>
-        <NavigationContainer  style={{ flex: 1 }}>
+        <NavigationContainer style={{ flex: 1 }}>
           <Navigation />
         </NavigationContainer>
       </SafeAreaProvider>

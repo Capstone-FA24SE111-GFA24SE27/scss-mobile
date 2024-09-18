@@ -28,7 +28,7 @@ export default function Login() {
     try {
       const response = await fetch(
         // Replace localhost with 192.168.x.x on local device
-        "http://localhost:8080/api/auth/login/default",
+        "http://192.168.0.150:8080/api/auth/login/default",
         {
           method: "POST",
           headers: {
