@@ -1,5 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -10,17 +9,18 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { AuthContext } from "../Context/AuthContext"; // Adjust the path as necessary
-import io from "socket.io-client"; // Import Socket.IO client
+import { AuthContext } from "../Context/AuthContext";
+import { SocketContext } from "../Context/SocketContext"; // Import SocketContext
 
 export default function Notification() {
   const navigation = useNavigation();
   const { isLogin, userData, session } = useContext(AuthContext);
+  const socket = useContext(SocketContext); // Sử dụng socket từ SocketContext
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const socket = useRef(null);
 
   useEffect(() => {
     if (!isLogin || !userData || !session) {
@@ -28,27 +28,35 @@ export default function Notification() {
       return;
     }
 
-    const connectSocketIO = () => {
-      // Replace the WebSocket URL with your Socket.IO server URL
-      socket.current = io(`ws://192.168.0.150:8080/ws`, {
-        transports: ['websocket'],
-      });
-
-      socket.current.on("connect", () => {
-        console.log("Socket.IO connection established");
-        setLoading(false);
-
-        // Subscribe to the user's private notification topic
-        socket.current.emit("subscribe", {
-          topic: `/user/${userData.accountId}/private/notification`,
+    // Lấy thông báo từ server khi component render
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/notification?SortDirection=ASC&sortBy=id&page=1', {
+          headers: {
+            'Authorization': `Bearer ${session}`,
+            'Accept': 'application/json',
+          },
         });
-      });
+        const result = await response.json();
+        if (response.ok) {
+          setNotifications(result.content.data);
+        } else {
+          setError(result.message || 'Failed to fetch notifications');
+        }
+      } catch (err) {
+        setError(err.message || 'Failed to fetch notifications');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      socket.current.on("notification", (data) => {
+    fetchNotifications();
+
+    // Nghe thông báo từ socket
+    if (socket) {
+      socket.on("notification", (data) => {
         try {
           const notification = JSON.parse(data);
-
-          // Update the notifications array with the new notification
           setNotifications((prevNotifications) => [
             notification,
             ...prevNotifications,
@@ -58,29 +66,17 @@ export default function Notification() {
           setError("Failed to parse notification");
         }
       });
+    }
 
-      socket.current.on("connect_error", (err) => {
-        console.error("Socket.IO connection error:", err.message);
-        setError(`Socket.IO connection error: ${err.message}`);
-      });
-
-      socket.current.on("disconnect", (reason) => {
-        console.log("Socket.IO disconnected:", reason);
-        setError("Socket.IO connection closed unexpectedly.");
-        // Attempt to reconnect
-        setTimeout(connectSocketIO, 3000);
-      });
-    };
-
-    connectSocketIO();
-
+    // Dọn dẹp socket khi component bị unmount
     return () => {
-      if (socket.current) {
-        socket.current.disconnect();
+      if (socket) {
+        socket.off("notification"); // Xóa lắng nghe thông báo từ socket
       }
     };
-  }, [isLogin, userData, session, navigation]);
+  }, [isLogin, userData, session, socket, navigation]);
 
+  // Render thông báo
   const renderItem = React.useCallback(({ item }) => {
     if (!item) {
       return (
@@ -129,8 +125,14 @@ export default function Notification() {
     }
   }, []);
 
+  // Đánh dấu tất cả thông báo là đã đọc
   const markAllAsRead = () => {
-    // Implement functionality to mark all notifications as read
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((notification) => ({
+        ...notification,
+        unread: false,
+      }))
+    );
   };
 
   if (loading) {
