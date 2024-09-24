@@ -76,6 +76,59 @@ export default function Notification() {
     };
   }, [isLogin, userData, session, socket, navigation]);
 
+  // Đánh dấu một thông báo là đã đọc
+  const markAsRead = async (notificationId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/notification/read/${notificationId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${session}`,
+          'Accept': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Cập nhật trạng thái trong UI
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notification) =>
+            notification.id === notificationId ? { ...notification, unread: false } : notification
+          )
+        );
+      } else {
+        console.error('Failed to mark notification as read');
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  // Đánh dấu tất cả thông báo là đã đọc
+  const markAllAsRead = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/notification/mark-all-read`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${session}`,
+          'Accept': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Cập nhật tất cả thông báo thành đã đọc trong UI
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notification) => ({
+            ...notification,
+            unread: false,
+          }))
+        );
+      } else {
+        console.error('Failed to mark all notifications as read');
+      }
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
+  };
+
   // Render thông báo
   const renderItem = React.useCallback(({ item }) => {
     if (!item) {
@@ -88,6 +141,7 @@ export default function Notification() {
     try {
       return (
         <TouchableOpacity
+          onPress={() => markAsRead(item.id)} // Đánh dấu thông báo khi nhấn
           style={{
             flexDirection: "row",
             paddingVertical: 12,
@@ -124,16 +178,6 @@ export default function Notification() {
       );
     }
   }, []);
-
-  // Đánh dấu tất cả thông báo là đã đọc
-  const markAllAsRead = () => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((notification) => ({
-        ...notification,
-        unread: false,
-      }))
-    );
-  };
 
   if (loading) {
     return (
@@ -216,14 +260,19 @@ const styles = StyleSheet.create({
     color: "white",
     paddingVertical: 4,
     paddingHorizontal: 20,
-    fontWeight: "600",
-    backgroundColor: "#F39300",
+    fontWeight: "600", backgroundColor: "#F39300",
     borderRadius: 10,
   },
-  tab: { fontSize: 18, color: "gray", paddingVertical: 4, paddingHorizontal: 12 },
+  tab: {
+    fontSize: 18,
+    color: "gray",
+    paddingVertical: 4, paddingHorizontal: 12
+  },
   notificationItem: {
     padding: 10,
     backgroundColor: "#f5f7fd",
   },
-  centeredContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  centeredContainer: {
+    flex: 1, justifyContent: "center", alignItems: "center"
+  },
 });
