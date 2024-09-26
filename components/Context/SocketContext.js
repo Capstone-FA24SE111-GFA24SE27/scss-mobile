@@ -9,8 +9,8 @@ export const SocketProvider = ({ children }) => {
     const socket = useRef(null);
 
     useEffect(() => {
-        if (userData?.accountId) {
-            connectSocketIO(userData.accountId);
+        if (userData?.id) {
+            connectSocketIO(userData.id);
         }
 
         return () => {
@@ -21,15 +21,10 @@ export const SocketProvider = ({ children }) => {
     }, [userData]);
 
     const connectSocketIO = (accountId) => {
-        socket.current = io(`http://localhost:3000`, {
-            transports: ["websocket"],
-        });
+        socket.current = io(`http://localhost:4000`);
 
         socket.current.on("connect", () => {
             console.log("Socket.IO connection established");
-            socket.current.emit("subscribe", {
-                topic: `/user/${accountId}/private/notification`,
-            });
         });
 
         socket.current.on("connect_error", (err) => {
