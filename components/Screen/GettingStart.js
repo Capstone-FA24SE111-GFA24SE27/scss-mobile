@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef } from "react";
 import { View, Text, Image, TouchableOpacity, Animated } from "react-native";
-
+import logo from "../../assets/logo-fpt.png";
 export default function GettingStart() {
   const navigation = useNavigation();
   const fadeAnim1 = useRef(new Animated.Value(0)).current;
@@ -18,7 +18,7 @@ export default function GettingStart() {
         toValue: 1,
         duration: 2000,
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   }, []);
 
@@ -32,6 +32,12 @@ export default function GettingStart() {
         padding: 20,
       }}
     >
+      <View style={{ position: "absolute", top: 8, left: 12 }}>
+        <Image
+          source={logo}
+          style={{ width: 160, height: 128, resizeMode: "contain" }}
+        />
+      </View>
       <View
         style={{
           alignItems: "center",
@@ -65,7 +71,12 @@ export default function GettingStart() {
         source={{
           uri: "https://static.vecteezy.com/system/resources/thumbnails/006/054/695/small/flat-design-counseling-concept-art-free-vector.jpg",
         }}
-        style={{ width: 200, height: 200, marginVertical: 40, resizeMode: "stretch" }}
+        style={{
+          width: 200,
+          height: 200,
+          marginVertical: 40,
+          resizeMode: "stretch",
+        }}
       />
       <TouchableOpacity
         style={{

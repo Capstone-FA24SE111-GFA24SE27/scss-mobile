@@ -5,14 +5,16 @@ import {
   ScrollView,
   Image,
   Animated,
+  TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { AuthContext } from "../Context/AuthContext";
 
 export default function Personal() {
   const navigation = useNavigation();
-  const blinking = useRef(new Animated.Value(0)).current;
+  const { fetchProfile, profile } = useContext(AuthContext);
 
   const scrollViewRef = useRef(null);
   useFocusEffect(
@@ -23,6 +25,8 @@ export default function Personal() {
     }, [])
   );
 
+  const blinking = useRef(new Animated.Value(0)).current;
+  
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -45,6 +49,10 @@ export default function Personal() {
     ).start();
   }, []);
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
@@ -64,7 +72,7 @@ export default function Personal() {
         <View
           style={{
             flex: 0.15,
-            backgroundColor: "#fff4fc",
+            backgroundColor: "white",
             borderRadius: 20,
             elevation: 5,
             marginHorizontal: 30,
@@ -81,14 +89,16 @@ export default function Personal() {
                 style={{ width: 50, height: 50, borderRadius: 25 }}
               />
               <View style={{ marginLeft: 20 }}>
-                <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                  Mr. ABC
-                </Text>
+                {profile && (
+                  <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                    {profile.fullName}
+                  </Text>
+                )}
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Animated.View
                     style={{
                       opacity: blinking,
-                      marginVertical: 4
+                      marginVertical: 4,
                     }}
                   >
                     <View
@@ -113,7 +123,25 @@ export default function Personal() {
           </View>
         </View>
         <View
-          style={{ flex: 0.15, marginHorizontal: 30, justifyContent: "center" }}
+          style={{ marginVertical: 12, marginHorizontal: 30, justifyContent: "center" }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+                Your Request
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate("Request")} style={{ justifyContent: "flex-end" }}>
+              <Text
+                style={{ fontSize: 20, color: "#F39300", fontWeight: "600" }}
+              >
+                View all
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View
+          style={{ marginVertical: 12, marginHorizontal: 30, justifyContent: "center" }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={{ flex: 1 }}>
@@ -135,15 +163,14 @@ export default function Personal() {
           showsVerticalScrollIndicator={false}
           style={{
             flex: 0.65,
-            backgroundColor: "#fff4fc",
+            backgroundColor: "white",
             borderRadius: 20,
-            elevation: 5,
+            elevation: 3,
             marginHorizontal: 30,
             paddingHorizontal: 5,
             marginBottom: 20,
           }}
-        >
-        </ScrollView>
+        ></ScrollView>
       </View>
     </>
   );

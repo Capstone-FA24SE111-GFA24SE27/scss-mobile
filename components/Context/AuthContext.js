@@ -1,15 +1,16 @@
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axiosJWT, { BASE_URL } from "../../config/Config";
 
-// Tạo context
+// Create context
 export const AuthContext = createContext();
 
-// Tạo provider
+// Create provider
 export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
   const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     // AsyncStorage.clear();
@@ -34,20 +35,6 @@ export const AuthProvider = ({ children }) => {
     checkUserSession();
   }, []);
 
-  //   const login = async (userInfo, sessionInfo) => {
-  //     setUserData(userInfo);
-  //     setSession(sessionInfo)
-  //     console.log(JSON.stringify(userInfo, undefined, 4))
-  //     console.log(JSON.stringify(sessionInfo, undefined, 4))
-  //     await AsyncStorage.setItem('userData', JSON.stringify(userInfo));
-  //     await AsyncStorage.setItem('session', JSON.stringify(sessionInfo));
-  //     const userDataAsync = await AsyncStorage.getItem('userData');
-  //     const sessionAsync = await AsyncStorage.getItem('session');
-  //     console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4))
-  //     console.log(JSON.stringify(JSON.parse(sessionAsync), undefined, 4))
-  //     setIsLogin(true);
-  //   };
-
   const login = async (userInfo, sessionInfo) => {
     setUserData(userInfo);
     setSession(sessionInfo);
@@ -58,6 +45,16 @@ export const AuthProvider = ({ children }) => {
     console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4));
     console.log(sessionAsync);
     setIsLogin(true);
+  };
+
+  const fetchProfile = async () => {
+    try {
+      const profileRes = await axiosJWT.get(`${BASE_URL}/profile`);
+      const profileData = profileRes?.data?.content || null;
+      setProfile(profileData);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const logout = () => {
@@ -74,8 +71,10 @@ export const AuthProvider = ({ children }) => {
         setIsLogin,
         userData,
         setUserData,
-        setSession,
         session,
+        setSession,
+        profile,
+        fetchProfile,
       }}
     >
       {children}
