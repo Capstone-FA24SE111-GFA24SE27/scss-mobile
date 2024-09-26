@@ -14,7 +14,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { AuthContext } from "../Context/AuthContext";
 import { SocketContext } from "../Context/SocketContext"; // Import SocketContext
 import { NotificationContext } from "../Context/NotificationContext";
-
+import axiosJWT, { BASE_URL } from "../../config/Config";
 export default function Notification() {
   const navigation = useNavigation();
   const { isLogin, userData, session } = useContext(AuthContext);
@@ -34,7 +34,7 @@ export default function Notification() {
 
     console.log("///////////////////////" + userData?.id)
 
-    console.log(notifications)
+    // console.log(notifications)
 
 
     // Dọn dẹp socket khi component bị unmount
@@ -45,17 +45,13 @@ export default function Notification() {
   // Đánh dấu tất cả thông báo là đã đọc
   const markAllAsRead = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/notification/mark-all-read`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${session}`,
-          'Accept': 'application/json',
-        },
+      const response = await axiosJWT.put(`${BASE_URL}/notification/mark-all-read`, {
+
       });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (response.ok) {
+      if (result && result.status === 200) {
         // Hiển thị thông báo thành công từ API
         // Alert.alert("Success", result.message);
 
@@ -78,19 +74,14 @@ export default function Notification() {
   // Đánh dấu một thông báo là đã đọc
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/notification/read/${notificationId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${session}`,
-          'Accept': 'application/json',
-        },
+      const response = await axiosJWT.put(`${BASE_URL}/notification/read/${notificationId}`, {
       });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (response.ok) {
+      if (result && result.status === 200) {
         // Hiển thị thông báo thành công từ API
-        Alert.alert("Success", result.message);
+        // Alert.alert("Success", result.message);
 
         // Cập nhật trạng thái trong UI
         setNotifications((prevNotifications) =>
@@ -142,7 +133,7 @@ export default function Notification() {
         >
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 18, fontWeight: "bold", color: item.readStatus ? "gray" : "black" }}>
-              {item.title}
+              {item.notificationId} | {item.title}
             </Text>
             <Text
               numberOfLines={1}
