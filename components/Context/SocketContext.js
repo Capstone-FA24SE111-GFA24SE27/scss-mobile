@@ -21,7 +21,7 @@ export const SocketProvider = ({ children }) => {
     }, [userData]);
 
     const connectSocketIO = (accountId) => {
-        socket.current = io(`http://localhost:4000`);
+        socket.current = io(`http://192.168.1.3:4000`);
 
         socket.current.on("connect", () => {
             console.log("Socket.IO connection established");
