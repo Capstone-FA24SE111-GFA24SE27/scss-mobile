@@ -17,7 +17,7 @@ import { AuthContext } from "../Context/AuthContext";
 export default function Home() {
   const { width, height } = Dimensions.get("screen");
   const navigation = useNavigation();
-  const { userData } = useContext(AuthContext);
+  const { fetchProfile, profile } = useContext(AuthContext);
   const scrollViewRef = useRef(null);
 
   const workshops = [
@@ -138,6 +138,10 @@ export default function Home() {
     ).start();
   }, []);
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
@@ -154,11 +158,13 @@ export default function Home() {
           }}
         >
           <View>
-            <Text
-              style={{ fontSize: 18, fontWeight: "semibold", color: "white" }}
-            >
-              Hello, {userData.email}
-            </Text>
+            {profile && (
+              <Text
+                style={{ fontSize: 18, fontWeight: "semibold", color: "white" }}
+              >
+                Hello, {profile.fullName}
+              </Text>
+            )}
             <Text style={{ fontSize: 26, fontWeight: "bold", color: "white" }}>
               Ready to discover
             </Text>
@@ -210,7 +216,7 @@ export default function Home() {
             paddingHorizontal: 15,
             marginVertical: 16,
             alignItems: "center",
-            backgroundColor: "#ffe4ec",
+            backgroundColor: "#ededed",
             alignContent: "center",
             height: 50,
           }}
@@ -239,7 +245,7 @@ export default function Home() {
               }}
             >
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Upcoming Events
+                Recommend Events for you
               </Text>
               <TouchableOpacity>
                 <Text
@@ -332,8 +338,9 @@ export default function Home() {
                     borderColor: "#e3e3e3",
                   }}
                   // onPress={() => alert(`${counselor.name} clicked`)}
-                  onPress={() => navigation.navigate("CounselorProfile", { counselor })} // Pass the counselor object
-
+                  onPress={() =>
+                    navigation.navigate("CounselorProfile", { counselor })
+                  } // Pass the counselor object
                 >
                   <Image
                     source={counselor.image}

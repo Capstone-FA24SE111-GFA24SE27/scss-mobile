@@ -10,20 +10,19 @@ import {
   Modal,
   TouchableOpacity,
 } from "react-native";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../Context/AuthContext";
 
 export default function Profile() {
   const navigation = useNavigation();
-
+  const { width, height } = Dimensions.get("window");
   const [isEnabled, setIsEnabled] = useState(false);
   const [open, setIsOpen] = useState(false);
-  const { userData, logout } = useContext(AuthContext);
+  const { userData, profile, fetchProfile, logout } = useContext(AuthContext);
   const scrollViewRef = useRef(null);
-  const { width, height } = Dimensions.get("window");
-
+  
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
@@ -31,6 +30,10 @@ export default function Profile() {
       }
     }, [])
   );
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
   const handleLogout = () => {
@@ -89,7 +92,7 @@ export default function Profile() {
         <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
           <View
             style={{
-              backgroundColor: "#fff4fc",
+              backgroundColor: "white",
               borderRadius: 20,
               elevation: 5,
               marginBottom: 12,
@@ -107,10 +110,22 @@ export default function Profile() {
                 borderRadius: width * 0.1,
               }}
             />
-            <Text style={{ fontWeight: "bold", fontSize: width * 0.06 }}>
-              Mr. ABC
-            </Text>
-            <Text style={{ fontWeight: "600", fontSize: width * 0.035, opacity: 0.5 }}>{userData.email}</Text>
+            {profile && (
+              <>
+                <Text style={{ fontWeight: "bold", fontSize: width * 0.06 }}>
+                  {profile.fullName}
+                </Text>
+                <Text
+                  style={{
+                    fontWeight: "600",
+                    fontSize: width * 0.035,
+                    opacity: 0.5,
+                  }}
+                >
+                  {userData.email}
+                </Text>
+              </>
+            )}
             <Pressable
               style={{
                 marginTop: 8,
@@ -120,7 +135,7 @@ export default function Profile() {
                 paddingHorizontal: width * 0.06,
                 paddingVertical: height * 0.01,
               }}
-              onPress={() => navigation.navigate("EditProfile")}
+              onPress={() => navigation.navigate("ViewProfile")}
             >
               <Text
                 style={{
@@ -129,7 +144,7 @@ export default function Profile() {
                   fontSize: width * 0.04,
                 }}
               >
-                Edit Profile
+                View Profile
               </Text>
             </Pressable>
           </View>
@@ -448,7 +463,7 @@ export default function Profile() {
                       <TouchableOpacity
                         style={{
                           flex: 1,
-                          backgroundColor: "red",
+                          backgroundColor: "#F39300",
                           padding: 10,
                           borderRadius: 10,
                           justifyContent: "center",

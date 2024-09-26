@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Pressable,
   ScrollView,
   Dimensions,
   Image,
@@ -13,6 +12,7 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../Context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import axiosJWT, { BASE_URL } from "../../config/Config";
 
 export default function Login() {
   const { width, height } = Dimensions.get("screen");
@@ -23,33 +23,37 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleLogin = async () => {
+    setEmailError("");
+    setPasswordError("");
+
+    if (!email) {
+      setEmailError("Email is empty.");
+    }
+    if (!password) {
+      setPasswordError("Password is empty.");
+    }
+
     try {
-      const response = await fetch(
-        // Replace localhost with 192.168.x.x on local device
-        "http://localhost:8080/api/auth/login/default",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
-        }
-      );
-      const data = await response.json();
+      const response = await axiosJWT.post(`${BASE_URL}/auth/login/default`, {
+        email: email,
+        password: password,
+      });
+      const data = await response.data;
       if (data && data.status == 200) {
         Alert.alert("Login", "Login successfully");
         await login(data.content.account, data.content.accessToken);
       } else {
-        Alert.alert("Login", "Login falied");
+        Alert.alert("Login", "Login failed");
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred. Please try again.");
-      console.log(error)
+      // Alert.alert("Error", "An error occurred. Please try again.");
+      console.log(error);
+      setEmailError("Email or password incorrect.");
+      setPasswordError("Email or password incorrect.");
     }
   };
 
@@ -100,6 +104,18 @@ export default function Login() {
         </View>
         <View style={{ marginTop: 40 }}>
           <View>
+            {emailError ? (
+              <Text
+                style={{
+                  color: "red",
+                  fontSize: 16,
+                  marginLeft: 12,
+                  marginVertical: 2,
+                }}
+              >
+                {emailError}
+              </Text>
+            ) : null}
             <View
               style={{
                 flexDirection: "row",
@@ -110,7 +126,11 @@ export default function Login() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused1 ? "white" : "#ededed",
-                borderColor: isFocused1 ? "#F39300" : "gray",
+                borderColor: isFocused1
+                  ? "#F39300"
+                  : emailError
+                  ? "red"
+                  : "gray",
                 alignContent: "center",
               }}
             >
@@ -137,6 +157,18 @@ export default function Login() {
                 }}
               />
             </View>
+            {passwordError ? (
+              <Text
+                style={{
+                  color: "red",
+                  fontSize: 16,
+                  marginLeft: 12,
+                  marginVertical: 2,
+                }}
+              >
+                {passwordError}
+              </Text>
+            ) : null}
             <View
               style={{
                 flexDirection: "row",
@@ -147,7 +179,11 @@ export default function Login() {
                 marginVertical: 8,
                 alignItems: "center",
                 backgroundColor: isFocused2 ? "white" : "#ededed",
-                borderColor: isFocused2 ? "#F39300" : "gray",
+                borderColor: isFocused2
+                  ? "#F39300"
+                  : passwordError
+                  ? "red"
+                  : "gray",
                 alignContent: "center",
               }}
             >
@@ -189,6 +225,7 @@ export default function Login() {
               </TouchableOpacity>
             </View>
           </View>
+
           <TouchableOpacity
             onPress={() => handleLogin()}
             style={{

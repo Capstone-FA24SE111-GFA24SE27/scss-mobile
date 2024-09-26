@@ -14,44 +14,65 @@ import { AuthContext } from "../Context/AuthContext";
 import Login from "../Screen/Login";
 import SignUp from "../Screen/SignUp";
 import Home from "../Screen/Home";
+import HomeCounselor from "../Screen/counselor/Home";
 import GettingStart from "../Screen/GettingStart";
 import Schedule from "../Screen/Schedule";
+import ScheduleCounselor from "../Screen/counselor/Schedule";
 import Personal from "../Screen/Personal";
+import PersonalCounselor from "../Screen/counselor/Personal";
 import Notification from "../Screen/Notification";
 import Profile from "../Screen/Profile";
-import EditProfile from "../Screen/EditProfile";
+import ProfileCounselor from "../Screen/counselor/Profile";
+import ViewProfile from "../Screen/ViewProfile";
 import ResetPassword from "../Screen/ResetPassword";
 import CounselorProfile from "../Screen/CounselorProfile";
+import Counselor from "../Screen/Counselor";
+import Request from "../Screen/Request";
+import RequestCounselor from "../Screen/counselor/Request";
+import Event from "../Screen/Event";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
-  const { isLogin } = useContext(AuthContext);
+  const { isLogin, userData } = useContext(AuthContext);
 
   const screenOptions = () => ({
     headerShown: false,
-
+    tabBarHideOnKeyboard: true,
     tabBarStyle: {
       height: 60,
-      backgroundColor: '#F39300',
-      borderTopRightRadius: 20, // Round top right corner
-      borderTopLeftRadius: 20,
+      backgroundColor: "#F39300",
+      borderTopRightRadius: 30,
+      borderTopLeftRadius: 30,
       // position: "absolute",
       // margin: 16,
-      // borderRadius: 16,
+      // borderRadius: 30,
       justifyContent: "center",
       alignItems: "center",
     },
   });
 
-  const TabArray = [
+  const TabArrayStudent = [
     {
       route: "Home",
       label: "Home",
       active: "home",
       inActive: "home-outline",
       component: Home,
+    },
+    {
+      route: "Counselor",
+      label: "Counselor",
+      active: "clipboard",
+      inActive: "clipboard-outline",
+      component: Counselor,
+    },{
+      route: "Event",
+      label: "Event",
+      active: "megaphone",
+      inActive: "megaphone-outline",
+      component: Event,
     },
     {
       route: "Schedule",
@@ -66,6 +87,30 @@ export default function Navigation() {
       active: "person",
       inActive: "person-outline",
       component: Personal,
+    },
+  ];
+
+  const TabArrayCounselor = [
+    {
+      route: "Home",
+      label: "Home",
+      active: "home",
+      inActive: "home-outline",
+      component: HomeCounselor,
+    },
+    {
+      route: "Schedule",
+      label: "Schedule",
+      active: "calendar",
+      inActive: "calendar-outline",
+      component: ScheduleCounselor,
+    },
+    {
+      route: "Personal",
+      label: "Personal",
+      active: "person",
+      inActive: "person-outline",
+      component: PersonalCounselor,
     },
   ];
 
@@ -111,7 +156,7 @@ export default function Navigation() {
         onPress={onPress}
         activeOpacity={1}
         style={{
-          flex: focused ? 1 : 0.65,
+          flex: focused ? 1 : 0.5,
           justifyContent: "center",
           alignItems: "center",
           height: 60,
@@ -119,11 +164,14 @@ export default function Navigation() {
       >
         <View>
           <Animated.View
-            style={[StyleSheet.absoluteFillObject, {
-              transform: [{ scale: viewScaleAnim }],
-              backgroundColor: focused ? "white" : "#F39300",
-              borderRadius: 16,
-            }]}
+            style={[
+              StyleSheet.absoluteFillObject,
+              {
+                transform: [{ scale: viewScaleAnim }],
+                backgroundColor: focused ? "white" : "#F39300",
+                borderRadius: 20,
+              },
+            ]}
           />
           <View
             style={{
@@ -175,9 +223,9 @@ export default function Navigation() {
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
         </Stack.Navigator>
-      ) : (
+      ) : userData.role === "STUDENT" ? (
         <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
-          {TabArray.map((item, index) => {
+          {TabArrayStudent.map((item, index) => {
             return (
               <Tab.Screen
                 key={index}
@@ -189,33 +237,50 @@ export default function Navigation() {
               />
             );
           })}
-          <Tab.Screen name="Notification" component={Notification} options={tabOptions} />
+          <Tab.Screen
+            name="Notification"
+            component={Notification}
+            options={tabOptions}
+          />
           <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
-          <Tab.Screen name="CounselorProfile" component={CounselorProfile} options={tabOptions} />
           <Tab.Screen
-            name="EditProfile"
-            component={EditProfile}
-            options={tabOptions}
-          />
-          {/* <Tab.Screen
-            name="Personal"
-            component={Personal}
-            options={tabOptions}
-          />
-          
-          <Tab.Screen
-            name="ChangePassword"
-            component={ChangePassword}
+            name="CounselorProfile"
+            component={CounselorProfile}
             options={tabOptions}
           />
           <Tab.Screen
-            name="DeleteAccount"
-            component={DeleteAccount}
+            name="ViewProfile"
+            component={ViewProfile}
             options={tabOptions}
           />
-          <Tab.Screen name="PT" component={PT} options={tabOptions} /> */}
+          <Tab.Screen name="Request" component={Request} options={tabOptions} />
         </Tab.Navigator>
-      )}
+      ) : userData.role === "COUNSELOR" ? (
+        <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
+          {TabArrayCounselor.map((item, index) => {
+            return (
+              <Tab.Screen
+                key={index}
+                name={item.route}
+                component={item.component}
+                options={{
+                  tabBarButton: (props) => <TabButton {...props} item={item} />,
+                }}
+              />
+            );
+          })}
+          <Tab.Screen
+            name="Request"
+            component={RequestCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileCounselor}
+            options={tabOptions}
+          />
+        </Tab.Navigator>
+      ) : null}
     </>
   );
 }
