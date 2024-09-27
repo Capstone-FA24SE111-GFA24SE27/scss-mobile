@@ -5,12 +5,15 @@ import { AuthContext } from "./AuthContext"; // Sử dụng AuthContext để l�
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
-    const { userData } = useContext(AuthContext); // Lấy thông tin người dùng từ AuthContext
+    const { userData, isLogin } = useContext(AuthContext); // Lấy thông tin người dùng từ AuthContext
     const socket = useRef(null);
 
     useEffect(() => {
         if (userData?.id) {
             connectSocketIO(userData.id);
+        }
+        if(isLogin === false && socket){
+            socket.current.disconnect();
         }
 
         return () => {
@@ -18,7 +21,7 @@ export const SocketProvider = ({ children }) => {
                 socket.current.disconnect();
             }
         };
-    }, [userData]);
+    }, [userData, isLogin]);
 
     const connectSocketIO = (accountId) => {
         socket.current = io(`http://192.168.1.3:4000`);
