@@ -17,6 +17,8 @@ export const NotificationProvider = ({ children }) => {
   const socket = useContext(SocketContext);
   const [notifications, setNotifications] = useState([]);
 
+
+
   useEffect(() => {
     if (userData?.id) {
       const fetchNotifications = async () => {
@@ -24,7 +26,9 @@ export const NotificationProvider = ({ children }) => {
           const response = await axiosJWT.get(
             `${BASE_URL}/notification?SortDirection=DESC&sortBy=id`
           );
+          console.log('API Response:', response.data);
           const result = response.data;
+
           if (result && result.status === 200) {
             setNotifications(result.content.data);
           } else {
@@ -38,6 +42,10 @@ export const NotificationProvider = ({ children }) => {
       };
 
       fetchNotifications();
+
+      console.log(
+        "///////////////////////NotificationContext" + userData?.id
+      );
 
       if (socket) {
         console.log(
@@ -65,7 +73,7 @@ export const NotificationProvider = ({ children }) => {
         socket.off(`/user/${userData?.id}/private/notification`); // Xóa lắng nghe thông báo từ socket
       }
     };
-  }, [userData]);
+  }, [userData, socket]);
 
   return (
     <NotificationContext.Provider value={{ notifications, setNotifications }}>
