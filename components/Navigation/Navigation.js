@@ -270,6 +270,11 @@ export default function Navigation() {
             );
           })}
           <Tab.Screen
+            name="Notification"
+            component={Notification}
+            options={tabOptions}
+          />
+          <Tab.Screen
             name="Request"
             component={RequestCounselor}
             options={tabOptions}

@@ -309,7 +309,7 @@ export default function Schedule() {
           >
             <TouchableOpacity
               onPress={() => handleOpenTakeAttendance(item.id, item.status)}
-              disabled={item.status !== "WAITING"}
+              disabled={new Date().toISOString().split("T")[0] > item.date}
               activeOpacity={0.6}
               style={{
                 backgroundColor: "#fdfdfd",
