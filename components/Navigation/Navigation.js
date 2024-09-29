@@ -29,7 +29,8 @@ import CounselorProfile from "../Screen/CounselorProfile";
 import Counselor from "../Screen/Counselor";
 import Request from "../Screen/Request";
 import RequestCounselor from "../Screen/counselor/Request";
-import Event from "../Screen/Event";
+import NotificationDetail from "../Screen/NotificationDetail";
+// import Event from "../Screen/Event";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -67,12 +68,12 @@ export default function Navigation() {
       active: "clipboard",
       inActive: "clipboard-outline",
       component: Counselor,
-    },{
-      route: "Event",
-      label: "Event",
-      active: "megaphone",
-      inActive: "megaphone-outline",
-      component: Event,
+      // },{
+      //   route: "Event",
+      //   label: "Event",
+      //   active: "megaphone",
+      //   inActive: "megaphone-outline",
+      //   component: Event,
     },
     {
       route: "Schedule",
@@ -242,7 +243,15 @@ export default function Navigation() {
             component={Notification}
             options={tabOptions}
           />
-          <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
+          <Tab.Screen
+            name="NotificationDetail"
+            component={NotificationDetail}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={Profile}
+            options={tabOptions} />
           <Tab.Screen
             name="CounselorProfile"
             component={CounselorProfile}
@@ -272,6 +281,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Notification"
             component={Notification}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="NotificationDetail"
+            component={NotificationDetail}
             options={tabOptions}
           />
           <Tab.Screen

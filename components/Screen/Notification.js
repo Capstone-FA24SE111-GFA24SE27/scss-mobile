@@ -72,8 +72,10 @@ export default function Notification() {
   };
 
   // Đánh dấu một thông báo là đã đọc
-  const markAsRead = async (notificationId) => {
+  const markAsRead = async (notificationId, item) => {
     try {
+
+      console.log("Marking as read - Notification ID: ", notificationId, "Item:", item);
       const response = await axiosJWT.put(`${BASE_URL}/notification/read/${notificationId}`, {
       });
 
@@ -91,6 +93,9 @@ export default function Notification() {
               : notification
           )
         );
+        //điều hướng sang detail
+        //truyền dũ liệu sang detail
+        navigation.navigate("NotificationDetail", { notificationData: item })
       } else {
         Alert.alert("Error", result.message || "Failed to mark notification as read.");
       }
@@ -116,7 +121,8 @@ export default function Notification() {
     try {
       return (
         <TouchableOpacity
-          onPress={() => markAsRead(item.notificationId)} // Đánh dấu thông báo khi nhấn
+          onPress={() => markAsRead(item.notificationId, item)} // Đánh dấu thông báo khi nhấn
+          //truyền cả item
           style={{
             flexDirection: "row",
             paddingVertical: 12,
@@ -204,7 +210,7 @@ export default function Notification() {
       {/* Tab bar */}
       <View style={styles.tabBar}>
         <Text style={styles.tabActive}>All</Text>
-        <Text style={styles.tab}>Unread</Text>
+        {/* <Text style={styles.tab}>Unread</Text> */}
       </View>
 
       {/* Notifications List */}
@@ -263,3 +269,52 @@ const styles = StyleSheet.create({
     flex: 1, justifyContent: "center", alignItems: "center"
   },
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
