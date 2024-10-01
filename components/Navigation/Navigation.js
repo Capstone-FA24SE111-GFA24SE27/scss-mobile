@@ -30,6 +30,7 @@ import Counselor from "../Screen/Counselor";
 import Request from "../Screen/Request";
 import RequestCounselor from "../Screen/counselor/Request";
 import NotificationDetail from "../Screen/NotificationDetail";
+import Report from "../Screen/Report";
 // import Event from "../Screen/Event";
 
 const Tab = createBottomTabNavigator();
@@ -249,6 +250,11 @@ export default function Navigation() {
             options={tabOptions}
           />
           <Tab.Screen
+            name="Report"
+            component={Report}
+            options={tabOptions}
+          />
+          <Tab.Screen
             name="Profile"
             component={Profile}
             options={tabOptions} />
@@ -281,6 +287,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Notification"
             component={Notification}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="Report"
+            component={Report}
             options={tabOptions}
           />
           <Tab.Screen

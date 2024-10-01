@@ -203,7 +203,7 @@ export default function Home() {
                 />
               </Animated.View>
             </Pressable>
-            <Pressable>
+            <Pressable onPress={() => navigation.navigate("Report")}>
               <Ionicons name="menu" size={40} color="white" />
             </Pressable>
           </View>
