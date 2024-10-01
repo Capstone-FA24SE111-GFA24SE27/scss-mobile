@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import io from "socket.io-client";
+import * as Notifications from 'expo-notifications';
 import { AuthContext } from "./AuthContext"; // Sử dụng AuthContext để lấy thông tin người dùng
 import { SocketContext } from "./SocketContext";
 import axiosJWT, { BASE_URL } from "../../config/Config";
@@ -31,13 +32,21 @@ export const NotificationProvider = ({ children }) => {
 
           if (result && result.status === 200) {
             setNotifications(result.content.data);
+            // Trigger local notification for each new item fetched from the API
+            result.content.data.forEach(notification => {
+              Notifications.scheduleNotificationAsync({
+                content: {
+                  title: notification.title || 'New Notification',
+                  body: notification.message || 'You have a new notification.',
+                },
+                trigger: null, // Show notification immediately
+              });
+            });
           } else {
-            console.log(result.message || "Failed to fetch notifications");
+            console.log(result.message || 'Failed to fetch notifications');
           }
         } catch (err) {
-          console.log(err.message || "Failed to fetch notifications");
-        } finally {
-          //   setLoading(false);
+          console.log(err.message || 'Failed to fetch notifications');
         }
       };
 
@@ -54,12 +63,16 @@ export const NotificationProvider = ({ children }) => {
         console.log(`/user/${userData?.id}/private/notification`)
         socket.on(`/user/${userData?.id}/private/notification`, (data) => {
           try {
-            // const notification = JSON.parse(data);
-            console.log(data);
-            setNotifications((prevNotifications) => [
-              data,
-              ...prevNotifications,
-            ]);
+            setNotifications((prevNotifications) => [data, ...prevNotifications]);
+
+            // Trigger a local notification for the new socket data
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: data.title || 'New Notification',
+                body: data.message || 'You have received a new notification.',
+              },
+              trigger: null, // Show notification immediately
+            });
           } catch (error) {
             console.error("Error parsing notification:", error);
             setError("Failed to parse notification");
@@ -81,3 +94,36 @@ export const NotificationProvider = ({ children }) => {
     </NotificationContext.Provider>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
