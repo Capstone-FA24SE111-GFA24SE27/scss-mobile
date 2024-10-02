@@ -1,27 +1,11 @@
-import React, { useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, Pressable, Animated } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';  // Ensure you install expo-linear-gradient if using Expo
 
 const Report = () => {
     const navigation = useNavigation();
-    const scaleValue = useRef(new Animated.Value(1)).current;
-
-    // Animation handlers
-    const handlePressIn = () => {
-        Animated.spring(scaleValue, {
-            toValue: 0.95,  // Shrink button on press
-            useNativeDriver: true,
-        }).start();
-    };
-
-    const handlePressOut = () => {
-        Animated.spring(scaleValue, {
-            toValue: 1,  // Restore to original size on release
-            useNativeDriver: true,
-        }).start();
-    };
 
     const reportData = {
         consultationGoal: {
@@ -54,17 +38,11 @@ const Report = () => {
                 style={styles.header}
             >
                 <View style={styles.headerContent}>
-                    {/* Animated Pressable Button with Scale Effect */}
-                    <Animated.View style={[styles.backButton, { transform: [{ scale: scaleValue }] }]}>
-                        <Pressable
-                            onPress={() => navigation.goBack()}
-                            onPressIn={handlePressIn}
-                            onPressOut={handlePressOut}
-                        >
-                            <Ionicons name="arrow-back" size={24} color="white" />
-                        </Pressable>
-                    </Animated.View>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                        <Ionicons name="arrow-back" size={24} color="white" />
+                    </TouchableOpacity>
 
+                    {/* Center the title */}
                     <Text style={styles.headerTitle}>Consultation Report</Text>
                 </View>
             </LinearGradient>
@@ -101,11 +79,9 @@ const Report = () => {
 
 const styles = StyleSheet.create({
     header: {
-        paddingTop: 40,  // Reduced top padding
-        paddingBottom: 15,  // Reduced bottom padding
+        paddingTop: 20,  // Reduced top padding
+        paddingBottom: 10,  // Reduced bottom padding
         paddingHorizontal: 16,
-        borderBottomLeftRadius: 30,  // Add subtle border radius for modern look
-        borderBottomRightRadius: 30,
         backgroundColor: '#F39300',
         justifyContent: 'center',
         alignItems: 'center',
@@ -119,7 +95,6 @@ const styles = StyleSheet.create({
     backButton: {
         position: 'absolute',
         left: 16,  // Align the back button to the left
-        padding: 10,
     },
     headerTitle: {
         color: 'white',
