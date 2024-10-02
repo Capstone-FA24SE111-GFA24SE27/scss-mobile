@@ -13,6 +13,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../Context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import axiosJWT, { BASE_URL } from "../../config/Config";
+import Toast from "react-native-toast-message";
 
 export default function Login() {
   const { width, height } = Dimensions.get("screen");
@@ -44,10 +45,24 @@ export default function Login() {
       });
       const data = await response.data;
       if (data && data.status == 200) {
-        Alert.alert("Login", "Login successfully");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2:  "Login successfully",
+          onPress: () => {
+            Toast.hide();
+          }
+        })
         await login(data.content.account, data.content.accessToken);
       } else {
-        Alert.alert("Login", "Login failed");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2:  "Login failed",
+          onPress: () => {
+            Toast.hide();
+          }
+        })
       }
     } catch (error) {
       // Alert.alert("Error", "An error occurred. Please try again.");

@@ -151,7 +151,8 @@ export default function Home() {
             flexDirection: "row",
             justifyContent: "space-between",
             paddingHorizontal: 30,
-            paddingVertical: 25,
+            paddingTop: height*0.04,
+            paddingBottom: height*0.02,
             backgroundColor: "#F39300",
             borderBottomStartRadius: 40,
             borderBottomEndRadius: 40,
@@ -160,7 +161,7 @@ export default function Home() {
           <View>
             {profile && (
               <Text
-                style={{ fontSize: 18, fontWeight: "semibold", color: "white" }}
+                style={{ fontSize: 20, fontWeight: "semibold", color: "white" }}
               >
                 Hello, {profile.fullName}
               </Text>

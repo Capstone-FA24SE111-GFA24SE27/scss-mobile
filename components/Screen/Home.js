@@ -151,7 +151,8 @@ export default function Home() {
             flexDirection: "row",
             justifyContent: "space-between",
             paddingHorizontal: 30,
-            paddingVertical: 25,
+            paddingTop: height * 0.04,
+            paddingBottom: height * 0.02,
             backgroundColor: "#F39300",
             borderBottomStartRadius: 40,
             borderBottomEndRadius: 40,
@@ -159,9 +160,7 @@ export default function Home() {
         >
           <View>
             {profile && (
-              <Text
-                style={{ fontSize: 18, fontWeight: "semibold", color: "white" }}
-              >
+              <Text style={{ fontSize: 20, fontWeight: "400", color: "white" }}>
                 Hello, {profile.fullName}
               </Text>
             )}
@@ -173,9 +172,10 @@ export default function Home() {
           <View
             style={{ display: "flex", flexDirection: "row", marginTop: 12 }}
           >
-            <Pressable
+            <TouchableOpacity
               onPress={() => navigation.navigate("Notification")}
               style={{ position: "relative", marginRight: 20, marginTop: 2 }}
+              activeOpacity={0.7}
             >
               <Animated.View style={{ transform: [{ rotate: rotation }] }}>
                 <Ionicons
@@ -202,8 +202,8 @@ export default function Home() {
                   }}
                 />
               </Animated.View>
-            </Pressable>
-            <Pressable onPress={() => navigation.navigate("Report")}>
+              </TouchableOpacity>
+            <Pressable onPress={() => navigation.navigate("Report")} >
               <Ionicons name="menu" size={40} color="white" />
             </Pressable>
           </View>

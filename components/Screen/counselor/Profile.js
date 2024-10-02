@@ -14,6 +14,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../../Context/AuthContext";
+import Toast from "react-native-toast-message";
 
 export default function Profile() {
   const navigation = useNavigation();
@@ -58,7 +59,14 @@ export default function Profile() {
 
   const confirmLogout = () => {
     setIsOpen(false);
-    Alert.alert("Status", "Logout successfully");
+    Toast.show({
+      type: "success",
+      text1: "Success",
+      text2:  "Logout successfully",
+      onPress: () => {
+        Toast.hide();
+      }
+    })
     logout();
   };
 
@@ -73,7 +81,7 @@ export default function Profile() {
           style={{
             flexDirection: "row",
             paddingHorizontal: 30,
-            paddingTop: 25,
+            paddingTop: height*0.035,
             paddingVertical: 10,
           }}
         >
@@ -102,7 +110,7 @@ export default function Profile() {
             }}
           >
             <Image
-              source={require("../../../assets/user.jpg")}
+              source={{ uri: userData?.profile?.avatarLink}}
               style={{
                 marginBottom: 8,
                 width: width * 0.2,

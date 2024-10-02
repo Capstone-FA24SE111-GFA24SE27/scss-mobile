@@ -10,7 +10,7 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Agenda,
   AgendaList,
@@ -20,10 +20,15 @@ import {
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { useFocusEffect } from "@react-navigation/native";
+import { SocketContext } from "../../Context/SocketContext";
+import { AuthContext } from "../../Context/AuthContext";
+import Toast from "react-native-toast-message";
 
 export default function Schedule() {
   const { width, height } = Dimensions.get("screen");
   // const [items, setItems] = useState({});
+  const socket = useContext(SocketContext);
+  const { userData } = useContext(AuthContext);
   const [items, setItems] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState(
@@ -67,6 +72,37 @@ export default function Schedule() {
     }, [selectedDate])
   );
 
+  useEffect(() => {
+    if (socket) {
+      socket.on(`/user/${userData?.id}/appointment`, (data) => {
+        console.log(data);
+        setSelectedDate((prev) => {
+          const date = new Date(prev);
+          const dayOfWeek = date.getDay();
+
+          const startDate = new Date(
+            date.getTime() - dayOfWeek * 24 * 60 * 60 * 1000
+          );
+          const endDate = new Date(
+            date.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000
+          );
+
+          const fromDate = startDate.toISOString().split("T")[0];
+          const toDate = endDate.toISOString().split("T")[0];
+          if (fromDate && toDate) {
+            fetchData(fromDate, toDate);
+          }
+          return prev;
+        });
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off(`/user/${userData?.id}/appointment`);
+      }
+    };
+  }, [socket]);
+
   const formatDate = (value) => {
     const date = new Date(value);
     const year = date.getFullYear();
@@ -94,28 +130,36 @@ export default function Schedule() {
       const data = scheduleRes?.data;
       console.log(data);
       if (data.status === 200) {
-        const formattedItems = data?.content?.reduce((acc, appointment) => {
-          const date = appointment?.startDateTime.split("T")[0];
-          if (!acc[date]) {
-            acc[date] = [];
-          }
-          acc[date].push({
-            id: appointment?.id,
-            date: formatDate(date),
-            startTime: appointment?.startDateTime.split("T")[1].slice(0, 5),
-            endTime: appointment?.endDateTime.split("T")[1].slice(0, 5),
-            meetingType: appointment?.meetingType,
-            place:
-              appointment?.meetingType === "ONLINE"
-                ? `${appointment?.meetUrl}`
-                : `${appointment?.address}`,
-            studentName: appointment?.studentInfo?.fullName || "No name",
-            studentImage: appointment?.studentInfo?.avatarLink || "Image-url",
-            status: appointment?.status,
-            feedback: appointment?.appointmentFeedback,
-          });
-          return acc;
-        }, {});
+        const formattedItems = data?.content
+          ?.sort(
+            (a, b) =>
+              new Date(a.startDateTime).getTime() -
+              new Date(b.startDateTime).getTime()
+          )
+          .reduce((acc, appointment) => {
+            const date = appointment?.startDateTime.split("T")[0];
+            if (!acc[date]) {
+              acc[date] = [];
+            }
+            acc[date].push({
+              id: appointment?.id,
+              date: formatDate(date),
+              startTime: appointment?.startDateTime.split("T")[1].slice(0, 5),
+              endTime: appointment?.endDateTime.split("T")[1].slice(0, 5),
+              meetingType: appointment?.meetingType,
+              place:
+                appointment?.meetingType === "ONLINE"
+                  ? `${appointment?.meetUrl}`
+                  : `${appointment?.address}`,
+              studentName:
+                appointment?.studentInfo?.profile?.fullName || "No name",
+              studentImage:
+                appointment?.studentInfo?.profile?.avatarLink || "Image-url",
+              status: appointment?.status,
+              feedback: appointment?.appointmentFeedback,
+            });
+            return acc;
+          }, {});
 
         const items = Object.keys(formattedItems).map((date) => ({
           title: date,
@@ -133,7 +177,14 @@ export default function Schedule() {
         });
         setMarkedDates(marked);
       } else {
-        Alert.alert("Error", "Failed to fetch data");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to request.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -180,7 +231,14 @@ export default function Schedule() {
         });
         handleCloseUpdateAppointment();
       } else {
-        Alert.alert("Appointment", "Failed to Update Appointment");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to update appoinment.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       }
       // console.log(selectedAppointment, method.toLowerCase(), value);
     } catch (error) {
@@ -311,18 +369,23 @@ export default function Schedule() {
               onPress={() => handleOpenTakeAttendance(item.id, item.status)}
               disabled={new Date().toISOString().split("T")[0] > item.date}
               activeOpacity={0.6}
-              style={{
-                backgroundColor: "#fdfdfd",
-                borderRadius: 20,
-                paddingVertical: 6,
-                borderWidth: 1,
-                borderColor: "#F39300",
-                paddingHorizontal: 12,
-                flexDirection: "row",
-                elevation: 1,
-              }}
+              style={[
+                item.status === "ATTEND" && { borderColor: "green" },
+                item.status === "WAITING" && { borderColor: "#F39300" },
+                item.status === "ABSENT" && { borderColor: "red" },
+                item.status === "CANCELED" && { borderColor: "gray" },
+                {
+                  backgroundColor: "#fdfdfd",
+                  borderRadius: 20,
+                  paddingVertical: 6,
+                  borderWidth: 1.5,
+                  paddingHorizontal: 12,
+                  flexDirection: "row",
+                  elevation: 1,
+                },
+              ]}
             >
-              <MaterialIcons name="edit-calendar" size={20} color="#F39300" />
+              <MaterialIcons name="edit-calendar" size={20} color="gray" />
               <Text style={{ fontSize: 16, marginHorizontal: 6 }}>-</Text>
               <Text
                 style={[
@@ -357,7 +420,7 @@ export default function Schedule() {
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
-        <View style={{ flex: 1, marginTop: 30 }}>
+        <View style={{ flex: 1, marginTop: height * 0.04 }}>
           <CalendarProvider
             date={selectedDate}
             onDateChanged={(date) => setSelectedDate(date)}
@@ -942,71 +1005,74 @@ export default function Schedule() {
                   </View>
                   {info?.feedback !== null ? (
                     <View
-                    style={{
-                      margin: 20,
-                      borderRadius: 20,
-                      backgroundColor: "white",
-                      padding: 16,
-                      borderWidth: 1.5,
-                      borderColor: "#E0E0E0",
-                      elevation: 5,
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.2,
-                      shadowRadius: 4,
-                    }}
-                  >
-                    <View
                       style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 12,
+                        margin: 20,
+                        borderRadius: 20,
+                        backgroundColor: "white",
+                        padding: 16,
+                        borderWidth: 1.5,
+                        borderColor: "#E0E0E0",
+                        elevation: 5,
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 4,
                       }}
                     >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        {formatDate(info?.feedback?.createdAt)}
-                      </Text>
+                      <View>
+                        <Text>{info.studentName} had leave a review</Text>
+                      </View>
                       <View
                         style={{
                           flexDirection: "row",
+                          justifyContent: "space-between",
                           alignItems: "center",
-                          backgroundColor: "#F39300",
-                          paddingHorizontal: 10,
-                          paddingVertical: 4,
-                          borderRadius: 16,
+                          marginBottom: 12,
                         }}
                       >
-                        <Ionicons name="star" size={16} color="white" />
                         <Text
                           style={{
                             fontSize: 16,
-                            marginLeft: 6,
                             fontWeight: "bold",
-                            color: "white",
+                            color: "#333",
                           }}
                         >
-                          {info?.feedback?.rating.toFixed(1)}
+                          {formatDate(info?.feedback?.createdAt)}
                         </Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            backgroundColor: "#F39300",
+                            paddingHorizontal: 10,
+                            paddingVertical: 4,
+                            borderRadius: 16,
+                          }}
+                        >
+                          <Ionicons name="star" size={16} color="white" />
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              marginLeft: 6,
+                              fontWeight: "bold",
+                              color: "white",
+                            }}
+                          >
+                            {info?.feedback?.rating.toFixed(1)}
+                          </Text>
+                        </View>
                       </View>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: "#555",
+                          fontWeight: "500",
+                          lineHeight: 24,
+                        }}
+                      >
+                        {info?.feedback?.comment}
+                      </Text>
                     </View>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        color: "#555",
-                        fontWeight: "500",
-                        lineHeight: 24,
-                      }}
-                    >
-                      {info?.feedback?.comment}
-                    </Text>
-                  </View>
                   ) : (
                     <View
                       style={{

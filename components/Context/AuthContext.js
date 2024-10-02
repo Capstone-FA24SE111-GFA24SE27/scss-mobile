@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   const fetchProfile = async () => {
     try {
       const profileRes = await axiosJWT.get(`${BASE_URL}/profile`);
-      const profileData = profileRes?.data?.content || null;
+      const profileData = profileRes?.data?.content?.profile || null;
       setProfile(profileData);
     } catch (err) {
       console.log(err);

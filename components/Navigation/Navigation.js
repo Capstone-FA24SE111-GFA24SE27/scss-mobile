@@ -29,6 +29,9 @@ import CounselorProfile from "../Screen/CounselorProfile";
 import Counselor from "../Screen/Counselor";
 import Request from "../Screen/Request";
 import RequestCounselor from "../Screen/counselor/Request";
+import Appointment from "../Screen/Appointment";
+import AppointmentCounselor from "../Screen/counselor/Appointment";
+
 import NotificationDetail from "../Screen/NotificationDetail";
 import Report from "../Screen/Report";
 // import Event from "../Screen/Event";
@@ -269,6 +272,11 @@ export default function Navigation() {
             options={tabOptions}
           />
           <Tab.Screen name="Request" component={Request} options={tabOptions} />
+          <Tab.Screen
+            name="Appointment"
+            component={Appointment}
+            options={tabOptions}
+          />
         </Tab.Navigator>
       ) : userData.role === "COUNSELOR" ? (
         <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
@@ -300,13 +308,18 @@ export default function Navigation() {
             options={tabOptions}
           />
           <Tab.Screen
+            name="Profile"
+            component={ProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
             name="Request"
             component={RequestCounselor}
             options={tabOptions}
           />
           <Tab.Screen
-            name="Profile"
-            component={ProfileCounselor}
+            name="Appointment"
+            component={AppointmentCounselor}
             options={tabOptions}
           />
         </Tab.Navigator>
