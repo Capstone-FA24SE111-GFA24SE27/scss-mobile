@@ -8,7 +8,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Agenda,
   AgendaList,
@@ -18,9 +18,14 @@ import {
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import { useFocusEffect } from "@react-navigation/native";
-
+import { SocketContext } from "../Context/SocketContext";
+import { AuthContext } from "../Context/AuthContext";
+import Toast
+ from "react-native-toast-message";
 export default function Schedule() {
   const { width, height } = Dimensions.get("screen");
+  const socket = useContext(SocketContext);
+  const { userData } = useContext(AuthContext);
   const [items, setItems] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState(
@@ -57,6 +62,38 @@ export default function Schedule() {
     }, [selectedDate])
   );
 
+  useEffect(() => {
+    if (socket) {
+      socket.on(`/user/${userData?.id}/appointment`, (data) => {
+        console.log(data);
+        setSelectedDate((prev) => {
+          const date = new Date(prev);
+          const dayOfWeek = date.getDay();
+    
+          const startDate = new Date(
+            date.getTime() - dayOfWeek * 24 * 60 * 60 * 1000
+          );
+          const endDate = new Date(
+            date.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000
+          );
+    
+          const fromDate = startDate.toISOString().split("T")[0];
+          const toDate = endDate.toISOString().split("T")[0];
+          if (fromDate && toDate) {
+            fetchData(fromDate, toDate);
+          }
+          return prev;
+      })
+        
+      });
+    }
+    return () => {
+      if(socket){
+        socket.off(`/user/${userData?.id}/appointment`)
+      }
+    }
+  }, [socket]);
+
   const formatDate = (value) => {
     const date = new Date(value);
     const year = date.getFullYear();
@@ -76,31 +113,37 @@ export default function Schedule() {
       );
 
       const data = scheduleRes?.data;
-      console.log(data);
       if (data.status === 200) {
-        const formattedItems = data?.content?.reduce((acc, appointment) => {
-          const date = appointment?.startDateTime.split("T")[0];
-          if (!acc[date]) {
-            acc[date] = [];
-          }
-          acc[date].push({
-            id: appointment?.id,
-            date: formatDate(date),
-            startTime: appointment?.startDateTime.split("T")[1].slice(0, 5),
-            endTime: appointment?.endDateTime.split("T")[1].slice(0, 5),
-            meetingType: appointment?.meetingType,
-            place:
-              appointment?.meetingType === "ONLINE"
-                ? `${appointment?.meetUrl}`
-                : `${appointment?.address}`,
-            counselorName: appointment?.counselorInfo?.fullName || "No name",
-            counselorImage:
-              appointment?.counselorInfo?.avatarLink || "Image-url",
-            status: appointment?.status,
-            feedback: appointment?.appointmentFeedback,
-          });
-          return acc;
-        }, {});
+        const formattedItems = data?.content
+          ?.sort(
+            (a, b) =>
+              new Date(a.startDateTime).getTime() -
+              new Date(b.startDateTime).getTime()
+          )
+          .reduce((acc, appointment) => {
+            const date = appointment?.startDateTime.split("T")[0];
+            if (!acc[date]) {
+              acc[date] = [];
+            }
+            acc[date].push({
+              id: appointment?.id,
+              date: formatDate(date),
+              startTime: appointment?.startDateTime.split("T")[1].slice(0, 5),
+              endTime: appointment?.endDateTime.split("T")[1].slice(0, 5),
+              meetingType: appointment?.meetingType,
+              place:
+                appointment?.meetingType === "ONLINE"
+                  ? `${appointment?.meetUrl}`
+                  : `${appointment?.address}`,
+              counselorName:
+                appointment?.counselorInfo?.profile?.fullName || "No name",
+              counselorImage:
+                appointment?.counselorInfo?.profile?.avatarLink || "Image-url",
+              status: appointment?.status,
+              feedback: appointment?.appointmentFeedback,
+            });
+            return acc;
+          }, {});
 
         const items = Object.keys(formattedItems).map((date) => ({
           title: date,
@@ -118,7 +161,14 @@ export default function Schedule() {
         });
         setMarkedDates(marked);
       } else {
-        Alert.alert("Error", "Failed to fetch data");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to fetch data",
+          onPress: () => {
+            Toast.hide();
+          }
+        })
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -253,16 +303,18 @@ export default function Schedule() {
             }}
           >
             <View
-              style={{
+              style={[  item.status === "ATTEND" && { borderColor: "green" },
+                item.status === "WAITING" && { borderColor: "#F39300" },
+                item.status === "ABSENT" && { borderColor: "red" },
+                item.status === "CANCELED" && { borderColor: "gray" }, {
                 backgroundColor: "#fdfdfd",
                 borderRadius: 20,
                 paddingVertical: 6,
-                borderWidth: 1,
-                borderColor: "#F39300",
+                borderWidth: 1.5,
                 paddingHorizontal: 12,
                 flexDirection: "row",
                 elevation: 1,
-              }}
+              }]}
             >
               <Text
                 style={[
@@ -285,7 +337,7 @@ export default function Schedule() {
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
-        <View style={{ flex: 1, marginTop: 30 }}>
+        <View style={{ flex: 1, marginTop: height*0.04 }}>
           <CalendarProvider
             date={selectedDate}
             onDateChanged={(date) => setSelectedDate(date)}
@@ -674,21 +726,26 @@ export default function Schedule() {
                       >
                         There's no feedback yet
                       </Text>
-                      <TouchableOpacity
-                        onPress={() => handleOpenFeedback(info.id)}
-                        activeOpacity={0.6}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color: "#F39300",
-                            textDecorationLine: "underline",
-                          }}
-                        >
-                          Leave a Review
-                        </Text>
-                      </TouchableOpacity>
+                      {new Date().toISOString().split("T")[0] <= info.date &&
+                        info.status !== "WAITING" &&
+                        info.status !== "ABSENT" && (
+                          <TouchableOpacity
+                            onPress={() => handleOpenFeedback(info.id)}
+                            disabled
+                            activeOpacity={0.6}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                color: "#F39300",
+                                textDecorationLine: "underline",
+                              }}
+                            >
+                              Leave a Review
+                            </Text>
+                          </TouchableOpacity>
+                        )}
                       <Modal
                         transparent={true}
                         visible={openFeedback}

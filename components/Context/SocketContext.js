@@ -12,13 +12,13 @@ export const SocketProvider = ({ children }) => {
         if (userData?.id) {
             connectSocketIO(userData.id);
         }
-        if (isLogin === false && socket) {
-            socket.current?.disconnect();
+        if(isLogin === false && socket){
+            socket?.current?.disconnect();
         }
 
         return () => {
-            if (socket.current) {
-                socket.current?.disconnect();
+            if (socket?.current) {
+                socket?.current?.disconnect();
             }
         };
     }, [userData, isLogin]);

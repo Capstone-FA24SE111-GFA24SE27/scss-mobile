@@ -11,8 +11,17 @@ import { AuthContext } from "./AuthContext"; // Sử dụng AuthContext để l�
 import { SocketContext } from "./SocketContext";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import { AppState } from "react-native";
+import Toast from 'react-native-toast-message';
+import { createNavigationContainerRef } from "@react-navigation/native";
 
+export const navigationRef = createNavigationContainerRef();
 export const NotificationContext = createContext();
+
+export function navigate(name, params) {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name, params);
+  }
+}
 
 export const NotificationProvider = ({ children }) => {
   const { userData } = useContext(AuthContext); // Lấy thông tin người dùng từ AuthContext
@@ -71,7 +80,6 @@ export const NotificationProvider = ({ children }) => {
         socket.on(`/user/${userData?.id}/private/notification`, (data) => {
           try {
             setNotifications((prevNotifications) => [data, ...prevNotifications]);
-
             // Chỉ hiển thị thông báo khi ứng dụng đang chạy nền
             if (appState === "background") {
               Notifications.scheduleNotificationAsync({
@@ -82,6 +90,15 @@ export const NotificationProvider = ({ children }) => {
                 trigger: null, // Show notification immediately
               });
             }
+            Toast.show({
+              type: 'success',
+              text1: data.title,
+              text2: data.message,
+              onPress: () => {
+                Toast.hide();
+                navigationRef.current?.navigate("NotificationDetail", { notificationData: data });
+              },
+            });
           } catch (error) {
             console.error("Error parsing notification:", error);
           }

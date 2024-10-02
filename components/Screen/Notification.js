@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   StyleSheet,
   Alert,
+  Animated,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -15,14 +17,39 @@ import { AuthContext } from "../Context/AuthContext";
 import { SocketContext } from "../Context/SocketContext"; // Import SocketContext
 import { NotificationContext } from "../Context/NotificationContext";
 import axiosJWT, { BASE_URL } from "../../config/Config";
+import Toast from "react-native-toast-message";
+
 export default function Notification() {
   const navigation = useNavigation();
   const { isLogin, userData, session } = useContext(AuthContext);
-  // const socket = useContext(SocketContext); 
+  // const socket = useContext(SocketContext);
   // const [notifications, setNotifications] = useState([]);
-  const { notifications, setNotifications } = useContext(NotificationContext)
+  const { notifications, setNotifications } = useContext(NotificationContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const blinking = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(blinking, {
+          toValue: 0.5,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(blinking, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(blinking, {
+          toValue: 0,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
 
   useEffect(() => {
     if (!isLogin || !userData || !session) {
@@ -32,22 +59,21 @@ export default function Notification() {
 
     // Lấy thông báo từ server khi component render
 
-    console.log("///////////////////////" + userData?.id)
+    console.log("///////////////////////" + userData?.id);
 
     // console.log(notifications)
 
-
     // Dọn dẹp socket khi component bị unmount
-    return () => {
-    };
+    return () => {};
   }, [isLogin, userData, session, navigation]);
 
   // Đánh dấu tất cả thông báo là đã đọc
   const markAllAsRead = async () => {
     try {
-      const response = await axiosJWT.put(`${BASE_URL}/notification/mark-all-read`, {
-
-      });
+      const response = await axiosJWT.put(
+        `${BASE_URL}/notification/mark-all-read`,
+        {}
+      );
 
       const result = response.data;
 
@@ -63,21 +89,41 @@ export default function Notification() {
           }))
         );
       } else {
-        Alert.alert("Error", "Failed to mark all notifications as read.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to mark all notifications as read.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred while marking all notifications as read.");
-      console.error('Error marking all notifications as read:', error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An error occurred while marking all notifications as read.",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
+      console.error("Error marking all notifications as read:", error);
     }
   };
 
   // Đánh dấu một thông báo là đã đọc
   const markAsRead = async (notificationId, item) => {
     try {
-
-      console.log("Marking as read - Notification ID: ", notificationId, "Item:", item);
-      const response = await axiosJWT.put(`${BASE_URL}/notification/read/${notificationId}`, {
-      });
+      console.log(
+        "Marking as read - Notification ID: ",
+        notificationId,
+        "Item:",
+        item
+      );
+      const response = await axiosJWT.put(
+        `${BASE_URL}/notification/read/${notificationId}`,
+        {}
+      );
 
       const result = response.data;
 
@@ -95,13 +141,27 @@ export default function Notification() {
         );
         //điều hướng sang detail
         //truyền dũ liệu sang detail
-        navigation.navigate("NotificationDetail", { notificationData: item })
+        navigation.navigate("NotificationDetail", { notificationData: item });
       } else {
-        Alert.alert("Error", result.message || "Failed to mark notification as read.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: result.message || "Failed to mark all notifications as read.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred while marking the notification as read.");
-      console.error('Error marking notification as read:', error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An error occurred while marking the notification as read.",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
+      console.error("Error marking notification as read:", error);
     }
   };
 
@@ -116,7 +176,7 @@ export default function Notification() {
     }
 
     // Thay đổi màu nền dựa trên trạng thái thông báo
-    const backgroundColor = item.readStatus ? '#e0e0e0' : '#f9f9f9';
+    const backgroundColor = item.readStatus ? "#e0e0e0" : "#f9f9f9";
 
     try {
       return (
@@ -138,11 +198,17 @@ export default function Notification() {
           }}
         >
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", color: item.readStatus ? "gray" : "black" }}>
-              {item.notificationId} | {item.title}
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                color: item.readStatus ? "gray" : "black",
+              }}
+            >
+              {item.title}
             </Text>
             <Text
-              numberOfLines={1}
+              numberOfLines={2}
               style={{
                 fontSize: 16,
                 color: item.readStatus ? "gray" : "black",
@@ -153,11 +219,25 @@ export default function Notification() {
             </Text>
           </View>
           <View style={styles.notificationStatus}>
-            <Ionicons
-              name={item.readStatus ? "checkmark-done" : "ellipse"}
-              size={24}
-              color={item.readStatus ? "gray" : "#F39300"}
-            />
+            {item.readStatus ? (
+              <Ionicons name="checkmark-done" size={24} color="gray" />
+            ) : (
+              <Animated.View
+                style={{
+                  opacity: blinking,
+                  marginVertical: 4,
+                }}
+              >
+                <View
+                  style={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: 20,
+                    backgroundColor: "#F39300",
+                  }}
+                />
+              </Animated.View>
+            )}
           </View>
         </TouchableOpacity>
       );
@@ -192,26 +272,22 @@ export default function Notification() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Pressable onPress={() => navigation.navigate("Home")}>
+          <TouchableOpacity hitSlop={30} onPress={() => navigation.navigate("Home")}>
             <Ionicons name="arrow-back-outline" size={30} color="#F39300" />
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Notifications</Text>
         </View>
         <View style={styles.headerRight}>
           {/* Icon để đánh dấu tất cả thông báo là đã đọc */}
-          <TouchableOpacity onPress={markAllAsRead}>
+          <TouchableOpacity hitSlop={30} onPress={markAllAsRead}>
             <MaterialIcons name="done-all" size={30} color="#F39300" />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Tab bar */}
-      <View style={styles.tabBar}>
-        <Text style={styles.tabActive}>All</Text>
-        {/* <Text style={styles.tab}>Unread</Text> */}
-      </View>
 
       {/* Notifications List */}
       <FlatList
@@ -224,14 +300,14 @@ export default function Notification() {
     </View>
   );
 }
-
+const { width, height } = Dimensions.get("screen");
 const styles = StyleSheet.create({
   container: { backgroundColor: "#f5f7fd", flex: 1, paddingHorizontal: 16 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 16,
+    paddingVertical: height * 0.035,
   },
   headerLeft: { flex: 1 },
   headerCenter: { flex: 3, alignItems: "center" },
@@ -266,55 +342,8 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   centeredContainer: {
-    flex: 1, justifyContent: "center", alignItems: "center"
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

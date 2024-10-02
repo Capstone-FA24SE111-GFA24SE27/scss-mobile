@@ -14,6 +14,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../Context/AuthContext";
+import Toast from "react-native-toast-message";
 
 export default function Profile() {
   const navigation = useNavigation();
@@ -22,7 +23,7 @@ export default function Profile() {
   const [open, setIsOpen] = useState(false);
   const { userData, profile, fetchProfile, logout } = useContext(AuthContext);
   const scrollViewRef = useRef(null);
-  
+
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
@@ -58,7 +59,14 @@ export default function Profile() {
 
   const confirmLogout = () => {
     setIsOpen(false);
-    Alert.alert("Status", "Logout successfully");
+    Toast.show({
+      type: "success",
+      text1: "Success",
+      text2: "Logout successfully",
+      onPress: () => {
+        Toast.hide();
+      },
+    });
     logout();
   };
 
@@ -73,14 +81,14 @@ export default function Profile() {
           style={{
             flexDirection: "row",
             paddingHorizontal: 30,
-            paddingTop: 25,
+            paddingTop: height * 0.04,
             paddingVertical: 10,
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
-            <Pressable onPress={() => navigation.navigate("Personal")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Personal")}>
               <Ionicons name="return-up-back" size={36} />
-            </Pressable>
+            </TouchableOpacity>
           </View>
           <View style={{ flex: 2, alignItems: "center" }}>
             <Text style={{ fontWeight: "bold", fontSize: width * 0.06 }}>
@@ -102,7 +110,7 @@ export default function Profile() {
             }}
           >
             <Image
-              source={require("../../assets/user.jpg")}
+              source={{ uri: userData?.profile?.avatarLink }}
               style={{
                 marginBottom: 8,
                 width: width * 0.2,
@@ -126,7 +134,7 @@ export default function Profile() {
                 </Text>
               </>
             )}
-            <Pressable
+            <TouchableOpacity
               style={{
                 marginTop: 8,
                 backgroundColor: "#F39300",
@@ -146,7 +154,7 @@ export default function Profile() {
               >
                 View Profile
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
           <View
             style={{
@@ -317,7 +325,7 @@ export default function Profile() {
                   width: "90%",
                 }}
               ></View>
-              <Pressable
+              <TouchableOpacity
                 onPress={() => navigation.navigate("ChangePassword")}
                 style={{
                   flexDirection: "row",
@@ -350,7 +358,7 @@ export default function Profile() {
                   size={width * 0.065}
                   style={{ color: "#e3e3e3" }}
                 />
-              </Pressable>
+              </TouchableOpacity>
               <View
                 style={{
                   borderBottomWidth: 1,
