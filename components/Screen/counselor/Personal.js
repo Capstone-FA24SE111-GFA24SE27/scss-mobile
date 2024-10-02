@@ -7,51 +7,109 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../../Context/AuthContext";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
+import { SocketContext } from "../../Context/SocketContext";
 
 export default function Personal() {
   const navigation = useNavigation();
-  const { fetchProfile, profile } = useContext(AuthContext);
-
+  const { fetchProfile, profile, userData } = useContext(AuthContext);
+  const socket = useContext(SocketContext);
   const scrollViewRef = useRef(null);
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
+      fetchRequestAllPages();
+      fetchAppointmentAllPages();
     }, [])
   );
 
   const blinking = useRef(new Animated.Value(0)).current;
-  
+
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(blinking, {
           toValue: 0.5,
-          duration: 1000,
+          duration: 800,
           useNativeDriver: true,
         }),
         Animated.timing(blinking, {
           toValue: 1,
-          duration: 1000,
+          duration: 400,
           useNativeDriver: true,
         }),
         Animated.timing(blinking, {
           toValue: 0,
-          duration: 1000,
+          duration: 800,
           useNativeDriver: true,
         }),
       ])
     ).start();
   }, []);
 
+  const [requestCount, setRequestCount] = useState(0);
+  const [appoinmentCount, setAppointmentCount] = useState(0);
+
   useEffect(() => {
-    fetchProfile();
+    socket.on(`/user/${userData?.id}/private/notification`, () => {
+      fetchRequestAllPages();
+      fetchAppointmentAllPages();
+    });
   }, []);
+
+  const fetchRequestAllPages = async () => {
+    let page = 1;
+    let totalWaitingItems = 0;
+    let hasMorePages = true;
+
+    try {
+      while (hasMorePages) {
+        const response = await axiosJWT.get(
+          `${BASE_URL}/booking-counseling/appointment-request`,
+          { params: { page: page } }
+        );
+        const { data, totalPages } = response?.data?.content;
+        const waitingItems = data?.filter((item) => item.status === "WAITING");
+        totalWaitingItems += waitingItems?.length;
+        page += 1;
+        hasMorePages = page <= totalPages;
+      }
+      setRequestCount(totalWaitingItems);
+    } catch (error) {
+      console.error("Error fetching pages:", error);
+      setRequestCount(0);
+    }
+  };
+
+  const fetchAppointmentAllPages = async () => {
+    let page = 1;
+    let totalWaitingItems = 0;
+    let hasMorePages = true;
+
+    try {
+      while (hasMorePages) {
+        const response = await axiosJWT.get(
+          `${BASE_URL}/appointments/counselor`,
+          { params: { page: page } }
+        );
+        const { data, totalPages } = response?.data?.content;
+        const waitingItems = data?.filter((item) => item.status === "WAITING");
+        totalWaitingItems += waitingItems?.length;
+        page += 1;
+        hasMorePages = page <= totalPages;
+      }
+      setAppointmentCount(totalWaitingItems);
+    } catch (error) {
+      console.error("Error fetching pages:", error);
+      setAppointmentCount(0);
+    }
+  };
 
   return (
     <>
@@ -71,12 +129,12 @@ export default function Personal() {
         </View>
         <View
           style={{
-            flex: 0.15,
             backgroundColor: "white",
             borderRadius: 20,
-            elevation: 5,
+            elevation: 3,
             marginHorizontal: 30,
-            paddingHorizontal: 15,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
             justifyContent: "center",
           }}
         >
@@ -85,7 +143,7 @@ export default function Personal() {
               style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
             >
               <Image
-                source={require("../../../assets/user.jpg")}
+                source={{ uri: profile.avatarLink }}
                 style={{ width: 50, height: 50, borderRadius: 25 }}
               />
               <View style={{ marginLeft: 20 }}>
@@ -118,30 +176,171 @@ export default function Personal() {
               style={{ justifyContent: "flex-end" }}
               onPress={() => navigation.navigate("Profile")}
             >
-              <Ionicons name="arrow-forward-circle" size={40} />
+              <Ionicons name="arrow-forward-circle" size={40} color="#F39300" />
             </Pressable>
           </View>
         </View>
         <View
-          style={{ marginVertical: 12, marginHorizontal: 30, justifyContent: "center" }}
+          style={{
+            marginVertical: 16,
+            marginHorizontal: 30,
+            justifyContent: "space-between",
+            flexDirection: "row",
+          }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-                Your Request
-              </Text>
-            </View>
-            <TouchableOpacity onPress={() => navigation.navigate("Request")} style={{ justifyContent: "flex-end" }}>
+          <View
+            style={{
+              backgroundColor: "white",
+              flex: 0.43,
+              padding: 12,
+              borderRadius: 10,
+              elevation: 3,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingVertical: 4,
+              }}
+            >
               <Text
-                style={{ fontSize: 20, color: "#F39300", fontWeight: "600" }}
+                style={{
+                  fontSize: 20,
+                  fontWeight: "700",
+                  color: "black",
+                }}
+              >
+                Requests
+              </Text>
+              <View
+                style={{
+                  backgroundColor: "#F39300",
+                  padding: 2,
+                  borderRadius: 20,
+                  width: 28,
+                  height: 28,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {requestCount === 0 ? 0 : requestCount}
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Request")}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 4,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "#F39300",
+                  fontWeight: "600",
+                }}
               >
                 View all
               </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={22}
+                color="#F39300"
+                style={{ marginLeft: 4 }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              backgroundColor: "white",
+              flex: 0.55,
+              padding: 12,
+              borderRadius: 10,
+              elevation: 3,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingVertical: 4,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "700",
+                  color: "black",
+                }}
+              >
+                Appointments
+              </Text>
+              <View
+                style={{
+                  backgroundColor: "#F39300",
+                  padding: 2,
+                  borderRadius: 20,
+                  width: 28,
+                  height: 28,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {appoinmentCount === 0 ? 0 : appoinmentCount}
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Appointment")}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 4,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "#F39300",
+                  fontWeight: "600",
+                }}
+              >
+                View all
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={22}
+                color="#F39300"
+                style={{ marginLeft: 4 }}
+              />
             </TouchableOpacity>
           </View>
         </View>
         <View
-          style={{ marginVertical: 12, marginHorizontal: 30, justifyContent: "center" }}
+          style={{
+            marginVertical: 4,
+            marginHorizontal: 30,
+            justifyContent: "center",
+          }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={{ flex: 1 }}>
