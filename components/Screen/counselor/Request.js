@@ -1,5 +1,5 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -16,9 +16,17 @@ import {
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import Toast from "react-native-toast-message";
+import { AuthContext } from "../../Context/AuthContext";
+import { SocketContext } from "../../Context/SocketContext";
+import { RequestSkeleton } from "../layout/Skeleton";
+
 export default function Request() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
+  const [loading, setLoading] = useState(true);
+  const { userData } = useContext(AuthContext);
+  const socket = useContext(SocketContext);
   const [requests, setRequests] = useState([]);
   const [filters, setFilters] = useState({
     dateFrom: "",
@@ -30,6 +38,7 @@ export default function Request() {
   const [dateTo, setDateTo] = useState("");
   const [online, isOnline] = useState("");
   const [sortDirection, setSortDirection] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -187,11 +196,13 @@ export default function Request() {
         {
           params: {
             ...filters,
+            page: currentPage,
           },
         }
       );
       const requestsData = requestsRes?.data?.content || [];
       setRequests(requestsData);
+      setLoading(false);
       console.log(requests);
     } catch (err) {
       console.log(err);
@@ -199,8 +210,14 @@ export default function Request() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    socket.on(`/user/${userData?.id}/private/notification`, () => {
+      fetchData(filters);
+    });
+  }, [filters]);
+
+  useEffect(() => {
+    fetchData({ ...filters, page: currentPage });
+  }, [currentPage]);
 
   const applyFilters = () => {
     const newFilters = {
@@ -297,7 +314,14 @@ export default function Request() {
         fetchData();
         setOpenSuccess(true);
       } else {
-        Alert.alert("Request", "Failed to request");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to request.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       }
       console.log(selectedRequest);
     } catch (error) {
@@ -319,7 +343,14 @@ export default function Request() {
         setOpenSuccess(true);
         fetchData();
       } else {
-        Alert.alert("Request", "Failed to request");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to request.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       }
       console.log(selectedRequest, method.toLowerCase(), dataToSend);
     } catch (error) {
@@ -356,12 +387,13 @@ export default function Request() {
             display: "flex",
             flexDirection: "row",
             paddingHorizontal: 30,
-            paddingTop: 25,
+            paddingTop: height * 0.035,
             paddingVertical: 10,
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
+              hitSlop={30}
               onPress={
                 () => navigation.navigate("Personal")
                 // setDateFrom(""),
@@ -387,12 +419,13 @@ export default function Request() {
             style={{
               display: "flex",
               flexDirection: "row",
+              alignItems: "center",
             }}
           >
             <View style={{ alignItems: "flex-start" }}>
               <Text
                 style={{
-                  fontSize: 20,
+                  fontSize: 24,
                   opacity: 0.8,
                   color: "black",
                   fontWeight: "600",
@@ -770,16 +803,24 @@ export default function Request() {
           </Animated.View>
         </View>
         <ScrollView
-          style={{ marginHorizontal: 30, marginVertical: 20 }}
+          ref={scrollViewRef}
+          style={{ marginHorizontal: 30, marginVertical: 12 }}
           showsVerticalScrollIndicator={false}
         >
-          {requests?.data?.length > 0 ? (
+          {loading ? (
+            <>
+              <RequestSkeleton />
+              <RequestSkeleton />
+              <RequestSkeleton />
+              <RequestSkeleton />
+            </>
+          ) : (
             requests?.data?.map((request) => (
               <View
                 key={request.id}
                 style={{
-                  padding: 15,
-                  marginBottom: 15,
+                  padding: 16,
+                  marginBottom: 16,
                   backgroundColor: "#fff",
                   borderRadius: 20,
                   elevation: 1,
@@ -790,7 +831,7 @@ export default function Request() {
               >
                 <View style={{ flexDirection: "row", marginBottom: 16 }}>
                   <Image
-                    source={{ uri: request.student.avatarLink }}
+                    source={{ uri: request.student.profile.avatarLink }}
                     style={{
                       width: width * 0.14,
                       height: width * 0.14,
@@ -799,7 +840,7 @@ export default function Request() {
                   />
                   <View style={{ marginLeft: 12 }}>
                     <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                      {request.student.fullName}
+                      {request.student.profile.fullName}
                     </Text>
                     <View
                       style={{
@@ -1275,10 +1316,6 @@ export default function Request() {
                 </View>
               </View>
             ))
-          ) : (
-            <Text>
-              {/* No requests found within the selected date range. */}
-            </Text>
           )}
           <Modal
             transparent={true}
@@ -1340,7 +1377,7 @@ export default function Request() {
                     >
                       <View style={{ width: "45%" }}>
                         <Image
-                          source={{ uri: info?.student?.avatarLink }}
+                          source={{ uri: info?.student?.profile?.avatarLink }}
                           style={{
                             width: width * 0.28,
                             height: width * 0.28,
@@ -1360,7 +1397,7 @@ export default function Request() {
                             marginBottom: 4,
                           }}
                         >
-                          {info?.student?.fullName}
+                          {info?.student?.profile?.fullName}
                         </Text>
                         <Text
                           style={{
@@ -1599,6 +1636,130 @@ export default function Request() {
             </View>
           </Modal>
         </ScrollView>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            marginHorizontal: 20,
+            marginBottom: 10,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 10,
+              backgroundColor: "white",
+              marginHorizontal: 4,
+              borderWidth: 1.5,
+              borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
+              opacity: currentPage <= 1 ? 0.5 : 1,
+            }}
+            onPress={() => setCurrentPage(1)}
+            disabled={currentPage <= 1}
+          >
+            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              {"<<"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 10,
+              backgroundColor: "white",
+              marginHorizontal: 4,
+              borderWidth: 1.5,
+              borderColor: currentPage === 1 ? "#ccc" : "#F39300",
+              opacity: currentPage === 1 ? 0.5 : 1,
+            }}
+            onPress={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage <= 1}
+          >
+            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              {"<"}
+            </Text>
+          </TouchableOpacity>
+          <View
+            style={{
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 10,
+              marginHorizontal: 4,
+              width: "auto",
+              height: width * 0.1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "white",
+              borderWidth: 1.5,
+              borderColor: "#F39300",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: "black",
+                fontWeight: "600",
+              }}
+            >
+              {requests?.data?.length != 0 ? currentPage : 0} /{" "}
+              {requests.totalPages}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 10,
+              backgroundColor: "white",
+              marginHorizontal: 4,
+              borderWidth: 1.5,
+              borderColor:
+                requests.totalPages == 0 || currentPage >= requests.totalPages
+                  ? "#ccc"
+                  : "#F39300",
+              opacity:
+                requests.totalPages == 0 || currentPage >= requests.totalPages
+                  ? 0.5
+                  : 1,
+            }}
+            onPress={() => setCurrentPage(currentPage + 1)}
+            disabled={
+              requests.totalPages == 0 || currentPage >= requests.totalPages
+            }
+          >
+            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              {">"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderRadius: 10,
+              backgroundColor: "white",
+              marginHorizontal: 4,
+              borderWidth: 1.5,
+              borderColor:
+                requests.totalPages == 0 || currentPage >= requests.totalPages
+                  ? "#ccc"
+                  : "#F39300",
+              opacity:
+                requests.totalPages == 0 || currentPage >= requests.totalPages
+                  ? 0.5
+                  : 1,
+            }}
+            onPress={() => setCurrentPage(requests.totalPages)}
+            disabled={
+              requests.totalPages == 0 || currentPage >= requests.totalPages
+            }
+          >
+            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              {">>"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </>
   );

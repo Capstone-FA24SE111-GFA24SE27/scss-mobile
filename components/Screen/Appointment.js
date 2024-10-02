@@ -19,22 +19,23 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { AuthContext } from "../Context/AuthContext";
 import { SocketContext } from "../Context/SocketContext";
 import { RequestSkeleton } from "./layout/Skeleton";
-export default function Request() {
+
+export default function Appointment() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
   const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
-  const [requests, setRequests] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [filters, setFilters] = useState({
-    dateFrom: "",
-    dateTo: "",
-    meetingType: "",
-    sortDirection: "",
+    fromDate: "",
+    toDate: "",
+    status: "",
+    SortDirection: "",
   });
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [online, isOnline] = useState("");
+  const [status, setStatus] = useState("");
   const [sortDirection, setSortDirection] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showFromPicker, setShowFromPicker] = useState(false);
@@ -152,27 +153,6 @@ export default function Request() {
                 >
                   {modalMessage}
                 </Text>
-                {/* <TouchableOpacity
-                  onPress={() => setShowModal(false)}
-                  style={{
-                    backgroundColor: "#F39300",
-                    paddingVertical: 12,
-                    paddingHorizontal: 16,
-                    borderRadius: 30,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: "white",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Close
-                  </Text>
-                </TouchableOpacity> */}
               </View>
             </View>
           </Modal>
@@ -183,8 +163,8 @@ export default function Request() {
 
   const fetchData = async (filters = {}) => {
     try {
-      const requestsRes = await axiosJWT.get(
-        `${BASE_URL}/booking-counseling/appointment-request`,
+      const appointmentsRes = await axiosJWT.get(
+        `${BASE_URL}/appointments/student`,
         {
           params: {
             ...filters,
@@ -192,10 +172,10 @@ export default function Request() {
           },
         }
       );
-      const requestsData = requestsRes?.data?.content || [];
-      setRequests(requestsData);
+      const appointmentsData = appointmentsRes?.data?.content || [];
+      setAppointments(appointmentsData);
       setLoading(false);
-      console.log(requests);
+      console.log(appointments);
     } catch (err) {
       console.log(err);
     }
@@ -213,10 +193,10 @@ export default function Request() {
 
   const applyFilters = () => {
     const newFilters = {
-      dateFrom: dateFrom,
-      dateTo: dateTo,
-      meetingType: online,
-      sortDirection: sortDirection,
+      fromDate: dateFrom,
+      toDate: dateTo,
+      status: status,
+      SortDirection: sortDirection,
     };
     setFilters(newFilters);
     fetchData(newFilters);
@@ -224,15 +204,15 @@ export default function Request() {
 
   const cancelFilters = () => {
     const resetFilters = {
-      dateFrom: "",
-      dateTo: "",
-      meetingType: "",
-      sortDirection: "",
+      fromDate: "",
+      toDate: "",
+      status: "",
+      SortDirection: "",
     };
-    setDateFrom(resetFilters.dateFrom);
-    setDateTo(resetFilters.dateTo);
-    isOnline(resetFilters.meetingType);
-    setSortDirection(resetFilters.sortDirection);
+    setDateFrom(resetFilters.fromDate);
+    setDateTo(resetFilters.toDate);
+    setStatus(resetFilters.status);
+    setSortDirection(resetFilters.SortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
   };
@@ -279,16 +259,6 @@ export default function Request() {
     outputRange: ["0deg", "90deg"],
   });
 
-  const handleOpenInfo = (info) => {
-    setInfo(info);
-    setOpenInfo(true);
-  };
-
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
-  };
-
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
@@ -308,7 +278,7 @@ export default function Request() {
           </View>
           <View style={{ alignItems: "center" }}>
             <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-              Your Requests
+              Your Appointments
             </Text>
           </View>
           <View style={{ flex: 1, alignItems: "flex-end" }} />
@@ -334,7 +304,7 @@ export default function Request() {
                   fontWeight: "600",
                 }}
               >
-                {requests.totalElements} Requests found
+                {appointments.totalElements} Appointments found
               </Text>
             </View>
             <View
@@ -479,92 +449,7 @@ export default function Request() {
                   </View>
                   {customAlert()}
                 </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 16, fontWeight: "bold", color: "black" }}
-                  >
-                    Method:
-                  </Text>
-                  <View style={{ flexDirection: "row", marginLeft: 20 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 12,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => isOnline("ONLINE")}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            online == "ONLINE"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={online == "ONLINE" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: online == "ONLINE" ? "#F39300" : "black",
-                            fontWeight: online == "ONLINE" ? "600" : "0",
-                          }}
-                        >
-                          Online
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 12,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => isOnline("OFFLINE")}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            online == "OFFLINE"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={online == "OFFLINE" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: online == "OFFLINE" ? "#F39300" : "black",
-                            fontWeight: online == "OFFLINE" ? "600" : "0",
-                          }}
-                        >
-                          Offline
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
+
                 <View
                   style={{
                     flexDirection: "row",
@@ -718,13 +603,13 @@ export default function Request() {
               <RequestSkeleton />
             </>
           ) : (
-            requests?.data?.map((request) => (
+            appointments?.data?.map((appointment) => (
               <View
-                key={request.id}
+                key={appointment.id}
                 style={{
                   padding: 16,
                   marginBottom: 16,
-                  backgroundColor: "white",
+                  backgroundColor: "#fff",
                   borderRadius: 20,
                   elevation: 1,
                   position: "relative",
@@ -734,7 +619,9 @@ export default function Request() {
               >
                 <View style={{ flexDirection: "row", marginBottom: 16 }}>
                   <Image
-                    source={{ uri: request.counselor.profile.avatarLink }}
+                    source={{
+                      uri: appointment.counselorInfo.profile.avatarLink,
+                    }}
                     style={{
                       width: width * 0.14,
                       height: width * 0.14,
@@ -744,8 +631,14 @@ export default function Request() {
                     }}
                   />
                   <View style={{ marginLeft: 12 }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                      {request.counselor.profile.fullName}
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        color: "#333",
+                      }}
+                    >
+                      {appointment.counselorInfo.profile.fullName}
                     </Text>
                     <View
                       style={{
@@ -755,7 +648,7 @@ export default function Request() {
                         backgroundColor: "#F39300",
                         width: width * 0.2,
                         borderRadius: 20,
-                        paddingVertical: 2,
+                        paddingVertical: 4,
                         paddingHorizontal: 4,
                         marginTop: 4,
                       }}
@@ -764,100 +657,140 @@ export default function Request() {
                         style={{
                           fontSize: 16,
                           fontWeight: "bold",
-                          color: "white",
+                          color: "#fff",
                         }}
                       >
-                        {request.meetingType.charAt(0).toUpperCase() +
-                          request.meetingType.slice(1)}
+                        {appointment.meetingType}
                       </Text>
                     </View>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => handleOpenInfo(request)}
-                    style={{ position: "absolute", top: 0, right: -4 }}
-                  >
-                    <Ionicons
-                      name="ellipsis-vertical"
-                      size={24}
-                      color="#F39300"
-                    />
-                  </TouchableOpacity>
                 </View>
-                <View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}
+                >
                   <View
                     style={{
                       flexDirection: "row",
-                      flexWrap: "wrap",
-                      justifyContent: "space-between",
-                      marginBottom: 8,
+                      alignItems: "center",
                     }}
                   >
-                    <View
+                    <Ionicons name="calendar" size={20} color="#F39300" />
+                    <Text
                       style={{
-                        flexDirection: "row",
-                        alignItems: "center",
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                        color: "#666",
                       }}
                     >
-                      <Ionicons name="calendar" size={20} color="#F39300" />
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "600",
-                          marginLeft: 8,
-                        }}
-                      >
-                        {request.requireDate}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Ionicons name="time" size={20} color="#F39300" />
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "600",
-                          marginLeft: 8,
-                        }}
-                      >
-                        {request.startTime.split(":")[0] +
-                          ":" +
-                          request.startTime.split(":")[1]}{" "}
-                        -{" "}
-                        {request.endTime.split(":")[0] +
-                          ":" +
-                          request.endTime.split(":")[1]}
-                      </Text>
-                    </View>
+                      {
+                        new Date(appointment.startDateTime)
+                          .toISOString()
+                          .split("T")[0]
+                      }
+                    </Text>
                   </View>
                   <View
                     style={{
                       flexDirection: "row",
-                      flexWrap: "wrap",
-                      justifyContent: "space-between",
-                      marginBottom: 8,
+                      alignItems: "center",
                     }}
                   >
-                    <View>
-                      <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                        Status:{" "}
-                        <Text
-                          style={[
-                            request.status === "APPROVED" && { color: "green" },
-                            request.status === "WAITING" && {
-                              color: "#F39300",
-                            },
-                            request.status === "DENIED" && { color: "red" },
-                          ]}
-                        >
-                          {request.status}
-                        </Text>
-                      </Text>
-                    </View>
+                    <Ionicons name="time" size={20} color="#F39300" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                        color: "#666",
+                      }}
+                    >
+                      {appointment.startDateTime.split("T")[1].split(":")[0] +
+                        ":" +
+                        appointment.startDateTime
+                          .split("T")[1]
+                          .split(":")[1]}{" "}
+                      -{" "}
+                      {appointment.endDateTime.split("T")[1].split(":")[0] +
+                        ":" +
+                        appointment.endDateTime.split("T")[1].split(":")[1]}
+                    </Text>
                   </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      Status:{" "}
+                      <Text
+                        style={[
+                          appointment.status === "ATTEND" && { color: "green" },
+                          appointment.status === "WAITING" && {
+                            color: "#F39300",
+                          },
+                          appointment.status === "ABSENT" && { color: "red" },
+                          appointment.status === "CANCELED" && {
+                            color: "gray",
+                          },
+                        ]}
+                      >
+                        {appointment.status}
+                      </Text>
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  {appointment.meetingType === "ONLINE" ? (
+                    <>
+                      <Ionicons name="videocam" size={20} color="#F39300" />
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 16,
+                          marginLeft: 8,
+                          color: "#666",
+                        }}
+                      >
+                        {appointment.meetUrl}
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <MaterialIcons name="place" size={20} color="#F39300" />
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 16,
+                          marginLeft: 8,
+                          color: "#666",
+                        }}
+                      >
+                        {appointment.address}
+                      </Text>
+                    </>
+                  )}
                 </View>
               </View>
             ))
@@ -930,7 +863,7 @@ export default function Request() {
                 fontWeight: "600",
               }}
             >
-              {requests?.data?.length != 0 ? currentPage : 0} / {requests.totalPages}
+              {appointments?.data?.length != 0 ? currentPage : 0} / {appointments.totalPages}
             </Text>
           </View>
           <TouchableOpacity
@@ -942,11 +875,11 @@ export default function Request() {
               marginHorizontal: 4,
               borderWidth: 1.5,
               borderColor:
-                (requests.totalPages == 0 || currentPage >= requests.totalPages) ? "#ccc" : "#F39300",
-              opacity: (requests.totalPages == 0 || currentPage >= requests.totalPages) ? 0.5 : 1,
+                (appointments.totalPages == 0 || currentPage >= appointments.totalPages) ? "#ccc" : "#F39300",
+              opacity: (appointments.totalPages == 0 || currentPage >= appointments.totalPages) ? 0.5 : 1,
             }}
             onPress={() => setCurrentPage(currentPage + 1)}
-            disabled={(requests.totalPages == 0 || currentPage >= requests.totalPages)}
+            disabled={(appointments.totalPages == 0 || currentPage >= appointments.totalPages)}
           >
             <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
               {">"}
@@ -961,328 +894,17 @@ export default function Request() {
               marginHorizontal: 4,
               borderWidth: 1.5,
               borderColor:
-                (requests.totalPages == 0 || currentPage >= requests.totalPages) ? "#ccc" : "#F39300",
-              opacity: (requests.totalPages == 0 || currentPage >= requests.totalPages) ? 0.5 : 1,
+                (appointments.totalPages == 0 || currentPage >= appointments.totalPages) ? "#ccc" : "#F39300",
+              opacity: (appointments.totalPages == 0 || currentPage >= appointments.totalPages) ? 0.5 : 1,
             }}
-            onPress={() => setCurrentPage(requests.totalPages)}
-            disabled={(requests.totalPages == 0 || currentPage >= requests.totalPages)}
+            onPress={() => setCurrentPage(appointments.totalPages)}
+            disabled={(appointments.totalPages == 0 || currentPage >= appointments.totalPages)}
           >
             <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
               {">>"}
             </Text>
           </TouchableOpacity>
-          {/* {Array.from(
-            { length: requests.totalPages },
-            (_, index) => index + 1
-          ).map((page) => (
-            <TouchableOpacity
-              key={page}
-              onPress={() => setCurrentPage(page)}
-              style={{
-                paddingHorizontal: 16,
-              paddingVertical: 8,
-                borderRadius: 10,
-                marginHorizontal: 4,
-                width: width*0.1,
-                height: width*0.1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: currentPage === page ? "#F39300" : "white",
-                borderWidth: 1.5,
-                borderColor: currentPage === page ? "#F39300" : "#ccc",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: currentPage === page ? "white" : "#F39300",
-                  fontWeight: "600",
-                }}
-              >
-                {page}
-              </Text>
-            </TouchableOpacity>
-          ))} */}
         </View>
-        <Modal
-          transparent={true}
-          visible={openInfo}
-          animationType="slide"
-          onRequestClose={handleCloseInfo}
-        >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "flex-end",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
-            }}
-          >
-            <View
-              style={{
-                width: "100%",
-                height: "98%",
-                backgroundColor: "#f5f7fd",
-                borderTopLeftRadius: 16,
-                borderTopRightRadius: 16,
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#ededed",
-                  padding: 4,
-                  marginHorizontal: 20,
-                  marginTop: 16,
-                  marginBottom: 8,
-                  borderRadius: 20,
-                  alignSelf: "flex-start",
-                  alignItems: "flex-start",
-                }}
-                onPress={handleCloseInfo}
-              >
-                <Ionicons name="chevron-back" size={28} />
-              </TouchableOpacity>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <View
-                  style={{
-                    padding: 20,
-                    backgroundColor: "#f5f7fd",
-                    borderRadius: 16,
-                  }}
-                >
-                  <View style={{ alignItems: "center" }}>
-                    <Image
-                      source={{ uri: info?.counselor?.profile?.avatarLink }}
-                      style={{
-                        width: width * 0.32,
-                        height: width * 0.32,
-                        borderRadius: 100,
-                        marginBottom: 8,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 26,
-                        fontWeight: "bold",
-                        marginBottom: 30,
-                      }}
-                    >
-                      {info?.counselor?.profile?.fullName}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      marginBottom: 20,
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                        marginBottom: 4,
-                      }}
-                    >
-                      Counseling For
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: "black",
-                        fontWeight: "500",
-                        opacity: 0.7,
-                      }}
-                    >
-                      {info.reason}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      backgroundColor: "white",
-                      borderRadius: 16,
-                      padding: 20,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 16,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <Ionicons name="calendar" size={22} color="#F39300" />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "grey",
-                            fontWeight: "600",
-                            marginLeft: 8,
-                          }}
-                        >
-                          Date
-                        </Text>
-                      </View>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        {info.requireDate}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 16,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <Ionicons name="time" size={22} color="#F39300" />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "grey",
-                            fontWeight: "600",
-                            marginLeft: 8,
-                          }}
-                        >
-                          Time
-                        </Text>
-                      </View>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        {info?.startTime?.split(":")[0] +
-                          ":" +
-                          info?.startTime?.split(":")[1]}{" "}
-                        -{" "}
-                        {info?.endTime?.split(":")[0] +
-                          ":" +
-                          info?.endTime?.split(":")[1]}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 16,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <MaterialIcons
-                          name="meeting-room"
-                          size={22}
-                          color="#F39300"
-                        />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "grey",
-                            fontWeight: "600",
-                            marginLeft: 8,
-                          }}
-                        >
-                          Format
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          backgroundColor: "#F39300",
-                          borderRadius: 18,
-                          paddingVertical: 6,
-                          paddingHorizontal: 12,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
-                            color: "white",
-                          }}
-                        >
-                          {info.meetingType}
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        {info.meetingType === "ONLINE" && (
-                          <Ionicons name="videocam" size={22} color="#F39300" />
-                        )}
-                        {info.meetingType === "OFFLINE" && (
-                          <MaterialIcons
-                            name="place"
-                            size={22}
-                            color="#F39300"
-                          />
-                        )}
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "grey",
-                            fontWeight: "600",
-                            marginLeft: 8,
-                          }}
-                        >
-                          {info.meetingType === "ONLINE"
-                            ? "Meet URL"
-                            : "Address"}
-                        </Text>
-                      </View>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#333",
-                          maxWidth: "60%",
-                          textAlign: "right",
-                        }}
-                      >
-                        {info.meetingType === "ONLINE"
-                          ? info?.appointmentDetails?.meetUrl || "N/A"
-                          : info?.appointmentDetails?.address || "N/A"}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
       </View>
     </>
   );
