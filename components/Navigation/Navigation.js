@@ -253,6 +253,10 @@ export default function Navigation() {
           />
           <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
           <Tab.Screen
+            name="Profile"
+            component={Profile}
+            options={tabOptions} />
+          <Tab.Screen
             name="CounselorProfile"
             component={CounselorProfile}
             options={tabOptions}
