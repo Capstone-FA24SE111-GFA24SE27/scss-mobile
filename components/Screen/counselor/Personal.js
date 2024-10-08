@@ -143,13 +143,13 @@ export default function Personal() {
               style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
             >
               <Image
-                source={{ uri: profile.avatarLink }}
+                source={{ uri: profile?.avatarLink }}
                 style={{ width: 50, height: 50, borderRadius: 25 }}
               />
               <View style={{ marginLeft: 20 }}>
                 {profile && (
                   <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                    {profile.fullName}
+                    {profile?.fullName}
                   </Text>
                 )}
                 <View style={{ flexDirection: "row", alignItems: "center" }}>

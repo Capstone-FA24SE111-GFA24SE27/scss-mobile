@@ -51,6 +51,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const profileRes = await axiosJWT.get(`${BASE_URL}/profile`);
       const profileData = profileRes?.data?.content?.profile || null;
+      if (userData.role == "STUDENT") {
+        profileData["studentCode"] = profileRes?.data?.content?.studentCode;
+      }
       setProfile(profileData);
     } catch (err) {
       console.log(err);

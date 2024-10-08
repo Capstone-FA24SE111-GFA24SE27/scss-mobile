@@ -20,8 +20,7 @@ import axiosJWT, { BASE_URL } from "../../config/Config";
 import { useFocusEffect } from "@react-navigation/native";
 import { SocketContext } from "../Context/SocketContext";
 import { AuthContext } from "../Context/AuthContext";
-import Toast
- from "react-native-toast-message";
+import Toast from "react-native-toast-message";
 export default function Schedule() {
   const { width, height } = Dimensions.get("screen");
   const socket = useContext(SocketContext);
@@ -69,29 +68,28 @@ export default function Schedule() {
         setSelectedDate((prev) => {
           const date = new Date(prev);
           const dayOfWeek = date.getDay();
-    
+
           const startDate = new Date(
             date.getTime() - dayOfWeek * 24 * 60 * 60 * 1000
           );
           const endDate = new Date(
             date.getTime() + (6 - dayOfWeek) * 24 * 60 * 60 * 1000
           );
-    
+
           const fromDate = startDate.toISOString().split("T")[0];
           const toDate = endDate.toISOString().split("T")[0];
           if (fromDate && toDate) {
             fetchData(fromDate, toDate);
           }
           return prev;
-      })
-        
+        });
       });
     }
     return () => {
-      if(socket){
-        socket.off(`/user/${userData?.id}/appointment`)
+      if (socket) {
+        socket.off(`/user/${userData?.id}/appointment`);
       }
-    }
+    };
   }, [socket]);
 
   const formatDate = (value) => {
@@ -167,8 +165,8 @@ export default function Schedule() {
           text2: "Failed to fetch data",
           onPress: () => {
             Toast.hide();
-          }
-        })
+          },
+        });
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -303,18 +301,21 @@ export default function Schedule() {
             }}
           >
             <View
-              style={[  item.status === "ATTEND" && { borderColor: "green" },
+              style={[
+                item.status === "ATTEND" && { borderColor: "green" },
                 item.status === "WAITING" && { borderColor: "#F39300" },
                 item.status === "ABSENT" && { borderColor: "red" },
-                item.status === "CANCELED" && { borderColor: "gray" }, {
-                backgroundColor: "#fdfdfd",
-                borderRadius: 20,
-                paddingVertical: 6,
-                borderWidth: 1.5,
-                paddingHorizontal: 12,
-                flexDirection: "row",
-                elevation: 1,
-              }]}
+                item.status === "CANCELED" && { borderColor: "gray" },
+                {
+                  backgroundColor: "#fdfdfd",
+                  borderRadius: 20,
+                  paddingVertical: 6,
+                  borderWidth: 1.5,
+                  paddingHorizontal: 12,
+                  flexDirection: "row",
+                  elevation: 1,
+                },
+              ]}
             >
               <Text
                 style={[
@@ -337,7 +338,7 @@ export default function Schedule() {
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
-        <View style={{ flex: 1, marginTop: height*0.04 }}>
+        <View style={{ flex: 1, marginTop: height * 0.04 }}>
           <CalendarProvider
             date={selectedDate}
             onDateChanged={(date) => setSelectedDate(date)}
@@ -645,7 +646,7 @@ export default function Schedule() {
                         padding: 16,
                         borderWidth: 1.5,
                         borderColor: "#E0E0E0",
-                        elevation: 5,
+                        elevation: 1,
                         shadowColor: "#000",
                         shadowOffset: { width: 0, height: 2 },
                         shadowOpacity: 0.2,
@@ -710,6 +711,7 @@ export default function Schedule() {
                         borderRadius: 20,
                         backgroundColor: "white",
                         padding: 16,
+                        elevation: 1,
                         borderWidth: 1.5,
                         borderColor: "lightgrey",
                         flexDirection: "row",
@@ -731,7 +733,6 @@ export default function Schedule() {
                         info.status !== "ABSENT" && (
                           <TouchableOpacity
                             onPress={() => handleOpenFeedback(info.id)}
-                            disabled
                             activeOpacity={0.6}
                           >
                             <Text
