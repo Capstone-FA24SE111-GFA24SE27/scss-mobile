@@ -251,7 +251,6 @@ export default function Navigation() {
             component={NotificationDetail}
             options={tabOptions}
           />
-          <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
           <Tab.Screen
             name="Profile"
             component={Profile}
