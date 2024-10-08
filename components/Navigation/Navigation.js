@@ -26,14 +26,12 @@ import ProfileCounselor from "../Screen/counselor/Profile";
 import ViewProfile from "../Screen/ViewProfile";
 import ResetPassword from "../Screen/ResetPassword";
 import CounselorProfile from "../Screen/CounselorProfile";
-import Counselor from "../Screen/Counselor";
 import Request from "../Screen/Request";
 import RequestCounselor from "../Screen/counselor/Request";
 import Appointment from "../Screen/Appointment";
 import AppointmentCounselor from "../Screen/counselor/Appointment";
-
 import NotificationDetail from "../Screen/NotificationDetail";
-import Report from "../Screen/Report";
+import CounselorNavigation from "./CounselorNavigation";
 // import Event from "../Screen/Event";
 
 const Tab = createBottomTabNavigator();
@@ -71,14 +69,15 @@ export default function Navigation() {
       label: "Counselor",
       active: "clipboard",
       inActive: "clipboard-outline",
-      component: Counselor,
-      // },{
-      //   route: "Event",
-      //   label: "Event",
-      //   active: "megaphone",
-      //   inActive: "megaphone-outline",
-      //   component: Event,
+      component: CounselorNavigation,
     },
+    // {
+    //   route: "Event",
+    //   label: "Event",
+    //   active: "megaphone",
+    //   inActive: "megaphone-outline",
+    //   component: Event,
+    // },
     {
       route: "Schedule",
       label: "Schedule",
@@ -95,7 +94,7 @@ export default function Navigation() {
     },
   ];
 
-  const TabArrayCounselor = [
+  const TabArrayAcademicCounselor = [
     {
       route: "Home",
       label: "Home",
@@ -252,15 +251,7 @@ export default function Navigation() {
             component={NotificationDetail}
             options={tabOptions}
           />
-          <Tab.Screen
-            name="Report"
-            component={Report}
-            options={tabOptions}
-          />
-          <Tab.Screen
-            name="Profile"
-            component={Profile}
-            options={tabOptions} />
+          <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
           <Tab.Screen
             name="CounselorProfile"
             component={CounselorProfile}
@@ -278,9 +269,9 @@ export default function Navigation() {
             options={tabOptions}
           />
         </Tab.Navigator>
-      ) : userData.role === "COUNSELOR" ? (
+      ) : userData.role === "ACADEMIC_COUNSELOR" ? (
         <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
-          {TabArrayCounselor.map((item, index) => {
+          {TabArrayAcademicCounselor.map((item, index) => {
             return (
               <Tab.Screen
                 key={index}
@@ -298,10 +289,46 @@ export default function Navigation() {
             options={tabOptions}
           />
           <Tab.Screen
-            name="Report"
-            component={Report}
+            name="NotificationDetail"
+            component={NotificationDetail}
             options={tabOptions}
           />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="Request"
+            component={RequestCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="Appointment"
+            component={AppointmentCounselor}
+            options={tabOptions}
+          />
+        </Tab.Navigator>
+      ) : userData.role === "NON_ACADEMIC_COUNSELOR" ? (
+        <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
+          {TabArrayAcademicCounselor.map((item, index) => {
+            return (
+              <Tab.Screen
+                key={index}
+                name={item.route}
+                component={item.component}
+                options={{
+                  tabBarButton: (props) => <TabButton {...props} item={item} />,
+                }}
+              />
+            );
+          })}
+          <Tab.Screen
+            name="Notification"
+            component={Notification}
+            options={tabOptions}
+          />
+          <Tab.Screen name="Report" component={Report} options={tabOptions} />
           <Tab.Screen
             name="NotificationDetail"
             component={NotificationDetail}

@@ -1,11 +1,11 @@
 import React, { createContext, useEffect, useRef, useContext } from "react";
 import io from "socket.io-client";
-import { AuthContext } from "./AuthContext"; // Sử dụng AuthContext để lấy thông tin người dùng
+import { AuthContext } from "./AuthContext";
 
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
-    const { userData, isLogin } = useContext(AuthContext); // Lấy thông tin người dùng từ AuthContext
+    const { userData, isLogin } = useContext(AuthContext);
     const socket = useRef(null);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export const SocketProvider = ({ children }) => {
     }, [userData, isLogin]);
 
     const connectSocketIO = (accountId) => {
-        socket.current = io(`http://192.168.1.3:4000`);
+        socket.current = io(`http://localhost:4000`);
 
         socket.current.on("connect", () => {
             console.log("Socket.IO connection established");

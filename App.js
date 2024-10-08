@@ -33,7 +33,7 @@ export default function App() {
           backgroundColor: "white",
           borderRadius: 10,
           width: "90%",
-          height: 80,
+          height: 90,
         }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
         text1Style={{ fontSize: 20, color: "#28a745", fontWeight: "bold" }}
@@ -56,7 +56,7 @@ export default function App() {
           backgroundColor: "white",
           borderRadius: 10,
           width: "90%",
-          height: 80,
+          height: 90,
         }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
         text1Style={{ fontSize: 20, color: "#dc3545", fontWeight: "bold" }}

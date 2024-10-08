@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import io from "socket.io-client";
 import * as Notifications from 'expo-notifications';
-import { AuthContext } from "./AuthContext"; // Sử dụng AuthContext để lấy thông tin người dùng
+import { AuthContext } from "./AuthContext";
 import { SocketContext } from "./SocketContext";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import { AppState } from "react-native";
@@ -24,10 +24,10 @@ export function navigate(name, params) {
 }
 
 export const NotificationProvider = ({ children }) => {
-  const { userData } = useContext(AuthContext); // Lấy thông tin người dùng từ AuthContext
+  const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const [notifications, setNotifications] = useState([]);
-  const [appState, setAppState] = useState(AppState.currentState); // Theo dõi trạng thái của ứng dụng
+  const [appState, setAppState] = useState(AppState.currentState);
 
   useEffect(() => {
     const appStateListener = AppState.addEventListener("change", (nextAppState) => {
@@ -53,16 +53,14 @@ export const NotificationProvider = ({ children }) => {
 
           if (result && result.status === 200) {
             setNotifications(result.content.data);
-            // Trigger local notification for each new item fetched from the API
             result.content.data.forEach(notification => {
-              // Chỉ hiển thị thông báo khi ứng dụng đang chạy nền
               if (appState === "background") {
                 Notifications.scheduleNotificationAsync({
                   content: {
                     title: notification.title || 'New Notification',
                     body: notification.message || 'You have a new notification.',
                   },
-                  trigger: null, // Show notification immediately
+                  trigger: null,
                 });
               }
             });
@@ -80,14 +78,13 @@ export const NotificationProvider = ({ children }) => {
         socket.on(`/user/${userData?.id}/private/notification`, (data) => {
           try {
             setNotifications((prevNotifications) => [data, ...prevNotifications]);
-            // Chỉ hiển thị thông báo khi ứng dụng đang chạy nền
             if (appState === "background") {
               Notifications.scheduleNotificationAsync({
                 content: {
                   title: data.title || 'New Notification',
                   body: data.message || 'You have received a new notification.',
                 },
-                trigger: null, // Show notification immediately
+                trigger: null,
               });
             }
             Toast.show({
@@ -111,7 +108,7 @@ export const NotificationProvider = ({ children }) => {
         // socket.off(`/user/${userData?.id}/private/notification`); // Xóa lắng nghe thông báo từ socket
       }
     };
-  }, [userData, socket, appState]); // Thêm appState vào mảng dependencies
+  }, [userData, socket, appState]);
 
   return (
     <NotificationContext.Provider value={{ notifications, setNotifications }}>

@@ -151,8 +151,8 @@ export default function Home() {
             flexDirection: "row",
             justifyContent: "space-between",
             paddingHorizontal: 30,
-            paddingTop: height*0.04,
-            paddingBottom: height*0.02,
+            paddingTop: height * 0.04,
+            paddingBottom: height * 0.02,
             backgroundColor: "#F39300",
             borderBottomStartRadius: 40,
             borderBottomEndRadius: 40,
@@ -204,7 +204,7 @@ export default function Home() {
                 />
               </Animated.View>
             </Pressable>
-            <Pressable>
+            <Pressable onPress={() => navigation.navigate("Report")}>
               <Ionicons name="menu" size={40} color="white" />
             </Pressable>
           </View>

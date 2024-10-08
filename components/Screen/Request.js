@@ -51,8 +51,8 @@ export default function Request() {
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
-      fetchData(filters);
-    }, [filters])
+      fetchData(filters, { page: currentPage });
+    }, [filters, currentPage])
   );
 
   const formatDate = (date) => {
@@ -302,7 +302,10 @@ export default function Request() {
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
-            <TouchableOpacity hitSlop={30} onPress={() => navigation.navigate("Personal")}>
+            <TouchableOpacity
+              hitSlop={30}
+              onPress={() => navigation.navigate("Personal")}
+            >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
           </View>
@@ -313,398 +316,414 @@ export default function Request() {
           </View>
           <View style={{ flex: 1, alignItems: "flex-end" }} />
         </View>
-        <View
-          style={{
-            marginHorizontal: 30,
-          }}
-        >
+        {!loading && (
           <View
             style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <View style={{ alignItems: "flex-start" }}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  opacity: 0.8,
-                  color: "black",
-                  fontWeight: "600",
-                }}
-              >
-                {requests.totalElements} Requests found
-              </Text>
-            </View>
-            <View
-              style={{
-                flex: 1,
-                alignItems: "flex-end",
-                justifyContent: "center",
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => setIsExpanded(!isExpanded)}
-                onLayout={calculateLayout}
-                style={{
-                  backgroundColor: isExpanded ? "#F39300" : "#e3e3e3",
-                  borderRadius: 40,
-                  padding: 8,
-                }}
-              >
-                <Animated.View style={{ transform: [{ rotate: rotateIcon }] }}>
-                  <Ionicons
-                    name="filter"
-                    size={26}
-                    style={{ color: isExpanded ? "white" : "black" }}
-                  />
-                </Animated.View>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <Animated.View
-            style={{
-              height: accordionHeight,
-              marginTop: 8,
-              overflow: "hidden",
-              backgroundColor: "#ededed",
-              borderRadius: 20,
+              marginHorizontal: 30,
             }}
           >
             <View
               style={{
-                position: "absolute",
-                width: "100%",
-                paddingVertical: 4,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
               }}
-              onLayout={(e) =>
-                (layoutHeight.current.text = e.nativeEvent.layout.height)
-              }
             >
-              <View style={{ paddingHorizontal: 10 }}>
-                <View
+              <View style={{ alignItems: "flex-start" }}>
+                <Text
                   style={{
-                    paddingVertical: 8,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginLeft: 4,
+                    fontSize: 24,
+                    opacity: 0.8,
+                    color: "black",
+                    fontWeight: "600",
                   }}
                 >
-                  <View style={{ flex: 1 }}>
+                  {requests.totalElements} Requests found
+                </Text>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => setIsExpanded(!isExpanded)}
+                  onLayout={calculateLayout}
+                  style={{
+                    backgroundColor: isExpanded ? "#F39300" : "#e3e3e3",
+                    borderRadius: 40,
+                    padding: 8,
+                  }}
+                >
+                  <Animated.View
+                    style={{ transform: [{ rotate: rotateIcon }] }}
+                  >
+                    <Ionicons
+                      name="filter"
+                      size={26}
+                      style={{ color: isExpanded ? "white" : "black" }}
+                    />
+                  </Animated.View>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <Animated.View
+              style={{
+                height: accordionHeight,
+                marginTop: 8,
+                overflow: "hidden",
+                backgroundColor: "#ededed",
+                borderRadius: 20,
+              }}
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  paddingVertical: 4,
+                }}
+                onLayout={(e) =>
+                  (layoutHeight.current.text = e.nativeEvent.layout.height)
+                }
+              >
+                <View style={{ paddingHorizontal: 10 }}>
+                  <View
+                    style={{
+                      paddingVertical: 8,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginLeft: 4,
+                    }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          marginBottom: 8,
+                        }}
+                      >
+                        From Date:
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          borderRadius: 20,
+                          paddingHorizontal: 16,
+                          alignItems: "center",
+                          backgroundColor: "white",
+                          height: 40,
+                          borderWidth: 1,
+                          borderColor: "gray",
+                        }}
+                      >
+                        <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
+                          {dateFrom !== "" ? dateFrom : "xxxx-xx-xx"}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowFromPicker(true)}
+                        >
+                          <Ionicons
+                            name="calendar-outline"
+                            size={22}
+                            color="#F39300"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      {showFromPicker && (
+                        <RNDateTimePicker
+                          value={selectedDate}
+                          mode="date"
+                          display="default"
+                          onChange={onFromDateChange}
+                        />
+                      )}
+                    </View>
+                    <View style={{ flex: 1, paddingLeft: 10 }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          marginBottom: 8,
+                        }}
+                      >
+                        To Date:
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          borderRadius: 20,
+                          paddingHorizontal: 16,
+                          alignItems: "center",
+                          backgroundColor: "white",
+                          height: 40,
+                          borderWidth: 1,
+                          borderColor: "gray",
+                        }}
+                      >
+                        <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
+                          {dateTo !== "" ? dateTo : "xxxx-xx-xx"}
+                        </Text>
+                        <TouchableOpacity onPress={() => setShowToPicker(true)}>
+                          <Ionicons
+                            name="calendar-outline"
+                            size={22}
+                            color="#F39300"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      {showToPicker && (
+                        <RNDateTimePicker
+                          value={selectedDate}
+                          mode="date"
+                          display="default"
+                          onChange={onToDateChange}
+                        />
+                      )}
+                    </View>
+                    {customAlert()}
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        marginBottom: 8,
+                        color: "black",
                       }}
                     >
-                      From Date:
+                      Method:
                     </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        borderRadius: 20,
-                        paddingHorizontal: 16,
-                        alignItems: "center",
-                        backgroundColor: "white",
-                        height: 40,
-                        borderWidth: 1,
-                        borderColor: "gray",
-                      }}
-                    >
-                      <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
-                        {dateFrom !== "" ? dateFrom : "xxxx-xx-xx"}
-                      </Text>
-                      <TouchableOpacity onPress={() => setShowFromPicker(true)}>
-                        <Ionicons
-                          name="calendar-outline"
-                          size={22}
-                          color="#F39300"
-                        />
-                      </TouchableOpacity>
+                    <View style={{ flexDirection: "row", marginLeft: 20 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginHorizontal: 12,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => isOnline("ONLINE")}
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              online == "ONLINE"
+                                ? "radio-button-on"
+                                : "radio-button-off"
+                            }
+                            size={20}
+                            color={online == "ONLINE" ? "#F39300" : "gray"}
+                            style={{ marginRight: 4 }}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: online == "ONLINE" ? "#F39300" : "black",
+                              fontWeight: online == "ONLINE" ? "600" : "0",
+                            }}
+                          >
+                            Online
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginHorizontal: 12,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => isOnline("OFFLINE")}
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              online == "OFFLINE"
+                                ? "radio-button-on"
+                                : "radio-button-off"
+                            }
+                            size={20}
+                            color={online == "OFFLINE" ? "#F39300" : "gray"}
+                            style={{ marginRight: 4 }}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: online == "OFFLINE" ? "#F39300" : "black",
+                              fontWeight: online == "OFFLINE" ? "600" : "0",
+                            }}
+                          >
+                            Offline
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                    {showFromPicker && (
-                      <RNDateTimePicker
-                        value={selectedDate}
-                        mode="date"
-                        display="default"
-                        onChange={onFromDateChange}
-                      />
-                    )}
                   </View>
-                  <View style={{ flex: 1, paddingLeft: 10 }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        marginBottom: 8,
+                        color: "black",
                       }}
                     >
-                      To Date:
+                      Sort:
                     </Text>
-                    <View
+                    <View style={{ flexDirection: "row" }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginHorizontal: 16,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => setSortDirection("ASC")}
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              sortDirection == "ASC"
+                                ? "radio-button-on"
+                                : "radio-button-off"
+                            }
+                            size={20}
+                            color={sortDirection == "ASC" ? "#F39300" : "gray"}
+                            style={{ marginRight: 4 }}
+                          />
+                          <Ionicons
+                            name="arrow-up"
+                            size={20}
+                            style={{
+                              color:
+                                sortDirection == "ASC" ? "#F39300" : "black",
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginHorizontal: 4,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => setSortDirection("DESC")}
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              sortDirection == "DESC"
+                                ? "radio-button-on"
+                                : "radio-button-off"
+                            }
+                            size={20}
+                            color={sortDirection == "DESC" ? "#F39300" : "gray"}
+                            style={{ marginRight: 4 }}
+                          />
+                          <Ionicons
+                            name="arrow-down"
+                            size={20}
+                            style={{
+                              color:
+                                sortDirection == "DESC" ? "#F39300" : "black",
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      margin: 8,
+                      flex: 1,
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={cancelFilters}
                       style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        borderRadius: 20,
-                        paddingHorizontal: 16,
-                        alignItems: "center",
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
                         backgroundColor: "white",
-                        height: 40,
-                        borderWidth: 1,
-                        borderColor: "gray",
-                      }}
-                    >
-                      <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
-                        {dateTo !== "" ? dateTo : "xxxx-xx-xx"}
-                      </Text>
-                      <TouchableOpacity onPress={() => setShowToPicker(true)}>
-                        <Ionicons
-                          name="calendar-outline"
-                          size={22}
-                          color="#F39300"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    {showToPicker && (
-                      <RNDateTimePicker
-                        value={selectedDate}
-                        mode="date"
-                        display="default"
-                        onChange={onToDateChange}
-                      />
-                    )}
-                  </View>
-                  {customAlert()}
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 16, fontWeight: "bold", color: "black" }}
-                  >
-                    Method:
-                  </Text>
-                  <View style={{ flexDirection: "row", marginLeft: 20 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 12,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => isOnline("ONLINE")}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            online == "ONLINE"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={online == "ONLINE" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: online == "ONLINE" ? "#F39300" : "black",
-                            fontWeight: online == "ONLINE" ? "600" : "0",
-                          }}
-                        >
-                          Online
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 12,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => isOnline("OFFLINE")}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            online == "OFFLINE"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={online == "OFFLINE" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: online == "OFFLINE" ? "#F39300" : "black",
-                            fontWeight: online == "OFFLINE" ? "600" : "0",
-                          }}
-                        >
-                          Offline
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 16, fontWeight: "bold", color: "black" }}
-                  >
-                    Sort:
-                  </Text>
-                  <View style={{ flexDirection: "row", marginLeft: 4 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 12,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => setSortDirection("ASC")}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            sortDirection == "ASC"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={sortDirection == "ASC" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Ionicons
-                          name="arrow-up"
-                          size={20}
-                          style={{
-                            color: sortDirection == "ASC" ? "#F39300" : "black",
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
+                        borderRadius: 10,
+                        elevation: 2,
                         marginHorizontal: 4,
                       }}
                     >
-                      <TouchableOpacity
-                        onPress={() => setSortDirection("DESC")}
+                      <Text
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
+                          color: "black",
+                          fontSize: 16,
+                          fontWeight: "600",
+                          opacity: 0.7,
                         }}
                       >
-                        <Ionicons
-                          name={
-                            sortDirection == "DESC"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={sortDirection == "DESC" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Ionicons
-                          name="arrow-down"
-                          size={20}
-                          style={{
-                            color:
-                              sortDirection == "DESC" ? "#F39300" : "black",
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
+                        Clear
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={applyFilters}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        backgroundColor: "#F39300",
+                        borderRadius: 10,
+                        elevation: 2,
+                        marginHorizontal: 4,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 16,
+                          fontWeight: "600",
+                        }}
+                      >
+                        Apply
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <View
-                  style={{
-                    margin: 8,
-                    flex: 1,
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                    flexDirection: "row",
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={cancelFilters}
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      backgroundColor: "white",
-                      borderRadius: 10,
-                      elevation: 2,
-                      marginHorizontal: 4,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "black",
-                        fontSize: 16,
-                        fontWeight: "600",
-                        opacity: 0.7,
-                      }}
-                    >
-                      Clear
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={applyFilters}
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      backgroundColor: "#F39300",
-                      borderRadius: 10,
-                      elevation: 2,
-                      marginHorizontal: 4,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "white",
-                        fontSize: 16,
-                        fontWeight: "600",
-                      }}
-                    >
-                      Apply
-                    </Text>
-                  </TouchableOpacity>
-                </View>
               </View>
-            </View>
-          </Animated.View>
-        </View>
+            </Animated.View>
+          </View>
+        )}
         <ScrollView
           ref={scrollViewRef}
           style={{ marginHorizontal: 30, marginVertical: 12 }}
@@ -863,115 +882,131 @@ export default function Request() {
             ))
           )}
         </ScrollView>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "row",
-            marginHorizontal: 20,
-            marginBottom: 10,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 10,
-              backgroundColor: "white",
-              marginHorizontal: 4,
-              borderWidth: 1.5,
-              borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-              opacity: currentPage <= 1 ? 0.5 : 1,
-            }}
-            onPress={() => setCurrentPage(1)}
-            disabled={currentPage <= 1}
-          >
-            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
-              {"<<"}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 10,
-              backgroundColor: "white",
-              marginHorizontal: 4,
-              borderWidth: 1.5,
-              borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-              opacity: currentPage === 1 ? 0.5 : 1,
-            }}
-            onPress={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage <= 1}
-          >
-            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
-              {"<"}
-            </Text>
-          </TouchableOpacity>
+        {!loading && (
           <View
             style={{
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 10,
-              marginHorizontal: 4,
-              width: "auto",
-              height: width * 0.1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "white",
-              borderWidth: 1.5,
-              borderColor: "#F39300",
+              flexDirection: "row",
+              marginHorizontal: 20,
+              marginBottom: 10,
             }}
           >
-            <Text
+            <TouchableOpacity
               style={{
-                fontSize: 16,
-                color: "black",
-                fontWeight: "600",
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 10,
+                backgroundColor: "white",
+                marginHorizontal: 4,
+                borderWidth: 1.5,
+                borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
+                opacity: currentPage <= 1 ? 0.5 : 1,
+              }}
+              onPress={() => setCurrentPage(1)}
+              disabled={currentPage <= 1}
+            >
+              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+                {"<<"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 10,
+                backgroundColor: "white",
+                marginHorizontal: 4,
+                borderWidth: 1.5,
+                borderColor: currentPage === 1 ? "#ccc" : "#F39300",
+                opacity: currentPage === 1 ? 0.5 : 1,
+              }}
+              onPress={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage <= 1}
+            >
+              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+                {"<"}
+              </Text>
+            </TouchableOpacity>
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                borderRadius: 10,
+                marginHorizontal: 4,
+                width: "auto",
+                height: width * 0.1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "white",
+                borderWidth: 1.5,
+                borderColor: "#F39300",
               }}
             >
-              {requests?.data?.length != 0 ? currentPage : 0} / {requests.totalPages}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 10,
-              backgroundColor: "white",
-              marginHorizontal: 4,
-              borderWidth: 1.5,
-              borderColor:
-                (requests.totalPages == 0 || currentPage >= requests.totalPages) ? "#ccc" : "#F39300",
-              opacity: (requests.totalPages == 0 || currentPage >= requests.totalPages) ? 0.5 : 1,
-            }}
-            onPress={() => setCurrentPage(currentPage + 1)}
-            disabled={(requests.totalPages == 0 || currentPage >= requests.totalPages)}
-          >
-            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
-              {">"}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderRadius: 10,
-              backgroundColor: "white",
-              marginHorizontal: 4,
-              borderWidth: 1.5,
-              borderColor:
-                (requests.totalPages == 0 || currentPage >= requests.totalPages) ? "#ccc" : "#F39300",
-              opacity: (requests.totalPages == 0 || currentPage >= requests.totalPages) ? 0.5 : 1,
-            }}
-            onPress={() => setCurrentPage(requests.totalPages)}
-            disabled={(requests.totalPages == 0 || currentPage >= requests.totalPages)}
-          >
-            <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
-              {">>"}
-            </Text>
-          </TouchableOpacity>
-          {/* {Array.from(
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "black",
+                  fontWeight: "600",
+                }}
+              >
+                {requests?.data?.length != 0 ? currentPage : 0} /{" "}
+                {requests.totalPages}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 10,
+                backgroundColor: "white",
+                marginHorizontal: 4,
+                borderWidth: 1.5,
+                borderColor:
+                  requests.totalPages == 0 || currentPage >= requests.totalPages
+                    ? "#ccc"
+                    : "#F39300",
+                opacity:
+                  requests.totalPages == 0 || currentPage >= requests.totalPages
+                    ? 0.5
+                    : 1,
+              }}
+              onPress={() => setCurrentPage(currentPage + 1)}
+              disabled={
+                requests.totalPages == 0 || currentPage >= requests.totalPages
+              }
+            >
+              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+                {">"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 10,
+                backgroundColor: "white",
+                marginHorizontal: 4,
+                borderWidth: 1.5,
+                borderColor:
+                  requests.totalPages == 0 || currentPage >= requests.totalPages
+                    ? "#ccc"
+                    : "#F39300",
+                opacity:
+                  requests.totalPages == 0 || currentPage >= requests.totalPages
+                    ? 0.5
+                    : 1,
+              }}
+              onPress={() => setCurrentPage(requests.totalPages)}
+              disabled={
+                requests.totalPages == 0 || currentPage >= requests.totalPages
+              }
+            >
+              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+                {">>"}
+              </Text>
+            </TouchableOpacity>
+            {/* {Array.from(
             { length: requests.totalPages },
             (_, index) => index + 1
           ).map((page) => (
@@ -1003,7 +1038,8 @@ export default function Request() {
               </Text>
             </TouchableOpacity>
           ))} */}
-        </View>
+          </View>
+        )}
         <Modal
           transparent={true}
           visible={openInfo}
@@ -1050,25 +1086,80 @@ export default function Request() {
                     borderRadius: 16,
                   }}
                 >
-                  <View style={{ alignItems: "center" }}>
-                    <Image
-                      source={{ uri: info?.counselor?.profile?.avatarLink }}
-                      style={{
-                        width: width * 0.32,
-                        height: width * 0.32,
-                        borderRadius: 100,
-                        marginBottom: 8,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 26,
-                        fontWeight: "bold",
-                        marginBottom: 30,
-                      }}
-                    >
-                      {info?.counselor?.profile?.fullName}
-                    </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      marginBottom: 20,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <View style={{ width: "40%" }}>
+                      <Image
+                        source={{ uri: info?.counselor?.profile?.avatarLink }}
+                        style={{
+                          width: 120,
+                          height: 120,
+                          borderRadius: 100,
+                          marginBottom: 12,
+                          borderColor: "#F39300",
+                          borderWidth: 2,
+                        }}
+                      />
+                      <View
+                        style={{
+                          padding: 5,
+                          backgroundColor: "#F39300",
+                          borderRadius: 30,
+                          position: "absolute",
+                          right: 20,
+                          bottom: 12,
+                        }}
+                      >
+                        <Ionicons
+                          name={
+                            info?.counselor?.profile?.gender == "MALE"
+                              ? "male"
+                              : "female"
+                          }
+                          size={24}
+                          style={{ color: "white" }}
+                        />
+                      </View>
+                    </View>
+                    <View style={{ width: "60%" }}>
+                      <Text
+                        style={{
+                          fontSize: 26,
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: 4,
+                        }}
+                      >
+                        {info?.counselor?.profile?.fullName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "grey",
+                          marginBottom: 2,
+                        }}
+                      >
+                        Email: {info?.counselor?.email}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "grey",
+                        }}
+                      >
+                        Phone: {info?.counselor?.profile?.phoneNumber}
+                      </Text>
+                    </View>
                   </View>
                   <View
                     style={{

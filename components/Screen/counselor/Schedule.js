@@ -19,12 +19,13 @@ import {
 } from "react-native-calendars";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SocketContext } from "../../Context/SocketContext";
 import { AuthContext } from "../../Context/AuthContext";
 import Toast from "react-native-toast-message";
 
 export default function Schedule() {
+  const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
   // const [items, setItems] = useState({});
   const socket = useContext(SocketContext);
@@ -36,12 +37,13 @@ export default function Schedule() {
   );
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
+  const [openReport, setOpenReport] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openAttendance, setOpenAttendance] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [method, setMethod] = useState("");
   const [value, setValue] = useState("");
-  const statusOptions = ["CANCELED", "ABSENT", "ATTEND"];
+  const statusOptions = ["ABSENT", "ATTEND"];
 
   useEffect(() => {
     console.log(items);
@@ -155,8 +157,12 @@ export default function Schedule() {
                 appointment?.studentInfo?.profile?.fullName || "No name",
               studentImage:
                 appointment?.studentInfo?.profile?.avatarLink || "Image-url",
+              studentGender: appointment?.studentInfo?.profile?.gender,
+              studentCode: appointment?.studentInfo?.studentCode,
+              studentPhone: appointment?.studentInfo?.profile?.phoneNumber,
               status: appointment?.status,
               feedback: appointment?.appointmentFeedback,
+              havingReport: appointment?.havingReport,
             });
             return acc;
           }, {});
@@ -213,6 +219,33 @@ export default function Schedule() {
     setOpenAttendance(true);
     setSelectedAppointment(id);
     setValue(value);
+  };
+
+  const reportData = {
+    consultationGoal: {
+      specificGoal: "Improve communication skills",
+      reason: "Student is facing difficulties in team projects",
+    },
+    consultationContent: {
+      summaryOfDiscussion: "Discussed strategies for effective communication",
+      mainIssues: "Lack of confidence, language barriers",
+      studentEmotions: "Anxious, willing to improve",
+      studentReactions: "Responsive, asked insightful questions",
+    },
+    consultationConclusion: {
+      counselorConclusion: "Recommended joining a communication workshop",
+      followUpNeeded: true,
+      followUpNotes: "Schedule a follow-up in one month",
+    },
+    intervention: {
+      type: "Workshop Enrollment",
+      description:
+        "Student should join a 2-week communication workshop to enhance skills",
+    },
+  };
+
+  const handleOpenReport = async () => {
+    setOpenReport(true);
   };
 
   const handleUpdateAppointment = async () => {
@@ -305,6 +338,10 @@ export default function Schedule() {
   const handleCloseInfo = () => {
     setInfo("");
     setOpenInfo(false);
+  };
+
+  const handleCloseReport = () => {
+    setOpenReport(false);
   };
 
   const renderItem = ({ item }) => (
@@ -485,75 +522,85 @@ export default function Schedule() {
                   width: width * 0.85,
                   padding: 20,
                   backgroundColor: "white",
-                  borderRadius: 10,
+                  borderRadius: 15,
                   elevation: 10,
                 }}
               >
-                <TouchableOpacity
+                <View
                   style={{
-                    backgroundColor: "#ededed",
-                    padding: 4,
-                    marginBottom: 8,
-                    borderRadius: 20,
-                    alignSelf: "flex-end",
-                    alignItems: "flex-end",
-                  }}
-                  onPress={handleCloseTakeAttendance}
-                >
-                  <Ionicons name="close" size={28} />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    fontSize: 22,
-                    fontWeight: "bold",
-                    marginBottom: 10,
-                    textAlign: "center",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 20,
                   }}
                 >
-                  Take Attendance
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 22,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      color: "#333",
+                    }}
+                  >
+                    Take Attendance
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ededed",
+                      padding: 6,
+                      borderRadius: 30,
+                      alignSelf: "flex-end",
+                    }}
+                    onPress={handleCloseTakeAttendance}
+                  >
+                    <Ionicons name="close" size={24} />
+                  </TouchableOpacity>
+                </View>
                 <FlatList
                   data={statusOptions}
                   keyExtractor={(item) => item}
                   numColumns={2}
                   columnWrapperStyle={{ justifyContent: "space-between" }}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      onPress={() => setValue(item)}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginVertical: 4,
-                      }}
-                    >
-                      <Ionicons
-                        name={
-                          item === value
-                            ? "radio-button-on"
-                            : "radio-button-off"
-                        }
-                        size={20}
-                        color={item === value ? "#F39300" : "gray"}
-                        style={{ marginRight: 4 }}
-                      />
-                      <Text
+                  renderItem={({ item }) => {
+                    const isSelected = item === value;
+                    const itemColor = item === "ATTEND" ? "green" : "red";
+                    return (
+                      <TouchableOpacity
+                        onPress={() => setValue(item)}
                         style={{
-                          fontSize: 18,
-                          color: item == value ? "#F39300" : "black",
-                          fontWeight: item == "value" ? "600" : "0",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginVertical: 6,
+                          paddingHorizontal: 20,
                         }}
                       >
-                        {item}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                        <Ionicons
+                          name={
+                            isSelected ? "radio-button-on" : "radio-button-off"
+                          }
+                          size={22}
+                          color={isSelected ? itemColor : "gray"}
+                          style={{ marginRight: 8 }}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: isSelected ? "600" : "400",
+                            color: isSelected ? itemColor : "black",
+                          }}
+                        >
+                          {item}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  }}
                 />
                 <TouchableOpacity
                   onPress={handleTakeAttendance}
                   style={{
                     marginTop: 20,
                     backgroundColor: "#F39300",
-                    paddingVertical: 10,
+                    paddingVertical: 8,
                     borderRadius: 10,
                   }}
                 >
@@ -562,7 +609,7 @@ export default function Schedule() {
                       textAlign: "center",
                       color: "white",
                       fontWeight: "bold",
-                      fontSize: 16,
+                      fontSize: 18,
                     }}
                   >
                     Save
@@ -594,41 +641,120 @@ export default function Schedule() {
                   borderTopRightRadius: 16,
                 }}
               >
-                <TouchableOpacity
+                <View
                   style={{
-                    backgroundColor: "#ededed",
-                    padding: 4,
-                    marginHorizontal: 20,
-                    marginTop: 16,
-                    marginBottom: 8,
-                    borderRadius: 20,
-                    alignSelf: "flex-start",
-                    alignItems: "flex-start",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
-                  onPress={handleCloseInfo}
                 >
-                  <Ionicons name="chevron-back" size={28} />
-                </TouchableOpacity>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  <View style={{ alignItems: "center" }}>
-                    <Image
-                      source={{ uri: info.studentImage }}
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ededed",
+                      padding: 4,
+                      marginHorizontal: 20,
+                      marginTop: 16,
+                      marginBottom: 8,
+                      borderRadius: 20,
+                      alignSelf: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                    onPress={handleCloseInfo}
+                  >
+                    <Ionicons name="chevron-back" size={28} />
+                  </TouchableOpacity>
+                  {info?.status != "WAITING" && (
+                    <TouchableOpacity
                       style={{
-                        width: width * 0.32,
-                        height: width * 0.32,
-                        borderRadius: 100,
+                        backgroundColor: "white",
+                        padding: 4,
+                        marginHorizontal: 20,
+                        marginTop: 16,
                         marginBottom: 8,
+                        borderRadius: 10,
+                        alignSelf: "flex-end",
+                        alignItems: "flex-end",
                       }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        marginBottom: 30,
-                      }}
+                      onPress={handleOpenReport}
                     >
-                      {info.studentName}
-                    </Text>
+                      <Ionicons name="newspaper" size={28} color="#F39300" />
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      marginVertical: 20,
+                      marginHorizontal: 20,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <View style={{ width: "40%" }}>
+                      <Image
+                        source={{ uri: info?.studentImage }}
+                        style={{
+                          width: 110,
+                          height: 110,
+                          borderRadius: 100,
+                          marginBottom: 12,
+                          borderColor: "#F39300",
+                          borderWidth: 2,
+                        }}
+                      />
+                      <View
+                        style={{
+                          padding: 5,
+                          backgroundColor: "#F39300",
+                          borderRadius: 30,
+                          position: "absolute",
+                          right: 20,
+                          bottom: 12,
+                        }}
+                      >
+                        <Ionicons
+                          name={
+                            info?.studentGender == "MALE" ? "male" : "female"
+                          }
+                          size={24}
+                          style={{ color: "white" }}
+                        />
+                      </View>
+                    </View>
+                    <View style={{ width: "60%" }}>
+                      <Text
+                        style={{
+                          fontSize: 26,
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: 4,
+                        }}
+                      >
+                        {info?.studentName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "grey",
+                          marginBottom: 2,
+                        }}
+                      >
+                        ID: {info?.studentCode}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "grey",
+                        }}
+                      >
+                        Phone: {info?.studentPhone}
+                      </Text>
+                    </View>
                   </View>
                   <View
                     style={{
@@ -1100,6 +1226,262 @@ export default function Schedule() {
                   )}
                 </ScrollView>
               </View>
+            </View>
+          </Modal>
+          <Modal
+            transparent={true}
+            visible={openReport}
+            animationType="slide"
+            onRequestClose={handleCloseReport}
+          >
+            <View
+              style={{
+                width: "100%",
+                height: "100%",
+                backgroundColor: "#f5f7fd",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#ededed",
+                    padding: 4,
+                    marginHorizontal: 20,
+                    marginTop: 16,
+                    marginBottom: 8,
+                    borderRadius: 20,
+                    alignSelf: "flex-start",
+                    alignItems: "flex-start",
+                  }}
+                  onPress={handleCloseReport}
+                >
+                  <Ionicons name="chevron-back" size={28} />
+                </TouchableOpacity>
+                <View style={{ flex: 3, justifyContent: "center" }}>
+                  <Text
+                    style={{
+                      color: "#F39300",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    Counseling Report
+                  </Text>
+                </View>
+                <View style={{ flex: 1 }} />
+              </View>
+              <ScrollView
+                style={{
+                  flex: 1,
+                  paddingHorizontal: 20,
+                  marginVertical: 12,
+                }}
+                showsVerticalScrollIndicator={false}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#F39300",
+                    paddingHorizontal: 8,
+                    paddingVertical: 6,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    Consultation Goal
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    backgroundColor: "#ededed",
+                    padding: 8,
+                    marginBottom: 16,
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>• Specific Goal:</Text>
+                    {"\n"}
+                    {reportData.consultationGoal.specificGoal}
+                  </Text>
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>• Reason:</Text>
+                    {"\n"}
+                    {reportData.consultationGoal.reason}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    backgroundColor: "#F39300",
+                    paddingHorizontal: 8,
+                    paddingVertical: 6,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    Consultation Content
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    backgroundColor: "#ededed",
+                    padding: 8,
+                    marginBottom: 16,
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>
+                      • Summary of Discussion:
+                    </Text>
+                    {"\n"}
+                    {reportData.consultationContent.summaryOfDiscussion}
+                  </Text>
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>• Main Issues:</Text>
+                    {"\n"}
+                    {reportData.consultationContent.mainIssues}
+                  </Text>
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>
+                      • Student Emotions:
+                    </Text>
+                    {"\n"}
+                    {reportData.consultationContent.studentEmotions}
+                  </Text>
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>
+                      • Student Reactions:
+                    </Text>
+                    {"\n"}
+                    {reportData.consultationContent.studentReactions}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    backgroundColor: "#F39300",
+                    paddingHorizontal: 8,
+                    paddingVertical: 6,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    Consultation Conclusion
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    backgroundColor: "#ededed",
+                    padding: 8,
+                    marginBottom: 16,
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>
+                      • Counselor Conclusion:
+                    </Text>
+                    {"\n"}
+                    {reportData.consultationConclusion.counselorConclusion}
+                  </Text>
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>
+                      • Follow-up Needed:
+                    </Text>
+                    {"\n"}
+                    {reportData.consultationConclusion.followUpNeeded
+                      ? "Yes"
+                      : "No"}
+                  </Text>
+                  {reportData.consultationConclusion.followUpNeeded && (
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        • Follow-up Notes:
+                      </Text>
+                      {"\n"}
+                      {reportData.consultationConclusion.followUpNotes}
+                    </Text>
+                  )}
+                </View>
+
+                <View
+                  style={{
+                    backgroundColor: "#F39300",
+                    paddingHorizontal: 8,
+                    paddingVertical: 6,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    Intervention
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    backgroundColor: "#ededed",
+                    padding: 8,
+                    marginBottom: 16,
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>• Type:</Text>
+                    {"\n"}
+                    {reportData.intervention.type}
+                  </Text>
+                  <Text
+                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  >
+                    <Text style={{ fontWeight: "600" }}>• Description:</Text>
+                    {"\n"}
+                    {reportData.intervention.description}
+                  </Text>
+                </View>
+              </ScrollView>
             </View>
           </Modal>
         </View>
