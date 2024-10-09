@@ -32,7 +32,6 @@ import Appointment from "../Screen/Appointment";
 import AppointmentCounselor from "../Screen/counselor/Appointment";
 import NotificationDetail from "../Screen/NotificationDetail";
 import CounselorNavigation from "./CounselorNavigation";
-// import Event from "../Screen/Event";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -71,13 +70,6 @@ export default function Navigation() {
       inActive: "clipboard-outline",
       component: CounselorNavigation,
     },
-    // {
-    //   route: "Event",
-    //   label: "Event",
-    //   active: "megaphone",
-    //   inActive: "megaphone-outline",
-    //   component: Event,
-    // },
     {
       route: "Schedule",
       label: "Schedule",
