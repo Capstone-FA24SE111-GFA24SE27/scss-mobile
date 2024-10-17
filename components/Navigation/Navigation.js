@@ -32,6 +32,8 @@ import Appointment from "../Screen/Appointment";
 import AppointmentCounselor from "../Screen/counselor/Appointment";
 import NotificationDetail from "../Screen/NotificationDetail";
 import CounselorNavigation from "./CounselorNavigation";
+import QA from "../Screen/QA";
+import QANavigation from "./QANavigation";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -78,6 +80,13 @@ export default function Navigation() {
       component: Schedule,
     },
     {
+      route: "QA",
+      label: "QA",
+      active: "chatbubbles",
+      inActive: "chatbubbles-outline",
+      component: QA,
+    },
+    {
       route: "Personal",
       label: "Personal",
       active: "person",
@@ -100,6 +109,13 @@ export default function Navigation() {
       active: "calendar",
       inActive: "calendar-outline",
       component: ScheduleCounselor,
+    },
+    {
+      route: "QA",
+      label: "QA",
+      active: "chatbubbles",
+      inActive: "chatbubbles-outline",
+      component: QANavigation,
     },
     {
       route: "Personal",
@@ -152,7 +168,7 @@ export default function Navigation() {
         onPress={onPress}
         activeOpacity={1}
         style={{
-          flex: focused ? 1 : 0.5,
+          flex: focused ? 1 : 0.55,
           justifyContent: "center",
           alignItems: "center",
           height: 60,
@@ -243,10 +259,7 @@ export default function Navigation() {
             component={NotificationDetail}
             options={tabOptions}
           />
-          <Tab.Screen
-            name="Profile"
-            component={Profile}
-            options={tabOptions} />
+          <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
           <Tab.Screen
             name="CounselorProfile"
             component={CounselorProfile}
@@ -323,7 +336,6 @@ export default function Navigation() {
             component={Notification}
             options={tabOptions}
           />
-          <Tab.Screen name="Report" component={Report} options={tabOptions} />
           <Tab.Screen
             name="NotificationDetail"
             component={NotificationDetail}

@@ -666,7 +666,7 @@ export default function Appointment() {
                       onChange={(item) => {
                         setStatus(item.name);
                         setExpanded(false);
-                        console.log(status)
+                        console.log(status);
                       }}
                       renderRightIcon={() => (
                         <Ionicons
@@ -1211,13 +1211,24 @@ export default function Appointment() {
                     <View style={{ width: "60%" }}>
                       <Text
                         style={{
-                          fontSize: 26,
+                          fontSize: 24,
                           fontWeight: "bold",
                           color: "black",
                           marginBottom: 4,
                         }}
                       >
                         {info?.counselorInfo?.profile?.fullName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "500",
+                          color: "black",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {info?.counselorInfo?.specialization?.name ||
+                          info?.counselorInfo?.expertise?.name}
                       </Text>
                       <Text
                         style={{

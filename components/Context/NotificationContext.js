@@ -12,16 +12,16 @@ import { SocketContext } from "./SocketContext";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import { AppState } from "react-native";
 import Toast from 'react-native-toast-message';
-import { createNavigationContainerRef } from "@react-navigation/native";
+import { navigationRef } from "./NavigationContext";
 
-export const navigationRef = createNavigationContainerRef();
 export const NotificationContext = createContext();
 
-export function navigate(name, params) {
-  if (navigationRef.isReady()) {
-    navigationRef.navigate(name, params);
-  }
-}
+// export const navigationRef = createNavigationContainerRef();
+// export function navigate = (name) => {
+//   if (navigationRef.isReady()) {
+//     navigationRef.navigate(name);
+//   }
+// };
 
 export const NotificationProvider = ({ children }) => {
   const { userData } = useContext(AuthContext);

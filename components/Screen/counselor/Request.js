@@ -340,8 +340,8 @@ export default function Request() {
       const data = await response.data;
       if (data && data.status == 200) {
         handleCloseConfirm();
-        setOpenSuccess(true);
         fetchData();
+        setOpenSuccess(true);
       } else {
         Toast.show({
           type: "error",
@@ -1556,13 +1556,23 @@ export default function Request() {
                     <View style={{ width: "60%" }}>
                       <Text
                         style={{
-                          fontSize: 26,
+                          fontSize: 24,
                           fontWeight: "bold",
                           color: "black",
                           marginBottom: 4,
                         }}
                       >
                         {info?.student?.profile?.fullName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "500",
+                          color: "black",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {info?.student?.specialization?.name}
                       </Text>
                       <Text
                         style={{

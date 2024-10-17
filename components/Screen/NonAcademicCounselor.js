@@ -632,7 +632,6 @@ export default function NonAcademicCounselor() {
                                       paddingVertical: 4,
                                       borderRadius: 20,
                                       marginRight: 3,
-                                      marginBottom: 8,
                                       backgroundColor: "white",
                                       justifyContent: "center",
                                       alignItems: "center",
@@ -695,7 +694,6 @@ export default function NonAcademicCounselor() {
                                       paddingVertical: 4,
                                       borderRadius: 20,
                                       marginRight: 3,
-                                      marginBottom: 8,
                                       backgroundColor: "white",
                                       justifyContent: "center",
                                       alignItems: "center",
@@ -1080,7 +1078,7 @@ export default function NonAcademicCounselor() {
                 >
                   <View
                     style={{
-                      flex: 1,
+                      flex: 1.35,
                       paddingHorizontal: 12,
                       paddingVertical: 6,
                     }}
