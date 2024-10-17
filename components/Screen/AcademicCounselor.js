@@ -636,7 +636,6 @@ export default function AcademicCounselor() {
                                       paddingVertical: 4,
                                       borderRadius: 20,
                                       marginRight: 3,
-                                      marginBottom: 8,
                                       backgroundColor: "white",
                                       justifyContent: "center",
                                       alignItems: "center",
@@ -699,7 +698,6 @@ export default function AcademicCounselor() {
                                       paddingVertical: 4,
                                       borderRadius: 20,
                                       marginRight: 3,
-                                      marginBottom: 8,
                                       backgroundColor: "white",
                                       justifyContent: "center",
                                       alignItems: "center",
@@ -1084,7 +1082,7 @@ export default function AcademicCounselor() {
                 >
                   <View
                     style={{
-                      flex: 1,
+                      flex: 1.35,
                       paddingHorizontal: 12,
                       paddingVertical: 6,
                     }}
@@ -1141,7 +1139,6 @@ export default function AcademicCounselor() {
                     </Text>
                   </View>
                 </View>
-
                 <TouchableOpacity
                   style={{
                     backgroundColor: "#F39300",

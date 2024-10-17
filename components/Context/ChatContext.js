@@ -181,6 +181,7 @@ export const ChatProvider = ({ children }) => {
             if (openChat && foundedQuestion?.chatSession?.id === chatSessionId && selectedQuestion?.chatSession?.id === chatSessionId) {
               fetchQuestionCard(foundedQuestion?.id);
               handleReadMessage(foundedQuestion?.chatSession?.id);
+              Toast.hide()
             }
           }
           if (
@@ -218,6 +219,7 @@ export const ChatProvider = ({ children }) => {
             if (openChat && foundedQuestion?.chatSession?.id === chatSessionId && selectedQuestion?.chatSession?.id === chatSessionId) {
               fetchQuestionCard(foundedQuestion?.id);
               handleReadMessage(foundedQuestion?.chatSession?.id);
+              Toast.hide()
             }
           }
         });

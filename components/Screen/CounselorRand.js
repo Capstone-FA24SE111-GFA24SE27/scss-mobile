@@ -8,6 +8,7 @@ import {
   TextInput,
   Modal,
   ActivityIndicator,
+  Animated,
 } from "react-native";
 import React, {
   useState,
@@ -30,6 +31,8 @@ export default function CounselorRand() {
   const socket = useContext(SocketContext);
   const scrollViewRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+  const [progress, setProgress] = useState(new Animated.Value(0));
   const [slots, setSlots] = useState([]);
   const [expertises, setExpertises] = useState([]);
   const [specializations, setSpecializations] = useState([]);
@@ -828,6 +831,7 @@ export default function CounselorRand() {
 
   const handleMatch = async () => {
     setError(null);
+    setLoading2(true);
     try {
       if (type === "ACADEMIC") {
         const response = await axiosJWT.get(
@@ -863,6 +867,41 @@ export default function CounselorRand() {
       setError("No Counselor found");
     }
   };
+
+  useEffect(() => {
+    if (loading2) {
+      Animated.sequence([
+        Animated.timing(progress, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: false,
+        }),
+        Animated.timing(progress, {
+          toValue: 25,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(progress, {
+          toValue: 50,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(progress, {
+          toValue: 75,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(progress, {
+          toValue: 100,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+      ]).start();
+      setTimeout(() => {
+        setLoading2(false);
+      }, 2000);
+    }
+  }, [loading2]);
 
   const handleOpenConfirm = () => {
     setOpenConfirm(true);
@@ -929,7 +968,45 @@ export default function CounselorRand() {
         <View style={{ paddingVertical: 6, paddingHorizontal: 12 }}>
           {renderCarousel()}
         </View>
-        {matcher ? (
+        {loading2 && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Animated.View
+              style={{
+                width: 90,
+                height: 90,
+                borderRadius: 50,
+                borderWidth: 10,
+                borderColor: progress.interpolate({  
+                  inputRange: [0, 25, 50, 75, 100],  
+                  outputRange: ["#888888", "#aaaaaa", "#cccccc", "#eeeeee", "#F39300"],  
+                }), 
+                justifyContent: "center",
+                alignItems: "center",
+                transform: [
+                  {
+                    rotate: progress.interpolate({
+                      inputRange: [0, 25, 50, 75, 100],
+                      outputRange: ["0deg", "90deg", "180deg", "270deg", "360deg"],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <Ionicons name="hourglass" size={40} color="#F39300" />
+            </Animated.View>
+          </View>
+        )}
+        {matcher && loading2 == false ? (
           <>
             <View
               key={matcher.id}
