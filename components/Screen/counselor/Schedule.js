@@ -958,8 +958,8 @@ export default function Schedule() {
                                 )
                               }
                             >
-                              <Ionicons
-                                name="pencil"
+                              <MaterialIcons
+                                name="edit-note"
                                 size={24}
                                 color="#F39300"
                               />

@@ -1080,13 +1080,23 @@ export default function Appointment() {
                     <View style={{ width: "60%" }}>
                       <Text
                         style={{
-                          fontSize: 26,
+                          fontSize: 24,
                           fontWeight: "bold",
                           color: "black",
                           marginBottom: 4,
                         }}
                       >
                         {info?.studentInfo?.profile?.fullName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "500",
+                          color: "black",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {info?.studentInfo?.specialization?.name}
                       </Text>
                       <Text
                         style={{

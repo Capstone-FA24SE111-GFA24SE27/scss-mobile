@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { StyleSheet, Platform, Alert } from "react-native";
-import { AuthProvider } from './components/Context/AuthContext';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
-import { SocketProvider } from './components/Context/SocketContext';
-import Navigation from './components/Navigation/Navigation';
-import * as Notifications from 'expo-notifications';
+import { AuthProvider } from "./components/Context/AuthContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { SocketProvider } from "./components/Context/SocketContext";
+import Navigation from "./components/Navigation/Navigation";
+import * as Notifications from "expo-notifications";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -14,14 +14,14 @@ Notifications.setNotificationHandler({
   }),
 });
 import {
-  navigationRef,
   NotificationContext,
   NotificationProvider,
 } from "./components/Context/NotificationContext";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import axiosJWT, { BASE_URL } from "./config/Config";
-import axios from 'axios';  // Ensure axios is imported
-
+import axios from "axios"; // Ensure axios is imported
+import { ChatProvider } from "./components/Context/ChatContext";
+import { navigationRef } from "./components/Context/NavigationContext";
 export default function App() {
   const toastConfig = {
     success: (props) => (
@@ -104,14 +104,15 @@ export default function App() {
   async function registerForPushNotificationsAsync() {
     let token;
     try {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
+      if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
-      if (finalStatus !== 'granted') {
-        Alert.alert('Failed to get push token for push notification!');
+      if (finalStatus !== "granted") {
+        Alert.alert("Failed to get push token for push notification!");
         return;
       }
       // Make sure the app is running on a physical device
@@ -120,26 +121,30 @@ export default function App() {
         return;
       }
       // Add projectId when calling getExpoPushTokenAsync
-      token = (await Notifications.getExpoPushTokenAsync({
-        projectId: '4d87a268-75a2-4c86-9068-3c5a158afec6',  // Replace with your actual projectId
-      })).data;
+      token = (
+        await Notifications.getExpoPushTokenAsync({
+          projectId: "4d87a268-75a2-4c86-9068-3c5a158afec6", // Replace with your actual projectId
+        })
+      ).data;
       if (!token) {
-        Alert.alert('Failed to retrieve Expo push token.');
+        Alert.alert("Failed to retrieve Expo push token.");
       } else {
-        console.log('Expo Push Token:', token);
+        console.log("Expo Push Token:", token);
         // Send the push token to your server
         sendPushTokenToServer(token);
       }
     } catch (error) {
-      console.error('Error getting push token:', error);
+      console.error("Error getting push token:", error);
     }
     return token;
   }
 
   async function sendPushTokenToServer(token) {
     try {
-      const response = await axios.post(`${BASE_URL}/save-push-token`, { token });
-      console.log('Push token sent to server successfully:', response.data);
+      const response = await axios.post(`${BASE_URL}/save-push-token`, {
+        token,
+      });
+      console.log("Push token sent to server successfully:", response.data);
     } catch (error) {
       console.error("Failed to send token to server:", error);
     }
@@ -149,12 +154,14 @@ export default function App() {
     <AuthProvider>
       <SocketProvider>
         <NotificationProvider>
-          <SafeAreaProvider>
-            <NavigationContainer ref={navigationRef} style={{ flex: 1 }}>
-              <Navigation />
-              <Toast config={toastConfig} />
-            </NavigationContainer>
-          </SafeAreaProvider>
+          <ChatProvider>
+            <SafeAreaProvider>
+              <NavigationContainer ref={navigationRef} style={{ flex: 1 }}>
+                <Navigation />
+                <Toast config={toastConfig} />
+              </NavigationContainer>
+            </SafeAreaProvider>
+          </ChatProvider>
         </NotificationProvider>
       </SocketProvider>
     </AuthProvider>

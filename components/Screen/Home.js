@@ -202,7 +202,7 @@ export default function Home() {
                   }}
                 />
               </Animated.View>
-              </TouchableOpacity>
+            </TouchableOpacity>
             <Pressable>
               <Ionicons name="menu" size={40} color="white" />
             </Pressable>
@@ -235,8 +235,41 @@ export default function Home() {
             }}
           />
         </View>
-        <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-          <View style={{ marginHorizontal: 30 }}>
+        <ScrollView
+          ref={scrollViewRef}
+          showsVerticalScrollIndicator={false}
+          style={{ marginHorizontal: 30 }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => navigation.navigate("Counselor")}
+            style={{
+              backgroundColor: "white",
+              borderRadius: 10,
+              borderWidth: 2,
+              borderColor: "#F39300",
+              width: "auto",
+              borderStyle: "dashed",
+              alignItems: "center",
+              justifyContent: "center",
+              marginVertical: 16,
+              paddingHorizontal: 12,
+              paddingVertical: 20,
+            }}
+          >
+            <Ionicons name="add-circle" size={48} color="#F39300" />
+            <Text
+              style={{
+                marginTop: 8,
+                fontSize: 18,
+                fontWeight: "600",
+                opacity: 0.7,
+              }}
+            >
+              Create your first appointment request
+            </Text>
+          </TouchableOpacity>
+          <View>
             <View
               style={{
                 flexDirection: "row",
@@ -316,7 +349,7 @@ export default function Home() {
               ))}
             </ScrollView>
           </View>
-          <View style={{ marginHorizontal: 30 }}>
+          <View>
             <View>
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Recommend Counselors

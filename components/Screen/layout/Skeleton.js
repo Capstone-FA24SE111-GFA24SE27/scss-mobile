@@ -159,92 +159,6 @@ const CounselorSkeleton = () => {
   );
 };
 
-const RequestSkeleton = () => {
-  return (
-    <View
-      style={{
-        padding: 16,
-        marginBottom: 16,
-        backgroundColor: "white",
-        borderRadius: 20,
-        elevation: 1,
-        position: "relative",
-        borderWidth: 1.5,
-        borderColor: "#e0e0e0",
-      }}
-    >
-      <View style={{ flexDirection: "row", marginBottom: 16 }}>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: width * 0.14,
-            height: width * 0.14,
-            borderRadius: 40,
-          }}
-        />
-        <View style={{ marginLeft: 12 }}>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.5,
-              height: 20,
-              borderRadius: 4,
-              marginBottom: 8,
-            }}
-          />
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.2,
-              height: 20,
-              borderRadius: 20,
-              marginTop: 4,
-            }}
-          />
-        </View>
-        <View style={{ position: "absolute", top: 0, right: -4 }}>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: 24, height: 24, borderRadius: 12 }}
-          />
-        </View>
-      </View>
-
-      <View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 8,
-          }}
-        >
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
-          />
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: width * 0.4, height: 20, borderRadius: 4 }}
-          />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 8,
-          }}
-        >
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
-          />
-        </View>
-      </View>
-    </View>
-  );
-};
-
 const ScheduleSkeleton = () => {
   return (
     <View
@@ -303,4 +217,182 @@ const ScheduleSkeleton = () => {
   );
 };
 
-export { CounselorSkeleton, RequestSkeleton, ScheduleSkeleton };
+const QASkeleton = () => {
+  return (
+    <View
+      style={{
+        paddingVertical: 16,
+        paddingHorizontal: 12,
+        backgroundColor: "white",
+        marginVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1.5,
+        borderColor: "#e3e3e3",
+      }}
+    >
+      <View style={{ marginBottom: 16 }}>
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            height: 24,
+            marginLeft: 4,
+            width: "50%",
+            marginBottom: 8,
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+            borderRadius: 10,
+          }}
+        />
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            height: 24,
+            borderRadius: 4,
+            marginLeft: 4,
+            width: "80%",
+          }}
+        />
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            height: 24,
+            borderRadius: 4,
+            marginTop: 8,
+            marginLeft: 4,
+            width: "80%",
+          }}
+        />
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingVertical: 4,
+            paddingHorizontal: 8,
+          }}
+        >
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: 24,
+              height: 24,
+              borderRadius: 20,
+            }}
+          />
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: 60,
+              height: 20,
+              borderRadius: 4,
+              marginLeft: 4,
+            }}
+          />
+        </View>
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 20,
+          }}
+        />
+      </View>
+    </View>
+  );
+};
+
+const RequestSkeleton = () => {
+  return (
+    <View
+      style={{
+        padding: 16,
+        marginBottom: 16,
+        backgroundColor: "white",
+        borderRadius: 20,
+        elevation: 1,
+        position: "relative",
+        borderWidth: 1.5,
+        borderColor: "#e0e0e0",
+      }}
+    >
+      <View style={{ flexDirection: "row", marginBottom: 16 }}>
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            width: width * 0.14,
+            height: width * 0.14,
+            borderRadius: 40,
+          }}
+        />
+        <View style={{ marginLeft: 12 }}>
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: width * 0.5,
+              height: 20,
+              borderRadius: 4,
+              marginBottom: 8,
+            }}
+          />
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: width * 0.2,
+              height: 20,
+              borderRadius: 20,
+              marginTop: 4,
+            }}
+          />
+        </View>
+        <View style={{ position: "absolute", top: 0, right: -4 }}>
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{ width: 24, height: 24, borderRadius: 12 }}
+          />
+        </View>
+      </View>
+      <View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 8,
+          }}
+        >
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
+          />
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{ width: width * 0.4, height: 20, borderRadius: 4 }}
+          />
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 8,
+          }}
+        >
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
+          />
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export { CounselorSkeleton, ScheduleSkeleton, QASkeleton, RequestSkeleton };

@@ -1134,13 +1134,24 @@ export default function Request() {
                     <View style={{ width: "60%" }}>
                       <Text
                         style={{
-                          fontSize: 26,
+                          fontSize: 24,
                           fontWeight: "bold",
                           color: "black",
                           marginBottom: 4,
                         }}
                       >
                         {info?.counselor?.profile?.fullName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "500",
+                          color: "black",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {info?.counselor?.specialization?.name ||
+                          info?.counselor?.expertise?.name}
                       </Text>
                       <Text
                         style={{
