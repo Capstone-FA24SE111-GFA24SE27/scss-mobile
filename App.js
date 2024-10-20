@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Platform, Alert } from "react-native";
-import { AuthProvider } from "./components/Context/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
-import { SocketProvider } from "./components/Context/SocketContext";
-import Navigation from "./components/Navigation/Navigation";
+import { AuthProvider } from "./src/components/context/AuthContext";
+import { SocketProvider } from "./src/components/context/SocketContext";
+import Navigation from "./src/components/routes/Navigation";
 import * as Notifications from "expo-notifications";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,12 +16,12 @@ Notifications.setNotificationHandler({
 import {
   NotificationContext,
   NotificationProvider,
-} from "./components/Context/NotificationContext";
+} from "./src/components/context/NotificationContext";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
-import axiosJWT, { BASE_URL } from "./config/Config";
+import axiosJWT, { BASE_URL } from "./src/config/Config";
 import axios from "axios"; // Ensure axios is imported
-import { ChatProvider } from "./components/Context/ChatContext";
-import { navigationRef } from "./components/Context/NavigationContext";
+import { ChatProvider } from "./src/components/context/ChatContext";
+import { navigationRef } from "./src/components/context/NavigationContext";
 export default function App() {
   const toastConfig = {
     success: (props) => (
