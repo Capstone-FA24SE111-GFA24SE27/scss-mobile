@@ -294,6 +294,7 @@ export default function Schedule() {
   };
 
   const handleCloseUpdateAppointment = () => {
+    setMethod("");
     setValue("");
     setSelectedAppointment(null);
     setOpenUpdate(false);
@@ -379,7 +380,7 @@ export default function Schedule() {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: "black",
+                color: "#333",
               }}
             >
               {item.studentName}
@@ -731,7 +732,7 @@ export default function Schedule() {
                         style={{
                           fontSize: 26,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                           marginBottom: 4,
                         }}
                       >
@@ -794,7 +795,7 @@ export default function Schedule() {
                         <Text
                           style={{
                             fontSize: 18,
-                            color: "black",
+                            color: "#333",
                             fontWeight: "500",
                           }}
                         >
@@ -836,7 +837,7 @@ export default function Schedule() {
                         <Text
                           style={{
                             fontSize: 18,
-                            color: "black",
+                            color: "#333",
                             fontWeight: "500",
                           }}
                         >
@@ -908,12 +909,12 @@ export default function Schedule() {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         marginVertical: 12,
                       }}
                     >
                       <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
+                        style={{ flexDirection: "row", alignItems: "flex-start" }}
                       >
                         {info.meetingType === "ONLINE" && (
                           <Ionicons name="videocam" size={24} color="#F39300" />
@@ -1069,7 +1070,7 @@ export default function Schedule() {
                                       <Text
                                         style={{
                                           fontSize: 18,
-                                          color: "black",
+                                          color: "#333",
                                           fontWeight: "600",
                                         }}
                                       >
@@ -1105,9 +1106,10 @@ export default function Schedule() {
                         )}
                         <Text
                           style={{
+                            maxWidth: "75%",
                             fontSize: 18,
                             fontWeight: "bold",
-                            color: "black",
+                            color: "#333",
                           }}
                         >
                           {info.place}
@@ -1216,7 +1218,7 @@ export default function Schedule() {
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                         }}
                       >
@@ -1520,7 +1522,7 @@ export default function Schedule() {
                       style={{
                         fontSize: 20,
                         fontWeight: "400",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       {item.time}
@@ -1549,7 +1551,7 @@ export default function Schedule() {
                     style={{
                       fontSize: 18,
                       marginTop: 8,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "500",
                     }}
                   >
@@ -1566,7 +1568,7 @@ export default function Schedule() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                         verticalAlign: "middle",
                         opacity: 0.7,
                         marginRight: 20,

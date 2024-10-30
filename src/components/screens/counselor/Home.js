@@ -9,7 +9,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
@@ -140,12 +140,9 @@ export default function Home() {
             appointment?.meetingType === "ONLINE"
               ? `${appointment?.meetUrl}`
               : `${appointment?.address}`,
-              studentName:
-              appointment?.studentInfo?.profile?.fullName,
-            studentImage:
-              appointment?.studentInfo?.profile?.avatarLink,
-          studentSpec:
-            appointment.studentInfo.specialization.name,
+          studentName: appointment?.studentInfo?.profile?.fullName,
+          studentImage: appointment?.studentInfo?.profile?.avatarLink,
+          studentSpec: appointment.studentInfo.specialization.name,
           status: appointment.status,
         }));
         setAppointments(formattedAppointments);
@@ -285,9 +282,11 @@ export default function Home() {
               <View
                 style={{
                   width: width,
+                  height: 80,
                   backgroundColor: "#ededed",
                   padding: 12,
                   marginVertical: 12,
+                  justifyContent: "center",
                   alignSelf: "center",
                 }}
               >
@@ -299,7 +298,7 @@ export default function Home() {
                     color: "#F39300",
                   }}
                 >
-                  No requests created
+                  No requests received
                 </Text>
               </View>
             ) : (
@@ -549,9 +548,11 @@ export default function Home() {
               <View
                 style={{
                   width: width,
+                  height: 80,
                   backgroundColor: "#ededed",
                   padding: 12,
                   marginVertical: 12,
+                  justifyContent: "center",
                   alignSelf: "center",
                 }}
               >
@@ -572,6 +573,7 @@ export default function Home() {
                   ?.filter((appointment) => appointment.date === selectedDate)
                   .map((appointment) => (
                     <TouchableOpacity
+                      activeOpacity={0.7}
                       key={appointment.id}
                       style={{
                         width: width * 0.8,
@@ -579,26 +581,28 @@ export default function Home() {
                         borderRadius: 20,
                         marginVertical: 12,
                         marginRight: 12,
-                        borderColor: "lightgrey",
-                        borderWidth: 1,
                       }}
                     >
                       <View
                         style={{
+                          backgroundColor: "#fff0e0",
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingVertical: 16,
-                          borderRadius: 20,
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          marginTop: 4,
+                          marginHorizontal: 4,
+                          borderTopLeftRadius: 18,
+                          borderTopRightRadius: 18,
                         }}
                       >
-                        <View>
+                        <View style={{ maxWidth: "80%" }}>
                           <Text
                             style={{
                               fontSize: 18,
                               fontWeight: "bold",
-                              color: "white",
+                              color: "#F39300",
                             }}
                           >
                             {appointment.studentName}
@@ -607,7 +611,7 @@ export default function Home() {
                             style={{
                               fontSize: 16,
                               fontWeight: "400",
-                              color: "white",
+                              color: "#333",
                               marginTop: 2,
                             }}
                           >
@@ -628,27 +632,26 @@ export default function Home() {
                       <View
                         style={{
                           flexDirection: "row",
-                          alignItems: "flex-start",
+                          alignItems: "stretch",
                           justifyContent: "space-between",
-                          padding: 16,
-                          borderBottomRightRadius: 20,
-                          borderBottomLeftRadius: 20,
+                          marginTop: 2,
+                          marginHorizontal: 4,
+                          marginBottom: 4,
                         }}
                       >
                         <View
                           style={{
-                            flex: 0.58,
+                            flex: 0.62,
                             flexDirection: "row",
                             alignItems: "center",
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
+                            padding: 4,
                             backgroundColor: "white",
-                            borderRadius: 10,
+                            borderBottomLeftRadius: 18,
                           }}
                         >
                           {appointment.meetingType === "ONLINE" ? (
                             <Ionicons
-                              name="videocam"
+                              name="videocam-outline"
                               size={24}
                               color="#F39300"
                             />
@@ -663,7 +666,7 @@ export default function Home() {
                             <Text
                               style={{
                                 fontSize: 16,
-                                color: "black",
+                                color: "#333",
                                 fontWeight: "600",
                               }}
                             >
@@ -676,7 +679,7 @@ export default function Home() {
                                 fontSize: 14,
                                 color: "#333",
                               }}
-                              numberOfLines={2}
+                              numberOfLines={1}
                             >
                               {appointment.place}
                             </Text>
@@ -684,13 +687,12 @@ export default function Home() {
                         </View>
                         <View
                           style={{
-                            flex: 0.38,
+                            flex: 0.37,
                             flexDirection: "row",
                             alignItems: "center",
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
+                            padding: 4,
                             backgroundColor: "white",
-                            borderRadius: 10,
+                            borderBottomRightRadius: 18,
                           }}
                         >
                           <Ionicons
@@ -702,7 +704,7 @@ export default function Home() {
                             <Text
                               style={{
                                 fontSize: 16,
-                                color: "black",
+                                color: "#333",
                                 fontWeight: "600",
                               }}
                             >

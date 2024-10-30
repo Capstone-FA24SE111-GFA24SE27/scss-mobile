@@ -795,7 +795,7 @@ export default function CounselorRand() {
             <Text
               style={{
                 fontWeight: "500",
-                color: "black",
+                color: "#333",
                 fontSize: 18,
               }}
             >
@@ -1063,7 +1063,7 @@ export default function CounselorRand() {
                       style={{
                         fontSize: 20,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       {matcher.profile.fullName}
@@ -1450,7 +1450,7 @@ export default function CounselorRand() {
                 <Text
                   style={{
                     fontSize: 18,
-                    color: "black",
+                    color: "#333",
                     fontWeight: "600",
                   }}
                 >

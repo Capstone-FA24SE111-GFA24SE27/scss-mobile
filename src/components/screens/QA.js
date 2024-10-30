@@ -68,6 +68,7 @@ export default function QA() {
   const [type, setType] = useState("");
   const [sortDirection, setSortDirection] = useState("");
   const [expanded, setExpanded] = useState(false);
+  const [expanded2, setExpanded2] = useState(false);
   // const [currentPage, setCurrentPage] = useState(1);
   const [openCreate, setOpenCreate] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
@@ -78,6 +79,8 @@ export default function QA() {
   // const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [content, setContent] = useState("");
   const [counselorType, setCounselorType] = useState("ACADEMIC");
+  const [topics, setTopics] = useState([]);
+  const [topic, setTopic] = useState("");
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
@@ -91,6 +94,7 @@ export default function QA() {
       }
       fetchData(filters, { page: currentPage });
       fetchBanInfo();
+      fetchTopic();
     }, [debouncedKeyword, filters, currentPage])
   );
 
@@ -185,16 +189,37 @@ export default function QA() {
 
   const fetchBanInfo = async () => {
     try {
-      const questionsRes = await axiosJWT.get(
+      const banRes = await axiosJWT.get(
         `${BASE_URL}/question-cards/student/ban-info`
       );
-      const questionsData = questionsRes?.data || [];
-      setBanInfo(questionsData);
-      console.log(questions);
+      const banData = banRes?.data || [];
+      setBanInfo(banData);
     } catch (err) {
       console.log(err);
     }
   };
+
+  const fetchTopic = async () => {
+    try {
+      if (counselorType === "ACADEMIC") {
+        const topicsRes = await axiosJWT.get(`${BASE_URL}/topics/academic`);
+        const topicsData = topicsRes?.data?.content || [];
+        setTopics(topicsData);
+      }
+      if (counselorType === "NON_ACADEMIC") {
+        const topicsRes = await axiosJWT.get(`${BASE_URL}/topics/non-academic`);
+        const topicsData = topicsRes?.data.content || [];
+        setTopics(topicsData);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    setTopic("");
+    fetchTopic();
+  }, [counselorType]);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const layoutHeight = useRef({ container: 0, text: 0 });
@@ -325,11 +350,13 @@ export default function QA() {
       const response = await axiosJWT.post(`${BASE_URL}/question-cards`, {
         content: content,
         questionType: counselorType,
+        topicId: topic.id,
       });
       const data = await response.data;
       if (data && data.status == 200) {
         setOpenCreate(false);
         handleCloseConfirm();
+        setTopic("");
         setOpenSuccess(true);
         fetchData(filters, { page: currentPage });
       }
@@ -481,7 +508,7 @@ export default function QA() {
                   style={{
                     fontSize: 24,
                     opacity: 0.8,
-                    color: "black",
+                    color: "#333",
                     fontWeight: "600",
                   }}
                 >
@@ -527,7 +554,11 @@ export default function QA() {
                     flexDirection: "row",
                     marginRight: 8,
                   }}
-                  onPress={() => banInfo?.ban === true ? setOpenBanInfo(true) : setOpenCreate(true)}
+                  onPress={() =>
+                    banInfo?.ban === true
+                      ? setOpenBanInfo(true)
+                      : setOpenCreate(true)
+                  }
                 >
                   <Ionicons
                     name="add"
@@ -589,7 +620,7 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       Status:
@@ -677,7 +708,7 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -767,7 +798,7 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -857,7 +888,7 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -945,7 +976,7 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -1042,7 +1073,7 @@ export default function QA() {
                     >
                       <Text
                         style={{
-                          color: "black",
+                          color: "#333",
                           fontSize: 16,
                           fontWeight: "600",
                           opacity: 0.7,
@@ -1130,7 +1161,7 @@ export default function QA() {
                             style={{
                               fontWeight: "600",
                               fontSize: 16,
-                              color: "black",
+                              color: "#333",
                               marginLeft: 4,
                             }}
                           >
@@ -1192,7 +1223,7 @@ export default function QA() {
                             style={{
                               fontWeight: "600",
                               fontSize: 16,
-                              color: "black",
+                              color: "#333",
                             }}
                           >
                             Not yet taken
@@ -1478,7 +1509,7 @@ export default function QA() {
                           }}
                         >
                           Answered by{" "}
-                          <Text style={{ fontWeight: "bold", color: "black" }}>
+                          <Text style={{ fontWeight: "bold", color: "#333" }}>
                             {question.counselor.profile.fullName}
                           </Text>
                         </Text>
@@ -1497,7 +1528,7 @@ export default function QA() {
                         <Text
                           style={{
                             fontSize: 16,
-                            color: "black",
+                            color: "#333",
                           }}
                           numberOfLines={2}
                         >
@@ -1574,7 +1605,7 @@ export default function QA() {
               onPress={() => setCurrentPage(1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<<"}
               </Text>
             </TouchableOpacity>
@@ -1592,7 +1623,7 @@ export default function QA() {
               onPress={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<"}
               </Text>
             </TouchableOpacity>
@@ -1614,7 +1645,7 @@ export default function QA() {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "black",
+                  color: "#333",
                   fontWeight: "600",
                 }}
               >
@@ -1646,7 +1677,7 @@ export default function QA() {
                 questions.totalPages == 0 || currentPage >= questions.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">"}
               </Text>
             </TouchableOpacity>
@@ -1674,7 +1705,7 @@ export default function QA() {
                 questions.totalPages == 0 || currentPage >= questions.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">>"}
               </Text>
             </TouchableOpacity>
@@ -1697,11 +1728,12 @@ export default function QA() {
             <View
               style={{
                 width: "100%",
-                height: "45%",
+                height: "70%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
                 padding: 20,
+                position: "relative"
               }}
             >
               <View
@@ -1743,7 +1775,8 @@ export default function QA() {
                   height: 100,
                   backgroundColor: "#fff",
                   fontSize: 16,
-                  marginVertical: 12,
+                  marginTop: 8,
+                  marginBottom: 12,
                   textAlignVertical: "top",
                 }}
                 multiline
@@ -1755,7 +1788,8 @@ export default function QA() {
                 style={{
                   flexDirection: "row",
                   flexWrap: "wrap",
-                  marginVertical: 12,
+                  marginTop: 8,
+                  marginBottom: 12,
                 }}
               >
                 <View
@@ -1851,18 +1885,94 @@ export default function QA() {
                   </TouchableOpacity>
                 </View>
               </View>
+              <Text style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}>
+                Question Topic:
+              </Text>
+              <Dropdown
+                style={{
+                  backgroundColor: "white",
+                  borderColor: expanded2 ? "#F39300" : "black",
+                  height: 40,
+                  borderWidth: 1,
+                  borderColor: "grey",
+                  borderRadius: 10,
+                  paddingHorizontal: 12,
+                  marginTop: 8,
+                  marginBottom: 12,
+                }}
+                placeholderStyle={{ fontSize: 16 }}
+                selectedTextStyle={{
+                  fontSize: 18,
+                  color: topic ? "black" : "white",
+                }}
+                maxHeight={150}
+                data={topics}
+                labelField="name"
+                search
+                value={topic !== "" ? topic.name : "Select item"}
+                placeholder={topic !== "" ? topic.name : "Select item"}
+                searchPlaceholder="Search Topic"
+                onFocus={() => setExpanded2(true)}
+                onBlur={() => setExpanded2(false)}
+                onChange={(item) => {
+                  setTopic(item);
+                  setExpanded2(false);
+                }}
+                renderRightIcon={() => (
+                  <Ionicons
+                    color={expanded2 ? "#F39300" : "black"}
+                    name={expanded2 ? "caret-up" : "caret-down"}
+                    size={20}
+                  />
+                )}
+                renderItem={(item) => {
+                  return (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingHorizontal: 16,
+                        paddingVertical: 8,
+                        backgroundColor:
+                          item.name == topic.name ? "#F39300" : "white",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "500",
+                          color: item.name == topic.name ? "white" : "black",
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                      {topic.name == item.name && (
+                        <Ionicons color="white" name="checkmark" size={24} />
+                      )}
+                    </View>
+                  );
+                }}
+              />
               <TouchableOpacity
-                disabled={content === "" || counselorType === ""}
+                disabled={
+                  content === "" || counselorType === "" || topic === ""
+                }
                 style={{
                   backgroundColor:
-                    content === "" || counselorType === ""
+                    content === "" || counselorType === "" || topic === ""
                       ? "#ededed"
                       : "#F39300",
-                  marginTop: 8,
+                  marginTop: 16,
                   paddingVertical: 8,
                   paddingHorizontal: 12,
                   borderRadius: 10,
                   alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  bottom: 20,
+                  left: 20,
+                  right: 20
                 }}
                 onPress={handleOpenConfirm}
               >
@@ -1945,7 +2055,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -2235,7 +2345,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -2335,7 +2445,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -2435,7 +2545,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -2567,11 +2677,11 @@ export default function QA() {
                         marginVertical: 4,
                         fontSize: 16,
                         textAlign: "left",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
-                      Our staff have determined that your behavior
-                      has been in violation of Create Question's principle.
+                      Our staff have determined that your behavior has been in
+                      violation of Create Question's principle.
                     </Text>
                     <View style={{ marginTop: 8 }}>
                       <Text
@@ -2582,7 +2692,7 @@ export default function QA() {
                         }}
                       >
                         Reviewed:{" "}
-                        <Text style={{ color: "black", fontWeight: "600" }}>
+                        <Text style={{ color: "#333", fontWeight: "600" }}>
                           {banInfo?.banStartDate?.split("T")[0]},{" "}
                           {banInfo?.banStartDate?.split("T")[1].split(":")[0]}:
                           {banInfo?.banStartDate?.split("T")[1].split(":")[1]}
@@ -2596,7 +2706,7 @@ export default function QA() {
                         }}
                       >
                         Ban End:{" "}
-                        <Text style={{ color: "black", fontWeight: "600" }}>
+                        <Text style={{ color: "#333", fontWeight: "600" }}>
                           {banInfo?.banEndDate?.split("T")[0]},{" "}
                           {banInfo?.banEndDate?.split("T")[1].split(":")[0]}:
                           {banInfo?.banEndDate?.split("T")[1].split(":")[1]}
@@ -2604,45 +2714,45 @@ export default function QA() {
                       </Text>
                     </View>
                     <View
-                    style={{
-                      marginTop: 8,
-                      padding: 12,
-                      backgroundColor: "#ffefef",
-                      borderWidth: 2,
-                      borderColor: "red",
-                      borderRadius: 10,
-                    }}
-                  >
-                    <Text
                       style={{
-                        fontSize: 18,
-                        color: "red",
-                        fontWeight: "500",
-                        textAlign: "left",
+                        marginTop: 8,
+                        padding: 12,
+                        backgroundColor: "#ffefef",
+                        borderWidth: 2,
+                        borderColor: "red",
+                        borderRadius: 10,
                       }}
                     >
-                      You have been banned from creating new questions.{"\n"}
-                      {(() => {
-                        const current = new Date();
-                        const banEndTime = new Date(banInfo.banEndDate);
-                        const timeDiff = banEndTime - current;
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: "red",
+                          fontWeight: "500",
+                          textAlign: "left",
+                        }}
+                      >
+                        You have been banned from creating new questions.{"\n"}
+                        {(() => {
+                          const current = new Date();
+                          const banEndTime = new Date(banInfo.banEndDate);
+                          const timeDiff = banEndTime - current;
 
-                        if (timeDiff > 0) {
-                          const daysLeft = Math.floor(
-                            timeDiff / (1000 * 60 * 60 * 24)
-                          );
-                          const hoursLeft = Math.floor(
-                            (timeDiff % (1000 * 60 * 60 * 24)) /
-                              (1000 * 60 * 60)
-                          );
+                          if (timeDiff > 0) {
+                            const daysLeft = Math.floor(
+                              timeDiff / (1000 * 60 * 60 * 24)
+                            );
+                            const hoursLeft = Math.floor(
+                              (timeDiff % (1000 * 60 * 60 * 24)) /
+                                (1000 * 60 * 60)
+                            );
 
-                          return `Time remaining: ${daysLeft} days and ${hoursLeft} hours.`;
-                        } else {
-                          return "Your ban has been lifted.";
-                        }
-                      })()}
-                    </Text>
-                  </View>
+                            return `Time remaining: ${daysLeft} days and ${hoursLeft} hours.`;
+                          } else {
+                            return "Your ban has been lifted.";
+                          }
+                        })()}
+                      </Text>
+                    </View>
                   </View>
                   {banInfo?.questionFlags?.map((flag, index) => (
                     <View
@@ -2657,12 +2767,16 @@ export default function QA() {
                       }}
                     >
                       <Text
-                        style={{ fontSize: 20, color: "#333", fontWeight: "bold"}}
+                        style={{
+                          fontSize: 20,
+                          color: "#333",
+                          fontWeight: "bold",
+                        }}
                       >
                         {flag.questionCard.content}
                       </Text>
                       <Text
-                        style={{ fontSize: 18, color: "black", marginTop: 4 }}
+                        style={{ fontSize: 18, color: "#333", marginTop: 4 }}
                       >
                         <Text style={{ fontWeight: "bold", color: "#F39300" }}>
                           Reason:
@@ -2670,13 +2784,19 @@ export default function QA() {
                         {flag.reason}
                       </Text>
                       <Text
-                        style={{ fontSize: 18, color: "#F39300", fontWeight: "500", marginTop: 4 }}
+                        style={{
+                          fontSize: 18,
+                          color: "#F39300",
+                          fontWeight: "500",
+                          marginTop: 4,
+                        }}
                       >
-                        Reviewed on: <Text
-                        style={{ color: "#333", fontWeight: "500" }}
-                      >{flag?.flagDate?.split("T")[0]},{" "}
-                        {flag?.flagDate?.split("T")[1].split(":")[0]}:
-                        {flag?.flagDate?.split("T")[1].split(":")[1]}</Text>
+                        Reviewed on:{" "}
+                        <Text style={{ color: "#333", fontWeight: "500" }}>
+                          {flag?.flagDate?.split("T")[0]},{" "}
+                          {flag?.flagDate?.split("T")[1].split(":")[0]}:
+                          {flag?.flagDate?.split("T")[1].split(":")[1]}
+                        </Text>
                       </Text>
                     </View>
                   ))}
@@ -2774,7 +2894,7 @@ export default function QA() {
                     <Text
                       style={{
                         fontSize: 20,
-                        color: "black",
+                        color: "#333",
                         fontWeight: "500",
                         opacity: 0.7,
                       }}
@@ -2852,7 +2972,7 @@ export default function QA() {
                             style={{
                               fontSize: 24,
                               fontWeight: "bold",
-                              color: "black",
+                              color: "#333",
                               marginBottom: 4,
                             }}
                           >
@@ -2862,7 +2982,7 @@ export default function QA() {
                             style={{
                               fontSize: 20,
                               fontWeight: "500",
-                              color: "black",
+                              color: "#333",
                               marginBottom: 2,
                             }}
                           >
@@ -2892,7 +3012,7 @@ export default function QA() {
                       <Text
                         style={{
                           fontSize: 20,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                           opacity: 0.7,
                         }}
@@ -2926,7 +3046,7 @@ export default function QA() {
                       <Text
                         style={{
                           fontSize: 20,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                           opacity: 0.7,
                         }}
@@ -2937,7 +3057,7 @@ export default function QA() {
                       <Text
                         style={{
                           fontSize: 20,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                           opacity: 0.7,
                         }}
@@ -3328,7 +3448,7 @@ export default function QA() {
                       textAlign: "center",
                       fontSize: 18,
                       fontWeight: "500",
-                      color: "black",
+                      color: "#333",
                       lineHeight: 24,
                       opacity: 0.8,
                     }}

@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function NotificationDetail({ route }) {
   const { notificationData } = route.params; // Data passed from Notification component
+  const prevScreen = route.params.prevScreen;
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
   // Convert createdDate to a human-readable format
@@ -36,7 +37,7 @@ export default function NotificationDetail({ route }) {
               alignSelf: "flex-start",
               alignItems: "flex-start",
             }}
-            onPress={() => navigation.navigate("Notification")}
+            onPress={() => navigation.navigate(prevScreen || "Notification")}
           >
             <Ionicons name="arrow-back-outline" size={30} color="#F39300" />
           </TouchableOpacity>

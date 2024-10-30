@@ -53,6 +53,21 @@ export const AuthProvider = ({ children }) => {
       const profileData = profileRes?.data?.content?.profile || null;
       if (userData.role == "STUDENT") {
         profileData["studentCode"] = profileRes?.data?.content?.studentCode;
+        profileData["specialization"] = profileRes?.data?.content?.specialization;
+        profileData["department"] = profileRes?.data?.content?.department;
+        profileData["major"] = profileRes?.data?.content?.major;
+      }
+      if (userData.role == "ACADEMIC_COUNSELOR") {
+        profileData["status"] = profileRes?.data?.content?.status;
+        profileData["specialization"] = profileRes?.data?.content?.specialization;
+        profileData["academicDegree"] = profileRes?.data?.content?.academicDegree;
+        profileData["department"] = profileRes?.data?.content?.department;
+        profileData["major"] = profileRes?.data?.content?.major;
+      }
+      if (userData.role == "NON_ACADEMIC_COUNSELOR") {
+        profileData["status"] = profileRes?.data?.content?.status;
+        profileData["expertise"] = profileRes?.data?.content?.expertise;
+        profileData["industryExperience"] = profileRes?.data?.content?.industryExperience;
       }
       setProfile(profileData);
     } catch (err) {

@@ -209,7 +209,7 @@ export default function Personal() {
                 style={{
                   fontSize: 20,
                   fontWeight: "700",
-                  color: "black",
+                  color: "#333",
                 }}
               >
                 Requests
@@ -282,7 +282,7 @@ export default function Personal() {
                 style={{
                   fontSize: 20,
                   fontWeight: "700",
-                  color: "black",
+                  color: "#333",
                 }}
               >
                 Appointments

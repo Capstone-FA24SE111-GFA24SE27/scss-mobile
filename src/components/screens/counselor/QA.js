@@ -26,13 +26,13 @@ export default function QA() {
   const [questions, setQuestions] = useState([]);
   const [filters, setFilters] = useState({
     isClosed: "",
-    // studentCode: "",
+    studentCode: null,
     sortDirection: "",
   });
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
   const [isClosed, setIsClosed] = useState("");
-  const [studentCode, setStudentCode] = useState("");
+  const [studentCode, setStudentCode] = useState(null);
   const [sortDirection, setSortDirection] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
@@ -96,7 +96,7 @@ export default function QA() {
   const applyFilters = () => {
     const newFilters = {
       isClosed: isClosed,
-      // studentCode: studentCode,
+      studentCode: studentCode,
       sortDirection: sortDirection,
     };
     setFilters(newFilters);
@@ -106,12 +106,12 @@ export default function QA() {
   const cancelFilters = () => {
     const resetFilters = {
       isClosed: "",
-      // studentCode: "",
+      studentCode: null,
       sortDirection: "",
     };
     setKeyword("");
     setIsClosed(resetFilters.isClosed);
-    // setStudentCode(resetFilters.studentCode);
+    setStudentCode(resetFilters.studentCode);
     setSortDirection(resetFilters.sortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
@@ -261,7 +261,7 @@ export default function QA() {
                   style={{
                     fontSize: 24,
                     opacity: 0.8,
-                    color: "black",
+                    color: "#333",
                     fontWeight: "600",
                   }}
                 >
@@ -328,7 +328,46 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
+                        minWidth: 54,
+                      }}
+                    >
+                      Student Code:
+                    </Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <TextInput
+                        value={studentCode}
+                        onChangeText={(value) => setStudentCode(value)}
+                        placeholder="Input Student Code"
+                        style={{
+                          backgroundColor: "white",
+                          borderColor: "black",
+                          flex: 0.75,
+                          height: 30,
+                          borderWidth: 1,
+                          borderColor: "grey",
+                          borderRadius: 10,
+                          paddingHorizontal: 12,
+                          marginLeft: 8,
+                        }}
+                        placeholderTextColor="gray"
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -418,7 +457,7 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -515,7 +554,7 @@ export default function QA() {
                     >
                       <Text
                         style={{
-                          color: "black",
+                          color: "#333",
                           fontSize: 16,
                           fontWeight: "600",
                           opacity: 0.7,
@@ -602,7 +641,7 @@ export default function QA() {
                           style={{
                             fontWeight: "600",
                             fontSize: 16,
-                            color: "black",
+                            color: "#333",
                             marginLeft: 8,
                           }}
                         >
@@ -768,7 +807,7 @@ export default function QA() {
                               fontWeight: "500",
                               color: "white",
                               fontSize: 16,
-                              marginLeft: 8
+                              marginLeft: 8,
                             }}
                           >
                             Take
@@ -806,7 +845,7 @@ export default function QA() {
               onPress={() => setCurrentPage(1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<<"}
               </Text>
             </TouchableOpacity>
@@ -824,7 +863,7 @@ export default function QA() {
               onPress={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<"}
               </Text>
             </TouchableOpacity>
@@ -846,7 +885,7 @@ export default function QA() {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "black",
+                  color: "#333",
                   fontWeight: "600",
                 }}
               >
@@ -878,7 +917,7 @@ export default function QA() {
                 questions.totalPages == 0 || currentPage >= questions.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">"}
               </Text>
             </TouchableOpacity>
@@ -906,7 +945,7 @@ export default function QA() {
                 questions.totalPages == 0 || currentPage >= questions.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">>"}
               </Text>
             </TouchableOpacity>
@@ -952,8 +991,8 @@ export default function QA() {
                   textAlign: "center",
                 }}
               >
-                Are you sure you want to take this question? Only you can answer and chat
-                with the student through this question
+                Are you sure you want to take this question? Only you can answer
+                and chat with the student through this question
               </Text>
               <View
                 style={{
@@ -978,7 +1017,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -1099,7 +1138,7 @@ export default function QA() {
                     <Text
                       style={{
                         fontSize: 20,
-                        color: "black",
+                        color: "#333",
                         fontWeight: "500",
                         opacity: 0.7,
                       }}
@@ -1175,7 +1214,7 @@ export default function QA() {
                           style={{
                             fontSize: 24,
                             fontWeight: "bold",
-                            color: "black",
+                            color: "#333",
                             marginBottom: 4,
                           }}
                         >
@@ -1185,7 +1224,7 @@ export default function QA() {
                           style={{
                             fontSize: 20,
                             fontWeight: "500",
-                            color: "black",
+                            color: "#333",
                             marginBottom: 2,
                           }}
                         >
@@ -1237,7 +1276,7 @@ export default function QA() {
                       <Text
                         style={{
                           fontSize: 20,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                           opacity: 0.7,
                         }}
@@ -1248,7 +1287,7 @@ export default function QA() {
                       <Text
                         style={{
                           fontSize: 20,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                           opacity: 0.7,
                         }}

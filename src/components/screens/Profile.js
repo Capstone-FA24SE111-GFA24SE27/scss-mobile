@@ -18,7 +18,7 @@ import Toast from "react-native-toast-message";
 
 export default function Profile() {
   const navigation = useNavigation();
-  const { width, height } = Dimensions.get("window");
+  const { width, height } = Dimensions.get("screen");
   const [isEnabled, setIsEnabled] = useState(false);
   const [open, setIsOpen] = useState(false);
   const { userData, profile, fetchProfile, logout } = useContext(AuthContext);
@@ -35,6 +35,14 @@ export default function Profile() {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
   const handleLogout = () => {
@@ -104,57 +112,242 @@ export default function Profile() {
               borderRadius: 20,
               elevation: 5,
               marginBottom: 12,
-              alignItems: "center",
-              marginHorizontal: width * 0.075,
-              paddingVertical: height * 0.015,
+              marginHorizontal: 30,
+              paddingVertical: 8,
             }}
           >
-            <Image
-              source={{ uri: userData?.profile?.avatarLink }}
+            <View
               style={{
-                marginBottom: 8,
-                width: width * 0.2,
-                height: width * 0.2,
-                borderRadius: width * 0.1,
+                flexDirection: "row",
+                paddingHorizontal: 16,
+                paddingVertical: 8,
               }}
-            />
-            {profile && (
-              <>
-                <Text style={{ fontWeight: "bold", fontSize: width * 0.06 }}>
-                  {profile.fullName}
+            >
+              <View style={{ width: "40%" }}>
+                <Image
+                  source={{
+                    uri: profile?.avatarLink,
+                  }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 100,
+                    // marginBottom: 12,
+                    borderColor: "#F39300",
+                    borderWidth: 2,
+                  }}
+                />
+                <View
+                  style={{
+                    padding: 5,
+                    backgroundColor: "#F39300",
+                    borderRadius: 30,
+                    position: "absolute",
+                    right: 30,
+                    bottom: 0,
+                  }}
+                >
+                  <Ionicons
+                    name={profile?.gender == "MALE" ? "male" : "female"}
+                    size={24}
+                    style={{ color: "white" }}
+                  />
+                </View>
+              </View>
+              <View style={{ width: "60%" }}>
+                <Text
+                  style={{
+                    fontSize: 24,
+                    fontWeight: "bold",
+                    color: "#333",
+                    marginBottom: 2,
+                  }}
+                >
+                  {profile?.fullName}
                 </Text>
                 <Text
                   style={{
-                    fontWeight: "600",
-                    fontSize: width * 0.035,
-                    opacity: 0.5,
+                    fontSize: 18,
+                    color: "gray",
+                    marginBottom: 2,
                   }}
                 >
-                  {userData.email}
+                  {userData?.email}
                 </Text>
-              </>
-            )}
-            <TouchableOpacity
-              style={{
-                marginTop: 8,
-                backgroundColor: "#F39300",
-                borderRadius: 20,
-                alignItems: "center",
-                paddingHorizontal: width * 0.06,
-                paddingVertical: height * 0.01,
-              }}
-              onPress={() => navigation.navigate("ViewProfile")}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  fontWeight: "600",
-                  fontSize: width * 0.04,
-                }}
-              >
-                View Profile
-              </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    backgroundColor: "#F39300",
+                    borderRadius: 20,
+                    padding: 8
+                  }}
+                  onPress={() => navigation.navigate("ViewProfile")}
+                >
+                  <Ionicons
+                    name="expand"
+                    size={20}
+                    style={{ color: "white" }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={{ paddingHorizontal: 20, paddingVertical: 15 }}>
+              {profile && (
+                <View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "flex-start",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Student Code:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.studentCode}
+                      </Text>
+                    </View>
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Phone Number:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.phoneNumber}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "flex-start",
+                      marginTop: 16,
+                    }}
+                  >
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Date of birth:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {formatDate(profile.dateOfBirth)}
+                      </Text>
+                    </View>
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Specialization:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.specialization?.name}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "flex-start",
+                      marginTop: 16,
+                    }}
+                  >
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Department:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.department?.name}
+                      </Text>
+                    </View>
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Major:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.major?.name}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
           </View>
           <View
             style={{
@@ -201,7 +394,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -242,7 +435,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -302,7 +495,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -345,7 +538,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -461,7 +654,7 @@ export default function Profile() {
                         <Text
                           style={{
                             fontSize: 18,
-                            color: "black",
+                            color: "#333",
                             fontWeight: "600",
                           }}
                         >

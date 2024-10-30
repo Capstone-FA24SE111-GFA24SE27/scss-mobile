@@ -41,6 +41,52 @@ export const NotificationProvider = ({ children }) => {
 
   console.log(appState)
 
+  const markAsRead = async (notificationId, item) => {
+    try {
+      console.log(
+        "Marking as read - Notification ID: ",
+        notificationId,
+        "Item:",
+        item
+      );
+      const response = await axiosJWT.put(
+        `${BASE_URL}/notification/read/${notificationId}`,
+        {}
+      );
+
+      const result = response.data;
+
+      if (result && result.status === 200) {
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notification) =>
+            notification.notificationId === notificationId
+              ? { ...notification, readStatus: true }
+              : notification
+          )
+        );
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: result.message || "Failed to mark all notifications as read.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An error occurred while marking the notification as read.",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
   useEffect(() => {
     if (userData?.id) {
       const fetchNotifications = async () => {
@@ -93,7 +139,8 @@ export const NotificationProvider = ({ children }) => {
               text2: data.message,
               onPress: () => {
                 Toast.hide();
-                navigationRef.current?.navigate("NotificationDetail", { notificationData: data });
+                markAsRead(data.notificationId, data)
+                navigationRef.current?.navigate("NotificationDetail", { notificationData: data, prevScreen: navigationRef.current?.getCurrentRoute().name });
               },
             });
           } catch (error) {

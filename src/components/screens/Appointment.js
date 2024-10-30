@@ -20,6 +20,7 @@ import { AuthContext } from "../context/AuthContext";
 import { SocketContext } from "../context/SocketContext";
 import { RequestSkeleton } from "../layout/Skeleton";
 import { Dropdown } from "react-native-element-dropdown";
+import Toast from "react-native-toast-message";
 
 export default function Appointment() {
   const navigation = useNavigation();
@@ -52,6 +53,7 @@ export default function Appointment() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
+  const [openCancel, setOpenCancel] = useState(false);
   const [openFeedback, setOpenFeedback] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [info, setInfo] = useState({});
@@ -276,6 +278,55 @@ export default function Appointment() {
     setOpenInfo(true);
   };
 
+  const handleOpenCancel = (id) => {
+    setOpenCancel(true);
+    setSelectedAppointment(id);
+  };
+
+  const handleCancelAppointment = async () => {
+    try {
+      const response = await axiosJWT.post(
+        `${BASE_URL}/booking-counseling/student/cancel/${selectedAppointment}`,
+        {
+          reason: value,
+        }
+      );
+      const data = await response.data;
+      if (data && data.status == 200) {
+        fetchData();
+        setOpenCancel(false);
+        setSelectedAppointment(null);
+        setValue("");
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to cancel appointment.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+      }
+      // console.log(selectedAppointment, value)
+    } catch (error) {
+      console.log("Something error when cancel this appointment", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Something error when cancel this appointment",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
+    }
+  };
+
+  const handleCloseCancel = () => {
+    setOpenCancel(false);
+    setSelectedAppointment(null);
+    setValue("");
+  };
+
   const handleOpenFeedback = async (id) => {
     setOpenFeedback(true);
     setSelectedAppointment(id);
@@ -379,7 +430,7 @@ export default function Appointment() {
                   style={{
                     fontSize: 24,
                     opacity: 0.8,
-                    color: "black",
+                    color: "#333",
                     fontWeight: "600",
                   }}
                 >
@@ -545,7 +596,7 @@ export default function Appointment() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       Sort:
@@ -634,7 +685,7 @@ export default function Appointment() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       Status:
@@ -731,7 +782,7 @@ export default function Appointment() {
                     >
                       <Text
                         style={{
-                          color: "black",
+                          color: "#333",
                           fontSize: 16,
                           fontWeight: "600",
                           opacity: 0.7,
@@ -774,6 +825,7 @@ export default function Appointment() {
         >
           {loading ? (
             <>
+              <RequestSkeleton />
               <RequestSkeleton />
               <RequestSkeleton />
               <RequestSkeleton />
@@ -914,7 +966,7 @@ export default function Appointment() {
                     flexDirection: "row",
                     flexWrap: "wrap",
                     justifyContent: "space-between",
-                    marginBottom: 8,
+                    alignItems: "center",
                   }}
                 >
                   <View>
@@ -938,10 +990,41 @@ export default function Appointment() {
                           },
                         ]}
                       >
-                      {appointment.status}
+                        {appointment.status}
                       </Text>
                     </Text>
                   </View>
+                  {appointment.status === "WAITING" && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => handleOpenCancel(appointment.id)}
+                        activeOpacity={0.6}
+                        style={{
+                          backgroundColor: "#ededed",
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          borderRadius: 10,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            fontWeight: "600",
+                          }}
+                        >
+                          Cancel
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </View>
                 {/* <View
                   style={{
@@ -1007,7 +1090,7 @@ export default function Appointment() {
               onPress={() => setCurrentPage(1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<<"}
               </Text>
             </TouchableOpacity>
@@ -1025,7 +1108,7 @@ export default function Appointment() {
               onPress={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<"}
               </Text>
             </TouchableOpacity>
@@ -1047,7 +1130,7 @@ export default function Appointment() {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "black",
+                  color: "#333",
                   fontWeight: "600",
                 }}
               >
@@ -1080,7 +1163,7 @@ export default function Appointment() {
                 currentPage >= appointments.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">"}
               </Text>
             </TouchableOpacity>
@@ -1109,7 +1192,7 @@ export default function Appointment() {
                 currentPage >= appointments.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">>"}
               </Text>
             </TouchableOpacity>
@@ -1213,7 +1296,7 @@ export default function Appointment() {
                         style={{
                           fontSize: 24,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                           marginBottom: 4,
                         }}
                       >
@@ -1223,7 +1306,7 @@ export default function Appointment() {
                         style={{
                           fontSize: 20,
                           fontWeight: "500",
-                          color: "black",
+                          color: "#333",
                           marginBottom: 2,
                         }}
                       >
@@ -1511,7 +1594,7 @@ export default function Appointment() {
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                         }}
                       >
@@ -1520,7 +1603,8 @@ export default function Appointment() {
                       {new Date().toISOString().split("T")[0] <=
                         info?.startDateTime?.split("T")[0] &&
                         info.status !== "WAITING" &&
-                        info.status !== "ABSENT" && (
+                        info.status !== "ABSENT" &&
+                        info.status !== "CANCELED" && (
                           <TouchableOpacity
                             onPress={() => handleOpenFeedback(info.id)}
                             activeOpacity={0.6}
@@ -1662,7 +1746,7 @@ export default function Appointment() {
                                   style={{
                                     fontSize: 18,
                                     fontWeight: "bold",
-                                    color: "black",
+                                    color: "#333",
                                   }}
                                 >
                                   Cancel
@@ -1699,6 +1783,136 @@ export default function Appointment() {
                   )}
                 </View>
               </ScrollView>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openCancel}
+          animationType="fade"
+          onRequestClose={handleCloseCancel}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <View
+              style={{
+                width: width * 0.8,
+                padding: 20,
+                backgroundColor: "white",
+                borderRadius: 10,
+                elevation: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginBottom: 10,
+                  textAlign: "center",
+                }}
+              >
+                Cancel Appointment Confirmation
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  marginBottom: 30,
+                  textAlign: "center",
+                }}
+              >
+                Are you sure you want to cancel this appointment?
+                {"\n"}
+                You need to provide your reason
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginBottom: 10,
+                  fontWeight: "600",
+                }}
+              >
+                Reason <Text style={{ color: "#F39300", fontSize: 20 }}>*</Text>
+              </Text>
+              <View>
+                <TextInput
+                  placeholder="Input here"
+                  placeholderTextColor="gray"
+                  keyboardType="default"
+                  value={value}
+                  onChangeText={(value) => setValue(value)}
+                  style={{
+                    fontWeight: "600",
+                    fontSize: 16,
+                    opacity: 0.8,
+                    paddingVertical: 8,
+                    textAlignVertical: "center",
+                    paddingHorizontal: 12,
+                    backgroundColor: "#ededed",
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    marginBottom: 20,
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#ededed",
+                    padding: 10,
+                    borderRadius: 10,
+                    marginRight: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "gray",
+                  }}
+                  onPress={handleCloseCancel}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "#333",
+                      fontWeight: "600",
+                    }}
+                  >
+                    No
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#F39300",
+                    padding: 10,
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={handleCancelAppointment}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Yes
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>

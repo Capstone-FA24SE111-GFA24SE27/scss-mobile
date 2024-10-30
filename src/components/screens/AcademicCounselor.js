@@ -209,7 +209,6 @@ export default function AcademicCounselor() {
       );
       const counselorData = counselorRes?.data || [];
       setSelectedCounselor(counselorData);
-      console.log(counselors);
       // setSelectedDate(new Date().toISOString().split("T")[0]);
       setSelectedDate((prev) => {
         return selectedDate || prev;
@@ -556,7 +555,7 @@ export default function AcademicCounselor() {
                 }}
               >
                 <View style={{ alignItems: "flex-start" }}>
-                  <Text style={{ fontSize: 20, opacity: 0.8, color: "black" }}>
+                  <Text style={{ fontSize: 20, opacity: 0.8, color: "#333" }}>
                     {counselors.totalElements} Counselors found in{" "}
                     <Text style={{ fontWeight: "bold", opacity: 1 }}>
                       FPT HCM
@@ -755,7 +754,7 @@ export default function AcademicCounselor() {
                         style={{
                           fontSize: 16,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                         }}
                       >
                         Sort:
@@ -848,7 +847,7 @@ export default function AcademicCounselor() {
                         style={{
                           fontSize: 16,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                         }}
                       >
                         Specialization:
@@ -959,7 +958,7 @@ export default function AcademicCounselor() {
                       >
                         <Text
                           style={{
-                            color: "black",
+                            color: "#333",
                             fontSize: 16,
                             fontWeight: "600",
                             opacity: 0.7,
@@ -1028,8 +1027,8 @@ export default function AcademicCounselor() {
                     <Image
                       source={{ uri: item.profile.avatarLink }}
                       style={{
-                        width: width * 0.14,
-                        height: width * 0.14,
+                        width: 60,
+                        height: 60,
                         marginRight: 8,
                         borderRadius: 40,
                       }}
@@ -1046,7 +1045,7 @@ export default function AcademicCounselor() {
                         style={{
                           fontSize: 20,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                         }}
                       >
                         {item.profile.fullName}
@@ -1420,16 +1419,38 @@ export default function AcademicCounselor() {
                           </View>
                         </View>
                         <View style={{ marginVertical: 12 }}>
-                          <Text
+                          <View
                             style={{
-                              fontSize: 18,
-                              marginHorizontal: 20,
-                              fontWeight: "600",
-                              marginBottom: 12,
+                              flexDirection: "row",
+                              justifyContent: "space-between",
                             }}
                           >
-                            Available Time
-                          </Text>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                marginHorizontal: 20,
+                                fontWeight: "600",
+                                marginBottom: 12,
+                              }}
+                            >
+                              Available Time
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                marginHorizontal: 20,
+                                fontWeight: "400",
+                                marginBottom: 12,
+                              }}
+                            >
+                              Date:{" "}
+                              <Text
+                                style={{ fontWeight: "600", color: "#F39300" }}
+                              >
+                                {selectedDate}
+                              </Text>
+                            </Text>
+                          </View>
                           <WeekCalendar
                             hideKnob
                             initialPosition="close"
@@ -1814,7 +1835,7 @@ export default function AcademicCounselor() {
                             <Text
                               style={{
                                 fontSize: 18,
-                                color: "black",
+                                color: "#333",
                                 fontWeight: "600",
                               }}
                             >
@@ -1980,7 +2001,7 @@ export default function AcademicCounselor() {
               onPress={() => setCurrentPage(1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<<"}
               </Text>
             </TouchableOpacity>
@@ -1998,7 +2019,7 @@ export default function AcademicCounselor() {
               onPress={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<"}
               </Text>
             </TouchableOpacity>
@@ -2020,7 +2041,7 @@ export default function AcademicCounselor() {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "black",
+                  color: "#333",
                   fontWeight: "600",
                 }}
               >
@@ -2053,7 +2074,7 @@ export default function AcademicCounselor() {
                 currentPage >= counselors.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">"}
               </Text>
             </TouchableOpacity>
@@ -2082,7 +2103,7 @@ export default function AcademicCounselor() {
                 currentPage >= counselors.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">>"}
               </Text>
             </TouchableOpacity>

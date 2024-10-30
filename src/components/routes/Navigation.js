@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -34,6 +34,7 @@ import NotificationDetail from "../screens/NotificationDetail";
 import CounselorNavigation from "./CounselorNavigation";
 import QA from "../screens/QA";
 import QANavigation from "./QANavigation";
+import Student from "../screens/counselor/Student";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -102,6 +103,13 @@ export default function Navigation() {
       active: "home",
       inActive: "home-outline",
       component: HomeCounselor,
+    },
+    {
+      route: "Student",
+      label: "Student",
+      active: "clipboard",
+      inActive: "clipboard-outline",
+      component: Student,
     },
     {
       route: "Schedule",
