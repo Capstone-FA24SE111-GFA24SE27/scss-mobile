@@ -334,7 +334,7 @@ export default function Request() {
                   style={{
                     fontSize: 24,
                     opacity: 0.8,
-                    color: "black",
+                    color: "#333",
                     fontWeight: "600",
                   }}
                 >
@@ -499,7 +499,7 @@ export default function Request() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       Method:
@@ -590,7 +590,7 @@ export default function Request() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       Sort:
@@ -688,7 +688,7 @@ export default function Request() {
                     >
                       <Text
                         style={{
-                          color: "black",
+                          color: "#333",
                           fontSize: 16,
                           fontWeight: "600",
                           opacity: 0.7,
@@ -731,6 +731,7 @@ export default function Request() {
         >
           {loading ? (
             <>
+              <RequestSkeleton />
               <RequestSkeleton />
               <RequestSkeleton />
               <RequestSkeleton />
@@ -906,7 +907,7 @@ export default function Request() {
               onPress={() => setCurrentPage(1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<<"}
               </Text>
             </TouchableOpacity>
@@ -924,7 +925,7 @@ export default function Request() {
               onPress={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<"}
               </Text>
             </TouchableOpacity>
@@ -946,7 +947,7 @@ export default function Request() {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "black",
+                  color: "#333",
                   fontWeight: "600",
                 }}
               >
@@ -976,7 +977,7 @@ export default function Request() {
                 requests.totalPages == 0 || currentPage >= requests.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">"}
               </Text>
             </TouchableOpacity>
@@ -1002,7 +1003,7 @@ export default function Request() {
                 requests.totalPages == 0 || currentPage >= requests.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">>"}
               </Text>
             </TouchableOpacity>
@@ -1136,7 +1137,7 @@ export default function Request() {
                         style={{
                           fontSize: 24,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                           marginBottom: 4,
                         }}
                       >
@@ -1146,7 +1147,7 @@ export default function Request() {
                         style={{
                           fontSize: 20,
                           fontWeight: "500",
-                          color: "black",
+                          color: "#333",
                           marginBottom: 2,
                         }}
                       >
@@ -1196,7 +1197,7 @@ export default function Request() {
                     <Text
                       style={{
                         fontSize: 20,
-                        color: "black",
+                        color: "#333",
                         fontWeight: "500",
                         opacity: 0.7,
                       }}

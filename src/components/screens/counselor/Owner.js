@@ -45,6 +45,7 @@ export default function QA() {
   } = useContext(ChatContext);
   const socket = useContext(SocketContext);
   const scrollViewRef = useRef(null);
+  const [studentCode, setStudentCode] = useState(null);
   const [isClosed, setIsClosed] = useState("");
   const [sortDirection, setSortDirection] = useState("");
   const [openAnswer, setOpenAnswer] = useState(false);
@@ -75,6 +76,7 @@ export default function QA() {
 
   const applyFilters = () => {
     const newFilters = {
+      studentCode: studentCode,
       isClosed: isClosed,
       sortDirection: sortDirection,
     };
@@ -84,10 +86,12 @@ export default function QA() {
 
   const cancelFilters = () => {
     const resetFilters = {
+      studentCode: null,
       isClosed: "",
       sortDirection: "",
     };
     setKeyword("");
+    setStudentCode(resetFilters.studentCode);
     setIsClosed(resetFilters.isClosed);
     setSortDirection(resetFilters.sortDirection);
     setFilters(resetFilters);
@@ -328,7 +332,7 @@ export default function QA() {
                   style={{
                     fontSize: 24,
                     opacity: 0.8,
-                    color: "black",
+                    color: "#333",
                     fontWeight: "600",
                   }}
                 >
@@ -396,7 +400,46 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
+                        minWidth: 54,
+                      }}
+                    >
+                      Student Code:
+                    </Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <TextInput
+                        value={studentCode}
+                        onChangeText={(value) => setStudentCode(value)}
+                        placeholder="Input Student Code"
+                        style={{
+                          backgroundColor: "white",
+                          borderColor: "black",
+                          flex: 0.75,
+                          height: 30,
+                          borderWidth: 1,
+                          borderColor: "grey",
+                          borderRadius: 10,
+                          paddingHorizontal: 12,
+                          marginLeft: 8,
+                        }}
+                        placeholderTextColor="gray"
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -486,7 +529,7 @@ export default function QA() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                         minWidth: 54,
                       }}
                     >
@@ -583,7 +626,7 @@ export default function QA() {
                     >
                       <Text
                         style={{
-                          color: "black",
+                          color: "#333",
                           fontSize: 16,
                           fontWeight: "600",
                           opacity: 0.7,
@@ -670,7 +713,7 @@ export default function QA() {
                           style={{
                             fontWeight: "600",
                             fontSize: 16,
-                            color: "black",
+                            color: "#333",
                             marginLeft: 8,
                           }}
                         >
@@ -810,11 +853,7 @@ export default function QA() {
                             borderColor: "gray",
                           }}
                         >
-                          <Ionicons
-                            name="lock-closed"
-                            color="gray"
-                            size={20}
-                          />
+                          <Ionicons name="lock-closed" color="gray" size={20} />
                         </View>
                       )}
                     </View>
@@ -886,7 +925,7 @@ export default function QA() {
                           }}
                         >
                           Answered by{" "}
-                          <Text style={{ fontWeight: "bold", color: "black" }}>
+                          <Text style={{ fontWeight: "bold", color: "#333" }}>
                             You
                           </Text>
                         </Text>
@@ -919,7 +958,7 @@ export default function QA() {
                         <Text
                           style={{
                             fontSize: 16,
-                            color: "black",
+                            color: "#333",
                           }}
                           numberOfLines={2}
                         >
@@ -1035,7 +1074,7 @@ export default function QA() {
               onPress={() => setCurrentPage(1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<<"}
               </Text>
             </TouchableOpacity>
@@ -1053,7 +1092,7 @@ export default function QA() {
               onPress={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<"}
               </Text>
             </TouchableOpacity>
@@ -1075,7 +1114,7 @@ export default function QA() {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "black",
+                  color: "#333",
                   fontWeight: "600",
                 }}
               >
@@ -1107,7 +1146,7 @@ export default function QA() {
                 questions.totalPages == 0 || currentPage >= questions.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">"}
               </Text>
             </TouchableOpacity>
@@ -1135,7 +1174,7 @@ export default function QA() {
                 questions.totalPages == 0 || currentPage >= questions.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">>"}
               </Text>
             </TouchableOpacity>
@@ -1314,7 +1353,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -1411,7 +1450,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -1606,7 +1645,7 @@ export default function QA() {
                     <Text
                       style={{
                         fontSize: 20,
-                        color: "black",
+                        color: "#333",
                         fontWeight: "500",
                         opacity: 0.7,
                       }}
@@ -1682,7 +1721,7 @@ export default function QA() {
                           style={{
                             fontSize: 24,
                             fontWeight: "bold",
-                            color: "black",
+                            color: "#333",
                             marginBottom: 4,
                           }}
                         >
@@ -1692,7 +1731,7 @@ export default function QA() {
                           style={{
                             fontSize: 20,
                             fontWeight: "500",
-                            color: "black",
+                            color: "#333",
                             marginBottom: 2,
                           }}
                         >
@@ -1744,7 +1783,7 @@ export default function QA() {
                       <Text
                         style={{
                           fontSize: 20,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                           opacity: 0.7,
                         }}
@@ -1755,7 +1794,7 @@ export default function QA() {
                       <Text
                         style={{
                           fontSize: 20,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                           opacity: 0.7,
                         }}
@@ -1868,7 +1907,7 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                     }}
                   >
@@ -1981,8 +2020,8 @@ export default function QA() {
                           marginLeft: 8,
                         }}
                       >
-                        {selectedQuestion?.student?.profile?.fullName
-                          ?.length > 24
+                        {selectedQuestion?.student?.profile?.fullName?.length >
+                        24
                           ? selectedQuestion?.student?.profile?.fullName.substring(
                               0,
                               24
@@ -2165,7 +2204,7 @@ export default function QA() {
                       textAlign: "center",
                       fontSize: 18,
                       fontWeight: "500",
-                      color: "black",
+                      color: "#333",
                       lineHeight: 24,
                       opacity: 0.8,
                     }}

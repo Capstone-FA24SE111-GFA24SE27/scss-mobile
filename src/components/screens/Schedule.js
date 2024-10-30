@@ -277,7 +277,7 @@ export default function Schedule() {
               style={{
                 fontSize: 20,
                 fontWeight: "bold",
-                color: "black",
+                color: "#333",
               }}
             >
               {item.counselorName}
@@ -479,7 +479,7 @@ export default function Schedule() {
                         <Text
                           style={{
                             fontSize: 18,
-                            color: "black",
+                            color: "#333",
                             fontWeight: "500",
                           }}
                         >
@@ -521,7 +521,7 @@ export default function Schedule() {
                         <Text
                           style={{
                             fontSize: 18,
-                            color: "black",
+                            color: "#333",
                             fontWeight: "500",
                           }}
                         >
@@ -593,7 +593,7 @@ export default function Schedule() {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         marginVertical: 12,
                       }}
                     >
@@ -627,9 +627,10 @@ export default function Schedule() {
                       <View style={{ flexDirection: "row", maxWidth: "50%" }}>
                         <Text
                           style={{
+                            maxWidth: "75%",
                             fontSize: 18,
                             fontWeight: "bold",
-                            color: "black",
+                            color: "#333",
                           }}
                         >
                           {info.place}
@@ -722,7 +723,7 @@ export default function Schedule() {
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                         }}
                       >
@@ -872,7 +873,7 @@ export default function Schedule() {
                                   style={{
                                     fontSize: 18,
                                     fontWeight: "bold",
-                                    color: "black",
+                                    color: "#333",
                                   }}
                                 >
                                   Cancel

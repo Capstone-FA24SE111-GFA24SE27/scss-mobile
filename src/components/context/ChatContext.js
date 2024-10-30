@@ -156,7 +156,7 @@ export const ChatProvider = ({ children }) => {
               (question) => question?.chatSession?.id === chatSessionId
             );
             Toast.show({
-              type: "success",
+              type: "info",
               text1: newMessage.sender.profile.fullName,
               text2: newMessage.content,
               onPress: () => {
@@ -192,7 +192,7 @@ export const ChatProvider = ({ children }) => {
               (question) => question?.chatSession?.id === chatSessionId
             );
             Toast.show({
-              type: "success",
+              type: "info",
               text1: newMessage.sender.profile.fullName,
               text2: newMessage.content,
               onPress: () => {

@@ -46,7 +46,7 @@ export default function SignUp() {
             <Ionicons
               name="chevron-back-circle-outline"
               size={36}
-              style={{ color: "black" }}
+              style={{ color: "#333" }}
             />
           </TouchableOpacity>
         </View>
@@ -254,7 +254,7 @@ export default function SignUp() {
             <Text
               style={{
                 fontSize: 18,
-                color: "black",
+                color: "#333",
                 fontWeight: "600",
                 opacity: 0.8,
               }}

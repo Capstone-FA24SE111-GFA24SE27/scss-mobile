@@ -159,6 +159,175 @@ const CounselorSkeleton = () => {
   );
 };
 
+const StudentSkeleton = () => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "flex-start",
+        backgroundColor: "#e0e0e0",
+        borderRadius: 20,
+        marginVertical: 8,
+      }}
+    >
+      <View
+        style={{
+          backgroundColor: "#f5f5f5",
+          padding: 12,
+          marginLeft: 8,
+          marginRight: 2,
+          marginVertical: 8,
+          borderTopLeftRadius: 20,
+          borderBottomLeftRadius: 20,
+        }}
+      >
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            width: 70,
+            height: 70,
+            borderRadius: 40,
+            borderColor: "#e0e0e0",
+            borderWidth: 2,
+          }}
+        />
+      </View>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "white",
+          borderTopRightRadius: 20,
+          borderBottomRightRadius: 20,
+          padding: 12,
+          marginVertical: 8,
+          marginRight: 8,
+        }}
+      >
+        <View style={{ flexDirection: "row", marginBottom: 8 }}>
+          <LinearGradient
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{ width: width * 0.5, height: 24, borderRadius: 4 }}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            marginBottom: 4,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              width: "50%",
+            }}
+          >
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: 16,
+                height: 18,
+                borderRadius: 4,
+              }}
+            />
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: width * 0.15,
+                height: 18,
+                borderRadius: 4,
+                marginLeft: 4,
+              }}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "50%",
+            }}
+          >
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: 16,
+                height: 18,
+                borderRadius: 4,
+              }}
+            />
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: width * 0.15,
+                height: 18,
+                borderRadius: 4,
+                marginLeft: 4,
+              }}
+            />
+          </View>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              width: "50%",
+            }}
+          >
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: 16,
+                height: 18,
+                borderRadius: 4,
+              }}
+            />
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: width * 0.15,
+                height: 18,
+                borderRadius: 4,
+                marginLeft: 4,
+              }}
+            />
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              width: "50%",
+            }}
+          >
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: 16,
+                height: 18,
+                borderRadius: 4,
+              }}
+            />
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: width * 0.15,
+                height: 18,
+                borderRadius: 4,
+                marginLeft: 4,
+              }}
+            />
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 const ScheduleSkeleton = () => {
   return (
     <View
@@ -395,4 +564,4 @@ const RequestSkeleton = () => {
   );
 };
 
-export { CounselorSkeleton, ScheduleSkeleton, QASkeleton, RequestSkeleton };
+export { CounselorSkeleton, StudentSkeleton, ScheduleSkeleton, QASkeleton, RequestSkeleton };

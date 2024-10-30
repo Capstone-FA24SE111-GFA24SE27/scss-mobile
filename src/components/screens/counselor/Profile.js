@@ -22,8 +22,9 @@ export default function Profile() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [open, setIsOpen] = useState(false);
   const { userData, profile, fetchProfile, logout } = useContext(AuthContext);
+
   const scrollViewRef = useRef(null);
-  
+
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
@@ -35,6 +36,14 @@ export default function Profile() {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
   const handleLogout = () => {
@@ -62,11 +71,11 @@ export default function Profile() {
     Toast.show({
       type: "success",
       text1: "Success",
-      text2:  "Logout successfully",
+      text2: "Logout successfully",
       onPress: () => {
         Toast.hide();
-      }
-    })
+      },
+    });
     logout();
   };
 
@@ -81,7 +90,7 @@ export default function Profile() {
           style={{
             flexDirection: "row",
             paddingHorizontal: 30,
-            paddingTop: height*0.035,
+            paddingTop: height * 0.035,
             paddingVertical: 10,
           }}
         >
@@ -104,57 +113,227 @@ export default function Profile() {
               borderRadius: 20,
               elevation: 5,
               marginBottom: 12,
-              alignItems: "center",
-              marginHorizontal: width * 0.075,
-              paddingVertical: height * 0.015,
+              marginHorizontal: 30,
+              paddingVertical: 8,
             }}
           >
-            <Image
-              source={{ uri: userData?.profile?.avatarLink}}
+            <View
               style={{
-                marginBottom: 8,
-                width: width * 0.2,
-                height: width * 0.2,
-                borderRadius: width * 0.1,
+                flexDirection: "row",
+                paddingHorizontal: 16,
+                paddingVertical: 8,
               }}
-            />
-            {profile && (
-              <>
-                <Text style={{ fontWeight: "bold", fontSize: width * 0.06 }}>
-                  {profile.fullName}
+            >
+              <View style={{ width: "40%" }}>
+                <Image
+                  source={{
+                    uri: profile?.avatarLink,
+                  }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 100,
+                    borderColor: "#F39300",
+                    borderWidth: 2,
+                  }}
+                />
+                <View
+                  style={{
+                    padding: 5,
+                    backgroundColor: "#F39300",
+                    borderRadius: 30,
+                    position: "absolute",
+                    right: 30,
+                    bottom: 0,
+                  }}
+                >
+                  <Ionicons
+                    name={profile?.gender == "MALE" ? "male" : "female"}
+                    size={24}
+                    style={{ color: "white" }}
+                  />
+                </View>
+              </View>
+              <View style={{ width: "60%" }}>
+                <Text
+                  style={{
+                    fontSize: 24,
+                    fontWeight: "bold",
+                    color: "#333",
+                    marginBottom: 2,
+                  }}
+                >
+                  {profile?.fullName}
                 </Text>
                 <Text
                   style={{
-                    fontWeight: "600",
-                    fontSize: width * 0.035,
-                    opacity: 0.5,
+                    fontSize: 18,
+                    color: "gray",
+                    marginBottom: 2,
                   }}
                 >
-                  {userData.email}
+                  {userData?.email}
                 </Text>
-              </>
-            )}
-            <Pressable
-              style={{
-                marginTop: 8,
-                backgroundColor: "#F39300",
-                borderRadius: 20,
-                alignItems: "center",
-                paddingHorizontal: width * 0.06,
-                paddingVertical: height * 0.01,
-              }}
-              onPress={() => navigation.navigate("EditProfile")}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  fontWeight: "600",
-                  fontSize: width * 0.04,
-                }}
-              >
-                Edit Profile
-              </Text>
-            </Pressable>
+              </View>
+            </View>
+            <View style={{ paddingHorizontal: 20, paddingVertical: 15 }}>
+              {profile && (
+                <View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "flex-start",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Status:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.status}
+                      </Text>
+                    </View>
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Phone Number:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.phoneNumber}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "flex-start",
+                      marginTop: 16,
+                    }}
+                  >
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Date of birth:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {formatDate(profile.dateOfBirth)}
+                      </Text>
+                    </View>
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        {profile.specialization != null ? "Specialization:" : "Expertise:"}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.specialization?.name ||
+                          profile.expertise?.name}
+                      </Text>
+                    </View>
+                  </View>
+                  {profile.specialization != null && (
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "flex-start",
+                      marginTop: 16,
+                    }}
+                  >
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Department:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.department?.name}
+                      </Text>
+                    </View>
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Major:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.major?.name}
+                      </Text>
+                    </View>
+                  </View>
+                  )}
+                </View>
+              )}
+            </View>
           </View>
           <View
             style={{
@@ -201,7 +380,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -242,7 +421,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -302,7 +481,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -345,7 +524,7 @@ export default function Profile() {
                   />
                   <Text
                     style={{
-                      color: "black",
+                      color: "#333",
                       fontWeight: "600",
                       fontSize: width * 0.045,
                     }}
@@ -461,7 +640,7 @@ export default function Profile() {
                         <Text
                           style={{
                             fontSize: 18,
-                            color: "black",
+                            color: "#333",
                             fontWeight: "600",
                           }}
                         >

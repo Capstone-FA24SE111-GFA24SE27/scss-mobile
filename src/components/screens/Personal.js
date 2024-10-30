@@ -30,7 +30,6 @@ export default function Personal() {
   );
 
   const blinking = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -209,7 +208,7 @@ export default function Personal() {
                 style={{
                   fontSize: 20,
                   fontWeight: "700",
-                  color: "black",
+                  color: "#333",
                 }}
               >
                 Requests
@@ -282,7 +281,7 @@ export default function Personal() {
                 style={{
                   fontSize: 20,
                   fontWeight: "700",
-                  color: "black",
+                  color: "#333",
                 }}
               >
                 Appointments

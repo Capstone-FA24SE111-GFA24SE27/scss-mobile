@@ -44,58 +44,6 @@ export default function Home() {
     }, [])
   );
 
-  const workshops = [
-    {
-      title: "Student Stress Management (First Course)",
-      coursesCount: "Sep 15, 2024",
-      imageUri:
-        "https://media.licdn.com/dms/image/D5612AQE00zOnoDzGEg/article-cover_image-shrink_720_1280/0/1683400315259?e=2147483647&v=beta&t=Ksr0RYLjuKlW7C4CuHbLevAWGLrBTPnAVDRvY5VPfzs",
-    },
-    {
-      title: "Career Guidance for Students",
-      coursesCount: "Sep 20, 2024",
-      imageUri:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2DATqMHbW91YuWbGe524aUBXnR8_VYJSw_Q&s",
-    },
-    {
-      title: "Mental Health Awareness",
-      coursesCount: "Sep 25, 2024",
-      imageUri:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtHYIS_WidgBIkc9s4rIJnT2dq5UHitQPz4A&s",
-    },
-  ];
-
-  const counselors = [
-    {
-      id: 1,
-      name: "Mr. John",
-      experience: 10,
-      skills: "Career Advisor, Mental Health Caretaker",
-      image: require("../../assets/user.jpg"),
-    },
-    {
-      id: 2,
-      name: "Mr. Mathew",
-      experience: 3,
-      skills: "Technical Skills, Soft Skills",
-      image: require("../../assets/user.jpg"),
-    },
-    {
-      id: 3,
-      name: "Mrs. Jean",
-      experience: 5,
-      skills: "Career Advisor, Soft Skills",
-      image: require("../../assets/user.jpg"),
-    },
-    {
-      id: 4,
-      name: "Mr. Saul",
-      experience: 10,
-      skills: "PhD, Technical Skills",
-      image: require("../../assets/user.jpg"),
-    },
-  ];
-
   const ringing = useRef(new Animated.Value(0)).current;
   const blinking = useRef(new Animated.Value(1)).current;
 
@@ -407,9 +355,11 @@ export default function Home() {
               <View
                 style={{
                   width: width,
+                  height: 80,
                   backgroundColor: "#ededed",
                   padding: 12,
                   marginVertical: 12,
+                  justifyContent: "center",
                   alignSelf: "center",
                 }}
               >
@@ -671,9 +621,11 @@ export default function Home() {
               <View
                 style={{
                   width: width,
+                  height: 80,
                   backgroundColor: "#ededed",
                   padding: 12,
                   marginVertical: 12,
+                  justifyContent: "center",
                   alignSelf: "center",
                 }}
               >
@@ -694,6 +646,7 @@ export default function Home() {
                   ?.filter((appointment) => appointment.date === selectedDate)
                   .map((appointment) => (
                     <TouchableOpacity
+                      activeOpacity={0.7}
                       key={appointment.id}
                       style={{
                         width: width * 0.8,
@@ -701,26 +654,28 @@ export default function Home() {
                         borderRadius: 20,
                         marginVertical: 12,
                         marginRight: 12,
-                        borderColor: "lightgrey",
-                        borderWidth: 1,
                       }}
                     >
                       <View
                         style={{
+                          backgroundColor: "#fff0e0",
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingVertical: 16,
-                          borderRadius: 20,
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          marginTop: 4,
+                          marginHorizontal: 4,
+                          borderTopLeftRadius: 18,
+                          borderTopRightRadius: 18,
                         }}
                       >
-                        <View>
+                        <View style={{ maxWidth: "80%" }}>
                           <Text
                             style={{
                               fontSize: 18,
                               fontWeight: "bold",
-                              color: "white",
+                              color: "#F39300",
                             }}
                           >
                             {appointment.counselorName}
@@ -729,7 +684,7 @@ export default function Home() {
                             style={{
                               fontSize: 16,
                               fontWeight: "400",
-                              color: "white",
+                              color: "#333",
                               marginTop: 2,
                             }}
                           >
@@ -750,11 +705,11 @@ export default function Home() {
                       <View
                         style={{
                           flexDirection: "row",
-                          alignItems: "flex-start",
+                          alignItems: "stretch",
                           justifyContent: "space-between",
-                          padding: 16,
-                          borderBottomRightRadius: 20,
-                          borderBottomLeftRadius: 20,
+                          marginTop: 2,
+                          marginHorizontal: 4,
+                          marginBottom: 4,
                         }}
                       >
                         <View
@@ -762,15 +717,14 @@ export default function Home() {
                             flex: 0.58,
                             flexDirection: "row",
                             alignItems: "center",
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
+                            padding: 4,
                             backgroundColor: "white",
-                            borderRadius: 10,
+                            borderBottomLeftRadius: 18,
                           }}
                         >
                           {appointment.meetingType === "ONLINE" ? (
                             <Ionicons
-                              name="videocam"
+                              name="videocam-outline"
                               size={24}
                               color="#F39300"
                             />
@@ -785,7 +739,7 @@ export default function Home() {
                             <Text
                               style={{
                                 fontSize: 16,
-                                color: "black",
+                                color: "#333",
                                 fontWeight: "600",
                               }}
                             >
@@ -798,7 +752,7 @@ export default function Home() {
                                 fontSize: 14,
                                 color: "#333",
                               }}
-                              numberOfLines={2}
+                              numberOfLines={1}
                             >
                               {appointment.place}
                             </Text>
@@ -806,13 +760,12 @@ export default function Home() {
                         </View>
                         <View
                           style={{
-                            flex: 0.38,
+                            flex: 0.41,
                             flexDirection: "row",
                             alignItems: "center",
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
+                            padding: 4,
                             backgroundColor: "white",
-                            borderRadius: 10,
+                            borderBottomRightRadius: 18,
                           }}
                         >
                           <Ionicons
@@ -824,7 +777,7 @@ export default function Home() {
                             <Text
                               style={{
                                 fontSize: 16,
-                                color: "black",
+                                color: "#333",
                                 fontWeight: "600",
                               }}
                             >
@@ -837,6 +790,148 @@ export default function Home() {
                         </View>
                       </View>
                     </TouchableOpacity>
+                    // <TouchableOpacity
+                    //   key={appointment.id}
+                    //   style={{
+                    //     width: width * 0.8,
+                    //     backgroundColor: "#F39300",
+                    //     borderRadius: 20,
+                    //     marginVertical: 12,
+                    //     marginRight: 12,
+                    //     borderColor: "lightgrey",
+                    //     borderWidth: 1,
+                    //   }}
+                    // >
+                    //   <View
+                    //     style={{
+                    //       flexDirection: "row",
+                    //       justifyContent: "space-between",
+                    //       alignItems: "center",
+                    //       paddingHorizontal: 16,
+                    //       paddingVertical: 16,
+                    //       borderRadius: 20,
+                    //     }}
+                    //   >
+                    //     <View>
+                    //       <Text
+                    //         style={{
+                    //           fontSize: 18,
+                    //           fontWeight: "bold",
+                    //           color: "white",
+                    //         }}
+                    //       >
+                    //         {appointment.counselorName}
+                    //       </Text>
+                    //       <Text
+                    //         style={{
+                    //           fontSize: 16,
+                    //           fontWeight: "400",
+                    //           color: "white",
+                    //           marginTop: 2,
+                    //         }}
+                    //       >
+                    //         {appointment.counselorSpec}
+                    //       </Text>
+                    //     </View>
+                    //     <Image
+                    //       source={{ uri: appointment.counselorImage }}
+                    //       style={{
+                    //         width: 50,
+                    //         height: 50,
+                    //         borderRadius: 40,
+                    //         borderColor: "white",
+                    //         borderWidth: 2,
+                    //       }}
+                    //     />
+                    //   </View>
+                    //   <View
+                    //     style={{
+                    //       flexDirection: "row",
+                    //       alignItems: "flex-start",
+                    //       justifyContent: "space-between",
+                    //       padding: 16,
+                    //       borderBottomRightRadius: 20,
+                    //       borderBottomLeftRadius: 20,
+                    //     }}
+                    //   >
+                    //     <View
+                    //       style={{
+                    //         flex: 0.58,
+                    //         flexDirection: "row",
+                    //         alignItems: "center",
+                    //         padding: 4,
+                    //         backgroundColor: "white",
+                    //         borderRadius: 10,
+                    //       }}
+                    //     >
+                    //       {appointment.meetingType === "ONLINE" ? (
+                    //         <Ionicons
+                    //           name="videocam-outline"
+                    //           size={24}
+                    //           color="#F39300"
+                    //         />
+                    //       ) : (
+                    //         <MaterialIcons
+                    //           name="place"
+                    //           size={24}
+                    //           color="#F39300"
+                    //         />
+                    //       )}
+                    //       <View style={{ marginLeft: 8, flex: 1 }}>
+                    //         <Text
+                    //           style={{
+                    //             fontSize: 16,
+                    //             color: "#333",
+                    //             fontWeight: "600",
+                    //           }}
+                    //         >
+                    //           {appointment.meetingType === "ONLINE"
+                    //             ? "Online"
+                    //             : "Offline"}
+                    //         </Text>
+                    //         <Text
+                    //           style={{
+                    //             fontSize: 14,
+                    //             color: "#333",
+                    //           }}
+                    //           numberOfLines={2}
+                    //         >
+                    //           {appointment.place}
+                    //         </Text>
+                    //       </View>
+                    //     </View>
+                    //     <View
+                    //       style={{
+                    //         flex: 0.38,
+                    //         flexDirection: "row",
+                    //         alignItems: "center",
+                    //         padding: 4,
+                    //         backgroundColor: "white",
+                    //         borderRadius: 10,
+                    //       }}
+                    //     >
+                    //       <Ionicons
+                    //         name="time-outline"
+                    //         size={24}
+                    //         color="#F39300"
+                    //       />
+                    //       <View style={{ marginLeft: 8 }}>
+                    //         <Text
+                    //           style={{
+                    //             fontSize: 16,
+                    //             color: "#333",
+                    //             fontWeight: "600",
+                    //           }}
+                    //         >
+                    //           {appointment.startTime}
+                    //         </Text>
+                    //         <Text style={{ fontSize: 14, color: "#333" }}>
+                    //           {appointment.date}
+                    //         </Text>
+                    //       </View>
+                    //     </View>
+                    //   </View>
+                    // </TouchableOpacity>
                   ))}
               </ScrollView>
             )}
@@ -869,9 +964,11 @@ export default function Home() {
               <View
                 style={{
                   width: width,
+                  height: 80,
                   backgroundColor: "#ededed",
                   padding: 12,
                   marginVertical: 12,
+                  justifyContent: "center",
                   alignSelf: "center",
                 }}
               >
@@ -937,7 +1034,7 @@ export default function Home() {
                         style={{
                           fontSize: 20,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                         }}
                       >
                         {question.content}
@@ -970,7 +1067,7 @@ export default function Home() {
                           style={{
                             fontSize: 16,
                             fontWeight: "bold",
-                            color: "black",
+                            color: "#333",
                           }}
                         >
                           {question.counselor.profile.fullName}{" "}
@@ -978,7 +1075,7 @@ export default function Home() {
                         <Text
                           style={{
                             fontSize: 16,
-                            color: "black",
+                            color: "#333",
                           }}
                         >
                           answered:
@@ -1001,7 +1098,7 @@ export default function Home() {
                       <Text
                         style={{
                           fontSize: 16,
-                          color: "black",
+                          color: "#333",
                         }}
                         numberOfLines={2}
                       >
@@ -1065,7 +1162,7 @@ export default function Home() {
                   <View style={{ padding: 8 }}>
                     <Text
                       style={{
-                        color: "black",
+                        color: "#333",
                         fontSize: 22,
                         fontWeight: "bold",
                       }}
@@ -1152,7 +1249,7 @@ export default function Home() {
                   >
                     <Text
                       style={{
-                        color: "black",
+                        color: "#333",
                         fontSize: 22,
                         fontWeight: "bold",
                         marginBottom: 4,

@@ -20,6 +20,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import { RequestSkeleton } from "../../layout/Skeleton";
+import Toast from "react-native-toast-message";
 
 export default function Appointment() {
   const navigation = useNavigation();
@@ -46,8 +47,10 @@ export default function Appointment() {
   const [modalMessage, setModalMessage] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [openAttendance, setOpenAttendance] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [method, setMethod] = useState("");
   const [value, setValue] = useState("");
   const statusOptions = ["ABSENT", "ATTEND"];
 
@@ -274,6 +277,51 @@ export default function Appointment() {
     setOpenInfo(false);
   };
 
+  const handleOpenUpdateAppointment = async (id, method, value) => {
+    setOpenUpdate(true);
+    setSelectedAppointment(id);
+    setMethod(method);
+    setValue(value);
+  };
+
+  const handleUpdateAppointment = async () => {
+    try {
+      const dataToSend =
+        method === "ONLINE" ? { meetUrl: value } : { address: value };
+      const response = await axiosJWT.put(
+        `${BASE_URL}/booking-counseling/${selectedAppointment}/update-details`,
+        dataToSend
+      );
+      const data = await response.data;
+      if (data && data.status == 200) {
+        setInfo({
+          ...info,
+          [method === "ONLINE" ? "meetUrl" : "address"]: value
+        });
+        Toast.show({
+          type: "success",
+          text1: "Appointment Updated",
+          text2: "Appointment updated successfully",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+        handleCloseUpdateAppointment();
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to update appoinment.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Something error", error);
+    }
+  };
+
   const handleTakeAttendance = async () => {
     try {
       const response = await axiosJWT.put(
@@ -288,6 +336,14 @@ export default function Appointment() {
     } catch {
       console.log("Can't take attendance", error);
     }
+  };
+
+  const handleCloseUpdateAppointment = () => {
+    setValue("");
+    setMethod("")
+    setSelectedAppointment(null);
+    setOpenUpdate(false);
+    fetchData(filters);
   };
 
   return (
@@ -335,7 +391,7 @@ export default function Appointment() {
                   style={{
                     fontSize: 24,
                     opacity: 0.8,
-                    color: "black",
+                    color: "#333",
                     fontWeight: "600",
                   }}
                 >
@@ -501,7 +557,7 @@ export default function Appointment() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "black",
+                        color: "#333",
                       }}
                     >
                       Sort:
@@ -599,7 +655,7 @@ export default function Appointment() {
                     >
                       <Text
                         style={{
-                          color: "black",
+                          color: "#333",
                           fontSize: 16,
                           fontWeight: "600",
                           opacity: 0.7,
@@ -642,6 +698,7 @@ export default function Appointment() {
         >
           {loading ? (
             <>
+              <RequestSkeleton />
               <RequestSkeleton />
               <RequestSkeleton />
               <RequestSkeleton />
@@ -871,7 +928,7 @@ export default function Appointment() {
               onPress={() => setCurrentPage(1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<<"}
               </Text>
             </TouchableOpacity>
@@ -889,7 +946,7 @@ export default function Appointment() {
               onPress={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage <= 1}
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {"<"}
               </Text>
             </TouchableOpacity>
@@ -911,7 +968,7 @@ export default function Appointment() {
               <Text
                 style={{
                   fontSize: 16,
-                  color: "black",
+                  color: "#333",
                   fontWeight: "600",
                 }}
               >
@@ -944,7 +1001,7 @@ export default function Appointment() {
                 currentPage >= appointments.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">"}
               </Text>
             </TouchableOpacity>
@@ -973,7 +1030,7 @@ export default function Appointment() {
                 currentPage >= appointments.totalPages
               }
             >
-              <Text style={{ color: "black", fontSize: 18, fontWeight: "600" }}>
+              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
                 {">>"}
               </Text>
             </TouchableOpacity>
@@ -1100,7 +1157,7 @@ export default function Appointment() {
                         style={{
                           fontSize: 24,
                           fontWeight: "bold",
-                          color: "black",
+                          color: "#333",
                           marginBottom: 4,
                         }}
                       >
@@ -1110,7 +1167,7 @@ export default function Appointment() {
                         style={{
                           fontSize: 20,
                           fontWeight: "500",
-                          color: "black",
+                          color: "#333",
                           marginBottom: 2,
                         }}
                       >
@@ -1269,7 +1326,7 @@ export default function Appointment() {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                       }}
                     >
                       <View
@@ -1298,19 +1355,183 @@ export default function Appointment() {
                             : "Address"}
                         </Text>
                       </View>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#333",
-                          maxWidth: "60%",
-                          textAlign: "right",
-                        }}
-                      >
-                        {info.meetingType === "ONLINE"
+                      <View style={{ flexDirection: "row", maxWidth: "50%" }}>
+                        {info?.startDateTime >
+                          new Date().toISOString() && (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "flex-end",
+                              marginHorizontal: 8,
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() =>
+                                handleOpenUpdateAppointment(
+                                  info.id,
+                                  info.meetingType,
+                                  info.meetingType === "ONLINE" ? info.meetUrl : info.address
+                                )
+                              }
+                            >
+                              <MaterialIcons
+                                name="edit-note"
+                                size={24}
+                                color="#F39300"
+                              />
+                            </TouchableOpacity>
+                            <Modal
+                              transparent={true}
+                              visible={openUpdate}
+                              animationType="fade"
+                              onRequestClose={handleCloseUpdateAppointment}
+                            >
+                              <View
+                                style={{
+                                  flex: 1,
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                                }}
+                              >
+                                <View
+                                  style={{
+                                    width: width * 0.8,
+                                    padding: 20,
+                                    backgroundColor: "white",
+                                    borderRadius: 10,
+                                    elevation: 10,
+                                  }}
+                                >
+                                  <Text
+                                    style={{
+                                      fontSize: 22,
+                                      fontWeight: "bold",
+                                      marginBottom: 10,
+                                      textAlign: "center",
+                                    }}
+                                  >
+                                    Update Confirmation
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      fontSize: 18,
+                                      marginBottom: 30,
+                                      textAlign: "left",
+                                    }}
+                                  >
+                                    Are you sure you want to update this
+                                    appointment? Your schedule will be updated
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      marginBottom: 10,
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    Please provide the meeting
+                                    {info.meetingType === "ONLINE"
+                                      ? "'s Google Meet URL"
+                                      : "'s address"}{" "}
+                                    <Text
+                                      style={{ color: "#F39300", fontSize: 20 }}
+                                    >
+                                      *
+                                    </Text>
+                                  </Text>
+                                  <View>
+                                    <TextInput
+                                      placeholder="Input here"
+                                      placeholderTextColor="gray"
+                                      keyboardType="default"
+                                      value={value}
+                                      onChangeText={(value) => setValue(value)}
+                                      style={{
+                                        fontWeight: "600",
+                                        fontSize: 16,
+                                        opacity: 0.8,
+                                        paddingVertical: 8,
+                                        textAlignVertical: "center",
+                                        paddingHorizontal: 12,
+                                        backgroundColor: "#ededed",
+                                        borderColor: "gray",
+                                        borderWidth: 1,
+                                        borderRadius: 10,
+                                        marginBottom: 20,
+                                      }}
+                                    />
+                                  </View>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <TouchableOpacity
+                                      style={{
+                                        flex: 1,
+                                        backgroundColor: "#ededed",
+                                        padding: 10,
+                                        borderRadius: 10,
+                                        marginRight: 10,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderWidth: 1,
+                                        borderColor: "gray",
+                                      }}
+                                      onPress={handleCloseUpdateAppointment}
+                                    >
+                                      <Text
+                                        style={{
+                                          fontSize: 18,
+                                          color: "#333",
+                                          fontWeight: "600",
+                                        }}
+                                      >
+                                        No
+                                      </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                      style={{
+                                        flex: 1,
+                                        backgroundColor: "#F39300",
+                                        padding: 10,
+                                        borderRadius: 10,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                      }}
+                                      onPress={handleUpdateAppointment}
+                                    >
+                                      <Text
+                                        style={{
+                                          fontSize: 18,
+                                          color: "white",
+                                          fontWeight: "600",
+                                        }}
+                                      >
+                                        Yes
+                                      </Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                </View>
+                              </View>
+                            </Modal>
+                          </View>
+                        )}
+                        <Text
+                          style={{
+                            maxWidth: "75%",
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#333",
+                          }}
+                        >
+                          {info.meetingType === "ONLINE"
                           ? info?.meetUrl || "N/A"
                           : info?.address || "N/A"}
-                      </Text>
+                        </Text>
+                      </View>
                     </View>
                   </View>
                   {info?.appointmentFeedback !== null ? (
@@ -1401,7 +1622,7 @@ export default function Appointment() {
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "black",
+                          color: "#333",
                           fontWeight: "500",
                         }}
                       >

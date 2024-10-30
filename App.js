@@ -17,7 +17,7 @@ import {
   NotificationContext,
   NotificationProvider,
 } from "./src/components/context/NotificationContext";
-import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import Toast, { BaseToast, InfoToast, ErrorToast } from "react-native-toast-message";
 import axiosJWT, { BASE_URL } from "./src/config/Config";
 import axios from "axios"; // Ensure axios is imported
 import { ChatProvider } from "./src/components/context/ChatContext";
@@ -28,7 +28,7 @@ export default function App() {
       <BaseToast
         {...props}
         style={{
-          borderLeftColor: "#28a745",
+          borderLeftColor: "#07bc0c",
           borderLeftWidth: 12,
           backgroundColor: "white",
           borderRadius: 10,
@@ -36,7 +36,30 @@ export default function App() {
           height: 90,
         }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
-        text1Style={{ fontSize: 20, color: "#28a745", fontWeight: "bold" }}
+        text1Style={{ fontSize: 20, color: "#07bc0c", fontWeight: "bold" }}
+        text2Style={{
+          fontSize: 16,
+          fontWeight: "600",
+          color: "#333",
+          opacity: 0.85,
+        }}
+        text2NumberOfLines={2}
+      />
+    ),
+
+    info: (props) => (
+      <InfoToast
+        {...props}
+        style={{
+          borderLeftColor: "#3498db",
+          borderLeftWidth: 12,
+          backgroundColor: "white",
+          borderRadius: 10,
+          width: "90%",
+          height: 90,
+        }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
+        text1Style={{ fontSize: 20, color: "#3498db", fontWeight: "bold" }}
         text2Style={{
           fontSize: 16,
           fontWeight: "600",
@@ -51,7 +74,7 @@ export default function App() {
       <ErrorToast
         {...props}
         style={{
-          borderLeftColor: "#dc3545",
+          borderLeftColor: "#e74c3c",
           borderLeftWidth: 12,
           backgroundColor: "white",
           borderRadius: 10,
@@ -59,7 +82,7 @@ export default function App() {
           height: 90,
         }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
-        text1Style={{ fontSize: 20, color: "#dc3545", fontWeight: "bold" }}
+        text1Style={{ fontSize: 20, color: "#e74c3c", fontWeight: "bold" }}
         text2Style={{
           fontSize: 16,
           fontWeight: "600",
