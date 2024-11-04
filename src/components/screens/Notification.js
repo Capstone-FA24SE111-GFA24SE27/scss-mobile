@@ -200,6 +200,7 @@ export default function Notification() {
           <View style={{ flex: 1 }}>
             <Text
               style={{
+                maxWidth: "90%",
                 fontSize: 18,
                 fontWeight: "bold",
                 color: item.readStatus ? "gray" : "black",
@@ -272,8 +273,11 @@ export default function Notification() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity hitSlop={30} onPress={() => navigation.navigate("Home")}>
-            <Ionicons name="arrow-back-outline" size={30} color="#F39300" />
+          <TouchableOpacity
+            hitSlop={30}
+            onPress={() => navigation.navigate("Home")}
+          >
+            <Ionicons name="return-up-back" size={36} />
           </TouchableOpacity>
         </View>
         <View style={styles.headerCenter}>
@@ -282,7 +286,7 @@ export default function Notification() {
         <View style={styles.headerRight}>
           {/* Icon để đánh dấu tất cả thông báo là đã đọc */}
           <TouchableOpacity hitSlop={30} onPress={markAllAsRead}>
-            <MaterialIcons name="done-all" size={30} color="#F39300" />
+            <MaterialIcons name="done-all" size={36} color="#F39300" />
           </TouchableOpacity>
         </View>
       </View>
@@ -307,12 +311,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: height * 0.035,
+    paddingTop: height * 0.035,
+    paddingVertical: 10,
   },
   headerLeft: { flex: 1 },
   headerCenter: { flex: 3, alignItems: "center" },
   headerRight: { flex: 1, alignItems: "flex-end" },
-  headerTitle: { fontSize: 20, fontWeight: "bold", color: "#F39300" },
+  headerTitle: { fontWeight: "bold", fontSize: 24 },
 
   tabBar: {
     flexDirection: "row",
@@ -337,9 +342,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   notificationStatus: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingLeft: 10,
+    position: "absolute",
+    top: 12,
+    right: 8,
   },
   centeredContainer: {
     flex: 1,

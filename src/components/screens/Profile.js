@@ -16,8 +16,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
 import Toast from "react-native-toast-message";
 
-export default function Profile() {
+export default function Profile({ route }) {
   const navigation = useNavigation();
+  const prevScreen = route?.params?.prevScreen;
   const { width, height } = Dimensions.get("screen");
   const [isEnabled, setIsEnabled] = useState(false);
   const [open, setIsOpen] = useState(false);
@@ -94,7 +95,7 @@ export default function Profile() {
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Personal")}>
+            <TouchableOpacity onPress={() => navigation.navigate(prevScreen || "Personal")}>
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
           </View>

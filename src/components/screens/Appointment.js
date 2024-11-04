@@ -22,8 +22,9 @@ import { RequestSkeleton } from "../layout/Skeleton";
 import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
 
-export default function Appointment() {
+export default function Appointment({ route }) {
   const navigation = useNavigation();
+  const prevScreen = route?.params?.prevScreen;
   const { width, height } = Dimensions.get("screen");
   const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
@@ -189,7 +190,6 @@ export default function Appointment() {
       const appointmentsData = appointmentsRes?.data?.content || [];
       setAppointments(appointmentsData);
       setLoading(false);
-      console.log(appointments);
     } catch (err) {
       console.log(err);
     }
@@ -276,6 +276,11 @@ export default function Appointment() {
   const handleOpenInfo = (info) => {
     setInfo(info);
     setOpenInfo(true);
+  };
+
+  const handleCloseInfo = () => {
+    setInfo("");
+    setOpenInfo(false);
   };
 
   const handleOpenCancel = (id) => {
@@ -380,11 +385,6 @@ export default function Appointment() {
     }
   };
 
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
-  };
-
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
@@ -400,7 +400,7 @@ export default function Appointment() {
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
               hitSlop={30}
-              onPress={() => navigation.navigate("Personal")}
+              onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
@@ -428,13 +428,23 @@ export default function Appointment() {
               <View style={{ alignItems: "flex-start" }}>
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: 20,
                     opacity: 0.8,
                     color: "#333",
-                    fontWeight: "600",
+                    fontWeight: "bold",
                   }}
                 >
-                  {appointments.totalElements} Appointments found
+                  {appointments.totalElements} Appointments{" "}
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      opacity: 0.8,
+                      fontWeight: "400",
+                      color: "#333",
+                    }}
+                  >
+                    found
+                  </Text>
                 </Text>
               </View>
               <View
@@ -859,7 +869,7 @@ export default function Appointment() {
                       borderWidth: 2,
                     }}
                   />
-                  <View style={{ marginLeft: 12 }}>
+                  <View style={{ marginLeft: 12, maxWidth: "80%" }}>
                     <Text
                       style={{
                         fontWeight: "bold",
@@ -1006,8 +1016,8 @@ export default function Appointment() {
                         activeOpacity={0.6}
                         style={{
                           backgroundColor: "#ededed",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
                           borderRadius: 10,
                           justifyContent: "center",
                           alignItems: "center",
@@ -1015,7 +1025,7 @@ export default function Appointment() {
                       >
                         <Text
                           style={{
-                            fontSize: 18,
+                            fontSize: 16,
                             color: "#333",
                             fontWeight: "600",
                           }}
@@ -1249,7 +1259,7 @@ export default function Appointment() {
                       flexDirection: "row",
                       padding: 16,
                       backgroundColor: "white",
-                      borderRadius: 12,
+                      borderRadius: 10,
                       elevation: 1,
                       marginBottom: 20,
                       borderWidth: 1.5,
@@ -1257,38 +1267,40 @@ export default function Appointment() {
                     }}
                   >
                     <View style={{ width: "40%" }}>
-                      <Image
-                        source={{
-                          uri: info?.counselorInfo?.profile?.avatarLink,
-                        }}
-                        style={{
-                          width: 120,
-                          height: 120,
-                          borderRadius: 100,
-                          marginBottom: 12,
-                          borderColor: "#F39300",
-                          borderWidth: 2,
-                        }}
-                      />
-                      <View
-                        style={{
-                          padding: 5,
-                          backgroundColor: "#F39300",
-                          borderRadius: 30,
-                          position: "absolute",
-                          right: 20,
-                          bottom: 12,
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            info?.counselorInfo?.profile?.gender == "MALE"
-                              ? "male"
-                              : "female"
-                          }
-                          size={24}
-                          style={{ color: "white" }}
+                      <View style={{ position: "relative" }}>
+                        <Image
+                          source={{
+                            uri: info?.counselorInfo?.profile?.avatarLink,
+                          }}
+                          style={{
+                            width: width * 0.28,
+                            height: width * 0.28,
+                            borderRadius: 100,
+                            marginBottom: 12,
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                          }}
                         />
+                        <View
+                          style={{
+                            padding: 5,
+                            backgroundColor: "#F39300",
+                            borderRadius: 30,
+                            position: "absolute",
+                            right: 20,
+                            bottom: 12,
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              info?.counselorInfo?.profile?.gender == "MALE"
+                                ? "male"
+                                : "female"
+                            }
+                            size={24}
+                            style={{ color: "white" }}
+                          />
+                        </View>
                       </View>
                     </View>
                     <View style={{ width: "60%" }}>
@@ -1335,7 +1347,7 @@ export default function Appointment() {
                   <View
                     style={{
                       backgroundColor: "white",
-                      borderRadius: 16,
+                      borderRadius: 10,
                       padding: 20,
                       elevation: 1,
                       borderWidth: 1.5,
@@ -1466,7 +1478,7 @@ export default function Appointment() {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                       }}
                     >
                       <View
@@ -1500,7 +1512,7 @@ export default function Appointment() {
                           fontSize: 18,
                           fontWeight: "bold",
                           color: "#333",
-                          maxWidth: "60%",
+                          maxWidth: "50%",
                           textAlign: "right",
                         }}
                       >
@@ -1569,7 +1581,7 @@ export default function Appointment() {
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "#555",
+                          color: "#333",
                           fontWeight: "500",
                           lineHeight: 24,
                         }}

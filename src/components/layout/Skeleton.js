@@ -1,7 +1,124 @@
-import { View, Dimensions } from "react-native";
+import { View, Dimensions, ScrollView } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 const { width, height } = Dimensions.get("window");
+
+const HomeSkeleton = () => {
+  return (
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={{ marginHorizontal: 30, marginBottom: 8 }}
+    >
+      <LinearGradient
+        colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+        style={{
+          width: width * 0.85,
+          height: width * 0.35,
+          borderRadius: 10,
+          marginVertical: 16,
+        }}
+      />
+      <View style={{ marginBottom: 12 }}>
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            width: width * 0.85,
+            height: width * 0.075,
+            borderRadius: 4,
+          }}
+        />
+      </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ marginBottom: 16 }}
+      >
+        {[...Array(3)].map((_, index) => (
+          <LinearGradient
+            key={index}
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: width * 0.6,
+              height: width * 0.35,
+              borderRadius: 10,
+              marginRight: 12,
+            }}
+          />
+        ))}
+      </ScrollView>
+      <View style={{ marginBottom: 12 }}>
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            width: width * 0.85,
+            height: width * 0.075,
+            borderRadius: 4,
+          }}
+        />
+      </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ marginBottom: 16 }}
+      >
+        {[...Array(4)].map((_, index) => (
+          <LinearGradient
+            key={index}
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: width * 0.25,
+              height: width * 0.125,
+              borderRadius: 10,
+              marginRight: 8,
+            }}
+          />
+        ))}
+      </ScrollView>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ marginBottom: 16 }}
+      >
+        {[...Array(3)].map((_, index) => (
+          <LinearGradient
+            key={index}
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: width * 0.6,
+              height: width * 0.35,
+              borderRadius: 10,
+              marginRight: 12,
+            }}
+          />
+        ))}
+      </ScrollView>
+      <View style={{ marginBottom: 12 }}>
+        <LinearGradient
+          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          style={{
+            width: width * 0.85,
+            height: width * 0.075,
+            borderRadius: 4,
+          }}
+        />
+      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {[...Array(3)].map((_, index) => (
+          <LinearGradient
+            key={index}
+            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+            style={{
+              width: width * 0.6,
+              height: width * 0.35,
+              borderRadius: 10,
+              marginRight: 12,
+            }}
+          />
+        ))}
+      </ScrollView>
+    </ScrollView>
+  );
+};
 
 const CounselorSkeleton = () => {
   return (
@@ -564,4 +681,11 @@ const RequestSkeleton = () => {
   );
 };
 
-export { CounselorSkeleton, StudentSkeleton, ScheduleSkeleton, QASkeleton, RequestSkeleton };
+export {
+  HomeSkeleton,
+  CounselorSkeleton,
+  StudentSkeleton,
+  ScheduleSkeleton,
+  QASkeleton,
+  RequestSkeleton,
+};

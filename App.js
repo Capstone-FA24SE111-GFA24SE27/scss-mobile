@@ -22,6 +22,7 @@ import axiosJWT, { BASE_URL } from "./src/config/Config";
 import axios from "axios"; // Ensure axios is imported
 import { ChatProvider } from "./src/components/context/ChatContext";
 import { navigationRef } from "./src/components/context/NavigationContext";
+import { CounselingProfileProvider } from "./src/components/context/CounselingProfileContext";
 export default function App() {
   const toastConfig = {
     success: (props) => (
@@ -177,6 +178,7 @@ export default function App() {
     <AuthProvider>
       <SocketProvider>
         <NotificationProvider>
+          <CounselingProfileProvider>
           <ChatProvider>
             <SafeAreaProvider>
               <NavigationContainer ref={navigationRef} style={{ flex: 1 }}>
@@ -185,6 +187,7 @@ export default function App() {
               </NavigationContainer>
             </SafeAreaProvider>
           </ChatProvider>
+          </CounselingProfileProvider>
         </NotificationProvider>
       </SocketProvider>
     </AuthProvider>

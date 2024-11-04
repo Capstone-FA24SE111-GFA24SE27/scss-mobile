@@ -21,8 +21,9 @@ import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import { RequestSkeleton } from "../../layout/Skeleton";
 
-export default function Request() {
+export default function Request({ route }) {
   const navigation = useNavigation();
+  const prevScreen = route?.params?.prevScreen;
   const { width, height } = Dimensions.get("screen");
   const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
@@ -210,7 +211,7 @@ export default function Request() {
   };
 
   useEffect(() => {
-    socket.on(`/user/${userData?.id}/private/notification`, () => {
+    socket.on(`/user/${userData?.id}/appointment/request`, () => {
       fetchData(filters);
     });
   }, [filters]);
@@ -292,6 +293,11 @@ export default function Request() {
     setOpenInfo(true);
   };
 
+  const handleCloseInfo = () => {
+    setInfo("");
+    setOpenInfo(false);
+  };
+
   const handleOpenConfirmDeny = (id) => {
     setOpenConfirmDeny(true);
     setSelectedRequest(id);
@@ -358,11 +364,6 @@ export default function Request() {
     }
   };
 
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
-  };
-
   const handleCloseConfirmDeny = () => {
     setSelectedRequest(null);
     setOpenConfirmDeny(false);
@@ -395,7 +396,7 @@ export default function Request() {
             <TouchableOpacity
               hitSlop={30}
               onPress={
-                () => navigation.navigate("Personal")
+                () => navigation.navigate(prevScreen || "Personal")
                 // setDateFrom(""),
                 // setDateTo("")
               }
@@ -405,7 +406,7 @@ export default function Request() {
           </View>
           <View style={{ alignItems: "center" }}>
             <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-              Your Requests
+              Requests List
             </Text>
           </View>
           <View style={{ flex: 1, alignItems: "flex-end" }} />
@@ -426,13 +427,23 @@ export default function Request() {
               <View style={{ alignItems: "flex-start" }}>
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: 20,
                     opacity: 0.8,
                     color: "#333",
-                    fontWeight: "600",
+                    fontWeight: "bold",
                   }}
                 >
-                  {requests.totalElements} Requests found
+                  {requests.totalElements} Requests{" "}
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      opacity: 0.8,
+                      fontWeight: "400",
+                      color: "#333",
+                    }}
+                  >
+                    found
+                  </Text>
                 </Text>
               </View>
               <View
@@ -857,7 +868,7 @@ export default function Request() {
                       borderColor: "#F39300",
                     }}
                   />
-                  <View style={{ marginLeft: 12 }}>
+                  <View style={{ marginLeft: 12, maxWidth: "80%" }}>
                     <Text style={{ fontWeight: "bold", fontSize: 18 }}>
                       {request.student.profile.fullName}
                     </Text>
@@ -1514,7 +1525,7 @@ export default function Request() {
                       flexDirection: "row",
                       padding: 16,
                       backgroundColor: "white",
-                      borderRadius: 12,
+                      borderRadius: 10,
                       elevation: 1,
                       marginBottom: 20,
                       borderWidth: 1.5,
@@ -1522,36 +1533,38 @@ export default function Request() {
                     }}
                   >
                     <View style={{ width: "40%" }}>
-                      <Image
-                        source={{ uri: info?.student?.profile?.avatarLink }}
-                        style={{
-                          width: 120,
-                          height: 120,
-                          borderRadius: 100,
-                          marginBottom: 12,
-                          borderColor: "#F39300",
-                          borderWidth: 2,
-                        }}
-                      />
-                      <View
-                        style={{
-                          padding: 5,
-                          backgroundColor: "#F39300",
-                          borderRadius: 30,
-                          position: "absolute",
-                          right: 20,
-                          bottom: 12,
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            info?.student?.profile?.gender == "MALE"
-                              ? "male"
-                              : "female"
-                          }
-                          size={24}
-                          style={{ color: "white" }}
+                      <View style={{ position: "relative" }}>
+                        <Image
+                          source={{ uri: info?.student?.profile?.avatarLink }}
+                          style={{
+                            width: width * 0.28,
+                            height: width * 0.28,
+                            borderRadius: 100,
+                            marginBottom: 12,
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                          }}
                         />
+                        <View
+                          style={{
+                            padding: 5,
+                            backgroundColor: "#F39300",
+                            borderRadius: 30,
+                            position: "absolute",
+                            right: 20,
+                            bottom: 12,
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              info?.student?.profile?.gender == "MALE"
+                                ? "male"
+                                : "female"
+                            }
+                            size={24}
+                            style={{ color: "white" }}
+                          />
+                        </View>
                       </View>
                     </View>
                     <View style={{ width: "60%" }}>
@@ -1599,7 +1612,7 @@ export default function Request() {
                       marginBottom: 20,
                       padding: 16,
                       backgroundColor: "white",
-                      borderRadius: 12,
+                      borderRadius: 10,
                       elevation: 1,
                       borderWidth: 1.5,
                       borderColor: "#e3e3e3",
@@ -1629,7 +1642,7 @@ export default function Request() {
                   <View
                     style={{
                       backgroundColor: "#fff",
-                      borderRadius: 16,
+                      borderRadius: 10,
                       padding: 20,
                       elevation: 1,
                       borderWidth: 1.5,
@@ -1758,7 +1771,7 @@ export default function Request() {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                       }}
                     >
                       <View
@@ -1792,7 +1805,7 @@ export default function Request() {
                           fontSize: 18,
                           fontWeight: "bold",
                           color: "#333",
-                          maxWidth: "60%",
+                          maxWidth: "50%",
                           textAlign: "right",
                         }}
                       >

@@ -36,10 +36,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (userInfo, sessionInfo) => {
-    setUserData(userInfo);
-    setSession(sessionInfo);
     await AsyncStorage.setItem("userData", JSON.stringify(userInfo));
     await AsyncStorage.setItem("session", sessionInfo);
+    setUserData(userInfo);
+    setSession(sessionInfo);
     const userDataAsync = await AsyncStorage.getItem("userData");
     const sessionAsync = await AsyncStorage.getItem("session");
     console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4));

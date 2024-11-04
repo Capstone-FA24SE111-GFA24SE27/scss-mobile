@@ -26,25 +26,21 @@ export default function NotificationDetail({ route }) {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          marginTop: height * 0.035,
-          marginBottom: 30,
+          paddingTop: height * 0.035,
+          paddingBottom: 10,
         }}
       >
         <View style={{ flex: 1, alignItems: "flex-start" }}>
           <TouchableOpacity
-            style={{
-              borderRadius: 20,
-              alignSelf: "flex-start",
-              alignItems: "flex-start",
-            }}
             onPress={() => navigation.navigate(prevScreen || "Notification")}
           >
-            <Ionicons name="arrow-back-outline" size={30} color="#F39300" />
+            <Ionicons name="return-up-back" size={36} />
           </TouchableOpacity>
         </View>
         <View style={{ flex: 2, alignItems: "center" }}>
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: "#F39300" }}>
-            No. {notificationData?.notificationId} Detail
+          <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+            {/* No. {notificationData?.notificationId}  */}
+            Detail
           </Text>
         </View>
         <View style={{ flex: 1 }} />
@@ -70,7 +66,7 @@ export default function NotificationDetail({ route }) {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 15,
+            marginBottom: 8,
           }}
         >
           <Ionicons name="person-outline" size={22} color="#F39300" />
@@ -94,7 +90,7 @@ export default function NotificationDetail({ route }) {
             flexDirection: "row",
             alignItems: "center",
             marginTop: 20,
-            marginBottom: 15,
+            marginBottom: 8,
           }}
         >
           <Ionicons
@@ -122,7 +118,7 @@ export default function NotificationDetail({ route }) {
             flexDirection: "row",
             alignItems: "center",
             marginTop: 20,
-            marginBottom: 15,
+            marginBottom: 8,
           }}
         >
           <Ionicons name="calendar-outline" size={22} color="#F39300" />
@@ -161,7 +157,7 @@ export default function NotificationDetail({ route }) {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 15,
+            marginBottom: 8,
           }}
         >
           <Ionicons name="mail-outline" size={22} color="#F39300" />
