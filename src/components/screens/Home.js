@@ -14,11 +14,13 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
 import { NotificationContext } from "../context/NotificationContext";
+import { HomeSkeleton } from "../layout/Skeleton";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 
 export default function Home() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
+  const [loading, setLoading] = useState(true);
   const { fetchProfile, profile } = useContext(AuthContext);
   const { notifications } = useContext(NotificationContext);
   const [requests, setRequests] = useState([]);
@@ -33,6 +35,9 @@ export default function Home() {
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
       fetchProfile();
       fetchRequest();
       const fromDate = new Date().toISOString().split("T")[0];
@@ -152,11 +157,11 @@ export default function Home() {
             appointment?.meetingType === "ONLINE"
               ? `${appointment?.meetUrl}`
               : `${appointment?.address}`,
-          counselorName: appointment.counselorInfo.profile.fullName,
-          counselorImage: appointment.counselorInfo.profile.avatarLink,
+          counselorName: appointment?.counselorInfo?.profile?.fullName,
+          counselorImage: appointment?.counselorInfo?.profile?.avatarLink,
           counselorSpec:
-            appointment.counselorInfo.specialization.name ||
-            appointment.counselorInfo.expertise.name,
+            appointment?.counselorInfo?.specialization?.name ||
+            appointment?.counselorInfo?.expertise?.name,
           status: appointment.status,
         }));
         setAppointments(formattedAppointments);
@@ -228,7 +233,7 @@ export default function Home() {
           >
             <TouchableOpacity
               onPress={() => navigation.navigate("Notification")}
-              style={{ position: "relative", marginTop: 2 }}
+              style={{ position: "relative", marginRight: 20, marginTop: 2 }}
               activeOpacity={0.7}
             >
               <Animated.View style={{ transform: [{ rotate: rotation }] }}>
@@ -261,8 +266,23 @@ export default function Home() {
                 </Animated.View>
               )}
             </TouchableOpacity>
-            <Pressable style={{ marginLeft: 16 }}>
-              <Ionicons name="menu" size={40} color="white" />
+            <Pressable
+              onPress={() =>
+                navigation.navigate("Profile", { prevScreen: "Home" })
+              }
+            >
+              {/* <Ionicons name="menu" size={40} color="white" /> */}
+              <Image
+                source={{ uri: profile.avatarLink }}
+                style={{
+                  backgroundColor: "white",
+                  width: width * 0.1,
+                  height: width * 0.1,
+                  borderRadius: 40,
+                  borderColor: "#e3e3e3",
+                  borderWidth: 2,
+                }}
+              />
             </Pressable>
           </View>
         </View>
@@ -293,824 +313,849 @@ export default function Home() {
             }}
           />
         </View>
-        <ScrollView
-          ref={scrollViewRef}
-          showsVerticalScrollIndicator={false}
-          style={{ marginHorizontal: 30 }}
-        >
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => navigation.navigate("Counselor")}
-            style={{
-              backgroundColor: "white",
-              borderRadius: 10,
-              borderWidth: 2,
-              borderColor: "#F39300",
-              width: "auto",
-              borderStyle: "dashed",
-              alignItems: "center",
-              justifyContent: "center",
-              marginVertical: 16,
-              paddingHorizontal: 12,
-              paddingVertical: 24,
-            }}
+        {loading ? (
+          <HomeSkeleton />
+        ) : (
+          <ScrollView
+            ref={scrollViewRef}
+            showsVerticalScrollIndicator={false}
+            style={{ marginHorizontal: 30 }}
           >
-            <Ionicons name="add-circle" size={48} color="#F39300" />
-            <Text
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("Counselor")}
               style={{
-                marginTop: 8,
-                fontSize: 18,
-                fontWeight: "600",
-                opacity: 0.7,
-              }}
-            >
-              Create your first appointment request
-            </Text>
-          </TouchableOpacity>
-          <View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
+                backgroundColor: "white",
+                borderRadius: 10,
+                borderWidth: 2,
+                borderColor: "#F39300",
+                width: "auto",
+                borderStyle: "dashed",
                 alignItems: "center",
+                justifyContent: "center",
+                marginVertical: 16,
+                paddingHorizontal: 12,
+                paddingVertical: 24,
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Recently Requests
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Request")}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: "600",
-                    color: "#F39300",
-                    opacity: 0.8,
-                  }}
-                >
-                  See All
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {requests?.data?.length === 0 ? (
-              <View
+              <Ionicons name="add-circle" size={48} color="#F39300" />
+              <Text
                 style={{
-                  width: width,
-                  height: 80,
-                  backgroundColor: "#ededed",
-                  padding: 12,
-                  marginVertical: 12,
-                  justifyContent: "center",
-                  alignSelf: "center",
+                  marginTop: 8,
+                  fontSize: 18,
+                  fontWeight: "600",
+                  opacity: 0.7,
                 }}
               >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "500",
-                    textAlign: "center",
-                    color: "#F39300",
-                  }}
-                >
-                  No requests created
+                Create your first appointment request
+              </Text>
+            </TouchableOpacity>
+
+            <View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                  Recently Requests
                 </Text>
-              </View>
-            ) : (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {requests?.data?.map((request, index) => (
-                  <TouchableOpacity
-                    key={request.id}
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("Request", { prevScreen: "Home" })
+                  }
+                >
+                  <Text
                     style={{
-                      width: width * 0.65,
-                      height: "auto",
-                      backgroundColor: "white",
-                      borderRadius: 20,
-                      padding: 12,
-                      marginVertical: 12,
-                      marginRight: 12,
-                      borderWidth: 1.5,
-                      borderColor: "#F39300",
-                      overflow: "hidden",
-                      position: "relative",
-                      flexDirection: "column",
+                      fontSize: 18,
+                      fontWeight: "600",
+                      color: "#F39300",
+                      opacity: 0.8,
                     }}
                   >
-                    <View style={{ flexDirection: "row", marginBottom: 16 }}>
-                      <Image
-                        source={{ uri: request.counselor.profile.avatarLink }}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          borderRadius: 40,
-                          borderColor: "#F39300",
-                          borderWidth: 2,
-                        }}
-                      />
-                      <View style={{ marginLeft: 12 }}>
-                        <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                          {request.counselor.profile.fullName.length > 12
-                            ? request.counselor.profile.fullName.substring(
-                                0,
-                                12
-                              ) + "..."
-                            : request.counselor.profile.fullName}
-                        </Text>
+                    See All
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {requests?.data?.length === 0 ? (
+                <View
+                  style={{
+                    width: width,
+                    height: 80,
+                    backgroundColor: "#ededed",
+                    padding: 12,
+                    marginVertical: 12,
+                    justifyContent: "center",
+                    alignSelf: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "500",
+                      textAlign: "center",
+                      color: "#F39300",
+                    }}
+                  >
+                    No requests created
+                  </Text>
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {requests?.data?.map((request, index) => (
+                    <TouchableOpacity
+                      key={request.id}
+                      style={{
+                        width: width * 0.65,
+                        height: "auto",
+                        backgroundColor: "white",
+                        borderRadius: 20,
+                        padding: 12,
+                        marginVertical: 12,
+                        marginRight: 12,
+                        borderWidth: 1.5,
+                        borderColor: "#F39300",
+                        overflow: "hidden",
+                        position: "relative",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <View style={{ flexDirection: "row", marginBottom: 16 }}>
+                        <Image
+                          source={{
+                            uri: request.counselor.profile.avatarLink,
+                          }}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 40,
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                          }}
+                        />
+                        <View style={{ marginLeft: 12 }}>
+                          <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+                            {request.counselor.profile.fullName.length > 12
+                              ? request.counselor.profile.fullName.substring(
+                                  0,
+                                  12
+                                ) + "..."
+                              : request.counselor.profile.fullName}
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignSelf: "flex-start",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              backgroundColor: "#F39300",
+                              borderRadius: 20,
+                              paddingVertical: 4,
+                              paddingHorizontal: 12,
+                              marginTop: 4,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "bold",
+                                color: "white",
+                              }}
+                            >
+                              {request.meetingType.charAt(0).toUpperCase() +
+                                request.meetingType.slice(1)}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View>
                         <View
                           style={{
                             flexDirection: "row",
-                            alignSelf: "flex-start",
                             alignItems: "center",
-                            justifyContent: "center",
-                            backgroundColor: "#F39300",
-                            borderRadius: 20,
-                            paddingVertical: 4,
-                            paddingHorizontal: 12,
-                            marginTop: 4,
+                            marginBottom: 8,
                           }}
                         >
+                          <Ionicons name="calendar" size={20} color="#F39300" />
                           <Text
                             style={{
                               fontSize: 16,
-                              fontWeight: "bold",
-                              color: "white",
+                              fontWeight: "600",
+                              marginLeft: 8,
                             }}
                           >
-                            {request.meetingType.charAt(0).toUpperCase() +
-                              request.meetingType.slice(1)}
+                            {request.requireDate}
                           </Text>
                         </View>
-                      </View>
-                    </View>
-                    <View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          marginBottom: 8,
-                        }}
-                      >
-                        <Ionicons name="calendar" size={20} color="#F39300" />
-                        <Text
+                        <View
                           style={{
-                            fontSize: 16,
-                            fontWeight: "600",
-                            marginLeft: 8,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            marginBottom: 8,
                           }}
                         >
-                          {request.requireDate}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          marginBottom: 8,
-                        }}
-                      >
-                        <Ionicons name="time" size={20} color="#F39300" />
-                        <Text
+                          <Ionicons name="time" size={20} color="#F39300" />
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "600",
+                              marginLeft: 8,
+                            }}
+                          >
+                            {request.startTime.split(":")[0] +
+                              ":" +
+                              request.startTime.split(":")[1]}{" "}
+                            -{" "}
+                            {request.endTime.split(":")[0] +
+                              ":" +
+                              request.endTime.split(":")[1]}
+                          </Text>
+                        </View>
+                        <View
                           style={{
-                            fontSize: 16,
-                            fontWeight: "600",
-                            marginLeft: 8,
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            justifyContent: "space-between",
+                            marginBottom: 8,
                           }}
                         >
-                          {request.startTime.split(":")[0] +
-                            ":" +
-                            request.startTime.split(":")[1]}{" "}
-                          -{" "}
-                          {request.endTime.split(":")[0] +
-                            ":" +
-                            request.endTime.split(":")[1]}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          flexWrap: "wrap",
-                          justifyContent: "space-between",
-                          marginBottom: 8,
-                        }}
-                      >
-                        <View>
-                          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                            Status:{" "}
-                            <Text
-                              style={[
-                                request.status === "APPROVED" && {
-                                  color: "green",
-                                },
-                                request.status === "WAITING" && {
-                                  color: "#F39300",
-                                },
-                                request.status === "DENIED" && { color: "red" },
-                              ]}
-                            >
-                              {request.status}
+                          <View>
+                            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                              Status:{" "}
+                              <Text
+                                style={[
+                                  request.status === "APPROVED" && {
+                                    color: "green",
+                                  },
+                                  request.status === "WAITING" && {
+                                    color: "#F39300",
+                                  },
+                                  request.status === "DENIED" && {
+                                    color: "red",
+                                  },
+                                ]}
+                              >
+                                {request.status}
+                              </Text>
                             </Text>
-                          </Text>
+                          </View>
                         </View>
                       </View>
-                    </View>
-                    <View
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        backgroundColor: "#F39300",
-                        paddingVertical: 4,
-                        paddingLeft: 8,
-                        paddingRight: 4,
-                        borderBottomLeftRadius: 16,
-                      }}
-                    >
-                      <Text style={{ fontSize: 16, color: "white" }}>New</Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            )}
-          </View>
-          <View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Upcoming Appointments
-              </Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Appointment")}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: "600",
-                    color: "#F39300",
-                    opacity: 0.8,
-                  }}
-                >
-                  See All
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {Array(7)
-                .fill(0)
-                .map((_, index) => {
-                  const date = new Date();
-                  date.setDate(date.getDate() + index);
-                  const dateString = date.toISOString().split("T")[0];
-                  const appointmentCount = appointments.filter(
-                    (appointment) => appointment.date === dateString
-                  ).length;
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => setSelectedDate(dateString)}
-                      style={{
-                        flexDirection: "row",
-                        paddingHorizontal: 12,
-                        paddingVertical: 8,
-                        marginVertical: 8,
-                        marginRight: 8,
-                        backgroundColor:
-                          selectedDate === dateString ? "#F39300" : "white",
-                        borderRadius: 10,
-                        borderColor: "#F39300",
-                        borderWidth: 1.5,
-                      }}
-                    >
-                      <Text
+                      <View
                         style={{
-                          fontWeight: "bold",
-                          fontSize: 16,
-                          color:
-                            selectedDate === dateString ? "white" : "#F39300",
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                          backgroundColor: "#F39300",
+                          paddingVertical: 4,
+                          paddingLeft: 8,
+                          paddingRight: 4,
+                          borderBottomLeftRadius: 16,
                         }}
                       >
-                        {date.toISOString().split("T")[0] ===
-                        new Date().toISOString().split("T")[0]
-                          ? "Today"
-                          : date.toLocaleDateString("en-US", {
-                              weekday: "short",
-                              day: "numeric",
-                              month: "short",
-                            })}
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 16,
-                          color:
-                            selectedDate === dateString ? "white" : "#F39300",
-                          marginLeft: 4,
-                        }}
-                      >
-                        ({appointmentCount})
-                      </Text>
+                        <Text style={{ fontSize: 16, color: "white" }}>
+                          New
+                        </Text>
+                      </View>
                     </TouchableOpacity>
-                  );
-                })}
-            </ScrollView>
-            {appointments?.filter(
-              (appointment) => appointment.date === selectedDate
-            ).length === 0 ? (
+                  ))}
+                </ScrollView>
+              )}
+            </View>
+            <View>
               <View
                 style={{
-                  width: width,
-                  height: 80,
-                  backgroundColor: "#ededed",
-                  padding: 12,
-                  marginVertical: 12,
-                  justifyContent: "center",
-                  alignSelf: "center",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <Text
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                  Upcoming Appointments
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("Appointment", { prevScreen: "Home" })
+                  }
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "600",
+                      color: "#F39300",
+                      opacity: 0.8,
+                    }}
+                  >
+                    See All
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {Array(7)
+                  .fill(0)
+                  .map((_, index) => {
+                    const date = new Date();
+                    date.setDate(date.getDate() + index);
+                    const dateString = date.toISOString().split("T")[0];
+                    const appointmentCount = appointments.filter(
+                      (appointment) => appointment.date === dateString
+                    ).length;
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setSelectedDate(dateString)}
+                        style={{
+                          flexDirection: "row",
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          marginVertical: 8,
+                          marginRight: 8,
+                          backgroundColor:
+                            selectedDate === dateString ? "#F39300" : "white",
+                          borderRadius: 10,
+                          borderColor: "#F39300",
+                          borderWidth: 1.5,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            fontSize: 16,
+                            color:
+                              selectedDate === dateString ? "white" : "#F39300",
+                          }}
+                        >
+                          {date.toISOString().split("T")[0] ===
+                          new Date().toISOString().split("T")[0]
+                            ? "Today"
+                            : date.toLocaleDateString("en-US", {
+                                weekday: "short",
+                                day: "numeric",
+                                month: "short",
+                              })}
+                        </Text>
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            fontSize: 16,
+                            color:
+                              selectedDate === dateString ? "white" : "#F39300",
+                            marginLeft: 4,
+                          }}
+                        >
+                          ({appointmentCount})
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+              </ScrollView>
+              {appointments?.filter(
+                (appointment) => appointment.date === selectedDate
+              ).length === 0 ? (
+                <View
                   style={{
-                    fontSize: 16,
-                    fontWeight: "500",
-                    textAlign: "center",
-                    color: "#F39300",
+                    width: width,
+                    height: 80,
+                    backgroundColor: "#ededed",
+                    padding: 12,
+                    marginVertical: 12,
+                    justifyContent: "center",
+                    alignSelf: "center",
                   }}
                 >
-                  No appointment on this day
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "500",
+                      textAlign: "center",
+                      color: "#F39300",
+                    }}
+                  >
+                    No appointment on this day
+                  </Text>
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {appointments
+                    ?.filter((appointment) => appointment.date === selectedDate)
+                    .map((appointment) => (
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        key={appointment.id}
+                        style={{
+                          width: width * 0.8,
+                          backgroundColor: "#F39300",
+                          borderRadius: 20,
+                          marginVertical: 12,
+                          marginRight: 12,
+                        }}
+                      >
+                        <View
+                          style={{
+                            backgroundColor: "#fff0e0",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            paddingHorizontal: 12,
+                            paddingVertical: 8,
+                            marginTop: 4,
+                            marginHorizontal: 4,
+                            borderTopLeftRadius: 18,
+                            borderTopRightRadius: 18,
+                          }}
+                        >
+                          <View style={{ maxWidth: "80%" }}>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                color: "#F39300",
+                              }}
+                            >
+                              {appointment.counselorName}
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "400",
+                                color: "#333",
+                                marginTop: 2,
+                              }}
+                            >
+                              {appointment.counselorSpec}
+                            </Text>
+                          </View>
+                          <Image
+                            source={{ uri: appointment.counselorImage }}
+                            style={{
+                              backgroundColor: "white",
+                              width: 50,
+                              height: 50,
+                              borderRadius: 40,
+                              borderColor: "#F39300",
+                              borderWidth: 2,
+                            }}
+                          />
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "stretch",
+                            justifyContent: "space-between",
+                            marginTop: 2,
+                            marginHorizontal: 4,
+                            marginBottom: 4,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 0.58,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              paddingHorizontal: 12,
+                              paddingVertical: 6,
+                              backgroundColor: "white",
+                              borderBottomLeftRadius: 18,
+                            }}
+                          >
+                            {appointment.meetingType === "ONLINE" ? (
+                              <Ionicons
+                                name="videocam-outline"
+                                size={24}
+                                color="#F39300"
+                              />
+                            ) : (
+                              <MaterialIcons
+                                name="place"
+                                size={24}
+                                color="#F39300"
+                              />
+                            )}
+                            <View style={{ marginLeft: 8, flex: 1 }}>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  color: "#333",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {appointment.meetingType === "ONLINE"
+                                  ? "Online"
+                                  : "Offline"}
+                              </Text>
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  color: "#333",
+                                }}
+                                numberOfLines={1}
+                              >
+                                {appointment.place}
+                              </Text>
+                            </View>
+                          </View>
+                          <View
+                            style={{
+                              flex: 0.41,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              paddingHorizontal: 12,
+                              paddingVertical: 6,
+                              backgroundColor: "white",
+                              borderBottomRightRadius: 18,
+                            }}
+                          >
+                            <Ionicons
+                              name="time-outline"
+                              size={24}
+                              color="#F39300"
+                            />
+                            <View style={{ marginLeft: 8 }}>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  color: "#333",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {appointment.startTime}
+                              </Text>
+                              <Text style={{ fontSize: 14, color: "#333" }}>
+                                {appointment.date}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                      // <TouchableOpacity
+                      //   key={appointment.id}
+                      //   style={{
+                      //     width: width * 0.8,
+                      //     backgroundColor: "#F39300",
+                      //     borderRadius: 20,
+                      //     marginVertical: 12,
+                      //     marginRight: 12,
+                      //     borderColor: "lightgrey",
+                      //     borderWidth: 1,
+                      //   }}
+                      // >
+                      //   <View
+                      //     style={{
+                      //       flexDirection: "row",
+                      //       justifyContent: "space-between",
+                      //       alignItems: "center",
+                      //       paddingHorizontal: 16,
+                      //       paddingVertical: 16,
+                      //       borderRadius: 20,
+                      //     }}
+                      //   >
+                      //     <View>
+                      //       <Text
+                      //         style={{
+                      //           fontSize: 18,
+                      //           fontWeight: "bold",
+                      //           color: "white",
+                      //         }}
+                      //       >
+                      //         {appointment.counselorName}
+                      //       </Text>
+                      //       <Text
+                      //         style={{
+                      //           fontSize: 16,
+                      //           fontWeight: "400",
+                      //           color: "white",
+                      //           marginTop: 2,
+                      //         }}
+                      //       >
+                      //         {appointment.counselorSpec}
+                      //       </Text>
+                      //     </View>
+                      //     <Image
+                      //       source={{ uri: appointment.counselorImage }}
+                      //       style={{
+                      //         width: 50,
+                      //         height: 50,
+                      //         borderRadius: 40,
+                      //         borderColor: "white",
+                      //         borderWidth: 2,
+                      //       }}
+                      //     />
+                      //   </View>
+                      //   <View
+                      //     style={{
+                      //       flexDirection: "row",
+                      //       alignItems: "flex-start",
+                      //       justifyContent: "space-between",
+                      //       padding: 16,
+                      //       borderBottomRightRadius: 20,
+                      //       borderBottomLeftRadius: 20,
+                      //     }}
+                      //   >
+                      //     <View
+                      //       style={{
+                      //         flex: 0.58,
+                      //         flexDirection: "row",
+                      //         alignItems: "center",
+                      //         padding: 4,
+                      //         backgroundColor: "white",
+                      //         borderRadius: 10,
+                      //       }}
+                      //     >
+                      //       {appointment.meetingType === "ONLINE" ? (
+                      //         <Ionicons
+                      //           name="videocam-outline"
+                      //           size={24}
+                      //           color="#F39300"
+                      //         />
+                      //       ) : (
+                      //         <MaterialIcons
+                      //           name="place"
+                      //           size={24}
+                      //           color="#F39300"
+                      //         />
+                      //       )}
+                      //       <View style={{ marginLeft: 8, flex: 1 }}>
+                      //         <Text
+                      //           style={{
+                      //             fontSize: 16,
+                      //             color: "#333",
+                      //             fontWeight: "600",
+                      //           }}
+                      //         >
+                      //           {appointment.meetingType === "ONLINE"
+                      //             ? "Online"
+                      //             : "Offline"}
+                      //         </Text>
+                      //         <Text
+                      //           style={{
+                      //             fontSize: 14,
+                      //             color: "#333",
+                      //           }}
+                      //           numberOfLines={2}
+                      //         >
+                      //           {appointment.place}
+                      //         </Text>
+                      //       </View>
+                      //     </View>
+                      //     <View
+                      //       style={{
+                      //         flex: 0.38,
+                      //         flexDirection: "row",
+                      //         alignItems: "center",
+                      //         padding: 4,
+                      //         backgroundColor: "white",
+                      //         borderRadius: 10,
+                      //       }}
+                      //     >
+                      //       <Ionicons
+                      //         name="time-outline"
+                      //         size={24}
+                      //         color="#F39300"
+                      //       />
+                      //       <View style={{ marginLeft: 8 }}>
+                      //         <Text
+                      //           style={{
+                      //             fontSize: 16,
+                      //             color: "#333",
+                      //             fontWeight: "600",
+                      //           }}
+                      //         >
+                      //           {appointment.startTime}
+                      //         </Text>
+                      //         <Text style={{ fontSize: 14, color: "#333" }}>
+                      //           {appointment.date}
+                      //         </Text>
+                      //       </View>
+                      //     </View>
+                      //   </View>
+                      // </TouchableOpacity>
+                    ))}
+                </ScrollView>
+              )}
+            </View>
+            <View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                  Answered Questions
                 </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("QA")}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "600",
+                      color: "#F39300",
+                      opacity: 0.8,
+                    }}
+                  >
+                    See All
+                  </Text>
+                </TouchableOpacity>
               </View>
-            ) : (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {appointments
-                  ?.filter((appointment) => appointment.date === selectedDate)
-                  .map((appointment) => (
+              {questions?.length === 0 ? (
+                <View
+                  style={{
+                    width: width,
+                    height: 80,
+                    backgroundColor: "#ededed",
+                    padding: 12,
+                    marginVertical: 12,
+                    justifyContent: "center",
+                    alignSelf: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "500",
+                      textAlign: "center",
+                      color: "#F39300",
+                    }}
+                  >
+                    No questions were answered
+                  </Text>
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {questions?.map((question) => (
                     <TouchableOpacity
-                      activeOpacity={0.7}
-                      key={appointment.id}
+                      key={question.id}
                       style={{
-                        width: width * 0.8,
-                        backgroundColor: "#F39300",
+                        width: width * 0.85,
+                        backgroundColor: "white",
                         borderRadius: 20,
                         marginVertical: 12,
-                        marginRight: 12,
+                        borderColor: "lightgrey",
+                        borderWidth: 1,
                       }}
                     >
                       <View
                         style={{
                           backgroundColor: "#fff0e0",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          marginTop: 4,
-                          marginHorizontal: 4,
-                          borderTopLeftRadius: 18,
-                          borderTopRightRadius: 18,
+                          paddingHorizontal: 16,
+                          paddingVertical: 16,
+                          borderRadius: 20,
                         }}
                       >
-                        <View style={{ maxWidth: "80%" }}>
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              fontWeight: "bold",
-                              color: "#F39300",
-                            }}
-                          >
-                            {appointment.counselorName}
-                          </Text>
+                        <View
+                          style={{
+                            backgroundColor: "#F39300",
+                            alignSelf: "flex-start",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexDirection: "row",
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            marginBottom: 8,
+                            borderRadius: 20,
+                            borderWidth: 1.5,
+                            borderColor: "transparent",
+                          }}
+                        >
                           <Text
                             style={{
                               fontSize: 16,
-                              fontWeight: "400",
-                              color: "#333",
-                              marginTop: 2,
+                              fontWeight: "600",
+                              color: "white",
                             }}
                           >
-                            {appointment.counselorSpec}
+                            {question.questionType}
                           </Text>
                         </View>
-                        <Image
-                          source={{ uri: appointment.counselorImage }}
-                          style={{
-                            width: 50,
-                            height: 50,
-                            borderRadius: 40,
-                            borderColor: "white",
-                            borderWidth: 2,
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "stretch",
-                          justifyContent: "space-between",
-                          marginTop: 2,
-                          marginHorizontal: 4,
-                          marginBottom: 4,
-                        }}
-                      >
-                        <View
-                          style={{
-                            flex: 0.58,
-                            flexDirection: "row",
-                            alignItems: "center",
-                            padding: 4,
-                            backgroundColor: "white",
-                            borderBottomLeftRadius: 18,
-                          }}
-                        >
-                          {appointment.meetingType === "ONLINE" ? (
-                            <Ionicons
-                              name="videocam-outline"
-                              size={24}
-                              color="#F39300"
-                            />
-                          ) : (
-                            <MaterialIcons
-                              name="place"
-                              size={24}
-                              color="#F39300"
-                            />
-                          )}
-                          <View style={{ marginLeft: 8, flex: 1 }}>
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                color: "#333",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {appointment.meetingType === "ONLINE"
-                                ? "Online"
-                                : "Offline"}
-                            </Text>
-                            <Text
-                              style={{
-                                fontSize: 14,
-                                color: "#333",
-                              }}
-                              numberOfLines={1}
-                            >
-                              {appointment.place}
-                            </Text>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            flex: 0.41,
-                            flexDirection: "row",
-                            alignItems: "center",
-                            padding: 4,
-                            backgroundColor: "white",
-                            borderBottomRightRadius: 18,
-                          }}
-                        >
-                          <Ionicons
-                            name="time-outline"
-                            size={24}
-                            color="#F39300"
-                          />
-                          <View style={{ marginLeft: 8 }}>
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                color: "#333",
-                                fontWeight: "600",
-                              }}
-                            >
-                              {appointment.startTime}
-                            </Text>
-                            <Text style={{ fontSize: 14, color: "#333" }}>
-                              {appointment.date}
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                    // <TouchableOpacity
-                    //   key={appointment.id}
-                    //   style={{
-                    //     width: width * 0.8,
-                    //     backgroundColor: "#F39300",
-                    //     borderRadius: 20,
-                    //     marginVertical: 12,
-                    //     marginRight: 12,
-                    //     borderColor: "lightgrey",
-                    //     borderWidth: 1,
-                    //   }}
-                    // >
-                    //   <View
-                    //     style={{
-                    //       flexDirection: "row",
-                    //       justifyContent: "space-between",
-                    //       alignItems: "center",
-                    //       paddingHorizontal: 16,
-                    //       paddingVertical: 16,
-                    //       borderRadius: 20,
-                    //     }}
-                    //   >
-                    //     <View>
-                    //       <Text
-                    //         style={{
-                    //           fontSize: 18,
-                    //           fontWeight: "bold",
-                    //           color: "white",
-                    //         }}
-                    //       >
-                    //         {appointment.counselorName}
-                    //       </Text>
-                    //       <Text
-                    //         style={{
-                    //           fontSize: 16,
-                    //           fontWeight: "400",
-                    //           color: "white",
-                    //           marginTop: 2,
-                    //         }}
-                    //       >
-                    //         {appointment.counselorSpec}
-                    //       </Text>
-                    //     </View>
-                    //     <Image
-                    //       source={{ uri: appointment.counselorImage }}
-                    //       style={{
-                    //         width: 50,
-                    //         height: 50,
-                    //         borderRadius: 40,
-                    //         borderColor: "white",
-                    //         borderWidth: 2,
-                    //       }}
-                    //     />
-                    //   </View>
-                    //   <View
-                    //     style={{
-                    //       flexDirection: "row",
-                    //       alignItems: "flex-start",
-                    //       justifyContent: "space-between",
-                    //       padding: 16,
-                    //       borderBottomRightRadius: 20,
-                    //       borderBottomLeftRadius: 20,
-                    //     }}
-                    //   >
-                    //     <View
-                    //       style={{
-                    //         flex: 0.58,
-                    //         flexDirection: "row",
-                    //         alignItems: "center",
-                    //         padding: 4,
-                    //         backgroundColor: "white",
-                    //         borderRadius: 10,
-                    //       }}
-                    //     >
-                    //       {appointment.meetingType === "ONLINE" ? (
-                    //         <Ionicons
-                    //           name="videocam-outline"
-                    //           size={24}
-                    //           color="#F39300"
-                    //         />
-                    //       ) : (
-                    //         <MaterialIcons
-                    //           name="place"
-                    //           size={24}
-                    //           color="#F39300"
-                    //         />
-                    //       )}
-                    //       <View style={{ marginLeft: 8, flex: 1 }}>
-                    //         <Text
-                    //           style={{
-                    //             fontSize: 16,
-                    //             color: "#333",
-                    //             fontWeight: "600",
-                    //           }}
-                    //         >
-                    //           {appointment.meetingType === "ONLINE"
-                    //             ? "Online"
-                    //             : "Offline"}
-                    //         </Text>
-                    //         <Text
-                    //           style={{
-                    //             fontSize: 14,
-                    //             color: "#333",
-                    //           }}
-                    //           numberOfLines={2}
-                    //         >
-                    //           {appointment.place}
-                    //         </Text>
-                    //       </View>
-                    //     </View>
-                    //     <View
-                    //       style={{
-                    //         flex: 0.38,
-                    //         flexDirection: "row",
-                    //         alignItems: "center",
-                    //         padding: 4,
-                    //         backgroundColor: "white",
-                    //         borderRadius: 10,
-                    //       }}
-                    //     >
-                    //       <Ionicons
-                    //         name="time-outline"
-                    //         size={24}
-                    //         color="#F39300"
-                    //       />
-                    //       <View style={{ marginLeft: 8 }}>
-                    //         <Text
-                    //           style={{
-                    //             fontSize: 16,
-                    //             color: "#333",
-                    //             fontWeight: "600",
-                    //           }}
-                    //         >
-                    //           {appointment.startTime}
-                    //         </Text>
-                    //         <Text style={{ fontSize: 14, color: "#333" }}>
-                    //           {appointment.date}
-                    //         </Text>
-                    //       </View>
-                    //     </View>
-                    //   </View>
-                    // </TouchableOpacity>
-                  ))}
-              </ScrollView>
-            )}
-          </View>
-          <View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Answered Questions
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("QA")}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: "600",
-                    color: "#F39300",
-                    opacity: 0.8,
-                  }}
-                >
-                  See All
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {questions?.length === 0 ? (
-              <View
-                style={{
-                  width: width,
-                  height: 80,
-                  backgroundColor: "#ededed",
-                  padding: 12,
-                  marginVertical: 12,
-                  justifyContent: "center",
-                  alignSelf: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "500",
-                    textAlign: "center",
-                    color: "#F39300",
-                  }}
-                >
-                  No questions were answered
-                </Text>
-              </View>
-            ) : (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {questions?.map((question) => (
-                  <TouchableOpacity
-                    key={question.id}
-                    style={{
-                      width: width * 0.85,
-                      backgroundColor: "white",
-                      borderRadius: 20,
-                      marginVertical: 12,
-                      borderColor: "lightgrey",
-                      borderWidth: 1,
-                    }}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: "#fff0e0",
-                        paddingHorizontal: 16,
-                        paddingVertical: 16,
-                        borderRadius: 20,
-                      }}
-                    >
-                      <View
-                        style={{
-                          backgroundColor: "#F39300",
-                          alignSelf: "flex-start",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexDirection: "row",
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          marginBottom: 8,
-                          borderRadius: 20,
-                          borderWidth: 1.5,
-                          borderColor: "transparent",
-                        }}
-                      >
                         <Text
                           style={{
-                            fontSize: 16,
-                            fontWeight: "600",
-                            color: "white",
-                          }}
-                        >
-                          {question.questionType}
-                        </Text>
-                      </View>
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        {question.content}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        padding: 16,
-                        borderBottomRightRadius: 20,
-                        borderBottomLeftRadius: 20,
-                      }}
-                    >
-                      <Image
-                        source={{ uri: question.counselor.profile.avatarLink }}
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 20,
-                          borderColor: "#F39300",
-                          borderWidth: 2,
-                          marginRight: 10,
-                        }}
-                      />
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: "bold",
                             color: "#333",
                           }}
                         >
-                          {question.counselor.profile.fullName}{" "}
+                          {question.content}
                         </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          padding: 16,
+                          borderBottomRightRadius: 20,
+                          borderBottomLeftRadius: 20,
+                        }}
+                      >
+                        <Image
+                          source={{
+                            uri: question.counselor.profile.avatarLink,
+                          }}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                            marginRight: 10,
+                          }}
+                        />
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "bold",
+                              color: "#333",
+                            }}
+                          >
+                            {question.counselor.profile.fullName}{" "}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: "#333",
+                            }}
+                          >
+                            answered:
+                          </Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          alignSelf: "flex-start",
+                          backgroundColor: "#ededed",
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          marginHorizontal: 20,
+                          marginBottom: 16,
+                          borderRadius: 16,
+                          borderWidth: 0.5,
+                          borderColor: "lightgrey",
+                        }}
+                      >
                         <Text
                           style={{
                             fontSize: 16,
                             color: "#333",
                           }}
+                          numberOfLines={2}
                         >
-                          answered:
+                          {question.answer}
                         </Text>
                       </View>
-                    </View>
-                    <View
-                      style={{
-                        alignSelf: "flex-start",
-                        backgroundColor: "#ededed",
-                        paddingHorizontal: 12,
-                        paddingVertical: 8,
-                        marginHorizontal: 20,
-                        marginBottom: 16,
-                        borderRadius: 16,
-                        borderWidth: 0.5,
-                        borderColor: "lightgrey",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: "#333",
-                        }}
-                        numberOfLines={2}
-                      >
-                        {question.answer}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            )}
-          </View>
-          {/* <View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              )}
+            </View>
+            {/* <View>
             <View
               style={{
                 flexDirection: "row",
@@ -1300,7 +1345,8 @@ export default function Home() {
               </TouchableOpacity>
             </ScrollView>
           </View> */}
-        </ScrollView>
+          </ScrollView>
+        )}
       </View>
     </>
   );

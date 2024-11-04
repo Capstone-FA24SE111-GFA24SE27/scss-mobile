@@ -26,6 +26,7 @@ export default function Personal() {
       }
       fetchRequestAllPages();
       fetchAppointmentAllPages();
+      fetchDemandAllPages();
     }, [])
   );
 
@@ -54,12 +55,14 @@ export default function Personal() {
   }, []);
 
   const [requestCount, setRequestCount] = useState(0);
-  const [appoinmentCount, setAppointmentCount] = useState(0);
+  const [appointmentCount, setAppointmentCount] = useState(0);
+  const [demandCount, setDemandCount] = useState(0);
 
   useEffect(() => {
     socket.on(`/user/${userData?.id}/private/notification`, () => {
       fetchRequestAllPages();
       fetchAppointmentAllPages();
+      fetchDemandAllPages();
     });
   }, []);
 
@@ -82,7 +85,7 @@ export default function Personal() {
       }
       setRequestCount(totalWaitingItems);
     } catch (error) {
-      console.error("Error fetching pages:", error);
+      console.log("Error fetching requests");
       setRequestCount(0);
     }
   };
@@ -106,8 +109,34 @@ export default function Personal() {
       }
       setAppointmentCount(totalWaitingItems);
     } catch (error) {
-      console.error("Error fetching pages:", error);
+      console.log("Error fetching appointments", error);
       setAppointmentCount(0);
+    }
+  };
+
+  const fetchDemandAllPages = async () => {
+    let page = 1;
+    let totalWaitingItems = 0;
+    let hasMorePages = true;
+
+    try {
+      while (hasMorePages) {
+        const response = await axiosJWT.get(
+          `${BASE_URL}/counseling-demand/counselor/filter`,
+          { params: { page: page } }
+        );
+        const { data, totalPages } = response?.data?.content;
+        const waitingItems = data?.filter(
+          (item) => item.status === "PROCESSING"
+        );
+        totalWaitingItems += waitingItems?.length;
+        page += 1;
+        hasMorePages = page <= totalPages;
+      }
+      setDemandCount(totalWaitingItems);
+    } catch (error) {
+      console.log("Error fetching demands", error);
+      setDemandCount(0);
     }
   };
 
@@ -130,7 +159,7 @@ export default function Personal() {
         <View
           style={{
             backgroundColor: "white",
-            borderRadius: 20,
+            borderRadius: 10,
             elevation: 3,
             marginHorizontal: 30,
             paddingHorizontal: 12,
@@ -305,7 +334,7 @@ export default function Personal() {
                     fontWeight: "bold",
                   }}
                 >
-                  {appoinmentCount === 0 ? 0 : appoinmentCount}
+                  {appointmentCount === 0 ? 0 : appointmentCount}
                 </Text>
               </View>
             </View>
@@ -337,39 +366,98 @@ export default function Personal() {
         </View>
         <View
           style={{
-            marginVertical: 4,
+            marginBottom: 16,
             marginHorizontal: 30,
-            justifyContent: "center",
+            flexDirection: "row",
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-                Your History
-              </Text>
-            </View>
-            <View style={{ justifyContent: "flex-end" }}>
+          <View
+            style={{
+              backgroundColor: "white",
+              flex: 1,
+              padding: 12,
+              borderRadius: 10,
+              elevation: 3,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingVertical: 4,
+              }}
+            >
               <Text
-                style={{ fontSize: 20, color: "#F39300", fontWeight: "600" }}
+                style={{
+                  fontSize: 20,
+                  fontWeight: "700",
+                  color: "#333",
+                }}
+              >
+                Counseling Demands
+              </Text>
+              <View
+                style={{
+                  backgroundColor: "#F39300",
+                  padding: 2,
+                  borderRadius: 20,
+                  width: 28,
+                  height: 28,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {demandCount === 0 ? 0 : demandCount}
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Demand")}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 4,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "#F39300",
+                  fontWeight: "600",
+                }}
               >
                 View all
               </Text>
-            </View>
+              <Ionicons
+                name="chevron-forward"
+                size={22}
+                color="#F39300"
+                style={{ marginLeft: 4 }}
+              />
+            </TouchableOpacity>
           </View>
         </View>
-        <ScrollView
+        {/* <ScrollView
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           style={{
             flex: 0.65,
             backgroundColor: "white",
-            borderRadius: 20,
+            borderRadius: 10,
             elevation: 3,
             marginHorizontal: 30,
             paddingHorizontal: 5,
             marginBottom: 20,
           }}
-        ></ScrollView>
+        ></ScrollView> */}
       </View>
     </>
   );

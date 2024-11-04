@@ -49,6 +49,9 @@ export default function Student() {
   const [info, setInfo] = useState({});
   const [info2, setInfo2] = useState(null);
   const [info3, setInfo3] = useState(null);
+  const [info4, setInfo4] = useState(null);
+  const [openInfo2, setOpenInfo2] = useState(false);
+  const [historyInfo, setHistoryInfo] = useState(null);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [showFromPicker, setShowFromPicker] = useState(false);
@@ -342,6 +345,16 @@ export default function Student() {
     } else {
       setDateTo(formatDate(currentDate));
     }
+  };
+
+  const handleOpenInfo = (info) => {
+    setHistoryInfo(info);
+    setOpenInfo2(true);
+  };
+
+  const handleCloseInfo = () => {
+    setHistoryInfo("");
+    setOpenInfo2(false);
   };
 
   return (
@@ -855,7 +868,7 @@ export default function Student() {
                           maxWidth: "80%",
                         }}
                       >
-                        {item.specialization.name}
+                        {item?.specialization?.name || "N/A"}
                       </Text>
                     </View>
                   </View>
@@ -1162,6 +1175,7 @@ export default function Student() {
                     onPress={() => setActiveTab(4)}
                     style={{
                       paddingVertical: 8,
+                      marginRight: 20,
                       borderBottomWidth: 2,
                       borderBottomColor:
                         activeTab === 4 ? "#F39300" : "transparent",
@@ -1172,6 +1186,25 @@ export default function Student() {
                         fontSize: 18,
                         fontWeight: activeTab === 4 ? "bold" : "500",
                         color: activeTab === 4 ? "#F39300" : "#333",
+                      }}
+                    >
+                      Attendance Report
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setActiveTab(5)}
+                    style={{
+                      paddingVertical: 8,
+                      borderBottomWidth: 2,
+                      borderBottomColor:
+                        activeTab === 5 ? "#F39300" : "transparent",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: activeTab === 5 ? "bold" : "500",
+                        color: activeTab === 5 ? "#F39300" : "#333",
                       }}
                     >
                       Appointments History
@@ -1269,8 +1302,8 @@ export default function Student() {
                           Department:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.studentProfile.department.name} (
-                          {info.studentProfile.department.code})
+                          {info?.studentProfile?.department?.name} (
+                          {info?.studentProfile?.department?.code})
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1285,8 +1318,8 @@ export default function Student() {
                           Major:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.studentProfile.major.name} (
-                          {info.studentProfile.major.code})
+                          {info?.studentProfile?.major?.name} (
+                          {info?.studentProfile?.major?.code})
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1301,7 +1334,7 @@ export default function Student() {
                           Specialization:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.studentProfile.specialization.name}
+                          {info?.studentProfile?.specialization?.name || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1331,7 +1364,7 @@ export default function Student() {
                         Introduction:
                       </Text>
                       <Text style={{ fontSize: 16, color: "#333" }}>
-                        {info.counselingProfile.introduction}
+                        {info.counselingProfile.introduction || "N/A"}
                       </Text>
                     </View>
                     <View
@@ -1365,7 +1398,7 @@ export default function Student() {
                           Current Health Status:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.currentHealthStatus}
+                          {info.counselingProfile.currentHealthStatus || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1380,7 +1413,7 @@ export default function Student() {
                           Psychological Status:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.psychologicalStatus}
+                          {info.counselingProfile.psychologicalStatus || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1395,7 +1428,7 @@ export default function Student() {
                           Stress Factors:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.stressFactors}
+                          {info.counselingProfile.stressFactors || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1430,7 +1463,7 @@ export default function Student() {
                           Academic Difficulties:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.academicDifficulties}
+                          {info.counselingProfile.academicDifficulties || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1445,7 +1478,7 @@ export default function Student() {
                           Study Plan:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.studyPlan}
+                          {info.counselingProfile.studyPlan || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1480,7 +1513,7 @@ export default function Student() {
                           Career Goals:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.careerGoals}
+                          {info.counselingProfile.careerGoals || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1495,7 +1528,7 @@ export default function Student() {
                           Part-time Experience:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.partTimeExperience}
+                          {info.counselingProfile.partTimeExperience || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1510,7 +1543,7 @@ export default function Student() {
                           Internship Program:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.internshipProgram}
+                          {info.counselingProfile.internshipProgram || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1545,7 +1578,7 @@ export default function Student() {
                           Extracurricular Activities:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.extracurricularActivities}
+                          {info.counselingProfile.extracurricularActivities || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1560,7 +1593,7 @@ export default function Student() {
                           Personal Interests:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.personalInterests}
+                          {info.counselingProfile.personalInterests || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1575,7 +1608,7 @@ export default function Student() {
                           Social Relationships:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.socialRelationships}
+                          {info.counselingProfile.socialRelationships || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1610,7 +1643,7 @@ export default function Student() {
                           Financial Situation:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.financialSituation}
+                          {info.counselingProfile.financialSituation || "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1625,7 +1658,7 @@ export default function Student() {
                           Financial Support:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.financialSupport}
+                          {info.counselingProfile.financialSupport || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1660,7 +1693,7 @@ export default function Student() {
                           Desired Counseling Fields:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.desiredCounselingFields}
+                          {info.counselingProfile.desiredCounselingFields || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1907,7 +1940,7 @@ export default function Student() {
                     <ActivityIndicator size={60} color="#F39300" animating />
                   </View>
                 ) : null}
-                {activeTab === 4 && info3 ? (
+                {activeTab === 5 && info3 ? (
                   <>
                     <View
                       style={{
@@ -2181,7 +2214,9 @@ export default function Student() {
                       {info3.data
                         .filter((item) => item.status === "ATTEND")
                         .map((item, index) => (
-                          <View
+                          <TouchableOpacity
+                            activeOpacity={0.7}
+                            onPress={() => handleOpenInfo(item)}
                             key={index}
                             style={{
                               backgroundColor: "white",
@@ -2265,7 +2300,7 @@ export default function Student() {
                                 </Text>
                               </Text>
                             </View>
-                          </View>
+                          </TouchableOpacity>
                         ))}
                     </ScrollView>
                     <View
@@ -2422,8 +2457,531 @@ export default function Student() {
                         </Text>
                       </TouchableOpacity>
                     </View>
+                    <Modal
+                      transparent={true}
+                      visible={openInfo2}
+                      animationType="slide"
+                      onRequestClose={handleCloseInfo}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          backgroundColor: "rgba(0, 0, 0, 0.2)",
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: "100%",
+                            height: "98%",
+                            backgroundColor: "#f5f7fd",
+                            borderTopLeftRadius: 16,
+                            borderTopRightRadius: 16,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#ededed",
+                                padding: 4,
+                                marginHorizontal: 20,
+                                marginTop: 16,
+                                marginBottom: 8,
+                                borderRadius: 20,
+                                alignSelf: "flex-start",
+                                alignItems: "flex-start",
+                              }}
+                              onPress={handleCloseInfo}
+                            >
+                              <Ionicons name="chevron-back" size={28} />
+                            </TouchableOpacity>
+                            {historyInfo?.status != "WAITING" && (
+                              <TouchableOpacity
+                                style={{
+                                  backgroundColor: "white",
+                                  padding: 4,
+                                  marginHorizontal: 20,
+                                  marginTop: 16,
+                                  marginBottom: 8,
+                                  borderRadius: 10,
+                                  alignSelf: "flex-end",
+                                  alignItems: "flex-end",
+                                }}
+                                // onPress={handleOpenReport}
+                              >
+                                <Ionicons
+                                  name="newspaper"
+                                  size={28}
+                                  color="#F39300"
+                                />
+                              </TouchableOpacity>
+                            )}
+                          </View>
+                          <ScrollView showsVerticalScrollIndicator={false}>
+                            <View
+                              style={{
+                                padding: 20,
+                                backgroundColor: "#f5f7fd",
+                                borderRadius: 16,
+                              }}
+                            >
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  padding: 16,
+                                  backgroundColor: "white",
+                                  borderRadius: 12,
+                                  marginBottom: 20,
+                                  elevation: 1,
+                                  borderWidth: 1.5,
+                                  borderColor: "#e3e3e3",
+                                }}
+                              >
+                                <View style={{ width: "40%" }}>
+                                  <View style={{ position: "relative" }}>
+                                    <Image
+                                      source={{
+                                        uri: historyInfo?.studentInfo?.profile
+                                          ?.avatarLink,
+                                      }}
+                                      style={{
+                                        width: width * 0.28,
+                                        height: width * 0.28,
+                                        borderRadius: 100,
+                                        marginBottom: 12,
+                                        borderColor: "#F39300",
+                                        borderWidth: 2,
+                                      }}
+                                    />
+                                    <View
+                                      style={{
+                                        padding: 5,
+                                        backgroundColor: "#F39300",
+                                        borderRadius: 30,
+                                        position: "absolute",
+                                        right: 20,
+                                        bottom: 12,
+                                      }}
+                                    >
+                                      <Ionicons
+                                        name={
+                                          historyInfo?.studentInfo?.profile
+                                            ?.gender == "MALE"
+                                            ? "male"
+                                            : "female"
+                                        }
+                                        size={24}
+                                        style={{ color: "white" }}
+                                      />
+                                    </View>
+                                  </View>
+                                </View>
+                                <View style={{ width: "60%" }}>
+                                  <Text
+                                    style={{
+                                      fontSize: 24,
+                                      fontWeight: "bold",
+                                      color: "#333",
+                                      marginBottom: 4,
+                                    }}
+                                  >
+                                    {
+                                      historyInfo?.studentInfo?.profile
+                                        ?.fullName
+                                    }
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      fontSize: 20,
+                                      fontWeight: "500",
+                                      color: "#333",
+                                      marginBottom: 2,
+                                    }}
+                                  >
+                                    {
+                                      historyInfo?.studentInfo?.specialization
+                                        ?.name
+                                    }
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      color: "grey",
+                                      marginBottom: 2,
+                                    }}
+                                  >
+                                    ID: {historyInfo?.studentInfo?.studentCode}
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      color: "grey",
+                                    }}
+                                  >
+                                    Phone:{" "}
+                                    {
+                                      historyInfo?.studentInfo?.profile
+                                        ?.phoneNumber
+                                    }
+                                  </Text>
+                                </View>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "white",
+                                  borderRadius: 16,
+                                  padding: 20,
+                                  elevation: 1,
+                                  borderWidth: 1.5,
+                                  borderColor: "#e3e3e3",
+                                }}
+                              >
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    marginBottom: 16,
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Ionicons
+                                      name="calendar"
+                                      size={22}
+                                      color="#F39300"
+                                    />
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        color: "grey",
+                                        fontWeight: "600",
+                                        marginLeft: 8,
+                                      }}
+                                    >
+                                      Date
+                                    </Text>
+                                  </View>
+                                  <Text
+                                    style={{
+                                      fontSize: 18,
+                                      fontWeight: "bold",
+                                      color: "#333",
+                                    }}
+                                  >
+                                    {historyInfo?.startDateTime?.split("T")[0]}
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    marginBottom: 16,
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Ionicons
+                                      name="time"
+                                      size={22}
+                                      color="#F39300"
+                                    />
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        color: "grey",
+                                        fontWeight: "600",
+                                        marginLeft: 8,
+                                      }}
+                                    >
+                                      Time
+                                    </Text>
+                                  </View>
+                                  <Text
+                                    style={{
+                                      fontSize: 18,
+                                      fontWeight: "bold",
+                                      color: "#333",
+                                    }}
+                                  >
+                                    {historyInfo?.startDateTime
+                                      ?.split("T")[1]
+                                      ?.split(":")[0] +
+                                      ":" +
+                                      historyInfo?.startDateTime
+                                        ?.split("T")[1]
+                                        ?.split(":")[1]}{" "}
+                                    -{" "}
+                                    {historyInfo?.endDateTime
+                                      ?.split("T")[1]
+                                      ?.split(":")[0] +
+                                      ":" +
+                                      historyInfo?.endDateTime
+                                        ?.split("T")[1]
+                                        ?.split(":")[1]}
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    marginBottom: 16,
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <MaterialIcons
+                                      name="meeting-room"
+                                      size={22}
+                                      color="#F39300"
+                                    />
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        color: "grey",
+                                        fontWeight: "600",
+                                        marginLeft: 8,
+                                      }}
+                                    >
+                                      Format
+                                    </Text>
+                                  </View>
+                                  <View
+                                    style={{
+                                      backgroundColor: "#F39300",
+                                      borderRadius: 18,
+                                      paddingVertical: 6,
+                                      paddingHorizontal: 12,
+                                    }}
+                                  >
+                                    <Text
+                                      style={{
+                                        fontSize: 16,
+                                        fontWeight: "bold",
+                                        color: "white",
+                                      }}
+                                    >
+                                      {historyInfo?.meetingType}
+                                    </Text>
+                                  </View>
+                                </View>
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "flex-start",
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    {historyInfo?.meetingType === "ONLINE" && (
+                                      <Ionicons
+                                        name="videocam"
+                                        size={22}
+                                        color="#F39300"
+                                      />
+                                    )}
+                                    {historyInfo?.meetingType === "OFFLINE" && (
+                                      <MaterialIcons
+                                        name="place"
+                                        size={22}
+                                        color="#F39300"
+                                      />
+                                    )}
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        color: "grey",
+                                        fontWeight: "600",
+                                        marginLeft: 8,
+                                      }}
+                                    >
+                                      {historyInfo?.meetingType === "ONLINE"
+                                        ? "Meet URL"
+                                        : "Address"}
+                                    </Text>
+                                  </View>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      maxWidth: "50%",
+                                    }}
+                                  >
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        fontWeight: "bold",
+                                        color: "#333",
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      {historyInfo?.meetingType === "ONLINE"
+                                        ? historyInfo?.meetUrl || "N/A"
+                                        : historyInfo?.address || "N/A"}
+                                    </Text>
+                                  </View>
+                                </View>
+                              </View>
+                              {historyInfo?.appointmentFeedback !== null ? (
+                                <View
+                                  style={{
+                                    marginTop: 20,
+                                    borderRadius: 20,
+                                    backgroundColor: "white",
+                                    padding: 16,
+                                    borderWidth: 1.5,
+                                    borderColor: "lightgrey",
+                                  }}
+                                >
+                                  <View style={{ marginBottom: 8 }}>
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        color: "#333",
+                                        fontWeight: "500",
+                                      }}
+                                    >
+                                      <Text
+                                        style={{
+                                          color: "#F39300",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {
+                                          historyInfo?.studentInfo?.profile
+                                            ?.fullName
+                                        }
+                                      </Text>{" "}
+                                      had leave a review
+                                    </Text>
+                                  </View>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                      marginBottom: 12,
+                                    }}
+                                  >
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        backgroundColor: "#F39300",
+                                        paddingHorizontal: 12,
+                                        paddingVertical: 4,
+                                        borderRadius: 16,
+                                      }}
+                                    >
+                                      <Ionicons
+                                        name="star"
+                                        size={16}
+                                        color="white"
+                                      />
+                                      <Text
+                                        style={{
+                                          fontSize: 16,
+                                          marginLeft: 6,
+                                          fontWeight: "bold",
+                                          color: "white",
+                                        }}
+                                      >
+                                        {historyInfo?.appointmentFeedback?.rating.toFixed(
+                                          1
+                                        )}
+                                      </Text>
+                                    </View>
+                                    <View
+                                      style={{
+                                        paddingHorizontal: 12,
+                                        paddingVertical: 4,
+                                        borderWidth: 1,
+                                        borderColor: "gray",
+                                        borderRadius: 20,
+                                      }}
+                                    >
+                                      <Text
+                                        style={{
+                                          fontSize: 16,
+                                          fontWeight: "500",
+                                          color: "#333",
+                                        }}
+                                      >
+                                        {formatDate(
+                                          historyInfo?.appointmentFeedback
+                                            ?.createdAt
+                                        )}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                  <Text
+                                    style={{
+                                      fontSize: 18,
+                                      color: "#333",
+                                      lineHeight: 24,
+                                    }}
+                                  >
+                                    {historyInfo?.appointmentFeedback?.comment}
+                                  </Text>
+                                </View>
+                              ) : (
+                                <View
+                                  style={{
+                                    marginTop: 20,
+                                    borderRadius: 10,
+                                    backgroundColor: "white",
+                                    padding: 16,
+                                    elevation: 1,
+                                    borderWidth: 1.5,
+                                    borderColor: "#e3e3e3",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Text
+                                    style={{
+                                      fontSize: 18,
+                                      color: "#333",
+                                      fontWeight: "500",
+                                    }}
+                                  >
+                                    There's no feedback yet
+                                  </Text>
+                                </View>
+                              )}
+                            </View>
+                          </ScrollView>
+                        </View>
+                      </View>
+                    </Modal>
                   </>
-                ) : activeTab === 4 ? (
+                ) : activeTab === 5 ? (
                   <Text
                     style={{
                       fontSize: 18,

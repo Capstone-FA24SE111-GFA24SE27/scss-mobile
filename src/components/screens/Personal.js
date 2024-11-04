@@ -16,7 +16,7 @@ import axiosJWT, { BASE_URL } from "../../config/Config";
 
 export default function Personal() {
   const navigation = useNavigation();
-  const { fetchProfile, profile, userData } = useContext(AuthContext);
+  const { profile, userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const scrollViewRef = useRef(null);
   useFocusEffect(
@@ -129,7 +129,7 @@ export default function Personal() {
         <View
           style={{
             backgroundColor: "white",
-            borderRadius: 20,
+            borderRadius: 10,
             elevation: 3,
             marginHorizontal: 30,
             paddingHorizontal: 12,
@@ -362,7 +362,7 @@ export default function Personal() {
           style={{
             flex: 0.65,
             backgroundColor: "white",
-            borderRadius: 20,
+            borderRadius: 10,
             elevation: 3,
             marginHorizontal: 30,
             paddingHorizontal: 5,

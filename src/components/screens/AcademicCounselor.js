@@ -202,7 +202,7 @@ export default function AcademicCounselor() {
     outputRange: ["0deg", "90deg"],
   });
 
-  const booking = async (counselorId) => {
+  const handleOpenBooking = async (counselorId) => {
     try {
       const counselorRes = await axiosJWT.get(
         `${BASE_URL}/counselors/academic/${counselorId}`
@@ -236,7 +236,7 @@ export default function AcademicCounselor() {
     return formattedDate;
   };
 
-  const cancelBooking = () => {
+  const handleCloseBooking = () => {
     setSelectedCounselor({});
     setSelectedSlot(null);
     isOnline(null);
@@ -1165,7 +1165,7 @@ export default function AcademicCounselor() {
                     alignItems: "center",
                     flexDirection: "row",
                   }}
-                  onPress={() => booking(item.id)}
+                  onPress={() => handleOpenBooking(item.id)}
                 >
                   <Text
                     style={{
@@ -1190,7 +1190,7 @@ export default function AcademicCounselor() {
             transparent={true}
             visible={open}
             animationType="slide"
-            onRequestClose={cancelBooking}
+            onRequestClose={handleCloseBooking}
           >
             <View
               style={{
@@ -1221,7 +1221,7 @@ export default function AcademicCounselor() {
                       alignSelf: "flex-start",
                       alignItems: "flex-start",
                     }}
-                    onPress={cancelBooking}
+                    onPress={handleCloseBooking}
                   >
                     <Ionicons name="chevron-back" size={28} />
                   </TouchableOpacity>
@@ -1948,8 +1948,8 @@ export default function AcademicCounselor() {
                           }}
                           onPress={() => (
                             handleCloseSuccess(),
-                            cancelBooking(),
-                            navigation.navigate("Request")
+                            handleCloseBooking(),
+                            navigation.navigate("Request", { prevScreen: "Academic" })
                           )}
                           activeOpacity={0.8}
                         >

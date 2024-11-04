@@ -137,6 +137,11 @@ export default function Schedule() {
                 appointment?.counselorInfo?.profile?.fullName || "No name",
               counselorImage:
                 appointment?.counselorInfo?.profile?.avatarLink || "Image-url",
+              counselorEmail: appointment?.counselorInfo?.email,
+              counselorGender: appointment?.counselorInfo?.profile?.gender,
+              counselorPhone: appointment?.counselorInfo?.profile?.phoneNumber,
+              counselorSpecialization:
+                appointment?.counselorInfo?.specialization?.name,
               status: appointment?.status,
               feedback: appointment?.appointmentFeedback,
             });
@@ -421,25 +426,93 @@ export default function Schedule() {
                   <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                  <View style={{ alignItems: "center" }}>
-                    <Image
-                      source={{ uri: info.counselorImage }}
-                      style={{
-                        width: width * 0.32,
-                        height: width * 0.32,
-                        borderRadius: 100,
-                        marginBottom: 8,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        marginBottom: 30,
-                      }}
-                    >
-                      {info.counselorName}
-                    </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      marginVertical: 20,
+                      marginHorizontal: 20,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <View style={{ width: "40%" }}>
+                      <View style={{ position: "relative" }}>
+                        <Image
+                          source={{ uri: info?.counselorImage }}
+                          style={{
+                            width: width * 0.28,
+                            height: width * 0.28,
+                            borderRadius: 100,
+                            marginBottom: 12,
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                          }}
+                        />
+                        <View
+                          style={{
+                            padding: 5,
+                            backgroundColor: "#F39300",
+                            borderRadius: 30,
+                            position: "absolute",
+                            right: 20,
+                            bottom: 12,
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              info?.counselorGender == "MALE"
+                                ? "male"
+                                : "female"
+                            }
+                            size={24}
+                            style={{ color: "white" }}
+                          />
+                        </View>
+                      </View>
+                    </View>
+                    <View style={{ width: "60%" }}>
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          color: "#333",
+                          marginBottom: 4,
+                        }}
+                      >
+                        {info?.counselorName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "500",
+                          color: "#333",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {info?.counselorSpecialization}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "grey",
+                          marginBottom: 2,
+                        }}
+                      >
+                        Email: {info?.counselorEmail}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "grey",
+                        }}
+                      >
+                        Phone: {info?.counselorPhone}
+                      </Text>
+                    </View>
                   </View>
                   <View
                     style={{
@@ -627,7 +700,6 @@ export default function Schedule() {
                       <View style={{ flexDirection: "row", maxWidth: "50%" }}>
                         <Text
                           style={{
-                            maxWidth: "75%",
                             fontSize: 18,
                             fontWeight: "bold",
                             color: "#333",
@@ -646,12 +718,7 @@ export default function Schedule() {
                         backgroundColor: "white",
                         padding: 16,
                         borderWidth: 1.5,
-                        borderColor: "#E0E0E0",
-                        elevation: 1,
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.2,
-                        shadowRadius: 4,
+                        borderColor: "lightgrey",
                       }}
                     >
                       <View
@@ -662,21 +729,12 @@ export default function Schedule() {
                           marginBottom: 12,
                         }}
                       >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
-                            color: "#333",
-                          }}
-                        >
-                          {formatDate(info?.feedback?.createdAt)}
-                        </Text>
                         <View
                           style={{
                             flexDirection: "row",
                             alignItems: "center",
                             backgroundColor: "#F39300",
-                            paddingHorizontal: 10,
+                            paddingHorizontal: 12,
                             paddingVertical: 4,
                             borderRadius: 16,
                           }}
@@ -693,12 +751,30 @@ export default function Schedule() {
                             {info?.feedback?.rating.toFixed(1)}
                           </Text>
                         </View>
+                        <View
+                          style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderWidth: 1,
+                            borderColor: "gray",
+                            borderRadius: 20,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "500",
+                              color: "#333",
+                            }}
+                          >
+                            {formatDate(info?.feedback?.createdAt)}
+                          </Text>
+                        </View>
                       </View>
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "#555",
-                          fontWeight: "500",
+                          color: "#333",
                           lineHeight: 24,
                         }}
                       >
@@ -731,7 +807,8 @@ export default function Schedule() {
                       </Text>
                       {new Date().toISOString().split("T")[0] <= info.date &&
                         info.status !== "WAITING" &&
-                        info.status !== "ABSENT" && (
+                        info.status !== "ABSENT" &&
+                        info.status !== "CANCELED" && (
                           <TouchableOpacity
                             onPress={() => handleOpenFeedback(info.id)}
                             activeOpacity={0.6}

@@ -157,9 +157,12 @@ export default function Schedule() {
                 appointment?.studentInfo?.profile?.fullName || "No name",
               studentImage:
                 appointment?.studentInfo?.profile?.avatarLink || "Image-url",
+              studentEmail: appointment?.studentInfo?.email,
               studentGender: appointment?.studentInfo?.profile?.gender,
               studentCode: appointment?.studentInfo?.studentCode,
               studentPhone: appointment?.studentInfo?.profile?.phoneNumber,
+              studentSpecialization:
+                appointment?.studentInfo?.specialization?.name,
               status: appointment?.status,
               feedback: appointment?.appointmentFeedback,
               havingReport: appointment?.havingReport,
@@ -697,46 +700,58 @@ export default function Schedule() {
                     }}
                   >
                     <View style={{ width: "40%" }}>
-                      <Image
-                        source={{ uri: info?.studentImage }}
-                        style={{
-                          width: 110,
-                          height: 110,
-                          borderRadius: 100,
-                          marginBottom: 12,
-                          borderColor: "#F39300",
-                          borderWidth: 2,
-                        }}
-                      />
-                      <View
-                        style={{
-                          padding: 5,
-                          backgroundColor: "#F39300",
-                          borderRadius: 30,
-                          position: "absolute",
-                          right: 20,
-                          bottom: 12,
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            info?.studentGender == "MALE" ? "male" : "female"
-                          }
-                          size={24}
-                          style={{ color: "white" }}
+                      <View style={{ position: "relative" }}>
+                        <Image
+                          source={{ uri: info?.studentImage }}
+                          style={{
+                            width: width * 0.28,
+                            height: width * 0.28,
+                            borderRadius: 100,
+                            marginBottom: 12,
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                          }}
                         />
+                        <View
+                          style={{
+                            padding: 5,
+                            backgroundColor: "#F39300",
+                            borderRadius: 30,
+                            position: "absolute",
+                            right: 20,
+                            bottom: 12,
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              info?.studentGender == "MALE" ? "male" : "female"
+                            }
+                            size={24}
+                            style={{ color: "white" }}
+                          />
+                        </View>
                       </View>
                     </View>
                     <View style={{ width: "60%" }}>
                       <Text
                         style={{
-                          fontSize: 26,
+                          fontSize: 24,
                           fontWeight: "bold",
                           color: "#333",
                           marginBottom: 4,
                         }}
                       >
                         {info?.studentName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "500",
+                          color: "#333",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {info?.studentSpecialization}
                       </Text>
                       <Text
                         style={{
@@ -914,7 +929,10 @@ export default function Schedule() {
                       }}
                     >
                       <View
-                        style={{ flexDirection: "row", alignItems: "flex-start" }}
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                        }}
                       >
                         {info.meetingType === "ONLINE" && (
                           <Ionicons name="videocam" size={24} color="#F39300" />
@@ -940,173 +958,182 @@ export default function Schedule() {
                             : "Address"}
                         </Text>
                       </View>
-                      <View style={{ flexDirection: "row", maxWidth: "50%" }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "flex-end",
+                          maxWidth: "45%",
+                        }}
+                      >
                         {info.date + "T" + info.startTime >
-                          new Date().toISOString() && (
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              justifyContent: "flex-end",
-                              marginHorizontal: 8,
-                            }}
-                          >
-                            <TouchableOpacity
-                              onPress={() =>
-                                handleOpenUpdateAppointment(
-                                  info.id,
-                                  info.meetingType,
-                                  info.place
-                                )
-                              }
+                          new Date().toISOString() && info?.status === "WAITING" &&  (
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                marginHorizontal: 8,
+                              }}
                             >
-                              <MaterialIcons
-                                name="edit-note"
-                                size={24}
-                                color="#F39300"
-                              />
-                            </TouchableOpacity>
-                            <Modal
-                              transparent={true}
-                              visible={openUpdate}
-                              animationType="fade"
-                              onRequestClose={handleCloseUpdateAppointment}
-                            >
-                              <View
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  backgroundColor: "rgba(0, 0, 0, 0.1)",
-                                }}
+                              <TouchableOpacity
+                                onPress={() =>
+                                  handleOpenUpdateAppointment(
+                                    info.id,
+                                    info.meetingType,
+                                    info.place
+                                  )
+                                }
+                              >
+                                <MaterialIcons
+                                  name="edit-note"
+                                  size={24}
+                                  color="#F39300"
+                                />
+                              </TouchableOpacity>
+                              <Modal
+                                transparent={true}
+                                visible={openUpdate}
+                                animationType="fade"
+                                onRequestClose={handleCloseUpdateAppointment}
                               >
                                 <View
                                   style={{
-                                    width: width * 0.8,
-                                    padding: 20,
-                                    backgroundColor: "white",
-                                    borderRadius: 10,
-                                    elevation: 10,
+                                    flex: 1,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    backgroundColor: "rgba(0, 0, 0, 0.1)",
                                   }}
                                 >
-                                  <Text
-                                    style={{
-                                      fontSize: 22,
-                                      fontWeight: "bold",
-                                      marginBottom: 10,
-                                      textAlign: "center",
-                                    }}
-                                  >
-                                    Update Confirmation
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      marginBottom: 30,
-                                      textAlign: "left",
-                                    }}
-                                  >
-                                    Are you sure you want to update this
-                                    appointment? Your schedule will be updated
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      fontSize: 16,
-                                      marginBottom: 10,
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    Please provide the meeting
-                                    {info.meetingType === "ONLINE"
-                                      ? "'s Google Meet URL"
-                                      : "'s address"}{" "}
-                                    <Text
-                                      style={{ color: "#F39300", fontSize: 20 }}
-                                    >
-                                      *
-                                    </Text>
-                                  </Text>
-                                  <View>
-                                    <TextInput
-                                      placeholder="Input here"
-                                      placeholderTextColor="gray"
-                                      keyboardType="default"
-                                      value={value}
-                                      onChangeText={(value) => setValue(value)}
-                                      style={{
-                                        fontWeight: "600",
-                                        fontSize: 16,
-                                        opacity: 0.8,
-                                        paddingVertical: 8,
-                                        textAlignVertical: "center",
-                                        paddingHorizontal: 12,
-                                        backgroundColor: "#ededed",
-                                        borderColor: "gray",
-                                        borderWidth: 1,
-                                        borderRadius: 10,
-                                        marginBottom: 20,
-                                      }}
-                                    />
-                                  </View>
                                   <View
                                     style={{
-                                      flexDirection: "row",
-                                      justifyContent: "space-between",
+                                      width: width * 0.8,
+                                      padding: 20,
+                                      backgroundColor: "white",
+                                      borderRadius: 10,
+                                      elevation: 10,
                                     }}
                                   >
-                                    <TouchableOpacity
+                                    <Text
                                       style={{
-                                        flex: 1,
-                                        backgroundColor: "#ededed",
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        marginRight: 10,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        borderWidth: 1,
-                                        borderColor: "gray",
+                                        fontSize: 22,
+                                        fontWeight: "bold",
+                                        marginBottom: 10,
+                                        textAlign: "center",
                                       }}
-                                      onPress={handleCloseUpdateAppointment}
                                     >
+                                      Update Confirmation
+                                    </Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        marginBottom: 30,
+                                        textAlign: "left",
+                                      }}
+                                    >
+                                      Are you sure you want to update this
+                                      appointment? Your schedule will be updated
+                                    </Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 16,
+                                        marginBottom: 10,
+                                        fontWeight: "600",
+                                      }}
+                                    >
+                                      Please provide the meeting
+                                      {info.meetingType === "ONLINE"
+                                        ? "'s Google Meet URL"
+                                        : "'s address"}{" "}
                                       <Text
                                         style={{
-                                          fontSize: 18,
-                                          color: "#333",
-                                          fontWeight: "600",
+                                          color: "#F39300",
+                                          fontSize: 20,
                                         }}
                                       >
-                                        No
+                                        *
                                       </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                      style={{
-                                        flex: 1,
-                                        backgroundColor: "#F39300",
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                      }}
-                                      onPress={handleUpdateAppointment}
-                                    >
-                                      <Text
+                                    </Text>
+                                    <View>
+                                      <TextInput
+                                        placeholder="Input here"
+                                        placeholderTextColor="gray"
+                                        keyboardType="default"
+                                        value={value}
+                                        onChangeText={(value) =>
+                                          setValue(value)
+                                        }
                                         style={{
-                                          fontSize: 18,
-                                          color: "white",
                                           fontWeight: "600",
+                                          fontSize: 16,
+                                          opacity: 0.8,
+                                          paddingVertical: 8,
+                                          textAlignVertical: "center",
+                                          paddingHorizontal: 12,
+                                          backgroundColor: "#ededed",
+                                          borderColor: "gray",
+                                          borderWidth: 1,
+                                          borderRadius: 10,
+                                          marginBottom: 20,
                                         }}
+                                      />
+                                    </View>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <TouchableOpacity
+                                        style={{
+                                          flex: 1,
+                                          backgroundColor: "#ededed",
+                                          padding: 10,
+                                          borderRadius: 10,
+                                          marginRight: 10,
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                          borderWidth: 1,
+                                          borderColor: "gray",
+                                        }}
+                                        onPress={handleCloseUpdateAppointment}
                                       >
-                                        Yes
-                                      </Text>
-                                    </TouchableOpacity>
+                                        <Text
+                                          style={{
+                                            fontSize: 18,
+                                            color: "#333",
+                                            fontWeight: "600",
+                                          }}
+                                        >
+                                          No
+                                        </Text>
+                                      </TouchableOpacity>
+                                      <TouchableOpacity
+                                        style={{
+                                          flex: 1,
+                                          backgroundColor: "#F39300",
+                                          padding: 10,
+                                          borderRadius: 10,
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                        }}
+                                        onPress={handleUpdateAppointment}
+                                      >
+                                        <Text
+                                          style={{
+                                            fontSize: 18,
+                                            color: "white",
+                                            fontWeight: "600",
+                                          }}
+                                        >
+                                          Yes
+                                        </Text>
+                                      </TouchableOpacity>
+                                    </View>
                                   </View>
                                 </View>
-                              </View>
-                            </Modal>
-                          </View>
-                        )}
+                              </Modal>
+                            </View>
+                          )}
                         <Text
                           style={{
-                            maxWidth: "75%",
                             fontSize: 18,
                             fontWeight: "bold",
                             color: "#333",
@@ -1139,16 +1166,24 @@ export default function Schedule() {
                         backgroundColor: "white",
                         padding: 16,
                         borderWidth: 1.5,
-                        borderColor: "#E0E0E0",
-                        elevation: 5,
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.2,
-                        shadowRadius: 4,
+                        borderColor: "lightgrey",
                       }}
                     >
-                      <View>
-                        <Text>{info.studentName} had leave a review</Text>
+                      <View style={{ marginBottom: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            fontWeight: "500",
+                          }}
+                        >
+                          <Text
+                            style={{ color: "#F39300", fontWeight: "bold" }}
+                          >
+                            {info.studentName}
+                          </Text>{" "}
+                          had leave a review
+                        </Text>
                       </View>
                       <View
                         style={{
@@ -1158,21 +1193,12 @@ export default function Schedule() {
                           marginBottom: 12,
                         }}
                       >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
-                            color: "#333",
-                          }}
-                        >
-                          {formatDate(info?.feedback?.createdAt)}
-                        </Text>
                         <View
                           style={{
                             flexDirection: "row",
                             alignItems: "center",
                             backgroundColor: "#F39300",
-                            paddingHorizontal: 10,
+                            paddingHorizontal: 12,
                             paddingVertical: 4,
                             borderRadius: 16,
                           }}
@@ -1189,12 +1215,30 @@ export default function Schedule() {
                             {info?.feedback?.rating.toFixed(1)}
                           </Text>
                         </View>
+                        <View
+                          style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderWidth: 1,
+                            borderColor: "gray",
+                            borderRadius: 20,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "500",
+                              color: "#333",
+                            }}
+                          >
+                            {formatDate(info?.feedback?.createdAt)}
+                          </Text>
+                        </View>
                       </View>
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "#555",
-                          fontWeight: "500",
+                          color: "#333",
                           lineHeight: 24,
                         }}
                       >

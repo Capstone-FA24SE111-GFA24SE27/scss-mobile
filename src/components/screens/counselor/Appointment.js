@@ -1,5 +1,11 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -21,9 +27,12 @@ import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import { RequestSkeleton } from "../../layout/Skeleton";
 import Toast from "react-native-toast-message";
+import { CalendarProvider, WeekCalendar } from "react-native-calendars";
+import { Dropdown } from "react-native-element-dropdown";
 
-export default function Appointment() {
+export default function Appointment({ route }) {
   const navigation = useNavigation();
+  const prevScreen = route?.params?.prevScreen;
   const { width, height } = Dimensions.get("screen");
   const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
@@ -38,20 +47,38 @@ export default function Appointment() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [status, setStatus] = useState("");
+  const statusList = [
+    { name: "CANCELED" },
+    { name: "ABSENT" },
+    { name: "WAITING" },
+    { name: "ATTEND" },
+  ];
   const [sortDirection, setSortDirection] = useState("");
+  const [expanded, setExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [openCreate, setOpenCreate] = useState(false);
+  const [slots, setSlots] = useState({});
+  const [selectedDate2, setSelectedDate2] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [online, isOnline] = useState(null);
+  const [reason, setReason] = useState("");
+  const [selectedStudent, setSelectedStudent] = useState(null);
   const [openInfo, setOpenInfo] = useState(false);
+  const [openCancel, setOpenCancel] = useState(false);
   const [info, setInfo] = useState({});
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openAttendance, setOpenAttendance] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [method, setMethod] = useState("");
   const [value, setValue] = useState("");
+  const [value2, setValue2] = useState("");
   const statusOptions = ["ABSENT", "ATTEND"];
 
   const scrollViewRef = useRef(null);
@@ -183,7 +210,6 @@ export default function Appointment() {
       const appointmentsData = appointmentsRes?.data?.content || [];
       setAppointments(appointmentsData);
       setLoading(false);
-      console.log(appointments);
     } catch (err) {
       console.log(err);
     }
@@ -267,6 +293,232 @@ export default function Appointment() {
     outputRange: ["0deg", "90deg"],
   });
 
+  const handleOpenCreate = async () => {
+    setOpenCreate(true);
+    const startOfWeek = new Date(selectedDate2);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 31);
+    startOfWeek.setDate(startOfWeek.getDate() - 31);
+    const from = startOfWeek.toISOString().split("T")[0];
+    const to = endOfWeek.toISOString().split("T")[0];
+    await fetchSlots(userData?.id, from, to);
+  };
+
+  const fetchSlots = async (counselorId, from, to) => {
+    try {
+      const response = await axiosJWT.get(
+        `${BASE_URL}/counselors/daily-slots/${counselorId}?from=${from}&to=${to}`
+      );
+      setSlots(response.data.content);
+    } catch (error) {
+      console.log("Error fetching slots", error);
+    }
+  };
+
+  const handleMonthChange = (newDate) => {
+    const startOfWeek = new Date(newDate);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 31);
+    startOfWeek.setDate(startOfWeek.getDate() - 31);
+    const from = startOfWeek.toISOString().split("T")[0];
+    const to = endOfWeek.toISOString().split("T")[0];
+
+    if (userData?.id) {
+      fetchSlots(userData.id, from, to);
+    }
+  };
+
+  const renderSlotsForSelectedDate = () => {
+    const daySlots = slots[selectedDate2] || [];
+    if (!daySlots.length) {
+      return (
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            fontWeight: "400",
+            marginTop: 12,
+          }}
+        >
+          No available slots for {selectedDate2}
+        </Text>
+      );
+    }
+
+    return (
+      <View
+        style={{
+          flexWrap: "wrap",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          marginTop: 4,
+        }}
+      >
+        {daySlots.map((slot, index) => (
+          <TouchableOpacity
+            key={`${selectedDate2}-${slot.slotCode}-${index}`}
+            onPress={() => (
+              console.log(selectedDate2, slot.slotCode),
+              setSelectedSlot(slot.slotCode)
+            )}
+            disabled={
+              slot.status === "EXPIRED" ||
+              slot.myAppointment === true ||
+              slot.status === "UNAVAILABLE"
+            }
+            style={{
+              width: "auto",
+              padding: 10,
+              marginVertical: 8,
+              backgroundColor:
+                slot.myAppointment === true
+                  ? "#ededed"
+                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  ? "white"
+                  : slot.status === "EXPIRED"
+                  ? "#ededed"
+                  : slot.status === "AVAILABLE"
+                  ? "white"
+                  : "#ededed",
+              borderRadius: 10,
+              alignItems: "center",
+              borderWidth: 1.5,
+              marginRight: 16,
+              borderColor:
+                slot.myAppointment === true
+                  ? "transparent"
+                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  ? "#F39300"
+                  : slot.status === "EXPIRED"
+                  ? "transparent"
+                  : slot.status === "AVAILABLE"
+                  ? "black"
+                  : "transparent",
+            }}
+          >
+            {selectedSlot === slot.slotCode &&
+              slot.status !== "EXPIRED" &&
+              slot.status !== "UNAVAILABLE" &&
+              slot.myAppointment !== true && (
+                <View style={{ position: "absolute", top: -10, right: -10 }}>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={24}
+                    style={{ color: "#F39300" }}
+                  />
+                </View>
+              )}
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "600",
+                color:
+                  slot.myAppointment === true
+                    ? "gray"
+                    : selectedSlot === slot.slotCode &&
+                      slot.status !== "EXPIRED"
+                    ? "#F39300"
+                    : slot.status === "EXPIRED"
+                    ? "gray"
+                    : slot.status === "AVAILABLE"
+                    ? "black"
+                    : "gray",
+              }}
+            >
+              {slot.startTime.split(":")[0] +
+                ":" +
+                slot.startTime.split(":")[1]}{" "}
+              - {slot.endTime.split(":")[0] + ":" + slot.endTime.split(":")[1]}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
+  useEffect(() => {}, [socket, selectedDate]);
+
+  const handleSocketChange = useCallback(
+    (day) => {
+      const handleSlotRender = (data) => {
+        try {
+          setSlots((prevSlots) => {
+            let updatedSlots = { ...prevSlots };
+            let newSlot = updatedSlots[data.dateChange].map((item) => {
+              if (item.slotId === data.slotId) {
+                return {
+                  ...item,
+                  status: data.newStatus,
+                  myAppointment:
+                    data.counselorId === userData?.id ? true : false,
+                };
+              }
+              return item;
+            });
+            updatedSlots[data.dateChange] = newSlot;
+            return updatedSlots;
+          });
+        } catch (error) {
+          console.error("Error parsing notification:", error);
+        }
+      };
+      setSelectedDate(day.dateString);
+      setSelectedSlot("");
+      console.log(`/user/${day.dateString}/${userData?.id}/slot`);
+      if (socket) {
+        socket.off(`/user/${selectedDate}/${userData?.id}/slot`);
+        socket.on(
+          `/user/${day.dateString}/${userData?.id}/slot`,
+          handleSlotRender
+        );
+      }
+    },
+    [socket, selectedDate, userData]
+  );
+
+  const fetchStudent = async (studentId) => {
+    try {
+      const response = await axiosJWT.get(
+        `${BASE_URL}/students/code/${studentId}`
+      );
+      setSelectedStudent(response.data.content);
+    } catch (error) {
+      console.log("Error fetching student", error);
+    }
+  };
+
+  const handleCreateAppointment = async () => {
+    try {
+      const response = await axiosJWT.post(
+        `${BASE_URL}/appointments/create/${selectedStudent?.id}`,
+        {
+          slotCode: selectedSlot,
+          date: selectedDate2,
+          isOnline: online,
+          reason: reason,
+          ...(online ? { meetURL: value } : { address: value }),
+        }
+      );
+      const data = await response.data;
+      if (data && data.status == 200) {
+        handleCloseCreate();
+        fetchData(filters, { page: currentPage });
+      }
+    } catch (error) {
+      console.error("Can't create appointment", error);
+    }
+  };
+
+  const handleCloseCreate = () => {
+    setSelectedStudent(null);
+    setSelectedSlot(null);
+    isOnline(null);
+    setReason(null);
+    setValue(null);
+    setValue2("");
+    setOpenCreate(false);
+  };
+
   const handleOpenInfo = (info) => {
     setInfo(info);
     setOpenInfo(true);
@@ -275,6 +527,54 @@ export default function Appointment() {
   const handleCloseInfo = () => {
     setInfo("");
     setOpenInfo(false);
+  };
+
+  const handleOpenCancel = (id) => {
+    setOpenCancel(true);
+    setSelectedAppointment(id);
+  };
+
+  const handleCancelAppointment = async () => {
+    try {
+      const response = await axiosJWT.post(
+        `${BASE_URL}/booking-counseling/counselor/cancel/${selectedAppointment}`,
+        {
+          reason: value,
+        }
+      );
+      const data = await response.data;
+      if (data && data.status == 200) {
+        fetchData();
+        setOpenCancel(false);
+        setSelectedAppointment(null);
+        setValue("");
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to cancel appointment.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+      }
+    } catch (error) {
+      console.log("Something error when cancel this appointment", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Something error when cancel this appointment",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
+    }
+  };
+
+  const handleCloseCancel = () => {
+    setOpenCancel(false);
+    setSelectedAppointment(null);
+    setValue("");
   };
 
   const handleOpenUpdateAppointment = async (id, method, value) => {
@@ -296,7 +596,7 @@ export default function Appointment() {
       if (data && data.status == 200) {
         setInfo({
           ...info,
-          [method === "ONLINE" ? "meetUrl" : "address"]: value
+          [method === "ONLINE" ? "meetUrl" : "address"]: value,
         });
         Toast.show({
           type: "success",
@@ -340,7 +640,7 @@ export default function Appointment() {
 
   const handleCloseUpdateAppointment = () => {
     setValue("");
-    setMethod("")
+    setMethod("");
     setSelectedAppointment(null);
     setOpenUpdate(false);
     fetchData(filters);
@@ -361,7 +661,7 @@ export default function Appointment() {
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
               hitSlop={30}
-              onPress={() => navigation.navigate("Personal")}
+              onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
@@ -381,30 +681,54 @@ export default function Appointment() {
           >
             <View
               style={{
-                display: "flex",
                 flexDirection: "row",
+                justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
               <View style={{ alignItems: "flex-start" }}>
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: 20,
                     opacity: 0.8,
                     color: "#333",
-                    fontWeight: "600",
+                    fontWeight: "bold",
                   }}
                 >
-                  {appointments.totalElements} Appointments found
+                  {appointments.totalElements} Appointments{" "}
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      opacity: 0.8,
+                      fontWeight: "400",
+                      color: "#333",
+                    }}
+                  >
+                    found
+                  </Text>
                 </Text>
               </View>
               <View
                 style={{
-                  flex: 1,
                   alignItems: "flex-end",
                   justifyContent: "center",
+                  flexDirection: "row",
                 }}
               >
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#F39300",
+                    borderRadius: 40,
+                    padding: 8,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginRight: 8,
+                  }}
+                  onPress={handleOpenCreate}
+                >
+                  <Ionicons name="add" size={26} style={{ color: "white" }} />
+                </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => setIsExpanded(!isExpanded)}
                   onLayout={calculateLayout}
@@ -635,6 +959,94 @@ export default function Appointment() {
                   </View>
                   <View
                     style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      Status:
+                    </Text>
+                    <Dropdown
+                      style={{
+                        backgroundColor: "white",
+                        borderColor: expanded ? "#F39300" : "black",
+                        flex: 0.5,
+                        height: 30,
+                        borderWidth: 1,
+                        borderColor: "grey",
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                        marginLeft: 8,
+                      }}
+                      placeholderStyle={{ fontSize: 16 }}
+                      selectedTextStyle={{
+                        fontSize: 18,
+                        color: status ? "black" : "white",
+                      }}
+                      maxHeight={250}
+                      data={statusList}
+                      labelField="name"
+                      value={status}
+                      placeholder={status != "" ? status : "Select item"}
+                      onFocus={() => setExpanded(true)}
+                      onBlur={() => setExpanded(false)}
+                      onChange={(item) => {
+                        setStatus(item.name);
+                        setExpanded(false);
+                        console.log(status);
+                      }}
+                      renderRightIcon={() => (
+                        <Ionicons
+                          color={expanded ? "#F39300" : "black"}
+                          name={expanded ? "caret-up" : "caret-down"}
+                          size={20}
+                        />
+                      )}
+                      renderItem={(item) => {
+                        return (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 16,
+                              paddingVertical: 8,
+                              backgroundColor:
+                                item.name == status ? "#F39300" : "white",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "500",
+                                color: item.name == status ? "white" : "black",
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            {status == item.name && (
+                              <Ionicons
+                                color="white"
+                                name="checkmark"
+                                size={24}
+                              />
+                            )}
+                          </View>
+                        );
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
                       margin: 8,
                       flex: 1,
                       justifyContent: "flex-end",
@@ -730,7 +1142,7 @@ export default function Appointment() {
                       borderWidth: 2,
                     }}
                   />
-                  <View style={{ marginLeft: 12 }}>
+                  <View style={{ marginLeft: 12, maxWidth: "80%" }}>
                     <Text
                       style={{
                         fontWeight: "bold",
@@ -738,8 +1150,7 @@ export default function Appointment() {
                         color: "#333",
                       }}
                     >
-                      {appointment.studentInfo.profile.fullName} (
-                      {appointment.studentInfo.studentCode})
+                      {appointment.studentInfo.profile.fullName}
                     </Text>
                     <View
                       style={{
@@ -866,39 +1277,77 @@ export default function Appointment() {
                       </Text>
                     </Text>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedAppointment(appointment.id);
-                      setOpenAttendance(true);
-                    }}
-                    style={{
-                      paddingHorizontal: 8,
-                      paddingVertical: 2,
-                      backgroundColor: "#F39300",
-                      borderRadius: 10,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      borderWidth: 1.5,
-                      borderColor: "#F39300",
-                    }}
-                  >
-                    <MaterialIcons
-                      name="edit-calendar"
-                      size={20}
-                      color="white"
-                    />
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    {appointment.status === "WAITING" && (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => handleOpenCancel(appointment.id)}
+                          activeOpacity={0.6}
+                          style={{
+                            backgroundColor: "#ededed",
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            marginRight: 8,
+                            borderRadius: 10,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderWidth: 1.5,
+                            borderColor: "#ededed",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: "#333",
+                              fontWeight: "600",
+                            }}
+                          >
+                            Cancel
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                    {appointment.status !== "CANCELED" && (
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedAppointment(appointment.id);
+                          setOpenAttendance(true);
+                        }}
+                        style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 2,
+                          backgroundColor: "#F39300",
+                          borderRadius: 10,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          borderWidth: 1.5,
+                          borderColor: "#F39300",
+                        }}
+                      >
+                        <MaterialIcons
+                          name="edit-calendar"
+                          size={18}
+                          color="white"
+                        />
 
-                    <Text
-                      style={{
-                        fontWeight: "500",
-                        color: "white",
-                        fontSize: 16,
-                        marginLeft: 4,
-                      }}
-                    >
-                      Check
-                    </Text>
-                  </TouchableOpacity>
+                        <Text
+                          style={{
+                            fontWeight: "500",
+                            color: "white",
+                            fontSize: 16,
+                            marginLeft: 4,
+                          }}
+                        >
+                          Check
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
               </View>
             ))
@@ -1038,6 +1487,686 @@ export default function Appointment() {
         )}
         <Modal
           transparent={true}
+          visible={openCreate}
+          animationType="slide"
+          onRequestClose={handleCloseCreate}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <View
+              style={{
+                width: "100%",
+                height: "98%",
+                backgroundColor: "#f5f7fd",
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#ededed",
+                  padding: 4,
+                  marginHorizontal: 20,
+                  marginTop: 16,
+                  marginBottom: 8,
+                  borderRadius: 20,
+                  alignSelf: "flex-start",
+                  alignItems: "flex-start",
+                }}
+                onPress={handleCloseCreate}
+              >
+                <Ionicons name="chevron-back" size={28} />
+              </TouchableOpacity>
+              <CalendarProvider
+                date={selectedDate2}
+                onDateChanged={(date) => (
+                  setSelectedDate2(date), setSelectedSlot("")
+                )}
+                onMonthChange={(newDate) =>
+                  handleMonthChange(newDate.dateString)
+                }
+              >
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View style={{ marginVertical: 12 }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          marginHorizontal: 20,
+                          fontWeight: "600",
+                          marginBottom: 12,
+                        }}
+                      >
+                        Available Time
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          marginHorizontal: 20,
+                          fontWeight: "400",
+                          marginBottom: 12,
+                        }}
+                      >
+                        Date:{" "}
+                        <Text style={{ fontWeight: "600", color: "#F39300" }}>
+                          {selectedDate2}
+                        </Text>
+                      </Text>
+                    </View>
+                    <WeekCalendar
+                      hideKnob
+                      initialPosition="close"
+                      theme={{
+                        selectedDayBackgroundColor: "#F39300",
+                        selectedDayTextColor: "white",
+                        arrowColor: "#F39300",
+                        textDayHeaderFontSize: 14,
+                        textDayFontSize: 16,
+                        todayTextColor: "#F39300",
+                      }}
+                      style={{
+                        justifyContent: "center",
+                        elevation: 1,
+                      }}
+                      renderArrow={(direction) => {
+                        return direction === "left" ? (
+                          <Ionicons
+                            name="chevron-back"
+                            size={22}
+                            color="#F39300"
+                          />
+                        ) : (
+                          <Ionicons
+                            name="chevron-forward"
+                            size={22}
+                            color="#F39300"
+                          />
+                        );
+                      }}
+                      onDayPress={handleSocketChange}
+                    />
+                    <View
+                      style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: 20,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "600",
+                        }}
+                      >
+                        Select a slot{" "}
+                        <Text style={{ color: "#F39300" }}>*</Text>
+                      </Text>
+                      {renderSlotsForSelectedDate()}
+                    </View>
+                    {slots[selectedDate2]?.length !== 0 &&
+                      slots[selectedDate2]?.some(
+                        (item) =>
+                          item.status !== "EXPIRED" &&
+                          item.status !== "UNAVAILABLE"
+                      ) && (
+                        <>
+                          <View
+                            style={{
+                              paddingVertical: 12,
+                              paddingHorizontal: 20,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "600",
+                              }}
+                            >
+                              Form of counseling{" "}
+                              <Text style={{ color: "#F39300" }}>*</Text>
+                            </Text>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  width: "50%",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <TouchableOpacity
+                                  onPress={() => isOnline(true)}
+                                  style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    backgroundColor:
+                                      online == true ? "white" : "#ededed",
+                                    borderRadius: 10,
+                                    paddingHorizontal: 12,
+                                    paddingVertical: 4,
+                                    marginTop: 10,
+                                    borderWidth: 1.5,
+                                    borderColor:
+                                      online == true
+                                        ? "#F39300"
+                                        : "transparent",
+                                  }}
+                                >
+                                  <Ionicons
+                                    name={
+                                      online == true
+                                        ? "checkmark-circle"
+                                        : "radio-button-off"
+                                    }
+                                    size={24}
+                                    color={online == true ? "#F39300" : "gray"}
+                                    style={{ marginRight: 8 }}
+                                  />
+                                  <Text
+                                    style={{
+                                      fontSize: 20,
+                                      color:
+                                        online == true ? "#F39300" : "black",
+                                      fontWeight: online == true ? "600" : "0",
+                                    }}
+                                  >
+                                    Online
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  width: "50%",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <TouchableOpacity
+                                  onPress={() => isOnline(false)}
+                                  style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    backgroundColor:
+                                      online == false ? "white" : "#ededed",
+                                    borderRadius: 10,
+                                    paddingHorizontal: 12,
+                                    paddingVertical: 4,
+                                    marginTop: 10,
+                                    borderWidth: 1.5,
+                                    borderColor:
+                                      online == false
+                                        ? "#F39300"
+                                        : "transparent",
+                                  }}
+                                >
+                                  <Ionicons
+                                    name={
+                                      online == false
+                                        ? "checkmark-circle"
+                                        : "radio-button-off"
+                                    }
+                                    size={24}
+                                    color={online == false ? "#F39300" : "gray"}
+                                    style={{ marginRight: 8 }}
+                                  />
+                                  <Text
+                                    style={{
+                                      fontSize: 20,
+                                      color:
+                                        online == false ? "#F39300" : "black",
+                                      fontWeight: online == false ? "600" : "0",
+                                    }}
+                                  >
+                                    Offline
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          </View>
+                          {online !== null && (
+                            <View
+                              style={{
+                                paddingVertical: 12,
+                                paddingHorizontal: 20,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 18,
+                                  fontWeight: "600",
+                                  marginBottom: 12,
+                                }}
+                              >
+                                {online === true
+                                  ? "Enter Meet URL"
+                                  : "Enter Address"}{" "}
+                                <Text style={{ color: "#F39300" }}>*</Text>
+                              </Text>
+                              <View>
+                                <TextInput
+                                  placeholder="Input here"
+                                  placeholderTextColor="gray"
+                                  keyboardType="default"
+                                  value={value}
+                                  onChangeText={(value) => setValue(value)}
+                                  style={{
+                                    flex: 1,
+                                    fontWeight: "600",
+                                    fontSize: 16,
+                                    opacity: 0.8,
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 12,
+                                    backgroundColor: "#ededed",
+                                    borderColor: "gray",
+                                    borderWidth: 1,
+                                    borderRadius: 10,
+                                  }}
+                                />
+                              </View>
+                            </View>
+                          )}
+                          <View
+                            style={{
+                              paddingVertical: 12,
+                              paddingHorizontal: 20,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "600",
+                                marginBottom: 12,
+                              }}
+                            >
+                              What is the purpose of this appointment?{" "}
+                              <Text style={{ color: "#F39300" }}>*</Text>
+                            </Text>
+                            <View>
+                              <TextInput
+                                placeholder="Input here"
+                                placeholderTextColor="gray"
+                                keyboardType="default"
+                                multiline={true}
+                                numberOfLines={2}
+                                value={reason}
+                                onChangeText={(value) => setReason(value)}
+                                style={{
+                                  flex: 1,
+                                  fontWeight: "600",
+                                  fontSize: 16,
+                                  opacity: 0.8,
+                                  paddingVertical: 8,
+                                  textAlignVertical: "top",
+                                  paddingHorizontal: 12,
+                                  backgroundColor: "#ededed",
+                                  borderColor: "gray",
+                                  borderWidth: 1,
+                                  borderRadius: 10,
+                                }}
+                              />
+                            </View>
+                          </View>
+                          <View
+                            style={{
+                              paddingVertical: 12,
+                              paddingHorizontal: 20,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "600",
+                                marginBottom: 12,
+                              }}
+                            >
+                              Assign student{" "}
+                              <Text style={{ color: "#F39300" }}>*</Text>
+                            </Text>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <View
+                                style={{
+                                  flex: 1,
+                                  flexDirection: "row",
+                                  paddingVertical: 8,
+                                  paddingHorizontal: 12,
+                                  backgroundColor: "#ededed",
+                                  borderColor: "gray",
+                                  borderWidth: 1,
+                                  borderRadius: 10,
+                                  alignItems: "center",
+                                }}
+                              >
+                                <TextInput
+                                  placeholder="Input Student Code"
+                                  placeholderTextColor="gray"
+                                  keyboardType="default"
+                                  value={value2}
+                                  onChangeText={(value) => setValue2(value)}
+                                  style={{
+                                    flex: 1,
+                                    fontWeight: "600",
+                                    fontSize: 16,
+                                    opacity: 0.8,
+                                  }}
+                                />
+                                {value2 !== "" && (
+                                  <TouchableOpacity
+                                    onPress={() => (
+                                      setValue2(""), setSelectedStudent(null)
+                                    )}
+                                  >
+                                    <Ionicons
+                                      name="close"
+                                      size={28}
+                                      style={{ color: "#F39300", opacity: 0.7 }}
+                                    />
+                                  </TouchableOpacity>
+                                )}
+                              </View>
+                              <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => fetchStudent(value2)}
+                                style={{
+                                  backgroundColor: "#F39300",
+                                  borderRadius: 40,
+                                  padding: 8,
+                                  marginLeft: 8,
+                                  borderWidth: 1.5,
+                                  borderColor: "#F39300",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  flexDirection: "row",
+                                }}
+                              >
+                                <Ionicons
+                                  name="search"
+                                  color="white"
+                                  size={24}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                            {selectedStudent && (
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  alignItems: "stretch",
+                                  backgroundColor: "#F39300",
+                                  borderRadius: 20,
+                                  marginVertical: 12,
+                                }}
+                              >
+                                <View
+                                  style={{
+                                    backgroundColor: "#fff0e0",
+                                    justifyContent: "flex-start",
+                                    padding: 12,
+                                    marginLeft: 4,
+                                    marginRight: 2,
+                                    marginVertical: 4,
+                                    borderTopLeftRadius: 18,
+                                    borderBottomLeftRadius: 18,
+                                  }}
+                                >
+                                  <Image
+                                    source={{
+                                      uri: selectedStudent.profile.avatarLink,
+                                    }}
+                                    style={{
+                                      width: 70,
+                                      height: 70,
+                                      borderRadius: 40,
+                                      borderColor: "#F39300",
+                                      borderWidth: 2,
+                                    }}
+                                  />
+                                </View>
+                                <View
+                                  style={{
+                                    flex: 1,
+                                    backgroundColor: "white",
+                                    borderTopRightRadius: 18,
+                                    borderBottomRightRadius: 18,
+                                    padding: 8,
+                                    marginVertical: 4,
+                                    marginRight: 4,
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      marginBottom: 8,
+                                    }}
+                                  >
+                                    <Text
+                                      style={{
+                                        color: "#F39300",
+                                        fontSize: 20,
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {selectedStudent.profile.fullName}
+                                    </Text>
+                                  </View>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      flexWrap: "wrap",
+                                      marginBottom: 4,
+                                    }}
+                                  >
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        width: "50%",
+                                      }}
+                                    >
+                                      <Ionicons
+                                        name="id-card"
+                                        size={16}
+                                        color="#F39300"
+                                      />
+                                      <Text
+                                        style={{
+                                          fontSize: 14,
+                                          marginLeft: 4,
+                                          color: "#333",
+                                          maxWidth: "80%",
+                                        }}
+                                      >
+                                        {selectedStudent.studentCode}
+                                      </Text>
+                                    </View>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        width: "50%",
+                                      }}
+                                    >
+                                      <Ionicons
+                                        name="briefcase"
+                                        size={16}
+                                        color="#F39300"
+                                      />
+                                      <Text
+                                        style={{
+                                          fontSize: 14,
+                                          marginLeft: 4,
+                                          color: "#333",
+                                          maxWidth: "80%",
+                                        }}
+                                      >
+                                        {selectedStudent?.specialization
+                                          ?.name || "N/A"}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      flexWrap: "wrap",
+                                    }}
+                                  >
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        width: "50%",
+                                      }}
+                                    >
+                                      <Ionicons
+                                        name="call"
+                                        size={16}
+                                        color="#F39300"
+                                      />
+                                      <Text
+                                        style={{
+                                          fontSize: 14,
+                                          marginLeft: 4,
+                                          color: "#333",
+                                          maxWidth: "80%",
+                                        }}
+                                      >
+                                        {selectedStudent.profile.phoneNumber}
+                                      </Text>
+                                    </View>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        width: "50%",
+                                      }}
+                                    >
+                                      <MaterialIcons
+                                        name="cake"
+                                        size={16}
+                                        color="#F39300"
+                                      />
+                                      <Text
+                                        style={{
+                                          fontSize: 14,
+                                          marginLeft: 4,
+                                          color: "#333",
+                                          maxWidth: "80%",
+                                        }}
+                                      >
+                                        {formatDate(
+                                          selectedStudent.profile.dateOfBirth
+                                        )}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                </View>
+                              </View>
+                            )}
+                          </View>
+                        </>
+                      )}
+                  </View>
+                </ScrollView>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor:
+                      slots[selectedDate2]?.length === 0 ||
+                      slots[selectedDate2]?.every(
+                        (item) => item.status === "EXPIRED"
+                      ) ||
+                      selectedSlot === "" ||
+                      online === null ||
+                      setValue === "" ||
+                      setValue2 === "" ||
+                      reason === "" ||
+                      selectedStudent === null
+                        ? "#ededed"
+                        : "#F39300",
+                    borderRadius: 20,
+                    paddingVertical: 12,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginHorizontal: 20,
+                    marginVertical: 16,
+                  }}
+                  disabled={
+                    slots[selectedDate2]?.length === 0 ||
+                    slots[selectedDate2]?.every(
+                      (item) => item.status === "EXPIRED"
+                    ) ||
+                    selectedSlot === "" ||
+                    online === null ||
+                    setValue === "" ||
+                    setValue2 === "" ||
+                    reason === "" ||
+                    selectedStudent === null
+                  }
+                  onPress={handleCreateAppointment}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={{
+                      fontWeight: "600",
+                      color:
+                        slots[selectedDate2]?.length === 0 ||
+                        slots[selectedDate2]?.every(
+                          (item) => item.status === "EXPIRED"
+                        ) ||
+                        selectedSlot === "" ||
+                        online === null ||
+                        setValue === "" ||
+                        setValue2 === "" ||
+                        reason === "" ||
+                        selectedStudent === null
+                          ? "gray"
+                          : "white",
+                      fontSize: 20,
+                      marginRight: 8,
+                    }}
+                  >
+                    Create Appointment
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={24}
+                    style={{
+                      color:
+                        slots[selectedDate2]?.length === 0 ||
+                        slots[selectedDate2]?.every(
+                          (item) => item.status === "EXPIRED"
+                        ) ||
+                        selectedSlot === "" ||
+                        online === null ||
+                        setValue === "" ||
+                        setValue2 === "" ||
+                        reason === "" ||
+                        selectedStudent === null
+                          ? "gray"
+                          : "white",
+                    }}
+                  />
+                </TouchableOpacity>
+              </CalendarProvider>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
           visible={openInfo}
           animationType="slide"
           onRequestClose={handleCloseInfo}
@@ -1112,7 +2241,7 @@ export default function Appointment() {
                       flexDirection: "row",
                       padding: 16,
                       backgroundColor: "white",
-                      borderRadius: 12,
+                      borderRadius: 10,
                       marginBottom: 20,
                       elevation: 1,
                       borderWidth: 1.5,
@@ -1120,36 +2249,40 @@ export default function Appointment() {
                     }}
                   >
                     <View style={{ width: "40%" }}>
-                      <Image
-                        source={{ uri: info?.studentInfo?.profile?.avatarLink }}
-                        style={{
-                          width: width * 0.28,
-                          height: width * 0.28,
-                          borderRadius: 100,
-                          marginBottom: 12,
-                          borderColor: "#F39300",
-                          borderWidth: 2,
-                        }}
-                      />
-                      <View
-                        style={{
-                          padding: 5,
-                          backgroundColor: "#F39300",
-                          borderRadius: 30,
-                          position: "absolute",
-                          right: 20,
-                          bottom: 12,
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            info?.studentInfo?.profile?.gender == "MALE"
-                              ? "male"
-                              : "female"
-                          }
-                          size={24}
-                          style={{ color: "white" }}
+                      <View style={{ position: "relative" }}>
+                        <Image
+                          source={{
+                            uri: info?.studentInfo?.profile?.avatarLink,
+                          }}
+                          style={{
+                            width: width * 0.28,
+                            height: width * 0.28,
+                            borderRadius: 100,
+                            marginBottom: 12,
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                          }}
                         />
+                        <View
+                          style={{
+                            padding: 5,
+                            backgroundColor: "#F39300",
+                            borderRadius: 30,
+                            position: "absolute",
+                            right: 20,
+                            bottom: 12,
+                          }}
+                        >
+                          <Ionicons
+                            name={
+                              info?.studentInfo?.profile?.gender == "MALE"
+                                ? "male"
+                                : "female"
+                            }
+                            size={24}
+                            style={{ color: "white" }}
+                          />
+                        </View>
                       </View>
                     </View>
                     <View style={{ width: "60%" }}>
@@ -1195,7 +2328,7 @@ export default function Appointment() {
                   <View
                     style={{
                       backgroundColor: "white",
-                      borderRadius: 16,
+                      borderRadius: 10,
                       padding: 20,
                       elevation: 1,
                       borderWidth: 1.5,
@@ -1355,181 +2488,192 @@ export default function Appointment() {
                             : "Address"}
                         </Text>
                       </View>
-                      <View style={{ flexDirection: "row", maxWidth: "50%" }}>
-                        {info?.startDateTime >
-                          new Date().toISOString() && (
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              justifyContent: "flex-end",
-                              marginHorizontal: 8,
-                            }}
-                          >
-                            <TouchableOpacity
-                              onPress={() =>
-                                handleOpenUpdateAppointment(
-                                  info.id,
-                                  info.meetingType,
-                                  info.meetingType === "ONLINE" ? info.meetUrl : info.address
-                                )
-                              }
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "flex-end",
+                          maxWidth: "45%",
+                        }}
+                      >
+                        {info?.startDateTime > new Date().toISOString() &&
+                          info?.status === "WAITING" && (
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                marginHorizontal: 8,
+                              }}
                             >
-                              <MaterialIcons
-                                name="edit-note"
-                                size={24}
-                                color="#F39300"
-                              />
-                            </TouchableOpacity>
-                            <Modal
-                              transparent={true}
-                              visible={openUpdate}
-                              animationType="fade"
-                              onRequestClose={handleCloseUpdateAppointment}
-                            >
-                              <View
-                                style={{
-                                  flex: 1,
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  backgroundColor: "rgba(0, 0, 0, 0.1)",
-                                }}
+                              <TouchableOpacity
+                                onPress={() =>
+                                  handleOpenUpdateAppointment(
+                                    info.id,
+                                    info.meetingType,
+                                    info.meetingType === "ONLINE"
+                                      ? info.meetUrl
+                                      : info.address
+                                  )
+                                }
+                              >
+                                <MaterialIcons
+                                  name="edit-note"
+                                  size={24}
+                                  color="#F39300"
+                                />
+                              </TouchableOpacity>
+                              <Modal
+                                transparent={true}
+                                visible={openUpdate}
+                                animationType="fade"
+                                onRequestClose={handleCloseUpdateAppointment}
                               >
                                 <View
                                   style={{
-                                    width: width * 0.8,
-                                    padding: 20,
-                                    backgroundColor: "white",
-                                    borderRadius: 10,
-                                    elevation: 10,
+                                    flex: 1,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    backgroundColor: "rgba(0, 0, 0, 0.1)",
                                   }}
                                 >
-                                  <Text
-                                    style={{
-                                      fontSize: 22,
-                                      fontWeight: "bold",
-                                      marginBottom: 10,
-                                      textAlign: "center",
-                                    }}
-                                  >
-                                    Update Confirmation
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      marginBottom: 30,
-                                      textAlign: "left",
-                                    }}
-                                  >
-                                    Are you sure you want to update this
-                                    appointment? Your schedule will be updated
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      fontSize: 16,
-                                      marginBottom: 10,
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    Please provide the meeting
-                                    {info.meetingType === "ONLINE"
-                                      ? "'s Google Meet URL"
-                                      : "'s address"}{" "}
-                                    <Text
-                                      style={{ color: "#F39300", fontSize: 20 }}
-                                    >
-                                      *
-                                    </Text>
-                                  </Text>
-                                  <View>
-                                    <TextInput
-                                      placeholder="Input here"
-                                      placeholderTextColor="gray"
-                                      keyboardType="default"
-                                      value={value}
-                                      onChangeText={(value) => setValue(value)}
-                                      style={{
-                                        fontWeight: "600",
-                                        fontSize: 16,
-                                        opacity: 0.8,
-                                        paddingVertical: 8,
-                                        textAlignVertical: "center",
-                                        paddingHorizontal: 12,
-                                        backgroundColor: "#ededed",
-                                        borderColor: "gray",
-                                        borderWidth: 1,
-                                        borderRadius: 10,
-                                        marginBottom: 20,
-                                      }}
-                                    />
-                                  </View>
                                   <View
                                     style={{
-                                      flexDirection: "row",
-                                      justifyContent: "space-between",
+                                      width: width * 0.8,
+                                      padding: 20,
+                                      backgroundColor: "white",
+                                      borderRadius: 10,
+                                      elevation: 10,
                                     }}
                                   >
-                                    <TouchableOpacity
+                                    <Text
                                       style={{
-                                        flex: 1,
-                                        backgroundColor: "#ededed",
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        marginRight: 10,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        borderWidth: 1,
-                                        borderColor: "gray",
+                                        fontSize: 22,
+                                        fontWeight: "bold",
+                                        marginBottom: 10,
+                                        textAlign: "center",
                                       }}
-                                      onPress={handleCloseUpdateAppointment}
                                     >
+                                      Update Confirmation
+                                    </Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        marginBottom: 30,
+                                        textAlign: "left",
+                                      }}
+                                    >
+                                      Are you sure you want to update this
+                                      appointment? Your schedule will be updated
+                                    </Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 16,
+                                        marginBottom: 10,
+                                        fontWeight: "600",
+                                      }}
+                                    >
+                                      Please provide the meeting
+                                      {info.meetingType === "ONLINE"
+                                        ? "'s Google Meet URL"
+                                        : "'s address"}{" "}
                                       <Text
                                         style={{
-                                          fontSize: 18,
-                                          color: "#333",
-                                          fontWeight: "600",
+                                          color: "#F39300",
+                                          fontSize: 20,
                                         }}
                                       >
-                                        No
+                                        *
                                       </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                      style={{
-                                        flex: 1,
-                                        backgroundColor: "#F39300",
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                      }}
-                                      onPress={handleUpdateAppointment}
-                                    >
-                                      <Text
+                                    </Text>
+                                    <View>
+                                      <TextInput
+                                        placeholder="Input here"
+                                        placeholderTextColor="gray"
+                                        keyboardType="default"
+                                        value={value}
+                                        onChangeText={(value) =>
+                                          setValue(value)
+                                        }
                                         style={{
-                                          fontSize: 18,
-                                          color: "white",
                                           fontWeight: "600",
+                                          fontSize: 16,
+                                          opacity: 0.8,
+                                          paddingVertical: 8,
+                                          textAlignVertical: "center",
+                                          paddingHorizontal: 12,
+                                          backgroundColor: "#ededed",
+                                          borderColor: "gray",
+                                          borderWidth: 1,
+                                          borderRadius: 10,
+                                          marginBottom: 20,
                                         }}
+                                      />
+                                    </View>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <TouchableOpacity
+                                        style={{
+                                          flex: 1,
+                                          backgroundColor: "#ededed",
+                                          padding: 10,
+                                          borderRadius: 10,
+                                          marginRight: 10,
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                          borderWidth: 1,
+                                          borderColor: "gray",
+                                        }}
+                                        onPress={handleCloseUpdateAppointment}
                                       >
-                                        Yes
-                                      </Text>
-                                    </TouchableOpacity>
+                                        <Text
+                                          style={{
+                                            fontSize: 18,
+                                            color: "#333",
+                                            fontWeight: "600",
+                                          }}
+                                        >
+                                          No
+                                        </Text>
+                                      </TouchableOpacity>
+                                      <TouchableOpacity
+                                        style={{
+                                          flex: 1,
+                                          backgroundColor: "#F39300",
+                                          padding: 10,
+                                          borderRadius: 10,
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                        }}
+                                        onPress={handleUpdateAppointment}
+                                      >
+                                        <Text
+                                          style={{
+                                            fontSize: 18,
+                                            color: "white",
+                                            fontWeight: "600",
+                                          }}
+                                        >
+                                          Yes
+                                        </Text>
+                                      </TouchableOpacity>
+                                    </View>
                                   </View>
                                 </View>
-                              </View>
-                            </Modal>
-                          </View>
-                        )}
+                              </Modal>
+                            </View>
+                          )}
                         <Text
                           style={{
-                            maxWidth: "75%",
                             fontSize: 18,
                             fontWeight: "bold",
                             color: "#333",
                           }}
                         >
                           {info.meetingType === "ONLINE"
-                          ? info?.meetUrl || "N/A"
-                          : info?.address || "N/A"}
+                            ? info?.meetUrl || "N/A"
+                            : info?.address || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1538,20 +2682,28 @@ export default function Appointment() {
                     <View
                       style={{
                         marginTop: 20,
-                        borderRadius: 10,
+                        borderRadius: 20,
                         backgroundColor: "white",
                         padding: 16,
-                        elevation: 1,
                         borderWidth: 1.5,
-                        borderColor: "#e3e3e3",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.2,
-                        shadowRadius: 4,
+                        borderColor: "lightgrey",
                       }}
                     >
-                      <View>
-                        <Text>{info.studentName} had leave a review</Text>
+                      <View style={{ marginBottom: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            fontWeight: "500",
+                          }}
+                        >
+                          <Text
+                            style={{ color: "#F39300", fontWeight: "bold" }}
+                          >
+                            {info?.studentInfo?.profile?.fullName}
+                          </Text>{" "}
+                          had leave a review
+                        </Text>
                       </View>
                       <View
                         style={{
@@ -1561,21 +2713,12 @@ export default function Appointment() {
                           marginBottom: 12,
                         }}
                       >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
-                            color: "#333",
-                          }}
-                        >
-                          {formatDate(info?.appointmentFeedback?.createdAt)}
-                        </Text>
                         <View
                           style={{
                             flexDirection: "row",
                             alignItems: "center",
                             backgroundColor: "#F39300",
-                            paddingHorizontal: 10,
+                            paddingHorizontal: 12,
                             paddingVertical: 4,
                             borderRadius: 16,
                           }}
@@ -1592,12 +2735,30 @@ export default function Appointment() {
                             {info?.appointmentFeedback?.rating.toFixed(1)}
                           </Text>
                         </View>
+                        <View
+                          style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderWidth: 1,
+                            borderColor: "gray",
+                            borderRadius: 20,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "500",
+                              color: "#333",
+                            }}
+                          >
+                            {formatDate(info?.appointmentFeedback?.createdAt)}
+                          </Text>
+                        </View>
                       </View>
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "#555",
-                          fontWeight: "500",
+                          color: "#333",
                           lineHeight: 24,
                         }}
                       >
@@ -1749,6 +2910,136 @@ export default function Appointment() {
                   Save
                 </Text>
               </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openCancel}
+          animationType="fade"
+          onRequestClose={handleCloseCancel}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <View
+              style={{
+                width: width * 0.8,
+                padding: 20,
+                backgroundColor: "white",
+                borderRadius: 10,
+                elevation: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginBottom: 10,
+                  textAlign: "center",
+                }}
+              >
+                Cancel Appointment Confirmation
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  marginBottom: 30,
+                  textAlign: "center",
+                }}
+              >
+                Are you sure you want to cancel this appointment?
+                {"\n"}
+                You need to provide your reason
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginBottom: 10,
+                  fontWeight: "600",
+                }}
+              >
+                Reason <Text style={{ color: "#F39300", fontSize: 20 }}>*</Text>
+              </Text>
+              <View>
+                <TextInput
+                  placeholder="Input here"
+                  placeholderTextColor="gray"
+                  keyboardType="default"
+                  value={value}
+                  onChangeText={(value) => setValue(value)}
+                  style={{
+                    fontWeight: "600",
+                    fontSize: 16,
+                    opacity: 0.8,
+                    paddingVertical: 8,
+                    textAlignVertical: "center",
+                    paddingHorizontal: 12,
+                    backgroundColor: "#ededed",
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    marginBottom: 20,
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#ededed",
+                    padding: 10,
+                    borderRadius: 10,
+                    marginRight: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "gray",
+                  }}
+                  onPress={handleCloseCancel}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "#333",
+                      fontWeight: "600",
+                    }}
+                  >
+                    No
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#F39300",
+                    padding: 10,
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={handleCancelAppointment}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Yes
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>

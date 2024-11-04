@@ -35,6 +35,7 @@ import CounselorNavigation from "./CounselorNavigation";
 import QA from "../screens/QA";
 import QANavigation from "./QANavigation";
 import Student from "../screens/counselor/Student";
+import Demand from "../screens/counselor/Demand";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -96,7 +97,7 @@ export default function Navigation() {
     },
   ];
 
-  const TabArrayAcademicCounselor = [
+  const TabArrayCounselor = [
     {
       route: "Home",
       label: "Home",
@@ -269,11 +270,6 @@ export default function Navigation() {
           />
           <Tab.Screen name="Profile" component={Profile} options={tabOptions} />
           <Tab.Screen
-            name="CounselorProfile"
-            component={CounselorProfile}
-            options={tabOptions}
-          />
-          <Tab.Screen
             name="ViewProfile"
             component={ViewProfile}
             options={tabOptions}
@@ -287,7 +283,7 @@ export default function Navigation() {
         </Tab.Navigator>
       ) : userData.role === "ACADEMIC_COUNSELOR" ? (
         <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
-          {TabArrayAcademicCounselor.map((item, index) => {
+          {TabArrayCounselor.map((item, index) => {
             return (
               <Tab.Screen
                 key={index}
@@ -322,6 +318,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Appointment"
             component={AppointmentCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="Demand"
+            component={Demand}
             options={tabOptions}
           />
         </Tab.Navigator>
@@ -362,6 +363,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Appointment"
             component={AppointmentCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="Demand"
+            component={Demand}
             options={tabOptions}
           />
         </Tab.Navigator>

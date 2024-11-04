@@ -1339,7 +1339,7 @@ export default function CounselorRand() {
                   placeholderTextColor="gray"
                   keyboardType="default"
                   multiline={true}
-                  numberOfLines={3}
+                  numberOfLines={2}
                   value={reason}
                   onChangeText={(value) => setReason(value)}
                   style={{
@@ -1570,7 +1570,7 @@ export default function CounselorRand() {
                 setMatcher("");
                 isOnline(null);
                 setReason("");
-                navigation.navigate("Request");
+                navigation.navigate("Request", { prevScreen: "Quick Booking" });
               }}
               activeOpacity={0.8}
             >

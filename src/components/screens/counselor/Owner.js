@@ -111,7 +111,7 @@ export default function QA() {
   }, [currentPage]);
 
   useEffect(() => {
-    socket.on(`/user/${userData?.id}/private/notification`, () => {
+    socket.on(`/user/${userData?.id}/question`, () => {
       fetchData(filters);
     });
   }, [filters]);
@@ -1682,38 +1682,40 @@ export default function QA() {
                       }}
                     >
                       <View style={{ width: "40%" }}>
-                        <Image
-                          source={{
-                            uri: info?.student?.profile?.avatarLink,
-                          }}
-                          style={{
-                            width: 120,
-                            height: 120,
-                            borderRadius: 100,
-                            marginBottom: 12,
-                            borderColor: "#F39300",
-                            borderWidth: 2,
-                          }}
-                        />
-                        <View
-                          style={{
-                            padding: 5,
-                            backgroundColor: "#F39300",
-                            borderRadius: 30,
-                            position: "absolute",
-                            right: 20,
-                            bottom: 12,
-                          }}
-                        >
-                          <Ionicons
-                            name={
-                              info?.student?.profile?.gender == "MALE"
-                                ? "male"
-                                : "female"
-                            }
-                            size={24}
-                            style={{ color: "white" }}
+                        <View style={{ position: "relative" }}>
+                          <Image
+                            source={{
+                              uri: info?.student?.profile?.avatarLink,
+                            }}
+                            style={{
+                              width: width * 0.28,
+                              height: width * 0.28,
+                              borderRadius: 100,
+                              marginBottom: 12,
+                              borderColor: "#F39300",
+                              borderWidth: 2,
+                            }}
                           />
+                          <View
+                            style={{
+                              padding: 5,
+                              backgroundColor: "#F39300",
+                              borderRadius: 30,
+                              position: "absolute",
+                              right: 20,
+                              bottom: 12,
+                            }}
+                          >
+                            <Ionicons
+                              name={
+                                info?.student?.profile?.gender == "MALE"
+                                  ? "male"
+                                  : "female"
+                              }
+                              size={24}
+                              style={{ color: "white" }}
+                            />
+                          </View>
                         </View>
                       </View>
                       <View style={{ width: "60%" }}>
