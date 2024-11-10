@@ -37,6 +37,7 @@ import Owner from "../screens/counselor/Owner";
 import QANavigation from "./QANavigation";
 import Student from "../screens/counselor/Student";
 import Demand from "../screens/counselor/Demand";
+import ChangePassword from "../screens/ChangePassword";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -276,6 +277,11 @@ export default function Navigation() {
             component={ViewProfile}
             options={tabOptions}
           />
+          <Tab.Screen
+            name="ChangePassword"
+            component={ChangePassword}
+            options={tabOptions}
+          />
           <Tab.Screen name="Request" component={Request} options={tabOptions} />
           <Tab.Screen
             name="Appointment"
@@ -310,6 +316,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Profile"
             component={ProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="ChangePassword"
+            component={ChangePassword}
             options={tabOptions}
           />
           <Tab.Screen
@@ -351,6 +362,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Profile"
             component={ProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="ChangePassword"
+            component={ChangePassword}
             options={tabOptions}
           />
           <Tab.Screen

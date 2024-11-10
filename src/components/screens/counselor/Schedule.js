@@ -779,8 +779,9 @@ export default function Schedule() {
                       backgroundColor: "white",
                       paddingVertical: 12,
                       paddingHorizontal: 20,
+                      elevation: 1,
                       borderWidth: 1.5,
-                      borderColor: "lightgrey",
+                      borderColor: "#e3e3e3",
                     }}
                   >
                     <View
@@ -1166,8 +1167,9 @@ export default function Schedule() {
                         borderRadius: 20,
                         backgroundColor: "white",
                         padding: 16,
+                        elevation: 1,
                         borderWidth: 1.5,
-                        borderColor: "lightgrey",
+                        borderColor: "#e3e3e3",
                       }}
                     >
                       <View style={{ marginBottom: 8 }}>
@@ -1253,8 +1255,9 @@ export default function Schedule() {
                         borderRadius: 20,
                         backgroundColor: "white",
                         padding: 16,
+                        elevation: 1,
                         borderWidth: 1.5,
-                        borderColor: "lightgrey",
+                        borderColor: "#e3e3e3",
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",

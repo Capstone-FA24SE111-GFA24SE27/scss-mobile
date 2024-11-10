@@ -21,6 +21,7 @@ import { SocketContext } from "../context/SocketContext";
 import { RequestSkeleton } from "../layout/Skeleton";
 import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
+import Pagination from "../layout/Pagination";
 
 export default function Appointment({ route }) {
   const navigation = useNavigation();
@@ -369,7 +370,7 @@ export default function Appointment({ route }) {
   const handleCloseFeedback = () => {
     setSelectedAppointment(null);
     setRating(0);
-    setValue(null);
+    setValue("");
     setOpenFeedback(false);
     const date = new Date(selectedDate);
     const dayOfWeek = date.getDay();
@@ -529,7 +530,7 @@ export default function Appointment({ route }) {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         borderRadius: 20,
-                        paddingHorizontal: 16,
+                        paddingHorizontal: 12,
                         alignItems: "center",
                         backgroundColor: "white",
                         height: 40,
@@ -537,13 +538,13 @@ export default function Appointment({ route }) {
                         borderColor: "gray",
                       }}
                     >
-                      <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
                         {dateFrom !== "" ? dateFrom : "xxxx-xx-xx"}
                       </Text>
                       <TouchableOpacity onPress={() => setShowFromPicker(true)}>
                         <Ionicons
                           name="calendar-outline"
-                          size={22}
+                          size={20}
                           color="#F39300"
                         />
                       </TouchableOpacity>
@@ -572,7 +573,7 @@ export default function Appointment({ route }) {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         borderRadius: 20,
-                        paddingHorizontal: 16,
+                        paddingHorizontal: 12,
                         alignItems: "center",
                         backgroundColor: "white",
                         height: 40,
@@ -580,13 +581,13 @@ export default function Appointment({ route }) {
                         borderColor: "gray",
                       }}
                     >
-                      <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
                         {dateTo !== "" ? dateTo : "xxxx-xx-xx"}
                       </Text>
                       <TouchableOpacity onPress={() => setShowToPicker(true)}>
                         <Ionicons
                           name="calendar-outline"
-                          size={22}
+                          size={20}
                           color="#F39300"
                         />
                       </TouchableOpacity>
@@ -616,6 +617,7 @@ export default function Appointment({ route }) {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
+                      minWidth: "30%",
                     }}
                   >
                     Sort:
@@ -704,6 +706,7 @@ export default function Appointment({ route }) {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
+                      minWidth: "30%",
                     }}
                   >
                     Status:
@@ -712,13 +715,13 @@ export default function Appointment({ route }) {
                     style={{
                       backgroundColor: "white",
                       borderColor: expanded ? "#F39300" : "black",
-                      flex: 0.5,
+                      flex: 1,
                       height: 30,
                       borderWidth: 1,
                       borderColor: "grey",
                       borderRadius: 10,
                       paddingHorizontal: 12,
-                      marginLeft: 8,
+                      marginLeft: 16,
                     }}
                     placeholderStyle={{ fontSize: 16 }}
                     selectedTextStyle={{
@@ -1084,136 +1087,12 @@ export default function Appointment({ route }) {
           )}
         </ScrollView>
         {!loading && (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              marginHorizontal: 20,
-              marginBottom: 10,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-                opacity: currentPage <= 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<<"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-                opacity: currentPage === 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<"}
-              </Text>
-            </TouchableOpacity>
-            <View
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 10,
-                marginHorizontal: 4,
-                width: "auto",
-                height: width * 0.1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "white",
-                borderWidth: 1.5,
-                borderColor: "#F39300",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#333",
-                  fontWeight: "600",
-                }}
-              >
-                {appointments?.data?.length != 0 ? currentPage : 0} /{" "}
-                {appointments.totalPages}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  appointments.totalPages == 0 ||
-                  currentPage >= appointments.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  appointments.totalPages == 0 ||
-                  currentPage >= appointments.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage + 1)}
-              disabled={
-                appointments.totalPages == 0 ||
-                currentPage >= appointments.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  appointments.totalPages == 0 ||
-                  currentPage >= appointments.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  appointments.totalPages == 0 ||
-                  currentPage >= appointments.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(appointments.totalPages)}
-              disabled={
-                appointments.totalPages == 0 ||
-                currentPage >= appointments.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">>"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            length={appointments?.data?.length}
+            totalPages={appointments?.totalPages}
+          />
         )}
         <Modal
           transparent={true}
@@ -1267,8 +1146,8 @@ export default function Appointment({ route }) {
                       padding: 16,
                       backgroundColor: "white",
                       borderRadius: 10,
-                      elevation: 1,
                       marginBottom: 20,
+                      elevation: 1,
                       borderWidth: 1.5,
                       borderColor: "#e3e3e3",
                     }}
@@ -1605,16 +1484,17 @@ export default function Appointment({ route }) {
                         padding: 16,
                         borderWidth: 1.5,
                         borderColor: "lightgrey",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "#333",
-                          fontWeight: "500",
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          textAlign: "center",
+                          color: "gray",
+                          opacity: 0.7,
                         }}
                       >
                         There's no feedback yet
@@ -1677,7 +1557,8 @@ export default function Appointment({ route }) {
                               <Text
                                 style={{
                                   fontSize: 18,
-                                  fontWeight: "600",
+                                  fontWeight: "bold",
+                                  color: "#333",
                                   marginBottom: 8,
                                 }}
                               >
@@ -1772,15 +1653,22 @@ export default function Appointment({ route }) {
                                 </Text>
                               </TouchableOpacity>
                               <TouchableOpacity
+                                disabled={value === "" || rating === 0}
                                 style={{
-                                  backgroundColor: "#F39300",
+                                  backgroundColor:
+                                    value === "" || rating === 0
+                                      ? "#ededed"
+                                      : "#F39300",
                                   paddingHorizontal: 12,
                                   paddingVertical: 6,
                                   borderRadius: 10,
                                   justifyContent: "center",
                                   alignItems: "center",
                                   borderWidth: 1,
-                                  borderColor: "#F39300",
+                                  borderColor:
+                                    value === "" || rating === 0
+                                      ? "gray"
+                                      : "#F39300",
                                 }}
                                 onPress={handleTakeFeedback}
                               >
@@ -1788,7 +1676,10 @@ export default function Appointment({ route }) {
                                   style={{
                                     fontSize: 18,
                                     fontWeight: "bold",
-                                    color: "white",
+                                    color:
+                                      value === "" || rating === 0
+                                        ? "gray"
+                                        : "white",
                                   }}
                                 >
                                   Save

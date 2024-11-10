@@ -32,6 +32,7 @@ import { SocketContext } from "../../context/SocketContext";
 import { StudentSkeleton } from "../../layout/Skeleton";
 import { Dropdown } from "react-native-element-dropdown";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import Pagination from "../../layout/Pagination";
 export default function Student() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
@@ -1588,130 +1589,12 @@ export default function Student() {
           )}
         </ScrollView>
         {!loading && (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              marginHorizontal: 20,
-              marginVertical: 10,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-                opacity: currentPage <= 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<<"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-                opacity: currentPage === 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<"}
-              </Text>
-            </TouchableOpacity>
-            <View
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 10,
-                marginHorizontal: 4,
-                width: "auto",
-                height: width * 0.1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "white",
-                borderWidth: 1.5,
-                borderColor: "#F39300",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#333",
-                  fontWeight: "600",
-                }}
-              >
-                {students?.data?.length != 0 ? currentPage : 0} /{" "}
-                {students.totalPages}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  students.totalPages == 0 || currentPage >= students.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  students.totalPages == 0 || currentPage >= students.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage + 1)}
-              disabled={
-                students.totalPages == 0 || currentPage >= students.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  students.totalPages == 0 || currentPage >= students.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  students.totalPages == 0 || currentPage >= students.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(students.totalPages)}
-              disabled={
-                students.totalPages == 0 || currentPage >= students.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">>"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            length={students?.data?.length}
+            totalPages={students?.totalPages}
+          />
         )}
         <Modal
           transparent={true}
@@ -3217,7 +3100,7 @@ export default function Student() {
                               flexDirection: "row",
                               justifyContent: "space-between",
                               borderRadius: 20,
-                              paddingHorizontal: 16,
+                              paddingHorizontal: 12,
                               alignItems: "center",
                               backgroundColor: "white",
                               height: 40,
@@ -3227,7 +3110,7 @@ export default function Student() {
                           >
                             <Text
                               style={{
-                                fontSize: 18,
+                                fontSize: 16,
                                 opacity: 0.8,
                                 flex: 1,
                               }}
@@ -3239,7 +3122,7 @@ export default function Student() {
                             >
                               <Ionicons
                                 name="calendar-outline"
-                                size={22}
+                                size={20}
                                 color="#F39300"
                               />
                             </TouchableOpacity>
@@ -3268,7 +3151,7 @@ export default function Student() {
                               flexDirection: "row",
                               justifyContent: "space-between",
                               borderRadius: 20,
-                              paddingHorizontal: 16,
+                              paddingHorizontal: 12,
                               alignItems: "center",
                               backgroundColor: "white",
                               height: 40,
@@ -3278,7 +3161,7 @@ export default function Student() {
                           >
                             <Text
                               style={{
-                                fontSize: 18,
+                                fontSize: 16,
                                 opacity: 0.8,
                                 flex: 1,
                               }}
@@ -3290,7 +3173,7 @@ export default function Student() {
                             >
                               <Ionicons
                                 name="calendar-outline"
-                                size={22}
+                                size={20}
                                 color="#F39300"
                               />
                             </TouchableOpacity>
@@ -3319,6 +3202,7 @@ export default function Student() {
                             fontSize: 16,
                             fontWeight: "bold",
                             color: "#333",
+                            minWidth: "30%",
                           }}
                         >
                           Sort:
@@ -3459,249 +3343,243 @@ export default function Student() {
                       {info5.data
                         .filter((item) => item.status === "ATTEND")
                         .map((item, index) => (
+                          // <TouchableOpacity
+                          //   activeOpacity={0.7}
+                          //   onPress={() => handleOpenHistoryInfo(item)}
+                          //   key={index}
+                          //   style={{
+                          //     backgroundColor: "white",
+                          //     borderRadius: 10,
+                          //     padding: 12,
+                          //     marginBottom: 20,
+                          //     elevation: 3,
+                          //     flexDirection: "row",
+                          //     alignItems: "center",
+                          //   }}
+                          // >
+                          //   <Image
+                          //     source={{
+                          //       uri: item.counselorInfo.profile.avatarLink,
+                          //     }}
+                          //     style={{
+                          //       width: 50,
+                          //       height: 50,
+                          //       borderRadius: 25,
+                          //       marginRight: 12,
+                          //     }}
+                          //   />
+                          //   <View style={{ flex: 1 }}>
+                          //     <Text
+                          //       style={{
+                          //         fontWeight: "bold",
+                          //         fontSize: 18,
+                          //         color: "#333",
+                          //         marginBottom: 4,
+                          //       }}
+                          //     >
+                          //       Counselor: {item.counselorInfo.profile.fullName}
+                          //     </Text>
+                          //     <Text
+                          //       style={{
+                          //         fontSize: 16,
+                          //         fontWeight: "500",
+                          //         color: "#333",
+                          //         marginBottom: 4,
+                          //       }}
+                          //     >
+                          //       Date:{" "}
+                          //       <Text
+                          //         style={{
+                          //           color: "#F39300",
+                          //           fontWeight: "600",
+                          //         }}
+                          //       >
+                          //         {item.startDateTime.split("T")[0]}
+                          //       </Text>
+                          //     </Text>
+                          //     <Text
+                          //       style={{
+                          //         fontSize: 16,
+                          //         fontWeight: "500",
+                          //         color: "#333",
+                          //       }}
+                          //     >
+                          //       Time:{" "}
+                          //       <Text
+                          //         style={{
+                          //           color: "#F39300",
+                          //           fontWeight: "600",
+                          //         }}
+                          //       >
+                          //         {item.startDateTime
+                          //           .split("T")[1]
+                          //           .split(":")[0] +
+                          //           ":" +
+                          //           item.startDateTime
+                          //             .split("T")[1]
+                          //             .split(":")[1]}{" "}
+                          //         -{" "}
+                          //         {item.endDateTime
+                          //           .split("T")[1]
+                          //           .split(":")[0] +
+                          //           ":" +
+                          //           item.endDateTime
+                          //             .split("T")[1]
+                          //             .split(":")[1]}
+                          //       </Text>
+                          //     </Text>
+                          //   </View>
+                          // </TouchableOpacity>
                           <TouchableOpacity
                             activeOpacity={0.7}
                             onPress={() => handleOpenHistoryInfo(item)}
                             key={index}
                             style={{
-                              backgroundColor: "white",
-                              borderRadius: 10,
-                              padding: 12,
+                              // width: width * 0.85,
+                              backgroundColor: "#F39300",
+                              borderRadius: 20,
                               marginBottom: 20,
-                              elevation: 3,
-                              flexDirection: "row",
-                              alignItems: "center",
                             }}
                           >
-                            <Image
-                              source={{
-                                uri: item.counselorInfo.profile.avatarLink,
-                              }}
+                            <View
                               style={{
-                                width: 50,
-                                height: 50,
-                                borderRadius: 25,
-                                marginRight: 12,
+                                backgroundColor: "#fff0e0",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                paddingHorizontal: 12,
+                                paddingVertical: 8,
+                                marginTop: 4,
+                                marginHorizontal: 4,
+                                borderTopLeftRadius: 18,
+                                borderTopRightRadius: 18,
                               }}
-                            />
-                            <View style={{ flex: 1 }}>
-                              <Text
-                                style={{
-                                  fontWeight: "bold",
-                                  fontSize: 18,
-                                  color: "#333",
-                                  marginBottom: 4,
-                                }}
-                              >
-                                Counselor: {item.counselorInfo.profile.fullName}
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 16,
-                                  fontWeight: "500",
-                                  color: "#333",
-                                  marginBottom: 4,
-                                }}
-                              >
-                                Date:{" "}
+                            >
+                              <View style={{ maxWidth: "80%" }}>
                                 <Text
                                   style={{
+                                    fontSize: 18,
+                                    fontWeight: "bold",
                                     color: "#F39300",
-                                    fontWeight: "600",
                                   }}
                                 >
-                                  {item.startDateTime.split("T")[0]}
+                                  {item.counselorInfo.profile.fullName}
                                 </Text>
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 16,
-                                  fontWeight: "500",
-                                  color: "#333",
-                                }}
-                              >
-                                Time:{" "}
                                 <Text
                                   style={{
-                                    color: "#F39300",
-                                    fontWeight: "600",
+                                    fontSize: 16,
+                                    fontWeight: "400",
+                                    color: "#333",
+                                    marginTop: 2,
                                   }}
                                 >
-                                  {item.startDateTime
-                                    .split("T")[1]
-                                    .split(":")[0] +
-                                    ":" +
-                                    item.startDateTime
-                                      .split("T")[1]
-                                      .split(":")[1]}{" "}
-                                  -{" "}
-                                  {item.endDateTime
-                                    .split("T")[1]
-                                    .split(":")[0] +
-                                    ":" +
-                                    item.endDateTime
-                                      .split("T")[1]
-                                      .split(":")[1]}
+                                  {item.counselorInfo.specialization.name}
                                 </Text>
-                              </Text>
+                              </View>
+                              <Image
+                                source={{
+                                  uri: item.counselorInfo.profile.avatarLink,
+                                }}
+                                style={{
+                                  backgroundColor: "white",
+                                  width: 50,
+                                  height: 50,
+                                  borderRadius: 40,
+                                  borderColor: "#F39300",
+                                  borderWidth: 2,
+                                }}
+                              />
+                            </View>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "stretch",
+                                justifyContent: "space-between",
+                                marginTop: 2,
+                                marginHorizontal: 4,
+                                marginBottom: 4,
+                              }}
+                            >
+                              <View
+                                style={{
+                                  flex: 0.5,
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  paddingHorizontal: 12,
+                                  paddingVertical: 6,
+                                  backgroundColor: "white",
+                                  borderBottomLeftRadius: 18,
+                                }}
+                              >
+                                <Ionicons
+                                  name="calendar-outline"
+                                  size={24}
+                                  color="#F39300"
+                                />
+                                <View style={{ marginLeft: 8 }}>
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      color: "#333",
+                                      fontWeight: "500",
+                                    }}
+                                  >
+                                    {item.startDateTime.split("T")[0]}
+                                  </Text>
+                                </View>
+                              </View>
+                              <View
+                                style={{
+                                  flex: 0.495,
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  paddingHorizontal: 12,
+                                  paddingVertical: 6,
+                                  backgroundColor: "white",
+                                  borderBottomRightRadius: 18,
+                                }}
+                              >
+                                <Ionicons
+                                  name="time-outline"
+                                  size={24}
+                                  color="#F39300"
+                                />
+                                <View style={{ marginLeft: 8 }}>
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      color: "#333",
+                                      fontWeight: "500",
+                                    }}
+                                  >
+                                    {item.startDateTime
+                                      .split("T")[1]
+                                      .split(":")[0] +
+                                      ":" +
+                                      item.startDateTime
+                                        .split("T")[1]
+                                        .split(":")[1]}{" "}
+                                    -{" "}
+                                    {item.endDateTime
+                                      .split("T")[1]
+                                      .split(":")[0] +
+                                      ":" +
+                                      item.endDateTime
+                                        .split("T")[1]
+                                        .split(":")[1]}
+                                  </Text>
+                                </View>
+                              </View>
                             </View>
                           </TouchableOpacity>
                         ))}
                     </ScrollView>
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "row",
-                        marginHorizontal: 20,
-                        marginBottom: 10,
-                      }}
-                    >
-                      <TouchableOpacity
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderRadius: 10,
-                          backgroundColor: "white",
-                          marginHorizontal: 4,
-                          borderWidth: 1.5,
-                          borderColor: currentPage2 <= 1 ? "#ccc" : "#F39300",
-                          opacity: currentPage2 <= 1 ? 0.5 : 1,
-                        }}
-                        onPress={() => setCurrentPage2(1)}
-                        disabled={currentPage2 <= 1}
-                      >
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontSize: 18,
-                            fontWeight: "600",
-                          }}
-                        >
-                          {"<<"}
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderRadius: 10,
-                          backgroundColor: "white",
-                          marginHorizontal: 4,
-                          borderWidth: 1.5,
-                          borderColor: currentPage2 === 1 ? "#ccc" : "#F39300",
-                          opacity: currentPage2 === 1 ? 0.5 : 1,
-                        }}
-                        onPress={() => setCurrentPage2(currentPage2 - 1)}
-                        disabled={currentPage2 <= 1}
-                      >
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontSize: 18,
-                            fontWeight: "600",
-                          }}
-                        >
-                          {"<"}
-                        </Text>
-                      </TouchableOpacity>
-                      <View
-                        style={{
-                          paddingHorizontal: 16,
-                          paddingVertical: 8,
-                          borderRadius: 10,
-                          marginHorizontal: 4,
-                          width: "auto",
-                          height: width * 0.1,
-                          justifyContent: "center",
-                          alignItems: "center",
-                          backgroundColor: "white",
-                          borderWidth: 1.5,
-                          borderColor: "#F39300",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "#333",
-                            fontWeight: "600",
-                          }}
-                        >
-                          {info5?.data?.length != 0 ? currentPage2 : 0} /{" "}
-                          {info5.totalPages}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderRadius: 10,
-                          backgroundColor: "white",
-                          marginHorizontal: 4,
-                          borderWidth: 1.5,
-                          borderColor:
-                            info5.totalPages == 0 ||
-                            currentPage2 >= info5.totalPages
-                              ? "#ccc"
-                              : "#F39300",
-                          opacity:
-                            info5.totalPages == 0 ||
-                            currentPage2 >= info5.totalPages
-                              ? 0.5
-                              : 1,
-                        }}
-                        onPress={() => setCurrentPage2(currentPage2 + 1)}
-                        disabled={
-                          info5.totalPages == 0 ||
-                          currentPage2 >= info5.totalPages
-                        }
-                      >
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontSize: 18,
-                            fontWeight: "600",
-                          }}
-                        >
-                          {">"}
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderRadius: 10,
-                          backgroundColor: "white",
-                          marginHorizontal: 4,
-                          borderWidth: 1.5,
-                          borderColor:
-                            info5.totalPages == 0 ||
-                            currentPage2 >= info5.totalPages
-                              ? "#ccc"
-                              : "#F39300",
-                          opacity:
-                            info5.totalPages == 0 ||
-                            currentPage2 >= info5.totalPages
-                              ? 0.5
-                              : 1,
-                        }}
-                        onPress={() => setCurrentPage2(info5.totalPages)}
-                        disabled={
-                          info5.totalPages == 0 ||
-                          currentPage2 >= info5.totalPages
-                        }
-                      >
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontSize: 18,
-                            fontWeight: "600",
-                          }}
-                        >
-                          {">>"}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
+                    <Pagination
+                      currentPage={currentPage2}
+                      setCurrentPage={setCurrentPage2}
+                      length={info5?.data?.length}
+                      totalPages={info5?.totalPages}
+                    />
                     <Modal
                       transparent={true}
                       visible={openInfo3}

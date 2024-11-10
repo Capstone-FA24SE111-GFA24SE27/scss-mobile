@@ -1629,7 +1629,7 @@ export default function CounselorRand() {
                 textAlign: "center",
               }}
             >
-              Are you sure you want to booking with this chosen counselor?
+              Are you sure you want to book with this chosen counselor?
             </Text>
             <View
               style={{

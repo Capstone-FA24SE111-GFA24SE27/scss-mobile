@@ -19,13 +19,11 @@ import Toast from "react-native-toast-message";
 export default function Profile({ route }) {
   const navigation = useNavigation();
   const prevScreen = route?.params?.prevScreen;
-  const { width, height } = Dimensions.get("window");
+  const { width, height } = Dimensions.get("screen");
   const [isEnabled, setIsEnabled] = useState(false);
   const [open, setIsOpen] = useState(false);
   const { userData, profile, fetchProfile, logout } = useContext(AuthContext);
-
   const scrollViewRef = useRef(null);
-
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
@@ -92,7 +90,7 @@ export default function Profile({ route }) {
             flexDirection: "row",
             paddingHorizontal: 30,
             paddingTop: height * 0.035,
-            paddingVertical: 10,
+            paddingBottom: 10,
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>

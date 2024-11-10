@@ -34,6 +34,7 @@ import { CounselorSkeleton } from "../layout/Skeleton";
 import Toast from "react-native-toast-message";
 import { Dropdown } from "react-native-element-dropdown";
 import ErrorModal from "../layout/ErrorModal";
+import Pagination from "../layout/Pagination";
 
 export default function AcademicCounselor() {
   const navigation = useNavigation();
@@ -606,14 +607,35 @@ export default function AcademicCounselor() {
             >
               <View style={{ alignItems: "flex-start" }}>
                 {!loading ? (
-                  <Text style={{ fontSize: 20, opacity: 0.8, color: "#333" }}>
-                    {counselors.totalElements} Counselors found in{" "}
-                    <Text style={{ fontWeight: "bold", opacity: 1 }}>
-                      FPT HCM
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {counselors.totalElements} Counselors{" "}
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        opacity: 0.8,
+                        fontWeight: "400",
+                        color: "#333",
+                      }}
+                    >
+                      found
                     </Text>
                   </Text>
                 ) : (
-                  <View style={{ width: width* 0.7, height: 20, backgroundColor: "#ededed", borderRadius: 20 }} />
+                  <View
+                    style={{
+                      width: width * 0.7,
+                      height: 20,
+                      backgroundColor: "#ededed",
+                      borderRadius: 20,
+                    }}
+                  />
                 )}
               </View>
               <View
@@ -2186,7 +2208,7 @@ export default function AcademicCounselor() {
                             textAlign: "center",
                           }}
                         >
-                          Are you sure you want to booking this slot?
+                          Are you sure you want to book this slot?
                         </Text>
                         <View
                           style={{
@@ -2356,136 +2378,142 @@ export default function AcademicCounselor() {
           </Modal>
         </ScrollView>
         {!loading && (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              marginHorizontal: 20,
-              marginVertical: 10,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-                opacity: currentPage <= 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<<"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-                opacity: currentPage === 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<"}
-              </Text>
-            </TouchableOpacity>
-            <View
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 10,
-                marginHorizontal: 4,
-                width: "auto",
-                height: width * 0.1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "white",
-                borderWidth: 1.5,
-                borderColor: "#F39300",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#333",
-                  fontWeight: "600",
-                }}
-              >
-                {counselors?.data?.length != 0 ? currentPage : 0} /{" "}
-                {counselors.totalPages}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  counselors.totalPages == 0 ||
-                  currentPage >= counselors.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  counselors.totalPages == 0 ||
-                  currentPage >= counselors.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage + 1)}
-              disabled={
-                counselors.totalPages == 0 ||
-                currentPage >= counselors.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  counselors.totalPages == 0 ||
-                  currentPage >= counselors.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  counselors.totalPages == 0 ||
-                  currentPage >= counselors.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(counselors.totalPages)}
-              disabled={
-                counselors.totalPages == 0 ||
-                currentPage >= counselors.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">>"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          // <View
+          //   style={{
+          //     justifyContent: "center",
+          //     alignItems: "center",
+          //     flexDirection: "row",
+          //     marginHorizontal: 20,
+          //     marginVertical: 10,
+          //   }}
+          // >
+          //   <TouchableOpacity
+          //     style={{
+          //       paddingHorizontal: 12,
+          //       paddingVertical: 8,
+          //       borderRadius: 10,
+          //       backgroundColor: "white",
+          //       marginHorizontal: 4,
+          //       borderWidth: 1.5,
+          //       borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
+          //       opacity: currentPage <= 1 ? 0.5 : 1,
+          //     }}
+          //     onPress={() => setCurrentPage(1)}
+          //     disabled={currentPage <= 1}
+          //   >
+          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
+          //       {"<<"}
+          //     </Text>
+          //   </TouchableOpacity>
+          //   <TouchableOpacity
+          //     style={{
+          //       paddingHorizontal: 12,
+          //       paddingVertical: 8,
+          //       borderRadius: 10,
+          //       backgroundColor: "white",
+          //       marginHorizontal: 4,
+          //       borderWidth: 1.5,
+          //       borderColor: currentPage === 1 ? "#ccc" : "#F39300",
+          //       opacity: currentPage === 1 ? 0.5 : 1,
+          //     }}
+          //     onPress={() => setCurrentPage(currentPage - 1)}
+          //     disabled={currentPage <= 1}
+          //   >
+          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
+          //       {"<"}
+          //     </Text>
+          //   </TouchableOpacity>
+          //   <View
+          //     style={{
+          //       paddingHorizontal: 16,
+          //       paddingVertical: 8,
+          //       borderRadius: 10,
+          //       marginHorizontal: 4,
+          //       width: "auto",
+          //       height: width * 0.1,
+          //       justifyContent: "center",
+          //       alignItems: "center",
+          //       backgroundColor: "white",
+          //       borderWidth: 1.5,
+          //       borderColor: "#F39300",
+          //     }}
+          //   >
+          //     <Text
+          //       style={{
+          //         fontSize: 16,
+          //         color: "#333",
+          //         fontWeight: "600",
+          //       }}
+          //     >
+          //       {counselors?.data?.length != 0 ? currentPage : 0} /{" "}
+          //       {counselors.totalPages}
+          //     </Text>
+          //   </View>
+          //   <TouchableOpacity
+          //     style={{
+          //       paddingHorizontal: 12,
+          //       paddingVertical: 8,
+          //       borderRadius: 10,
+          //       backgroundColor: "white",
+          //       marginHorizontal: 4,
+          //       borderWidth: 1.5,
+          //       borderColor:
+          //         counselors.totalPages == 0 ||
+          //         currentPage >= counselors.totalPages
+          //           ? "#ccc"
+          //           : "#F39300",
+          //       opacity:
+          //         counselors.totalPages == 0 ||
+          //         currentPage >= counselors.totalPages
+          //           ? 0.5
+          //           : 1,
+          //     }}
+          //     onPress={() => setCurrentPage(currentPage + 1)}
+          //     disabled={
+          //       counselors.totalPages == 0 ||
+          //       currentPage >= counselors.totalPages
+          //     }
+          //   >
+          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
+          //       {">"}
+          //     </Text>
+          //   </TouchableOpacity>
+          //   <TouchableOpacity
+          //     style={{
+          //       paddingHorizontal: 12,
+          //       paddingVertical: 8,
+          //       borderRadius: 10,
+          //       backgroundColor: "white",
+          //       marginHorizontal: 4,
+          //       borderWidth: 1.5,
+          //       borderColor:
+          //         counselors.totalPages == 0 ||
+          //         currentPage >= counselors.totalPages
+          //           ? "#ccc"
+          //           : "#F39300",
+          //       opacity:
+          //         counselors.totalPages == 0 ||
+          //         currentPage >= counselors.totalPages
+          //           ? 0.5
+          //           : 1,
+          //     }}
+          //     onPress={() => setCurrentPage(counselors.totalPages)}
+          //     disabled={
+          //       counselors.totalPages == 0 ||
+          //       currentPage >= counselors.totalPages
+          //     }
+          //   >
+          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
+          //       {">>"}
+          //     </Text>
+          //   </TouchableOpacity>
+          // </View>
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            length={counselors?.data?.length}
+            totalPages={counselors?.totalPages}
+          />
         )}
       </View>
     </>

@@ -18,8 +18,8 @@ import Toast from "react-native-toast-message";
 import Loading from "../layout/Loading";
 
 export default function Login() {
-  const { width, height } = Dimensions.get("screen");
   const navigation = useNavigation();
+  const { width, height } = Dimensions.get("screen");
   const { login } = useContext(AuthContext);
   const [isFocused1, setIsFocused1] = useState(false);
   const [isFocused2, setIsFocused2] = useState(false);
@@ -36,9 +36,11 @@ export default function Login() {
 
     if (!email) {
       setEmailError("Email is empty.");
+      return;
     }
     if (!password) {
       setPasswordError("Password is empty.");
+      return;
     }
 
     try {
@@ -58,9 +60,6 @@ export default function Login() {
           },
         });
         login(data.content.account, data.content.accessToken);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1500);
       } else {
         Toast.show({
           type: "error",
@@ -70,18 +69,17 @@ export default function Login() {
             Toast.hide();
           },
         });
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000);
       }
     } catch (error) {
       // Alert.alert("Error", "An error occurred. Please try again.");
       console.log(error);
+      setLoading(false);
       setEmailError("Email or password incorrect.");
       setPasswordError("Email or password incorrect.");
+    } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 1500);
     }
   };
 
