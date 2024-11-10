@@ -20,6 +20,7 @@ import Toast from "react-native-toast-message";
 import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import { RequestSkeleton } from "../../layout/Skeleton";
+import Pagination from "../../layout/Pagination";
 
 export default function Request({ route }) {
   const navigation = useNavigation();
@@ -507,7 +508,7 @@ export default function Request({ route }) {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         borderRadius: 20,
-                        paddingHorizontal: 16,
+                        paddingHorizontal: 12,
                         alignItems: "center",
                         backgroundColor: "white",
                         height: 40,
@@ -515,13 +516,13 @@ export default function Request({ route }) {
                         borderColor: "gray",
                       }}
                     >
-                      <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
                         {dateFrom !== "" ? dateFrom : "xxxx-xx-xx"}
                       </Text>
                       <TouchableOpacity onPress={() => setShowFromPicker(true)}>
                         <Ionicons
                           name="calendar-outline"
-                          size={22}
+                          size={20}
                           color="#F39300"
                         />
                       </TouchableOpacity>
@@ -550,7 +551,7 @@ export default function Request({ route }) {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         borderRadius: 20,
-                        paddingHorizontal: 16,
+                        paddingHorizontal: 12,
                         alignItems: "center",
                         backgroundColor: "white",
                         height: 40,
@@ -558,13 +559,13 @@ export default function Request({ route }) {
                         borderColor: "gray",
                       }}
                     >
-                      <Text style={{ fontSize: 18, opacity: 0.8, flex: 1 }}>
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
                         {dateTo !== "" ? dateTo : "xxxx-xx-xx"}
                       </Text>
                       <TouchableOpacity onPress={() => setShowToPicker(true)}>
                         <Ionicons
                           name="calendar-outline"
-                          size={22}
+                          size={20}
                           color="#F39300"
                         />
                       </TouchableOpacity>
@@ -593,16 +594,17 @@ export default function Request({ route }) {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
+                      minWidth: "30%",
                     }}
                   >
                     Method:
                   </Text>
-                  <View style={{ flexDirection: "row", marginLeft: 20 }}>
+                  <View style={{ flexDirection: "row" }}>
                     <View
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
-                        marginHorizontal: 12,
+                        marginHorizontal: 16,
                       }}
                     >
                       <TouchableOpacity
@@ -684,6 +686,7 @@ export default function Request({ route }) {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
+                      minWidth: "30%",
                     }}
                   >
                     Sort:
@@ -1335,130 +1338,12 @@ export default function Request({ route }) {
           )}
         </ScrollView>
         {!loading && (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              marginHorizontal: 20,
-              marginBottom: 10,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-                opacity: currentPage <= 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<<"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-                opacity: currentPage === 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<"}
-              </Text>
-            </TouchableOpacity>
-            <View
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 10,
-                marginHorizontal: 4,
-                width: "auto",
-                height: width * 0.1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "white",
-                borderWidth: 1.5,
-                borderColor: "#F39300",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#333",
-                  fontWeight: "600",
-                }}
-              >
-                {requests?.data?.length != 0 ? currentPage : 0} /{" "}
-                {requests.totalPages}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  requests.totalPages == 0 || currentPage >= requests.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  requests.totalPages == 0 || currentPage >= requests.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage + 1)}
-              disabled={
-                requests.totalPages == 0 || currentPage >= requests.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  requests.totalPages == 0 || currentPage >= requests.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  requests.totalPages == 0 || currentPage >= requests.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(requests.totalPages)}
-              disabled={
-                requests.totalPages == 0 || currentPage >= requests.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">>"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            length={requests?.data?.length}
+            totalPages={requests?.totalPages}
+          />
         )}
         <Modal
           transparent={true}

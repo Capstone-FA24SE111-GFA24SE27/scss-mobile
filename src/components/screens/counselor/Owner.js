@@ -19,6 +19,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import { ChatContext } from "../../context/ChatContext";
+import Pagination from "../../layout/Pagination";
 
 export default function QA() {
   const navigation = useNavigation();
@@ -218,6 +219,8 @@ export default function QA() {
       if (data && data.status == 200) {
         setOpenReject(false);
         setValue("");
+        setInfo("");
+        setOpenInfo(false);
         fetchData(filters, { page: currentPage });
       }
     } catch (error) {
@@ -237,6 +240,8 @@ export default function QA() {
       if (data && data.status == 200) {
         setOpenFlag(false);
         setContent("");
+        setInfo("");
+        setOpenInfo(false);
         fetchData(filters, { page: currentPage });
       }
     } catch (error) {
@@ -1164,134 +1169,12 @@ export default function QA() {
           )}
         </ScrollView>
         {!loading && (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              marginHorizontal: 20,
-              marginVertical: 10,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-                opacity: currentPage <= 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<<"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-                opacity: currentPage === 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<"}
-              </Text>
-            </TouchableOpacity>
-            <View
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 10,
-                marginHorizontal: 4,
-                width: "auto",
-                height: width * 0.1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "white",
-                borderWidth: 1.5,
-                borderColor: "#F39300",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#333",
-                  fontWeight: "600",
-                }}
-              >
-                {questions?.data?.length != 0 ? currentPage : 0} /{" "}
-                {questions.totalPages}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage + 1)}
-              disabled={
-                questions.totalPages == 0 || currentPage >= questions.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(questions.totalPages)}
-              disabled={
-                questions.totalPages == 0 || currentPage >= questions.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">>"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            length={questions?.data?.length}
+            totalPages={questions?.totalPages}
+          />
         )}
         <Modal
           transparent={true}
@@ -1437,31 +1320,42 @@ export default function QA() {
                   <Ionicons name="close" size={28} color="#333" />
                 </TouchableOpacity>
               </View>
-              <Text style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  color: "#333",
+                  marginBottom: 8,
+                }}
+              >
                 Your reason:
               </Text>
               <TextInput
                 placeholder="Type your reason here"
+                placeholderTextColor="gray"
+                keyboardType="default"
+                multiline={true}
+                numberOfLines={3}
                 value={content}
                 onChangeText={setContent}
                 style={{
-                  borderColor: "#ccc",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  padding: 12,
-                  height: 100,
-                  backgroundColor: "#fff",
+                  fontWeight: "600",
                   fontSize: 16,
-                  marginVertical: 12,
+                  opacity: 0.8,
+                  paddingVertical: 8,
                   textAlignVertical: "top",
+                  paddingHorizontal: 12,
+                  backgroundColor: "#ededed",
+                  borderColor: "gray",
+                  borderWidth: 1,
+                  borderRadius: 10,
                 }}
-                multiline
               />
               <TouchableOpacity
                 disabled={content === ""}
                 style={{
                   backgroundColor: content === "" ? "#ededed" : "#F39300",
-                  marginTop: 8,
+                  marginTop: 12,
                   paddingVertical: 8,
                   paddingHorizontal: 12,
                   borderRadius: 10,
@@ -1529,31 +1423,42 @@ export default function QA() {
                   <Ionicons name="close" size={28} color="#333" />
                 </TouchableOpacity>
               </View>
-              <Text style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: "#333",
+                  marginBottom: 8,
+                }}
+              >
                 Your answer:
               </Text>
               <TextInput
                 placeholder="Type your answer here"
+                placeholderTextColor="gray"
+                keyboardType="default"
+                multiline={true}
+                numberOfLines={3}
                 value={content}
                 onChangeText={setContent}
                 style={{
-                  borderColor: "#ccc",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  padding: 12,
-                  height: 100,
-                  backgroundColor: "#fff",
+                  fontWeight: "600",
                   fontSize: 16,
-                  marginVertical: 12,
+                  opacity: 0.8,
+                  paddingVertical: 8,
                   textAlignVertical: "top",
+                  paddingHorizontal: 12,
+                  backgroundColor: "#ededed",
+                  borderColor: "gray",
+                  borderWidth: 1,
+                  borderRadius: 10,
                 }}
-                multiline
               />
               <TouchableOpacity
                 disabled={content === ""}
                 style={{
                   backgroundColor: content === "" ? "#ededed" : "#F39300",
-                  marginTop: 8,
+                  marginTop: 12,
                   paddingVertical: 8,
                   paddingHorizontal: 12,
                   borderRadius: 10,
@@ -2106,6 +2011,78 @@ export default function QA() {
                       </Text>
                     )}
                   </View>
+                  {info.status == "PENDING" && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => (
+                          setOpenReject(true),
+                          setSelectedQuestion(info),
+                          setValue("REJECTED")
+                        )}
+                        style={{
+                          width: "49%",
+                          marginRight: 8,
+                          marginBottom: 8,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          borderWidth: 1.5,
+                          borderColor: "red",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <MaterialIcons name="cancel" size={20} color="red" />
+                        <Text
+                          style={{
+                            fontWeight: "500",
+                            color: "red",
+                            fontSize: 20,
+                            marginLeft: 4,
+                          }}
+                        >
+                          Cancel
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => (
+                          setOpenFlag(true), setSelectedQuestion(info)
+                        )}
+                        style={{
+                          width: "49%",
+                          marginBottom: 8,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          borderWidth: 1.5,
+                          borderColor: "gray",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons name="flag" size={20} color="gray" />
+                        <Text
+                          style={{
+                            fontWeight: "500",
+                            color: "gray",
+                            fontSize: 20,
+                            marginLeft: 4,
+                          }}
+                        >
+                          Flag
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                   {info?.answer !== null && info?.closed == false && (
                     <TouchableOpacity
                       onPress={() => (
@@ -2203,9 +2180,7 @@ export default function QA() {
                     borderWidth: 1,
                     borderColor: "gray",
                   }}
-                  onPress={() => (
-                    setOpenCloseConfirm(false), setSelectedQuestion(null)
-                  )}
+                  onPress={() => setOpenCloseConfirm(false)}
                 >
                   <Text
                     style={{

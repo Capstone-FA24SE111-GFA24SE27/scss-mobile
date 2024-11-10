@@ -220,7 +220,7 @@ export default function Personal() {
           <View
             style={{
               backgroundColor: "white",
-              flex: 0.43,
+              flex: 0.42,
               padding: 12,
               borderRadius: 10,
               elevation: 3,
@@ -246,10 +246,10 @@ export default function Personal() {
               <View
                 style={{
                   backgroundColor: "#F39300",
-                  padding: 2,
+                  padding: 1,
                   borderRadius: 20,
-                  width: 28,
-                  height: 28,
+                  width: 24,
+                  height: 24,
                   justifyContent: "center",
                   alignItems: "center",
                 }}
@@ -294,7 +294,7 @@ export default function Personal() {
           <View
             style={{
               backgroundColor: "white",
-              flex: 0.55,
+              flex: 0.56,
               padding: 12,
               borderRadius: 10,
               elevation: 3,
@@ -320,10 +320,10 @@ export default function Personal() {
               <View
                 style={{
                   backgroundColor: "#F39300",
-                  padding: 2,
+                  padding: 1,
                   borderRadius: 20,
-                  width: 28,
-                  height: 28,
+                  width: 24,
+                  height: 24,
                   justifyContent: "center",
                   alignItems: "center",
                 }}
@@ -402,10 +402,10 @@ export default function Personal() {
               <View
                 style={{
                   backgroundColor: "#F39300",
-                  padding: 2,
+                  padding: 1,
                   borderRadius: 20,
-                  width: 28,
-                  height: 28,
+                  width: 24,
+                  height: 24,
                   justifyContent: "center",
                   alignItems: "center",
                 }}

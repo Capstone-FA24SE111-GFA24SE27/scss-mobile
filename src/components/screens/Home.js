@@ -346,11 +346,11 @@ export default function Home() {
                 alignItems: "center",
                 justifyContent: "center",
                 marginVertical: 16,
-                paddingHorizontal: 12,
-                paddingVertical: 24,
+                paddingHorizontal: 8,
+                paddingVertical: 16,
               }}
             >
-              <Ionicons name="add-circle" size={48} color="#F39300" />
+              <Ionicons name="add-circle" size={60} color="#F39300" />
               <Text
                 style={{
                   marginTop: 8,

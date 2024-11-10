@@ -24,7 +24,6 @@ export default function Profile({ route }) {
   const [open, setIsOpen] = useState(false);
   const { userData, profile, fetchProfile, logout } = useContext(AuthContext);
   const scrollViewRef = useRef(null);
-
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
@@ -90,8 +89,8 @@ export default function Profile({ route }) {
           style={{
             flexDirection: "row",
             paddingHorizontal: 30,
-            paddingTop: height * 0.04,
-            paddingVertical: 10,
+            paddingTop: height * 0.035,
+            paddingBottom: 10,
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>

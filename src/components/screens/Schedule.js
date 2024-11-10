@@ -223,7 +223,7 @@ export default function Schedule() {
   const handleCloseFeedback = () => {
     setSelectedAppointment(null);
     setRating(0);
-    setValue(null);
+    setValue("");
     setOpenFeedback(false);
     const date = new Date(selectedDate);
     const dayOfWeek = date.getDay();
@@ -521,8 +521,9 @@ export default function Schedule() {
                       backgroundColor: "white",
                       paddingVertical: 12,
                       paddingHorizontal: 20,
+                      elevation: 1,
                       borderWidth: 1.5,
-                      borderColor: "lightgrey",
+                      borderColor: "#e3e3e3",
                     }}
                   >
                     <View
@@ -717,6 +718,7 @@ export default function Schedule() {
                         borderRadius: 20,
                         backgroundColor: "white",
                         padding: 16,
+                        elevation: 1,
                         borderWidth: 1.5,
                         borderColor: "lightgrey",
                       }}
@@ -790,9 +792,7 @@ export default function Schedule() {
                         padding: 16,
                         elevation: 1,
                         borderWidth: 1.5,
-                        borderColor: "lightgrey",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
+                        borderColor: "#e3e3e3",
                         alignItems: "center",
                       }}
                     >
@@ -960,15 +960,22 @@ export default function Schedule() {
                                 </Text>
                               </TouchableOpacity>
                               <TouchableOpacity
+                                disabled={value === "" || rating === 0}
                                 style={{
-                                  backgroundColor: "#F39300",
+                                  backgroundColor:
+                                    value === "" || rating === 0
+                                      ? "#ededed"
+                                      : "#F39300",
                                   paddingHorizontal: 12,
                                   paddingVertical: 6,
                                   borderRadius: 10,
                                   justifyContent: "center",
                                   alignItems: "center",
                                   borderWidth: 1,
-                                  borderColor: "#F39300",
+                                  borderColor:
+                                    value === "" || rating === 0
+                                      ? "gray"
+                                      : "#F39300",
                                 }}
                                 onPress={handleTakeFeedback}
                               >
@@ -976,7 +983,10 @@ export default function Schedule() {
                                   style={{
                                     fontSize: 18,
                                     fontWeight: "bold",
-                                    color: "white",
+                                    color:
+                                      value === "" || rating === 0
+                                        ? "gray"
+                                        : "white",
                                   }}
                                 >
                                   Save

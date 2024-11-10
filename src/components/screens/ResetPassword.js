@@ -1,96 +1,335 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { Ionicons } from '@expo/vector-icons'; // For icons
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Modal,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-const ResetPassword = ({ navigation }) => {
-    const [email, setEmail] = useState("");
+export default function ResetPassword() {
+  const navigation = useNavigation();
+  const { width, height } = Dimensions.get("screen");
+  const [isFocused, setIsFocused] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
 
-    const handlePasswordReset = () => {
-        // Logic for resetting password, usually through an API
-        console.log("Reset password link sent to:", email);
-        // Navigate back to Login after sending reset link
-        navigation.navigate("Login");
-    };
+  const handleForgotPassword = async () => {
+    setEmailError("");
+    if (!email.includes("@fpt.edu.vn") && !email.includes("@gmail.com")) {
+      setEmailError("Incorrect syntax of an email");
+      setOpenConfirm(false);
+      return;
+    }
+    try {
+      //   const response = await axiosJWT.post(
+      //     `${BASE_URL}/account/forgot-password`,
+      //     {
+      //       email: email,
+      //     }
+      //   );
+      //   const data = await response.data;
+      //   if (data && data.status == 200) {
+      //   setOpenConfirm(false);
+      //   setOpenSuccess(true);
+      //   }
+    } catch (error) {
+      console.log("Can't send mail to provided email", error);
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            {/* Back Button */}
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Ionicons name="chevron-back-circle-outline" size={32} color="#333" />
-            </TouchableOpacity>
-            <Text style={styles.title}>Reset Password</Text>
-
-            {/* Email Input */}
-            <View style={styles.inputContainer}>
-                <Ionicons name="mail-outline" size={24} color="#ccc" style={styles.icon} />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter your email"
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                />
-            </View>
-
-            {/* Send Reset Link Button */}
-            <TouchableOpacity style={styles.resetButton} onPress={handlePasswordReset}>
-                <Text style={styles.resetButtonText}>Send Reset Link</Text>
-            </TouchableOpacity>
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#f5f7fd",
+        paddingHorizontal: 25,
+      }}
+    >
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingTop: 40,
+        }}
+      >
+        <View style={{ flex: 1, alignItems: "flex-start" }}>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Ionicons
+              name="chevron-back-circle-outline"
+              size={36}
+              color="#333"
+            />
+          </TouchableOpacity>
         </View>
-    );
-};
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f8f8f8",
-        paddingHorizontal: 20,
-    },
-    backButton: {
-        position: "absolute",
-        top: 40, // adjust as needed for your layout
-        left: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 20,
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        paddingVertical: 12,
-        marginBottom: 12,
-        width: "100%",
-        backgroundColor: "#fff",
-    },
-    input: {
-        flex: 1,
-        fontSize: 16,
-        color: "#333",
-    },
-    icon: {
-        marginRight: 8,
-    },
-    resetButton: {
-        backgroundColor: "#F39300",
-        paddingVertical: 14,
-        borderRadius: 8,
-        alignItems: "center",
-        width: "100%",
-    },
-    resetButtonText: {
-        color: "#fff",
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-});
-
-export default ResetPassword;
+      </View>
+      <View
+        style={{
+          justifyContent: "center",
+          marginTop: width * 0.5,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "bold",
+            marginBottom: 20,
+            textAlign: "center",
+          }}
+        >
+          Reset Password
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            borderWidth: 1,
+            borderRadius: 10,
+            paddingHorizontal: 16,
+            height: 50,
+            marginVertical: 8,
+            alignItems: "center",
+            backgroundColor: isFocused ? "white" : "#ededed",
+            borderColor: isFocused ? "#F39300" : emailError ? "red" : "gray",
+            alignContent: "center",
+          }}
+        >
+          <Ionicons
+            name="mail"
+            size={24}
+            style={{
+              marginRight: 10,
+              color: isFocused ? "#F39300" : "gray",
+              opacity: 0.7,
+            }}
+          />
+          <TextInput
+            placeholder="Enter Email"
+            placeholderTextColor="gray"
+            value={email}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onChangeText={(text) => setEmail(text)}
+            style={{
+              flex: 1,
+              fontSize: 18,
+              opacity: 0.8,
+            }}
+          />
+        </View>
+        {emailError ? (
+          <Text
+            style={{
+              color: "red",
+              fontSize: 16,
+              marginVertical: 2,
+            }}
+          >
+            {emailError}
+          </Text>
+        ) : null}
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#F39300",
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            marginTop: 12,
+            borderRadius: 10,
+            justifyContent: "center",
+            alignItems: "center",
+            borderColor: "#F39300",
+            borderWidth: 1,
+            width: "100%",
+          }}
+          onPress={() => setOpenConfirm(true)}
+        >
+          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
+            Send Reset Link
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Modal
+        transparent={true}
+        visible={openConfirm}
+        animationType="fade"
+        onRequestClose={() => setOpenConfirm(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              width: width * 0.8,
+              padding: 20,
+              backgroundColor: "white",
+              borderRadius: 10,
+              elevation: 10,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "bold",
+                marginBottom: 10,
+                textAlign: "center",
+              }}
+            >
+              Forgot Password Confirmation
+            </Text>
+            <Text
+              style={{
+                fontSize: 18,
+                marginBottom: 30,
+                textAlign: "center",
+              }}
+            >
+              Are you sure you forgot your current password? A mail will be sent
+              to your provided email
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  backgroundColor: "#ededed",
+                  padding: 10,
+                  borderRadius: 10,
+                  marginRight: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 1,
+                  borderColor: "gray",
+                }}
+                onPress={() => setOpenConfirm(false)}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#333",
+                    fontWeight: "600",
+                  }}
+                >
+                  No
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  backgroundColor: "#F39300",
+                  padding: 10,
+                  borderRadius: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={handleForgotPassword}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                >
+                  Yes
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        visible={openSuccess}
+        animationType="fade"
+        onRequestClose={() => setOpenSuccess(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              width: width * 0.85,
+              paddingVertical: 25,
+              paddingHorizontal: 20,
+              backgroundColor: "white",
+              borderRadius: 20,
+            }}
+          >
+            <View
+              style={{
+                alignItems: "center",
+                marginVertical: 12,
+              }}
+            >
+              <Ionicons name="checkmark-circle" size={80} color="#F39300" />
+              <Text
+                style={{
+                  color: "#F39300",
+                  fontSize: 30,
+                  fontWeight: "bold",
+                }}
+              >
+                Success!
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontSize: 16,
+                textAlign: "center",
+                marginBottom: 20,
+              }}
+            >
+              A mail has been sent to{" "}
+              <Text style={{ fontWeight: "600", color: "#F39300" }}>
+                {email}
+              </Text>
+              ! {"\n"}
+              Please check it to start changing your password
+            </Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#F39300",
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderRadius: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => navigation.navigate("Login")}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: "white",
+                  fontWeight: "600",
+                }}
+              >
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+}

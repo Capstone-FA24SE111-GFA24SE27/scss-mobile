@@ -19,6 +19,7 @@ import { AuthContext } from "../context/AuthContext";
 import { SocketContext } from "../context/SocketContext";
 import { ChatContext } from "../context/ChatContext";
 import { QASkeleton } from "../layout/Skeleton";
+import Pagination from "../layout/Pagination";
 export default function QA() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
@@ -709,6 +710,7 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
+                      minWidth: "20%",
                     }}
                   >
                     Status:
@@ -717,13 +719,13 @@ export default function QA() {
                     style={{
                       backgroundColor: "white",
                       borderColor: expanded ? "#F39300" : "black",
-                      flex: 0.5,
+                      flex: 1,
                       height: 30,
                       borderWidth: 1,
                       borderColor: "grey",
                       borderRadius: 10,
                       paddingHorizontal: 12,
-                      marginLeft: 8,
+                      marginLeft: 16,
                     }}
                     placeholderStyle={{ fontSize: 16 }}
                     selectedTextStyle={{
@@ -797,7 +799,7 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
-                      minWidth: 54,
+                      minWidth: "20%",
                     }}
                   >
                     Sort:
@@ -886,7 +888,7 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
-                      minWidth: 54,
+                      minWidth: "20%",
                     }}
                   >
                     Type:
@@ -919,7 +921,7 @@ export default function QA() {
                         <Text
                           style={{
                             color: type == "ACADEMIC" ? "#F39300" : "black",
-                            fontSize: 18,
+                            fontSize: 15,
                           }}
                         >
                           Academic
@@ -952,7 +954,7 @@ export default function QA() {
                         <Text
                           style={{
                             color: type == "NON_ACADEMIC" ? "#F39300" : "black",
-                            fontSize: 18,
+                            fontSize: 15,
                           }}
                         >
                           Non-Academic
@@ -975,7 +977,7 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
-                      minWidth: 54,
+                      minWidth: "20%",
                     }}
                   >
                     Taken:
@@ -1063,7 +1065,7 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
-                      minWidth: 54,
+                      minWidth: "20%",
                     }}
                   >
                     Closed:
@@ -1631,134 +1633,12 @@ export default function QA() {
           )}
         </ScrollView>
         {!loading && (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              marginHorizontal: 20,
-              marginVertical: 10,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-                opacity: currentPage <= 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<<"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-                opacity: currentPage === 1 ? 0.5 : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {"<"}
-              </Text>
-            </TouchableOpacity>
-            <View
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 10,
-                marginHorizontal: 4,
-                width: "auto",
-                height: width * 0.1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "white",
-                borderWidth: 1.5,
-                borderColor: "#F39300",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#333",
-                  fontWeight: "600",
-                }}
-              >
-                {questions?.data?.length != 0 ? currentPage : 0} /{" "}
-                {questions.totalPages}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(currentPage + 1)}
-              disabled={
-                questions.totalPages == 0 || currentPage >= questions.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: "white",
-                marginHorizontal: 4,
-                borderWidth: 1.5,
-                borderColor:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? "#ccc"
-                    : "#F39300",
-                opacity:
-                  questions.totalPages == 0 ||
-                  currentPage >= questions.totalPages
-                    ? 0.5
-                    : 1,
-              }}
-              onPress={() => setCurrentPage(questions.totalPages)}
-              disabled={
-                questions.totalPages == 0 || currentPage >= questions.totalPages
-              }
-            >
-              <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-                {">>"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            length={questions?.data?.length}
+            totalPages={questions?.totalPages}
+          />
         )}
         <Modal
           animationType="slide"
@@ -2773,9 +2653,7 @@ export default function QA() {
                     borderWidth: 1,
                     borderColor: "gray",
                   }}
-                  onPress={() => (
-                    setOpenCloseConfirm(false), setSelectedQuestion(null)
-                  )}
+                  onPress={() => setOpenCloseConfirm(false)}
                 >
                   <Text
                     style={{
