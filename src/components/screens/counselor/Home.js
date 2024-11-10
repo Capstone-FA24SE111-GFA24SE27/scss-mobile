@@ -16,6 +16,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { NotificationContext } from "../../context/NotificationContext";
 import { HomeSkeleton } from "../../layout/Skeleton";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -241,17 +242,28 @@ export default function Home() {
                 navigation.navigate("Profile", { prevScreen: "Home" })
               }
             >
-              <Image
-                source={{ uri: profile.avatarLink }}
-                style={{
-                  backgroundColor: "white",
-                  width: width * 0.1,
-                  height: width * 0.1,
-                  borderRadius: 40,
-                  borderColor: "#e3e3e3",
-                  borderWidth: 2,
-                }}
-              />
+              {profile ? (
+                <Image
+                  source={{ uri: profile.avatarLink }}
+                  style={{
+                    backgroundColor: "white",
+                    width: width * 0.1,
+                    height: width * 0.1,
+                    borderRadius: 40,
+                    borderColor: "#e3e3e3",
+                    borderWidth: 2,
+                  }}
+                />
+              ) : (
+                <LinearGradient
+                  colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+                  style={{
+                    width: width * 0.1,
+                    height: width * 0.1,
+                    borderRadius: 40,
+                  }}
+                />
+              )}
             </Pressable>
           </View>
         </View>
@@ -314,7 +326,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    See All
+                    VIEW ALL
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -525,7 +537,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    See All
+                    VIEW ALL
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -630,7 +642,7 @@ export default function Home() {
                         activeOpacity={0.7}
                         key={appointment.id}
                         style={{
-                          width: width * 0.8,
+                          width: width * 0.85,
                           backgroundColor: "#F39300",
                           borderRadius: 20,
                           marginVertical: 12,
@@ -802,7 +814,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    See All
+                    VIEW ALL
                   </Text>
                 </TouchableOpacity>
               </View>

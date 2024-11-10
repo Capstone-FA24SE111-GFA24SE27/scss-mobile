@@ -421,7 +421,7 @@ const GatherInfo = ({
                   opacity: 0.8,
                 }}
               >
-                Skip For Now
+                Skip for now
               </Text>
             </TouchableOpacity>
             <TouchableOpacity

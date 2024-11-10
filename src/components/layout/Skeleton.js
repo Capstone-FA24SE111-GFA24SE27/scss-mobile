@@ -292,11 +292,12 @@ const StudentSkeleton = () => {
         style={{
           backgroundColor: "#f5f5f5",
           padding: 12,
-          marginLeft: 8,
+          marginLeft: 4,
           marginRight: 2,
-          marginVertical: 8,
-          borderTopLeftRadius: 20,
-          borderBottomLeftRadius: 20,
+          marginTop: 4,
+          marginBottom: 4,
+          borderTopLeftRadius: 18,
+          borderBottomLeftRadius: 18,
         }}
       >
         <LinearGradient
@@ -314,11 +315,12 @@ const StudentSkeleton = () => {
         style={{
           flex: 1,
           backgroundColor: "white",
-          borderTopRightRadius: 20,
-          borderBottomRightRadius: 20,
+          borderTopRightRadius: 18,
+          borderBottomRightRadius: 18,
           padding: 12,
-          marginVertical: 8,
-          marginRight: 8,
+          marginTop: 4,
+          marginBottom: 4,
+          marginRight: 4,
         }}
       >
         <View style={{ flexDirection: "row", marginBottom: 8 }}>
@@ -383,7 +385,6 @@ const StudentSkeleton = () => {
             />
           </View>
         </View>
-
         <View
           style={{
             flexDirection: "row",

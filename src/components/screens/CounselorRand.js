@@ -36,6 +36,8 @@ export default function CounselorRand() {
   const [progress, setProgress] = useState(new Animated.Value(0));
   const [slots, setSlots] = useState([]);
   const [expertises, setExpertises] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [majors, setMajors] = useState([]);
   const [specializations, setSpecializations] = useState([]);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -43,8 +45,14 @@ export default function CounselorRand() {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [type, setType] = useState("ACADEMIC");
   const [gender, setGender] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const [expanded2, setExpanded2] = useState(false);
+  const [expanded3, setExpanded3] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedMajor, setSelectedMajor] = useState("");
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
   const [selectedExpertise, setSelectedExpertise] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
   const [online, isOnline] = useState(null);
   const [reason, setReason] = useState("");
   const [matcher, setMatcher] = useState(null);
@@ -60,7 +68,6 @@ export default function CounselorRand() {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       fetchSlots();
-      fetchSpecialization();
       fetchExpertise();
     }, [selectedDate])
   );
@@ -90,23 +97,61 @@ export default function CounselorRand() {
     }
   };
 
-  const fetchSpecialization = async () => {
+  const fetchDepartment = async () => {
     try {
-      const response = await axiosJWT.get(
-        `${BASE_URL}/counselors/specialization`
+      const departmentsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/departments`
       );
-      setSpecializations(response.data.content);
-    } catch (error) {
-      console.log("Error fetching specializations");
+      const departmentsData = departmentsRes?.data || [];
+      setDepartments(departmentsData);
+    } catch (err) {
+      console.log("Can't fetch departments");
     }
   };
 
+  const fetchMajor = async () => {
+    try {
+      const majorsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/departments/${selectedDepartment?.id}/majors`
+      );
+      const majorsData = majorsRes?.data || [];
+      setMajors(majorsData);
+    } catch (err) {
+      console.log("Can't fetch majors");
+    }
+  };
+
+  const fetchSpecialization = async () => {
+    try {
+      const specializationsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/majors/${selectedMajor?.id}/specializations`
+      );
+      const specializationsData = specializationsRes?.data || [];
+      setSpecializations(specializationsData);
+    } catch (err) {
+      console.log("Can't fetch specializations");
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartment();
+    if (selectedDepartment !== "") {
+      fetchMajor();
+      if (selectedMajor !== "") {
+        fetchSpecialization();
+      }
+    }
+  }, [selectedDepartment, selectedMajor, selectedSpecialization]);
+
   const fetchExpertise = async () => {
     try {
-      const response = await axiosJWT.get(`${BASE_URL}/counselors/expertise`);
-      setExpertises(response.data.content);
+      const expertisesRes = await axiosJWT.get(
+        `${BASE_URL}/counselors/expertise`
+      );
+      const expertisesData = expertisesRes?.data.content || [];
+      setExpertises(expertisesData);
     } catch (error) {
-      console.log("Error fetching expertises");
+      console.log("Can't fetch  expertises");
     }
   };
 
@@ -459,18 +504,161 @@ export default function CounselorRand() {
     );
   };
 
-  const [expanded, setExpanded] = useState(false);
+  const renderDepartments = () => {
+    return (
+      <Dropdown
+        style={{
+          backgroundColor: "white",
+          borderColor: expanded ? "#F39300" : "black",
+          height: 40,
+          borderWidth: 2,
+          borderRadius: 10,
+          marginVertical: 8,
+          paddingHorizontal: 16,
+        }}
+        placeholderStyle={{ fontSize: 16 }}
+        selectedTextStyle={{
+          fontSize: 18,
+          color: selectedDepartment ? "black" : "white",
+        }}
+        inputSearchStyle={{ height: 40, fontSize: 16 }}
+        maxHeight={250}
+        data={departments}
+        labelField="name"
+        search
+        value={
+          selectedDepartment !== "" ? selectedDepartment.name : "Select item"
+        }
+        placeholder={
+          selectedDepartment !== "" ? selectedDepartment.name : "Select item"
+        }
+        searchPlaceholder="Search Department"
+        onFocus={() => setExpanded(true)}
+        onBlur={() => setExpanded(false)}
+        onChange={(item) => {
+          setSelectedDepartment(item);
+          setExpanded(false);
+        }}
+        renderRightIcon={() => (
+          <Ionicons
+            color={expanded ? "#F39300" : "black"}
+            name={expanded ? "caret-up" : "caret-down"}
+            size={20}
+          />
+        )}
+        renderItem={(item) => {
+          return (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                backgroundColor:
+                  item.name == selectedDepartment.name ? "#F39300" : "white",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "500",
+                  color:
+                    item.name == selectedDepartment.name ? "white" : "black",
+                }}
+              >
+                {item.name}
+              </Text>
+              {selectedDepartment.name === item.name && (
+                <Ionicons color="white" name="checkmark" size={24} />
+              )}
+            </View>
+          );
+        }}
+      />
+    );
+  };
+
+  const renderMajors = () => {
+    return (
+      <Dropdown
+        style={{
+          backgroundColor: "white",
+          borderColor: expanded2 ? "#F39300" : "black",
+          height: 40,
+          borderWidth: 2,
+          borderRadius: 10,
+          marginVertical: 8,
+          paddingHorizontal: 16,
+        }}
+        placeholderStyle={{ fontSize: 16 }}
+        selectedTextStyle={{
+          fontSize: 18,
+          color: selectedMajor ? "black" : "white",
+        }}
+        inputSearchStyle={{ height: 40, fontSize: 16 }}
+        maxHeight={250}
+        data={majors}
+        labelField="name"
+        search
+        value={selectedMajor !== "" ? selectedMajor.name : "Select item"}
+        placeholder={selectedMajor !== "" ? selectedMajor.name : "Select item"}
+        searchPlaceholder="Search Major"
+        onFocus={() => setExpanded2(true)}
+        onBlur={() => setExpanded2(false)}
+        onChange={(item) => {
+          setSelectedMajor(item);
+          setExpanded2(false);
+        }}
+        renderRightIcon={() => (
+          <Ionicons
+            color={expanded2 ? "#F39300" : "black"}
+            name={expanded2 ? "caret-up" : "caret-down"}
+            size={20}
+          />
+        )}
+        renderItem={(item) => {
+          return (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                backgroundColor:
+                  item.name == selectedMajor.name ? "#F39300" : "white",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "500",
+                  color: item.name == selectedMajor.name ? "white" : "black",
+                }}
+              >
+                {item.name}
+              </Text>
+              {selectedMajor.name === item.name && (
+                <Ionicons color="white" name="checkmark" size={24} />
+              )}
+            </View>
+          );
+        }}
+      />
+    );
+  };
 
   const renderSpecializations = () => {
     return (
       <Dropdown
         style={{
           backgroundColor: "white",
-          borderColor: expanded ? "#F39300" : "black",
-          height: 50,
+          borderColor: expanded3 ? "#F39300" : "black",
+          height: 40,
           borderWidth: 2,
           borderRadius: 10,
-          marginVertical: 10,
+          marginVertical: 8,
           paddingHorizontal: 16,
         }}
         placeholderStyle={{ fontSize: 16 }}
@@ -494,16 +682,16 @@ export default function CounselorRand() {
             : "Select item"
         }
         searchPlaceholder="Search Specialization"
-        onFocus={() => setExpanded(true)}
-        onBlur={() => setExpanded(false)}
+        onFocus={() => setExpanded3(true)}
+        onBlur={() => setExpanded3(false)}
         onChange={(item) => {
           setSelectedSpecialization(item);
-          setExpanded(false);
+          setExpanded3(false);
         }}
         renderRightIcon={() => (
           <Ionicons
-            color={expanded ? "#F39300" : "black"}
-            name={expanded ? "caret-up" : "caret-down"}
+            color={expanded3 ? "#F39300" : "black"}
+            name={expanded3 ? "caret-up" : "caret-down"}
             size={20}
           />
         )}
@@ -550,10 +738,10 @@ export default function CounselorRand() {
         style={{
           backgroundColor: "white",
           borderColor: expanded ? "#F39300" : "black",
-          height: 50,
+          height: 40,
           borderWidth: 2,
           borderRadius: 10,
-          marginVertical: 10,
+          marginVertical: 8,
           paddingHorizontal: 16,
         }}
         placeholderStyle={{ fontSize: 16 }}
@@ -619,7 +807,6 @@ export default function CounselorRand() {
     );
   };
 
-  const [currentPage, setCurrentPage] = useState(0);
   const renderCarousel = () => {
     const items = [
       {
@@ -638,15 +825,27 @@ export default function CounselorRand() {
         title: "Select gender",
         content: renderGender(),
       },
-      type === "ACADEMIC"
-        ? {
-            title: "Select specialization",
-            content: renderSpecializations(),
-          }
-        : {
-            title: "Select expertise",
-            content: renderExpertises(),
-          },
+      ...(type === "ACADEMIC"
+        ? [
+            {
+              title: "Select department",
+              content: renderDepartments(),
+            },
+            selectedDepartment !== "" && {
+              title: "Select major",
+              content: renderMajors(),
+            },
+            selectedMajor !== "" && {
+              title: "Select specialization",
+              content: renderSpecializations(),
+            },
+          ].filter(Boolean)
+        : [
+            {
+              title: "Select expertise",
+              content: renderExpertises(),
+            },
+          ]),
     ];
 
     const renderItem = (item, index) => {
@@ -679,7 +878,7 @@ export default function CounselorRand() {
       if (currentPage === 0) {
         pageItems = items.slice(0, 2);
       } else if (currentPage === 1) {
-        pageItems = items.slice(2, 5);
+        pageItems = items.slice(2);
       }
 
       return (
@@ -768,9 +967,12 @@ export default function CounselorRand() {
         >
           <TouchableOpacity
             onPress={() => (
+              setCurrentPage(0),
               setSelectedSlot(""),
               setGender(""),
               setType("ACADEMIC"),
+              setSelectedDepartment(""),
+              setSelectedMajor(""),
               setSelectedSpecialization(""),
               setSelectedExpertise(""),
               setMatcher(""),
@@ -844,6 +1046,8 @@ export default function CounselorRand() {
               slotId: selectedSlot.slotId,
               date: selectedDate,
               gender: gender,
+              departmentId: selectedDepartment.id,
+              majorId: selectedMajor.id,
               specializationId: selectedSpecialization.id,
             },
           }

@@ -33,6 +33,7 @@ import AppointmentCounselor from "../screens/counselor/Appointment";
 import NotificationDetail from "../screens/NotificationDetail";
 import CounselorNavigation from "./CounselorNavigation";
 import QA from "../screens/QA";
+import Owner from "../screens/counselor/Owner";
 import QANavigation from "./QANavigation";
 import Student from "../screens/counselor/Student";
 import Demand from "../screens/counselor/Demand";
@@ -124,7 +125,8 @@ export default function Navigation() {
       label: "QA",
       active: "chatbubbles",
       inActive: "chatbubbles-outline",
-      component: QANavigation,
+      component: Owner,
+      // component: QANavigation,
     },
     {
       route: "Personal",
@@ -320,15 +322,11 @@ export default function Navigation() {
             component={AppointmentCounselor}
             options={tabOptions}
           />
-          <Tab.Screen
-            name="Demand"
-            component={Demand}
-            options={tabOptions}
-          />
+          <Tab.Screen name="Demand" component={Demand} options={tabOptions} />
         </Tab.Navigator>
       ) : userData.role === "NON_ACADEMIC_COUNSELOR" ? (
         <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
-          {TabArrayAcademicCounselor.map((item, index) => {
+          {TabArrayCounselor.map((item, index) => {
             return (
               <Tab.Screen
                 key={index}
@@ -365,11 +363,7 @@ export default function Navigation() {
             component={AppointmentCounselor}
             options={tabOptions}
           />
-          <Tab.Screen
-            name="Demand"
-            component={Demand}
-            options={tabOptions}
-          />
+          <Tab.Screen name="Demand" component={Demand} options={tabOptions} />
         </Tab.Navigator>
       ) : null}
     </>

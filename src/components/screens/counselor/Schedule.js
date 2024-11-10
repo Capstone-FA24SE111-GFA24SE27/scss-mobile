@@ -966,7 +966,8 @@ export default function Schedule() {
                         }}
                       >
                         {info.date + "T" + info.startTime >
-                          new Date().toISOString() && info?.status === "WAITING" &&  (
+                          new Date().toISOString() &&
+                          info?.status === "WAITING" && (
                             <View
                               style={{
                                 flexDirection: "row",
@@ -1262,8 +1263,11 @@ export default function Schedule() {
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "#333",
-                          fontWeight: "500",
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          textAlign: "center",
+                          color: "gray",
+                          opacity: 0.7,
                         }}
                       >
                         There's no feedback yet

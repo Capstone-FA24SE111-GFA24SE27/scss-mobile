@@ -16,6 +16,7 @@ import { AuthContext } from "../context/AuthContext";
 import { NotificationContext } from "../context/NotificationContext";
 import { HomeSkeleton } from "../layout/Skeleton";
 import axiosJWT, { BASE_URL } from "../../config/Config";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -272,17 +273,28 @@ export default function Home() {
               }
             >
               {/* <Ionicons name="menu" size={40} color="white" /> */}
-              <Image
-                source={{ uri: profile.avatarLink }}
-                style={{
-                  backgroundColor: "white",
-                  width: width * 0.1,
-                  height: width * 0.1,
-                  borderRadius: 40,
-                  borderColor: "#e3e3e3",
-                  borderWidth: 2,
-                }}
-              />
+              {profile ? (
+                <Image
+                  source={{ uri: profile.avatarLink }}
+                  style={{
+                    backgroundColor: "white",
+                    width: width * 0.1,
+                    height: width * 0.1,
+                    borderRadius: 40,
+                    borderColor: "#e3e3e3",
+                    borderWidth: 2,
+                  }}
+                />
+              ) : (
+                <LinearGradient
+                  colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+                  style={{
+                    width: width * 0.1,
+                    height: width * 0.1,
+                    borderRadius: 40,
+                  }}
+                />
+              )}
             </Pressable>
           </View>
         </View>
@@ -375,7 +387,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    See All
+                    VIEW ALL
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -589,7 +601,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    See All
+                    VIEW ALL
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -686,7 +698,7 @@ export default function Home() {
                         activeOpacity={0.7}
                         key={appointment.id}
                         style={{
-                          width: width * 0.8,
+                          width: width * 0.85,
                           backgroundColor: "#F39300",
                           borderRadius: 20,
                           marginVertical: 12,
@@ -752,7 +764,7 @@ export default function Home() {
                         >
                           <View
                             style={{
-                              flex: 0.58,
+                              flex: 0.62,
                               flexDirection: "row",
                               alignItems: "center",
                               paddingHorizontal: 12,
@@ -799,7 +811,7 @@ export default function Home() {
                           </View>
                           <View
                             style={{
-                              flex: 0.41,
+                              flex: 0.37,
                               flexDirection: "row",
                               alignItems: "center",
                               paddingHorizontal: 12,
@@ -996,7 +1008,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    See All
+                    VIEW ALL
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1089,19 +1101,6 @@ export default function Home() {
                           borderBottomLeftRadius: 20,
                         }}
                       >
-                        <Image
-                          source={{
-                            uri: question.counselor.profile.avatarLink,
-                          }}
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 20,
-                            borderColor: "#F39300",
-                            borderWidth: 2,
-                            marginRight: 10,
-                          }}
-                        />
                         <View
                           style={{
                             flexDirection: "row",
@@ -1111,19 +1110,33 @@ export default function Home() {
                           <Text
                             style={{
                               fontSize: 16,
+                              color: "gray",
+                              fontWeight: "500",
+                            }}
+                          >
+                            Answered by{" "}
+                          </Text>
+                          <Image
+                            source={{
+                              uri: question.counselor.profile.avatarLink,
+                            }}
+                            style={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: 20,
+                              borderColor: "#F39300",
+                              borderWidth: 2,
+                              marginHorizontal: 4,
+                            }}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 16,
                               fontWeight: "bold",
                               color: "#333",
                             }}
                           >
-                            {question.counselor.profile.fullName}{" "}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: "#333",
-                            }}
-                          >
-                            answered:
+                            {question.counselor.profile.fullName}
                           </Text>
                         </View>
                       </View>
@@ -1175,7 +1188,7 @@ export default function Home() {
                     marginRight: 4,
                   }}
                 >
-                  See all
+                  VIEW ALL
                 </Text>
               </TouchableOpacity>
             </View>
