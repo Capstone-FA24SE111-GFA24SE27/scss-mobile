@@ -799,8 +799,11 @@ export default function Schedule() {
                       <Text
                         style={{
                           fontSize: 18,
-                          color: "#333",
-                          fontWeight: "500",
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          textAlign: "center",
+                          color: "gray",
+                          opacity: 0.7,
                         }}
                       >
                         There's no feedback yet

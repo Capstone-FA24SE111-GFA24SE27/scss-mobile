@@ -95,7 +95,9 @@ export default function Profile({ route }) {
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
-            <TouchableOpacity onPress={() => navigation.navigate(prevScreen || "Personal")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(prevScreen || "Personal")}
+            >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
           </View>
@@ -125,34 +127,35 @@ export default function Profile({ route }) {
               }}
             >
               <View style={{ width: "40%" }}>
-                <Image
-                  source={{
-                    uri: profile?.avatarLink,
-                  }}
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 100,
-                    // marginBottom: 12,
-                    borderColor: "#F39300",
-                    borderWidth: 2,
-                  }}
-                />
-                <View
-                  style={{
-                    padding: 5,
-                    backgroundColor: "#F39300",
-                    borderRadius: 30,
-                    position: "absolute",
-                    right: 30,
-                    bottom: 0,
-                  }}
-                >
-                  <Ionicons
-                    name={profile?.gender == "MALE" ? "male" : "female"}
-                    size={24}
-                    style={{ color: "white" }}
+                <View style={{ position: "relative" }}>
+                  <Image
+                    source={{
+                      uri: profile?.avatarLink,
+                    }}
+                    style={{
+                      width: width * 0.28,
+                      height: width * 0.28,
+                      borderRadius: 100,
+                      borderColor: "#F39300",
+                      borderWidth: 2,
+                    }}
                   />
+                  <View
+                    style={{
+                      padding: 5,
+                      backgroundColor: "#F39300",
+                      borderRadius: 30,
+                      position: "absolute",
+                      right: 12,
+                      bottom: 0,
+                    }}
+                  >
+                    <Ionicons
+                      name={profile?.gender == "MALE" ? "male" : "female"}
+                      size={24}
+                      style={{ color: "white" }}
+                    />
+                  </View>
                 </View>
               </View>
               <View style={{ width: "60%" }}>
@@ -182,7 +185,7 @@ export default function Profile({ route }) {
                     right: 0,
                     backgroundColor: "#F39300",
                     borderRadius: 20,
-                    padding: 8
+                    padding: 8,
                   }}
                   onPress={() => navigation.navigate("ViewProfile")}
                 >
@@ -322,7 +325,7 @@ export default function Profile({ route }) {
                           maxWidth: "90%",
                         }}
                       >
-                        {profile.department?.name}
+                        {profile.department?.name} ({profile.department?.code})
                       </Text>
                     </View>
                     <View style={{ width: "50%" }}>
@@ -342,7 +345,7 @@ export default function Profile({ route }) {
                           maxWidth: "90%",
                         }}
                       >
-                        {profile.major?.name}
+                        {profile.major?.name} ({profile.major?.code})
                       </Text>
                     </View>
                   </View>

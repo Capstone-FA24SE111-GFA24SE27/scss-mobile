@@ -278,9 +278,10 @@ export default function Personal() {
                   fontSize: 16,
                   color: "#F39300",
                   fontWeight: "600",
+                  opacity: 0.8
                 }}
               >
-                View all
+                VIEW ALL
               </Text>
               <Ionicons
                 name="chevron-forward"
@@ -351,9 +352,10 @@ export default function Personal() {
                   fontSize: 16,
                   color: "#F39300",
                   fontWeight: "600",
+                  opacity: 0.8
                 }}
               >
-                View all
+                VIEW ALL
               </Text>
               <Ionicons
                 name="chevron-forward"
@@ -432,9 +434,10 @@ export default function Personal() {
                   fontSize: 16,
                   color: "#F39300",
                   fontWeight: "600",
+                  opacity: 0.8
                 }}
               >
-                View all
+                VIEW ALL
               </Text>
               <Ionicons
                 name="chevron-forward"

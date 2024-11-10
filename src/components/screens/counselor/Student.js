@@ -1,5 +1,11 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -12,24 +18,32 @@ import {
   Platform,
   Modal,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import { StudentSkeleton } from "../../layout/Skeleton";
+import { Dropdown } from "react-native-element-dropdown";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 export default function Student() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const scrollViewRef = useRef(null);
   const [students, setStudents] = useState([]);
   const [filters, setFilters] = useState({
     sortDirection: "",
+    departmentId: "",
+    majorId: "",
     specializationId: "",
   });
   const [filters2, setFilters2] = useState({
@@ -39,18 +53,41 @@ export default function Student() {
   });
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
+  const [isIncludeBehavior, setIsIncludeBehaviour] = useState(false);
+  const [promptForBehavior, setPromptForBehavior] = useState(null);
+  const [debouncedPromptForBehavior, setDebouncedPromptForBehavior] =
+    useState(null);
   const [sortDirection, setSortDirection] = useState("");
-  const [specializations, setSpecializations] = useState([]);
   const [expanded, setExpanded] = useState(false);
+  const [expanded2, setExpanded2] = useState(false);
+  const [expanded3, setExpanded3] = useState(false);
+  const [expanded4, setExpanded4] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [majors, setMajors] = useState([]);
+  const [selectedMajor, setSelectedMajor] = useState("");
+  const [specializations, setSpecializations] = useState([]);
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
+  const [terms, setTerms] = useState([]);
+  const [selectedTerm, setSelectedTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [openTag, setOpenTag] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
-  const [info, setInfo] = useState({});
+  const [info, setInfo] = useState(null);
+  const [info2Loading, setInfo2Loading] = useState(false);
   const [info2, setInfo2] = useState(null);
+  const [semesters, setSemesters] = useState([]);
+  const [selectedSemester, setSelectedSemester] = useState(null);
+  const [info3Loading, setInfo3Loading] = useState(false);
   const [info3, setInfo3] = useState(null);
+  const [courses, setCourses] = useState(null);
+  const [coursesLoading, setCoursesLoading] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
   const [info4, setInfo4] = useState(null);
-  const [openInfo2, setOpenInfo2] = useState(false);
+  const [info5, setInfo5] = useState(null);
+  const [openInfo3, setOpenInfo3] = useState(false);
   const [historyInfo, setHistoryInfo] = useState(null);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -69,14 +106,23 @@ export default function Student() {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       fetchData(filters, { page: currentPage });
-    }, [debouncedKeyword, filters, currentPage])
+    }, [
+      debouncedKeyword,
+      isIncludeBehavior,
+      debouncedPromptForBehavior,
+      filters,
+      currentPage,
+    ])
   );
 
   const fetchData = async (filters = {}) => {
+    setLoading(true);
     try {
       const studentRes = await axiosJWT.get(`${BASE_URL}/students/filter`, {
         params: {
           keyword: debouncedKeyword,
+          isIncludeBehavior: isIncludeBehavior,
+          promptForBehavior: debouncedPromptForBehavior,
           ...filters,
           page: currentPage,
         },
@@ -86,20 +132,74 @@ export default function Student() {
       setLoading(false);
     } catch (err) {
       console.log("Can't fetch students");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedKeyword(keyword);
+      setDebouncedPromptForBehavior(promptForBehavior);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [keyword]);
+  }, [keyword, promptForBehavior]);
+
+  const fetchDepartment = async () => {
+    try {
+      const departmentsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/departments`
+      );
+      const departmentsData = departmentsRes?.data || [];
+      setDepartments(departmentsData);
+    } catch (err) {
+      console.log("Can't fetch departments");
+    }
+  };
+
+  const fetchMajor = async () => {
+    try {
+      const majorsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/departments/${selectedDepartment?.id}/majors`
+      );
+      const majorsData = majorsRes?.data || [];
+      setMajors(majorsData);
+    } catch (err) {
+      console.log("Can't fetch majors");
+    }
+  };
+
+  const fetchSpecialization = async () => {
+    try {
+      const specializationsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/majors/${selectedMajor?.id}/specializations`
+      );
+      const specializationsData = specializationsRes?.data || [];
+      setSpecializations(specializationsData);
+    } catch (err) {
+      console.log("Can't fetch specializations");
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartment();
+    if (selectedDepartment !== "") {
+      fetchMajor();
+      if (selectedMajor !== "") {
+        fetchSpecialization();
+      }
+    }
+  }, [selectedDepartment, selectedMajor, selectedSpecialization]);
 
   const applyFilters = () => {
     const newFilters = {
       sortDirection: sortDirection,
-      specializationId: selectedSpecialization.id,
+      departmentId: selectedDepartment.id,
+      majorId: selectedMajor.id,
+      specializationId:
+        selectedSpecialization.id !== undefined
+          ? selectedSpecialization.id
+          : "",
     };
     setFilters(newFilters);
     fetchData(newFilters);
@@ -108,10 +208,15 @@ export default function Student() {
   const cancelFilters = () => {
     const resetFilters = {
       sortDirection: "",
+      departmentId: "",
+      majorId: "",
       specializationId: "",
     };
     setKeyword("");
+    setPromptForBehavior(null);
     setSortDirection(resetFilters.sortDirection);
+    setSelectedDepartment(resetFilters.departmentId);
+    setSelectedMajor(resetFilters.majorId);
     setSelectedSpecialization(resetFilters.specializationId);
     setFilters(resetFilters);
     fetchData(resetFilters);
@@ -119,7 +224,7 @@ export default function Student() {
 
   useEffect(() => {
     fetchData();
-  }, [debouncedKeyword]);
+  }, [debouncedKeyword, debouncedPromptForBehavior]);
 
   useEffect(() => {
     setLoading(true);
@@ -134,25 +239,116 @@ export default function Student() {
       );
       const infoData = infoRes?.data?.content;
       setInfo(infoData);
-      setOpenInfo(true);
     } catch (err) {
       console.log("Can't fetch student profile");
     }
   };
 
-  // const fetchStudentInfo2 = async () => {
-  //   try {
-  //     const infoRes2 = await axiosJWT.get(`${BASE_URL}/students/study/${selectedStudent}`);
-  //     const infoData2 = infoRes2?.data?.content;
-  //     setInfo2(infoData2);
-  //   } catch (err) {
-  //     console.log("Can't fetch student academic transcript");
-  //   }
-  // };
+  const fetchSemester = useCallback(async () => {
+    try {
+      const semesterRes = await axiosJWT.get(`${BASE_URL}/academic/semester`);
+      const semesterData = semesterRes?.data;
+      setSemesters(semesterData.sort((a, b) => b.id - a.id));
+    } catch (err) {
+      console.log("Can't fetch semesters");
+    }
+  }, []);
 
-  const fetchStudentInfo3 = async (filters2 = {}) => {
+  useEffect(() => {
+    if (semesters.length) {
+      setSelectedSemester(semesters[0].name);
+    }
+  }, [semesters]);
+
+  const fetchStudentInfo2 = async () => {
+    setInfo2Loading(true);
+    try {
+      const infoRes2 = await axiosJWT.get(
+        `${BASE_URL}/students/${selectedStudent}/problem-tag/detail/semester/${selectedSemester}`
+      );
+      const infoData2 = infoRes2?.data?.content;
+      setInfo2(infoData2);
+    } catch (err) {
+      console.log("Can't fetch student problem details");
+    } finally {
+      setInfo2Loading(false);
+    }
+  };
+
+  const fetchCoursesSemester = useCallback(async () => {
+    setCoursesLoading(true);
+    setAttendanceLoading(true);
+    try {
+      const courseRes = await axiosJWT.get(
+        `${BASE_URL}/students/${selectedStudent}/semester/${selectedSemester}`
+      );
+      const courseData = courseRes?.data?.content;
+      setCourses(courseData);
+      setSelectedCourse(courseData[0].id);
+    } catch (err) {
+      console.log("Can't fetch courses");
+      setCourses(null);
+      setSelectedCourse(null);
+      setInfo4(null);
+    } finally {
+      setCoursesLoading(false);
+      setTimeout(() => {
+        setAttendanceLoading(false);
+      }, 1000);
+    }
+  }, [selectedSemester]);
+
+  useEffect(() => {
+    if (selectedSemester) {
+      setInfo2(null);
+      fetchStudentInfo2();
+      fetchCoursesSemester();
+      setInfo4(null);
+    }
+  }, [selectedSemester]);
+
+  const fetchStudentInfo3 = async () => {
+    setInfo3Loading(true);
     try {
       const infoRes3 = await axiosJWT.get(
+        `${BASE_URL}/students/study/${selectedStudent}`
+      );
+      const infoData3 = infoRes3?.data?.content;
+      setInfo3(infoData3);
+    } catch (err) {
+      console.log("Can't fetch student academic transcript");
+    } finally {
+      setInfo3Loading(false);
+    }
+  };
+
+  const fetchStudentInfo4 = async () => {
+    setAttendanceLoading(true);
+    try {
+      const infoRes4 = await axiosJWT.get(
+        `${BASE_URL}/students/${selectedStudent}/attendance/${selectedCourse}`
+      );
+      const infoData4 = infoRes4?.data?.content;
+      setInfo4(infoData4);
+    } catch (err) {
+      console.log("Can't fetch courses attendance");
+      setInfo4(null);
+    } finally {
+      setAttendanceLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCourse) {
+      fetchStudentInfo4();
+    } else {
+      setInfo4(null);
+    }
+  }, [selectedCourse]);
+
+  const fetchStudentInfo5 = async (filters2 = {}) => {
+    try {
+      const infoRes5 = await axiosJWT.get(
         `${BASE_URL}/students/appointment/filter/${selectedStudent}`,
         {
           params: {
@@ -161,8 +357,8 @@ export default function Student() {
           },
         }
       );
-      const infoData3 = infoRes3?.data?.content;
-      setInfo3(infoData3);
+      const infoData5 = infoRes5?.data?.content;
+      setInfo5(infoData5);
     } catch (err) {
       console.log("Can't fetch student appointment history");
     }
@@ -171,8 +367,9 @@ export default function Student() {
   useEffect(() => {
     if (selectedStudent !== null) {
       fetchStudentInfo();
-      // fetchStudentInfo2();
-      fetchStudentInfo3(filters2);
+      fetchStudentInfo3();
+      fetchSemester();
+      fetchStudentInfo5(filters2);
     }
   }, [selectedStudent]);
 
@@ -183,7 +380,7 @@ export default function Student() {
       SortDirection: sortDirection2,
     };
     setFilters(newFilters);
-    fetchStudentInfo3(newFilters);
+    fetchStudentInfo5(newFilters);
   };
 
   const cancelFilters2 = () => {
@@ -196,7 +393,7 @@ export default function Student() {
     setDateTo(resetFilters.toDate);
     setSortDirection2(resetFilters.SortDirection);
     setFilters(resetFilters);
-    fetchStudentInfo3(resetFilters);
+    fetchStudentInfo5(resetFilters);
   };
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -347,14 +544,14 @@ export default function Student() {
     }
   };
 
-  const handleOpenInfo = (info) => {
+  const handleOpenHistoryInfo = (info) => {
     setHistoryInfo(info);
-    setOpenInfo2(true);
+    setOpenInfo3(true);
   };
 
-  const handleCloseInfo = () => {
+  const handleCloseHistoryInfo = () => {
     setHistoryInfo("");
-    setOpenInfo2(false);
+    setOpenInfo3(false);
   };
 
   return (
@@ -370,19 +567,26 @@ export default function Student() {
             justifyContent: "flex-start",
           }}
         />
-        {!loading && (
-          <>
+        <>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 10,
+            }}
+          >
             <View
               style={{
+                flex: 0.925,
                 flexDirection: "row",
                 borderRadius: 30,
-                marginHorizontal: 20,
+                marginLeft: 20,
+                marginRight: 8,
                 paddingHorizontal: 16,
-                marginBottom: 10,
                 alignItems: "center",
                 backgroundColor: "#ededed",
                 alignContent: "center",
-                height: 50,
+                height: 40,
               }}
             >
               <Ionicons
@@ -391,7 +595,7 @@ export default function Student() {
                 style={{ marginRight: 10, color: "#F39300", opacity: 0.7 }}
               />
               <TextInput
-                placeholder="Search by Student's name"
+                placeholder="Search by Name"
                 placeholderTextColor="#F39300"
                 value={keyword}
                 onChangeText={(value) => setKeyword(value)}
@@ -412,19 +616,89 @@ export default function Student() {
                 </TouchableOpacity>
               )}
             </View>
-            <View
+            <TouchableOpacity
+              disabled
+              onPress={() => (
+                setIsIncludeBehaviour(!isIncludeBehavior),
+                setCurrentPage(1),
+                setPromptForBehavior(null)
+              )}
               style={{
-                marginHorizontal: 20,
+                backgroundColor: isIncludeBehavior ? "#F39300" : "#e3e3e3",
+                flexDirection: "row",
+                alignItems: "center",
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 20,
               }}
             >
-              <View
+              <Text
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
+                  fontSize: 16,
+                  fontWeight: "600",
+                  color: isIncludeBehavior ? "white" : "gray",
                 }}
               >
-                <View style={{ alignItems: "flex-start" }}>
+                Prompt
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {isIncludeBehavior && (
+            <View
+              style={{
+                flexDirection: "row",
+                borderRadius: 30,
+                marginHorizontal: 20,
+                marginBottom: 10,
+                paddingHorizontal: 16,
+                alignItems: "center",
+                backgroundColor: "#ededed",
+                alignContent: "center",
+                height: 40,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="head-cog-outline"
+                size={24}
+                style={{ marginRight: 10, color: "#F39300", opacity: 0.7 }}
+              />
+              <TextInput
+                placeholder="Search by Advanced Prompt"
+                placeholderTextColor="#F39300"
+                value={promptForBehavior}
+                onChangeText={(value) => setPromptForBehavior(value)}
+                style={{
+                  flex: 1,
+                  fontSize: 18,
+                  opacity: 0.8,
+                  marginHorizontal: 4,
+                }}
+              />
+              {promptForBehavior !== null && (
+                <TouchableOpacity onPress={() => setPromptForBehavior(null)}>
+                  <Ionicons
+                    name="close"
+                    size={28}
+                    style={{ color: "#F39300", opacity: 0.7 }}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+          <View
+            style={{
+              marginHorizontal: 20,
+            }}
+          >
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <View style={{ alignItems: "flex-start" }}>
+                {!loading ? (
                   <Text
                     style={{
                       fontSize: 20,
@@ -445,309 +719,526 @@ export default function Student() {
                       found
                     </Text>
                   </Text>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: "flex-end",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setIsExpanded(!isExpanded)}
-                    onLayout={calculateLayout}
+                ) : (
+                  <View
                     style={{
-                      backgroundColor: isExpanded ? "#F39300" : "#e3e3e3",
-                      borderRadius: 40,
-                      padding: 8,
+                      width: width * 0.6,
+                      height: 20,
+                      backgroundColor: "#ededed",
+                      borderRadius: 20,
                     }}
-                  >
-                    <Animated.View
-                      style={{ transform: [{ rotate: rotateIcon }] }}
-                    >
-                      <Ionicons
-                        name="filter"
-                        size={26}
-                        style={{ color: isExpanded ? "white" : "black" }}
-                      />
-                    </Animated.View>
-                  </TouchableOpacity>
-                </View>
+                  />
+                )}
               </View>
-              <Animated.View
+              <View
                 style={{
-                  height: accordionHeight,
-                  marginTop: 8,
-                  overflow: "hidden",
-                  backgroundColor: "#ededed",
-                  borderRadius: 20,
+                  flex: 1,
+                  alignItems: "flex-end",
+                  justifyContent: "center",
                 }}
               >
-                <View
+                <TouchableOpacity
+                  onPress={() => setIsExpanded(!isExpanded)}
+                  onLayout={calculateLayout}
                   style={{
-                    position: "absolute",
-                    width: "100%",
-                    paddingVertical: 4,
+                    backgroundColor: isExpanded ? "#F39300" : "#e3e3e3",
+                    borderRadius: 40,
+                    padding: 8,
                   }}
-                  onLayout={(e) =>
-                    (layoutHeight.current.text = e.nativeEvent.layout.height)
-                  }
                 >
-                  <View style={{ paddingHorizontal: 10 }}>
-                    <View
+                  <Animated.View
+                    style={{ transform: [{ rotate: rotateIcon }] }}
+                  >
+                    <Ionicons
+                      name="filter"
+                      size={26}
+                      style={{ color: isExpanded ? "white" : "black" }}
+                    />
+                  </Animated.View>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <Animated.View
+              style={{
+                height: accordionHeight,
+                marginTop: 8,
+                overflow: "hidden",
+                backgroundColor: "#ededed",
+                borderRadius: 20,
+              }}
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  paddingVertical: 4,
+                }}
+                onLayout={(e) =>
+                  (layoutHeight.current.text = e.nativeEvent.layout.height)
+                }
+              >
+                <View style={{ paddingHorizontal: 10 }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
+                    <Text
                       style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginVertical: 4,
-                        marginLeft: 4,
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                        minWidth: "30%",
                       }}
                     >
-                      <Text
+                      Sort:
+                    </Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <View
                         style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          color: "#333",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginHorizontal: 8,
                         }}
                       >
-                        Sort:
-                      </Text>
-                      <View style={{ flexDirection: "row" }}>
-                        <View
+                        <TouchableOpacity
+                          onPress={() => setSortDirection("ASC")}
                           style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            marginHorizontal: 16,
                           }}
                         >
-                          <TouchableOpacity
-                            onPress={() => setSortDirection("ASC")}
+                          <Ionicons
+                            name={
+                              sortDirection == "ASC"
+                                ? "radio-button-on"
+                                : "radio-button-off"
+                            }
+                            size={20}
+                            color={sortDirection == "ASC" ? "#F39300" : "gray"}
+                            style={{ marginRight: 4 }}
+                          />
+                          <Ionicons
+                            name="arrow-up"
+                            size={20}
                             style={{
-                              flexDirection: "row",
-                              alignItems: "center",
+                              color:
+                                sortDirection == "ASC" ? "#F39300" : "black",
                             }}
-                          >
-                            <Ionicons
-                              name={
-                                sortDirection == "ASC"
-                                  ? "radio-button-on"
-                                  : "radio-button-off"
-                              }
-                              size={20}
-                              color={
-                                sortDirection == "ASC" ? "#F39300" : "gray"
-                              }
-                              style={{ marginRight: 4 }}
-                            />
-                            <Ionicons
-                              name="arrow-up"
-                              size={20}
-                              style={{
-                                color:
-                                  sortDirection == "ASC" ? "#F39300" : "black",
-                              }}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                        <View
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginHorizontal: 8,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => setSortDirection("DESC")}
                           style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            marginHorizontal: 4,
                           }}
                         >
-                          <TouchableOpacity
-                            onPress={() => setSortDirection("DESC")}
+                          <Ionicons
+                            name={
+                              sortDirection == "DESC"
+                                ? "radio-button-on"
+                                : "radio-button-off"
+                            }
+                            size={20}
+                            color={sortDirection == "DESC" ? "#F39300" : "gray"}
+                            style={{ marginRight: 4 }}
+                          />
+                          <Ionicons
+                            name="arrow-down"
+                            size={20}
                             style={{
-                              flexDirection: "row",
-                              alignItems: "center",
+                              color:
+                                sortDirection == "DESC" ? "#F39300" : "black",
                             }}
-                          >
-                            <Ionicons
-                              name={
-                                sortDirection == "DESC"
-                                  ? "radio-button-on"
-                                  : "radio-button-off"
-                              }
-                              size={20}
-                              color={
-                                sortDirection == "DESC" ? "#F39300" : "gray"
-                              }
-                              style={{ marginRight: 4 }}
-                            />
-                            <Ionicons
-                              name="arrow-down"
-                              size={20}
-                              style={{
-                                color:
-                                  sortDirection == "DESC" ? "#F39300" : "black",
-                              }}
-                            />
-                          </TouchableOpacity>
-                        </View>
+                          />
+                        </TouchableOpacity>
                       </View>
                     </View>
-                    <View
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
+                    <Text
                       style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                        minWidth: "30%",
+                      }}
+                    >
+                      Department:
+                    </Text>
+                    <Dropdown
+                      style={{
+                        backgroundColor: "white",
+                        borderColor: expanded ? "#F39300" : "black",
                         flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginVertical: 4,
-                        marginLeft: 4,
+                        height: 30,
+                        borderWidth: 1,
+                        borderColor: "grey",
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                        marginLeft: 8,
+                      }}
+                      placeholderStyle={{ fontSize: 16 }}
+                      selectedTextStyle={{
+                        fontSize: 18,
+                        color: selectedDepartment ? "black" : "white",
+                      }}
+                      inputSearchStyle={{ height: 40, fontSize: 16 }}
+                      maxHeight={250}
+                      data={departments}
+                      labelField="name"
+                      value={
+                        selectedDepartment !== ""
+                          ? selectedDepartment.name
+                          : "Select item"
+                      }
+                      placeholder={
+                        selectedDepartment !== ""
+                          ? selectedDepartment.name
+                          : "Select item"
+                      }
+                      searchPlaceholder="Search Specialization"
+                      onFocus={() => setExpanded(true)}
+                      onBlur={() => setExpanded(false)}
+                      onChange={(item) => {
+                        setSelectedDepartment(item);
+                        setExpanded(false);
+                      }}
+                      renderRightIcon={() => (
+                        <Ionicons
+                          color={expanded ? "#F39300" : "black"}
+                          name={expanded ? "caret-up" : "caret-down"}
+                          size={20}
+                        />
+                      )}
+                      renderItem={(item) => {
+                        return (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 16,
+                              paddingVertical: 8,
+                              backgroundColor:
+                                item.name == selectedDepartment.name
+                                  ? "#F39300"
+                                  : "white",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "500",
+                                color:
+                                  item.name == selectedDepartment.name
+                                    ? "white"
+                                    : "black",
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            {selectedDepartment.name === item.name && (
+                              <Ionicons
+                                color="white"
+                                name="checkmark"
+                                size={24}
+                              />
+                            )}
+                          </View>
+                        );
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                        minWidth: "30%",
+                      }}
+                    >
+                      Major:
+                    </Text>
+                    <Dropdown
+                      disable={selectedDepartment === ""}
+                      style={{
+                        backgroundColor: "white",
+                        borderColor: expanded2 ? "#F39300" : "black",
+                        flex: 1,
+                        height: 30,
+                        borderWidth: 1,
+                        borderColor: "grey",
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                        marginLeft: 8,
+                      }}
+                      placeholderStyle={{ fontSize: 16 }}
+                      selectedTextStyle={{
+                        fontSize: 18,
+                        color: selectedMajor ? "black" : "white",
+                      }}
+                      inputSearchStyle={{ height: 40, fontSize: 16 }}
+                      maxHeight={250}
+                      data={majors}
+                      labelField="name"
+                      value={
+                        selectedMajor !== ""
+                          ? selectedMajor.name
+                          : "Select item"
+                      }
+                      placeholder={
+                        selectedMajor !== ""
+                          ? selectedMajor.name
+                          : "Select item"
+                      }
+                      searchPlaceholder="Search Specialization"
+                      onFocus={() => setExpanded2(true)}
+                      onBlur={() => setExpanded2(false)}
+                      onChange={(item) => {
+                        setSelectedMajor(item);
+                        setExpanded2(false);
+                      }}
+                      renderRightIcon={() => (
+                        <Ionicons
+                          color={expanded2 ? "#F39300" : "black"}
+                          name={expanded2 ? "caret-up" : "caret-down"}
+                          size={20}
+                        />
+                      )}
+                      renderItem={(item) => {
+                        return (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 16,
+                              paddingVertical: 8,
+                              backgroundColor:
+                                item.name == selectedMajor.name
+                                  ? "#F39300"
+                                  : "white",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "500",
+                                color:
+                                  item.name == selectedMajor.name
+                                    ? "white"
+                                    : "black",
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            {selectedMajor.name === item.name && (
+                              <Ionicons
+                                color="white"
+                                name="checkmark"
+                                size={24}
+                              />
+                            )}
+                          </View>
+                        );
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                        minWidth: "30%",
+                      }}
+                    >
+                      Specialization:
+                    </Text>
+                    <Dropdown
+                      disable={
+                        selectedDepartment === "" || selectedMajor === ""
+                      }
+                      style={{
+                        backgroundColor: "white",
+                        borderColor: expanded3 ? "#F39300" : "black",
+                        flex: 1,
+                        height: 30,
+                        borderWidth: 1,
+                        borderColor: "grey",
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                        marginLeft: 8,
+                      }}
+                      placeholderStyle={{ fontSize: 16 }}
+                      selectedTextStyle={{
+                        fontSize: 18,
+                        color: selectedSpecialization ? "black" : "white",
+                      }}
+                      inputSearchStyle={{ height: 40, fontSize: 16 }}
+                      maxHeight={250}
+                      data={specializations}
+                      labelField="name"
+                      value={
+                        selectedSpecialization !== ""
+                          ? selectedSpecialization.name
+                          : "Select item"
+                      }
+                      placeholder={
+                        selectedSpecialization !== ""
+                          ? selectedSpecialization.name
+                          : "Select item"
+                      }
+                      searchPlaceholder="Search Specialization"
+                      onFocus={() => setExpanded3(true)}
+                      onBlur={() => setExpanded3(false)}
+                      onChange={(item) => {
+                        setSelectedSpecialization(item);
+                        setExpanded3(false);
+                      }}
+                      renderRightIcon={() => (
+                        <Ionicons
+                          color={expanded3 ? "#F39300" : "black"}
+                          name={expanded3 ? "caret-up" : "caret-down"}
+                          size={20}
+                        />
+                      )}
+                      renderItem={(item) => {
+                        return (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 16,
+                              paddingVertical: 8,
+                              backgroundColor:
+                                item.name == selectedSpecialization.name
+                                  ? "#F39300"
+                                  : "white",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "500",
+                                color:
+                                  item.name == selectedSpecialization.name
+                                    ? "white"
+                                    : "black",
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            {selectedSpecialization.name === item.name && (
+                              <Ionicons
+                                color="white"
+                                name="checkmark"
+                                size={24}
+                              />
+                            )}
+                          </View>
+                        );
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      margin: 8,
+                      flex: 1,
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={cancelFilters}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        elevation: 2,
+                        marginHorizontal: 4,
                       }}
                     >
                       <Text
                         style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
                           color: "#333",
+                          fontSize: 16,
+                          fontWeight: "600",
+                          opacity: 0.7,
                         }}
                       >
-                        Specialization:
+                        Clear
                       </Text>
-                      {/* <Dropdown
-                        style={{
-                          backgroundColor: "white",
-                          borderColor: expanded ? "#F39300" : "black",
-                          flex: 0.94,
-                          height: 30,
-                          borderWidth: 1,
-                          borderColor: "grey",
-                          borderRadius: 10,
-                          paddingHorizontal: 12,
-                          marginLeft: 8,
-                        }}
-                        placeholderStyle={{ fontSize: 16 }}
-                        selectedTextStyle={{
-                          fontSize: 18,
-                          color: selectedSpecialization ? "black" : "white",
-                        }}
-                        inputSearchStyle={{ height: 40, fontSize: 16 }}
-                        maxHeight={250}
-                        data={specializations}
-                        labelField="name"
-                        value={
-                          selectedSpecialization !== ""
-                            ? selectedSpecialization.name
-                            : "Select item"
-                        }
-                        placeholder={
-                          selectedSpecialization !== ""
-                            ? selectedSpecialization.name
-                            : "Select item"
-                        }
-                        searchPlaceholder="Search Specialization"
-                        onFocus={() => setExpanded(true)}
-                        onBlur={() => setExpanded(false)}
-                        onChange={(item) => {
-                          setSelectedSpecialization(item);
-                          setExpanded(false);
-                        }}
-                        renderRightIcon={() => (
-                          <Ionicons
-                            color={expanded ? "#F39300" : "black"}
-                            name={expanded ? "caret-up" : "caret-down"}
-                            size={20}
-                          />
-                        )}
-                        renderItem={(item) => {
-                          return (
-                            <View
-                              style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                paddingHorizontal: 16,
-                                paddingVertical: 8,
-                                backgroundColor:
-                                  item.name == selectedSpecialization.name
-                                    ? "#F39300"
-                                    : "white",
-                              }}
-                            >
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "500",
-                                  color:
-                                    item.name == selectedSpecialization.name
-                                      ? "white"
-                                      : "black",
-                                }}
-                              >
-                                {item.name}
-                              </Text>
-                              {selectedSpecialization.name === item.name && (
-                                <Ionicons
-                                  color="white"
-                                  name="checkmark"
-                                  size={24}
-                                />
-                              )}
-                            </View>
-                          );
-                        }}
-                      /> */}
-                    </View>
-                    <View
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={applyFilters}
                       style={{
-                        margin: 8,
-                        flex: 1,
-                        justifyContent: "flex-end",
-                        alignItems: "flex-end",
-                        flexDirection: "row",
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        backgroundColor: "#F39300",
+                        borderRadius: 10,
+                        elevation: 2,
+                        marginHorizontal: 4,
                       }}
                     >
-                      <TouchableOpacity
-                        onPress={cancelFilters}
+                      <Text
                         style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 12,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          elevation: 2,
-                          marginHorizontal: 4,
+                          color: "white",
+                          fontSize: 16,
+                          fontWeight: "600",
                         }}
                       >
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontSize: 16,
-                            fontWeight: "600",
-                            opacity: 0.7,
-                          }}
-                        >
-                          Clear
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={applyFilters}
-                        style={{
-                          paddingVertical: 8,
-                          paddingHorizontal: 12,
-                          backgroundColor: "#F39300",
-                          borderRadius: 10,
-                          elevation: 2,
-                          marginHorizontal: 4,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: "white",
-                            fontSize: 16,
-                            fontWeight: "600",
-                          }}
-                        >
-                          Apply
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
+                        Apply
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-              </Animated.View>
-            </View>
-          </>
-        )}
+              </View>
+            </Animated.View>
+          </View>
+        </>
         <ScrollView
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
@@ -764,160 +1255,336 @@ export default function Student() {
             </>
           ) : (
             students?.data?.map((item, index) => (
-              <TouchableOpacity
-                activeOpacity={0.7}
+              <View
                 key={item.id}
-                onPress={() => (
-                  setSelectedStudent(item.id), setOpenInfo(true)
-                  // fetchStudentInfo(),
-                  // fetchStudentInfo2(),
-                  // fetchStudentInfo3()
-                )}
                 style={{
                   flex: 1,
-                  flexDirection: "row",
-                  // alignItems: "flex-start",
                   alignItems: "stretch",
                   backgroundColor: "#F39300",
                   borderRadius: 20,
                   marginVertical: 8,
                 }}
               >
-                <View
-                  style={{
-                    backgroundColor: "#fff0e0",
-                    justifyContent: "flex-start",
-                    padding: 12,
-                    marginLeft: 4,
-                    marginRight: 2,
-                    marginVertical: 4,
-                    borderTopLeftRadius: 18,
-                    borderBottomLeftRadius: 18,
-                  }}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => (
+                    setSelectedStudent(item.id), setOpenInfo(true)
+                  )}
+                  style={{ flexDirection: "row" }}
                 >
-                  <Image
-                    source={{ uri: item.profile.avatarLink }}
+                  <View
                     style={{
-                      width: 70,
-                      height: 70,
-                      borderRadius: 40,
-                      borderColor: "#F39300",
-                      borderWidth: 2,
+                      backgroundColor: "#fff0e0",
+                      justifyContent: "flex-start",
+                      padding: 12,
+                      marginLeft: 4,
+                      marginRight: 2,
+                      marginTop: 4,
+                      marginBottom: item.behaviorTagList.length > 0 ? 2 : 4,
+                      borderTopLeftRadius: 18,
+                      borderBottomLeftRadius:
+                        item.behaviorTagList.length > 0 ? 0 : 18,
                     }}
-                  />
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: "white",
-                    borderTopRightRadius: 18,
-                    borderBottomRightRadius: 18,
-                    padding: 8,
-                    marginVertical: 4,
-                    marginRight: 4,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", marginBottom: 8 }}>
-                    <Text
+                  >
+                    <Image
+                      source={{ uri: item.profile.avatarLink }}
                       style={{
-                        color: "#F39300",
-                        fontSize: 20,
-                        fontWeight: "bold",
+                        width: 70,
+                        height: 70,
+                        borderRadius: 40,
+                        borderColor: "#F39300",
+                        borderWidth: 2,
                       }}
-                    >
-                      {item.profile.fullName}
-                    </Text>
+                    />
                   </View>
                   <View
                     style={{
+                      flex: 1,
+                      backgroundColor: "white",
+                      padding: 8,
+                      marginTop: 4,
+                      marginBottom: item.behaviorTagList.length > 0 ? 2 : 4,
+                      marginRight: 4,
+                      borderTopRightRadius: 18,
+                      borderBottomRightRadius:
+                        item.behaviorTagList.length > 0 ? 0 : 18,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", marginBottom: 8 }}>
+                      <Text
+                        style={{
+                          color: "#F39300",
+                          fontSize: 20,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {item.profile.fullName}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        marginBottom: 4,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          width: "50%",
+                        }}
+                      >
+                        <Ionicons name="id-card" size={16} color="#F39300" />
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            marginLeft: 4,
+                            color: "#333",
+                            maxWidth: "80%",
+                          }}
+                        >
+                          {item.studentCode}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          width: "50%",
+                        }}
+                      >
+                        <Ionicons name="briefcase" size={16} color="#F39300" />
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            marginLeft: 4,
+                            color: "#333",
+                            maxWidth: "80%",
+                          }}
+                        >
+                          {item?.specialization?.name || "N/A"}
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          width: "50%",
+                        }}
+                      >
+                        <Ionicons name="call" size={16} color="#F39300" />
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            marginLeft: 4,
+                            color: "#333",
+                            maxWidth: "80%",
+                          }}
+                        >
+                          {item.profile.phoneNumber}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          width: "50%",
+                        }}
+                      >
+                        <MaterialIcons name="cake" size={16} color="#F39300" />
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            marginLeft: 4,
+                            color: "#333",
+                            maxWidth: "80%",
+                          }}
+                        >
+                          {formatDate(item.profile.dateOfBirth)}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                {item.behaviorTagList.length > 0 && (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      setSelectedStudent(item);
+                      setOpenTag(true);
+                    }}
+                    style={{
+                      flex: 1,
                       flexDirection: "row",
                       flexWrap: "wrap",
+                      backgroundColor: "white",
+                      borderBottomLeftRadius: 18,
+                      borderBottomRightRadius: 18,
+                      paddingHorizontal: 12,
+                      paddingTop: 8,
+                      marginHorizontal: 4,
                       marginBottom: 4,
                     }}
                   >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        width: "50%",
-                      }}
-                    >
-                      <Ionicons name="id-card" size={16} color="#F39300" />
-                      <Text
+                    {item.behaviorTagList
+                      .sort(
+                        (a, b) =>
+                          (b.contained === true) - (a.contained === true)
+                      )
+                      .slice(0, 3)
+                      .map((tag, index) => (
+                        <View
+                          key={index}
+                          style={{
+                            backgroundColor:
+                              tag.contained === true ? "#F39300" : "#ededed",
+                            borderRadius: 20,
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            marginHorizontal: 4,
+                            marginTop: 8,
+                            alignSelf: "flex-start",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: tag.contained === true ? "white" : "#333",
+                              fontWeight:
+                                tag.contained === true ? "600" : "400",
+                            }}
+                          >
+                            {tag.problemTagName} x {tag.number}
+                          </Text>
+                        </View>
+                      ))}
+                    {item.behaviorTagList.length > 3 && (
+                      <View
                         style={{
-                          fontSize: 14,
-                          marginLeft: 4,
-                          color: "#333",
-                          maxWidth: "80%",
+                          backgroundColor: "#ededed",
+                          borderRadius: 20,
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          marginHorizontal: 4,
+                          marginTop: 8,
+                          alignSelf: "flex-start",
                         }}
                       >
-                        {item.studentCode}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        width: "50%",
-                      }}
-                    >
-                      <Ionicons name="briefcase" size={16} color="#F39300" />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          marginLeft: 4,
-                          color: "#333",
-                          maxWidth: "80%",
-                        }}
-                      >
-                        {item?.specialization?.name || "N/A"}
-                      </Text>
-                    </View>
-                  </View>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "#333",
+                            fontWeight: "400",
+                          }}
+                        >
+                          + {item.behaviorTagList.length - 3}
+                        </Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))
+          )}
+          {selectedStudent && openTag && (
+            <Modal
+              visible={openTag}
+              transparent={true}
+              animationType="slide"
+              onRequestClose={() => (
+                setOpenTag(false), setSelectedStudent(null)
+              )}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: 10,
+                    width: "90%",
+                    height: "85%",
+                  }}
+                >
                   <View
                     style={{
+                      backgroundColor: "#F39300",
                       flexDirection: "row",
-                      flexWrap: "wrap",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: 20,
+                      marginBottom: 12,
+                      borderTopLeftRadius: 10,
+                      borderTopRightRadius: 10,
                     }}
                   >
-                    <View
+                    <Text
                       style={{
-                        flexDirection: "row",
-                        width: "50%",
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        color: "white",
                       }}
                     >
-                      <Ionicons name="call" size={16} color="#F39300" />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          marginLeft: 4,
-                          color: "#333",
-                          maxWidth: "80%",
-                        }}
-                      >
-                        {item.profile.phoneNumber}
-                      </Text>
-                    </View>
-                    <View
+                      Behaviour Tags
+                    </Text>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setOpenTag(false);
+                        setSelectedStudent(null);
+                      }}
                       style={{
-                        flexDirection: "row",
-                        width: "50%",
+                        backgroundColor: "white",
+                        padding: 4,
+                        borderRadius: 20,
+                        alignSelf: "flex-end",
+                        alignItems: "flex-end",
                       }}
                     >
-                      <MaterialIcons name="cake" size={16} color="#F39300" />
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          marginLeft: 4,
-                          color: "#333",
-                          maxWidth: "80%",
-                        }}
-                      >
-                        {formatDate(item.profile.dateOfBirth)}
-                      </Text>
-                    </View>
+                      <Ionicons name="close" size={24} color="#F39300" />
+                    </TouchableOpacity>
                   </View>
+                  <FlatList
+                    data={selectedStudent?.behaviorTagList}
+                    keyExtractor={(tag, index) => index.toString()}
+                    showsVerticalScrollIndicator={false}
+                    style={{ paddingHorizontal: 20 }}
+                    renderItem={({ item: tag }) => (
+                      <View
+                        style={{
+                          backgroundColor: tag.contained
+                            ? "#F39300"
+                            : "#ededed",
+                          borderRadius: 20,
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          marginTop: 8,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: tag.contained === true ? "white" : "#333",
+                            fontWeight: tag.contained === true ? "600" : "400",
+                          }}
+                        >
+                          {tag.problemTagName} x {tag.number}
+                        </Text>
+                      </View>
+                    )}
+                  />
                 </View>
-              </TouchableOpacity>
-            ))
+              </View>
+            </Modal>
           )}
         </ScrollView>
         {!loading && (
@@ -1054,7 +1721,12 @@ export default function Student() {
             setSelectedStudent(null),
             setInfo(null),
             setInfo2(null),
+            setSelectedSemester(null),
             setInfo3(null),
+            setCourses(null),
+            setSelectedCourse(null),
+            setInfo4(null),
+            setInfo5(null),
             setDateFrom(""),
             setDateTo(""),
             setCurrentPage2(1),
@@ -1093,7 +1765,12 @@ export default function Student() {
                   setSelectedStudent(null),
                   setInfo(null),
                   setInfo2(null),
+                  setSelectedSemester(null),
                   setInfo3(null),
+                  setCourses(null),
+                  setSelectedCourse(null),
+                  setInfo4(null),
+                  setInfo5(null),
                   setDateFrom(""),
                   setDateTo(""),
                   setCurrentPage2(1),
@@ -1152,7 +1829,9 @@ export default function Student() {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => setActiveTab(3)}
+                    onPress={() => (
+                      setActiveTab(3), setSelectedSemester(semesters[0].name)
+                    )}
                     style={{
                       paddingVertical: 8,
                       marginRight: 20,
@@ -1168,7 +1847,7 @@ export default function Student() {
                         color: activeTab === 3 ? "#F39300" : "#333",
                       }}
                     >
-                      Academic Transcript
+                      Problem Details
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -1188,13 +1867,16 @@ export default function Student() {
                         color: activeTab === 4 ? "#F39300" : "#333",
                       }}
                     >
-                      Attendance Report
+                      Academic Transcript
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => setActiveTab(5)}
+                    onPress={() => (
+                      setActiveTab(5), setSelectedSemester(semesters[0].name)
+                    )}
                     style={{
                       paddingVertical: 8,
+                      marginRight: 20,
                       borderBottomWidth: 2,
                       borderBottomColor:
                         activeTab === 5 ? "#F39300" : "transparent",
@@ -1205,6 +1887,25 @@ export default function Student() {
                         fontSize: 18,
                         fontWeight: activeTab === 5 ? "bold" : "500",
                         color: activeTab === 5 ? "#F39300" : "#333",
+                      }}
+                    >
+                      Attendance Report
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setActiveTab(6)}
+                    style={{
+                      paddingVertical: 8,
+                      borderBottomWidth: 2,
+                      borderBottomColor:
+                        activeTab === 6 ? "#F39300" : "transparent",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: activeTab === 6 ? "bold" : "500",
+                        color: activeTab === 6 ? "#F39300" : "#333",
                       }}
                     >
                       Appointments History
@@ -1578,7 +2279,8 @@ export default function Student() {
                           Extracurricular Activities:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.extracurricularActivities || "N/A"}
+                          {info.counselingProfile.extracurricularActivities ||
+                            "N/A"}
                         </Text>
                       </View>
                       <View style={{ marginVertical: 10 }}>
@@ -1693,7 +2395,8 @@ export default function Student() {
                           Desired Counseling Fields:
                         </Text>
                         <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.counselingProfile.desiredCounselingFields || "N/A"}
+                          {info.counselingProfile.desiredCounselingFields ||
+                            "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -1702,245 +2405,787 @@ export default function Student() {
                   <Text
                     style={{
                       fontSize: 18,
+                      fontStyle: "italic",
                       fontWeight: "600",
-                      color: "#333",
                       textAlign: "center",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     This student doesn't have counseling profile
                   </Text>
                 ) : null}
-                {activeTab === 3 && info2 ? (
-                  // info2.map((item, index) => (
-                  //   <View
-                  //     key={index}
-                  //     style={{
-                  //       backgroundColor: "white",
-                  //       borderRadius: 10,
-                  //       padding: 12,
-                  //       marginBottom: 20,
-                  //       elevation: 3,
-                  //     }}
-                  //   >
-                  //     <Text
-                  //       style={{
-                  //         fontWeight: "bold",
-                  //         fontSize: 18,
-                  //         marginBottom: 4,
-                  //         color: "#F39300",
-                  //       }}
-                  //     >
-                  //       Term {item.term}{" "}
-                  //       {item.semester !== "N/A"
-                  //         ? "- " + item.semester
-                  //         : ""}
-                  //     </Text>
-                  //     <Text style={{ fontSize: 18, fontWeight: "600" }}>
-                  //       {item.subjectCode} - {item.subjectName}
-                  //     </Text>
-                  //     <View
-                  //       style={{
-                  //         flexDirection: "row",
-                  //         justifyContent: "space-between",
-                  //         alignItems: "center",
-                  //         marginTop: 8,
-                  //       }}
-                  //     >
-                  //       <Text
-                  //         style={{
-                  //           fontSize: 18,
-                  //           fontWeight: "500",
-                  //           color: "#333",
-                  //         }}
-                  //       >
-                  //         Grade:{" "}
-                  //         {item.grade !== null ? (
-                  //           <Text
-                  //             style={{
-                  //               fontWeight: "600",
-                  //               color: "#F39300",
-                  //             }}
-                  //           >
-                  //             {item.grade}
-                  //           </Text>
-                  //         ) : (
-                  //           <Text
-                  //             style={{ fontWeight: "600", color: "gray" }}
-                  //           >
-                  //             --
-                  //           </Text>
-                  //         )}
-                  //       </Text>
-                  //       <Text
-                  //         style={{
-                  //           fontSize: 16,
-                  //           fontWeight: "bold",
-                  //           paddingVertical: 2,
-                  //           paddingHorizontal: 8,
-                  //           borderRadius: 10,
-                  //           backgroundColor:
-                  //             item.status === "PASSED"
-                  //               ? "green"
-                  //               : item.status === "NOT_PASSED"
-                  //               ? "red"
-                  //               : item.status === "STUDYING"
-                  //               ? "#F39300"
-                  //               : "gray",
-                  //           color: "#fff",
-                  //         }}
-                  //       >
-                  //         {item.status}
-                  //       </Text>
-                  //     </View>
-                  //   </View>
-                  // ))
-                  <ScrollView showsVerticalScrollIndicator={false}>
-                    {[...new Set(info2.map((item) => item.term))].map(
-                      (term) => (
-                        <View
-                          key={term}
-                          style={{
-                            backgroundColor: "white",
-                            borderRadius: 10,
-                            padding: 12,
-                            marginBottom: 20,
-                            elevation: 3,
-                          }}
-                        >
-                          <Text
+                {activeTab === 3 && selectedSemester ? (
+                  <View style={{ flex: 1 }}>
+                    <View
+                      style={{
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        marginBottom: 16,
+                        elevation: 1,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 8,
+                        }}
+                      >
+                        TERM
+                      </Text>
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                      >
+                        {semesters.map((semester) => (
+                          <TouchableOpacity
+                            key={semester.id}
+                            onPress={() => setSelectedSemester(semester.name)}
                             style={{
-                              fontWeight: "bold",
-                              fontSize: 24,
-                              marginBottom: 4,
-                              color: "#F39300",
+                              padding: 8,
+                              marginRight: 8,
+                              marginBottom: 8,
+                              backgroundColor: "white",
+                              borderRadius: 10,
+                              borderWidth: 2,
+                              borderColor:
+                                selectedSemester === semester.name
+                                  ? "#F39300"
+                                  : "black",
                             }}
                           >
-                            Term {term}
-                          </Text>
-                          {info2
-                            .filter((subject) => subject.term === term)
-                            .map((subject, index) => (
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "600",
+                                color:
+                                  selectedSemester === semester.name
+                                    ? "#F39300"
+                                    : "black",
+                                textAlign: "left",
+                              }}
+                            >
+                              {semester.name}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    </View>
+                    {info2Loading ? (
+                      <View
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginVertical: 38.5,
+                        }}
+                      >
+                        <ActivityIndicator
+                          size={40}
+                          color="#F39300"
+                          animating
+                        />
+                      </View>
+                    ) : info2 && Object.keys(info2).length > 0 ? (
+                      <ScrollView showsVerticalScrollIndicator={false}>
+                        {Object.entries(info2).map(([subject, tags], index) => (
+                          <View
+                            key={index}
+                            style={{
+                              backgroundColor: "white",
+                              padding: 16,
+                              borderRadius: 12,
+                              marginBottom: 12,
+                              elevation: 1,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                fontWeight: "bold",
+                                color: "#333",
+                                marginBottom: 8,
+                              }}
+                            >
+                              {subject}
+                            </Text>
+                            {tags.isNotExcluded.map((tag, tagIndex) => (
                               <View
-                                key={index}
+                                key={tagIndex}
                                 style={{
-                                  paddingVertical: 12,
+                                  backgroundColor: tag.contained
+                                    ? "#F39300"
+                                    : "#ededed",
+                                  padding: 8,
+                                  borderRadius: 20,
                                   marginBottom: 8,
-                                  borderBottomWidth: 1,
-                                  borderBottomColor: "gray",
                                 }}
                               >
                                 <Text
                                   style={{
-                                    fontSize: 20,
-                                    fontWeight: "600",
-                                    marginBottom: 4,
+                                    fontSize: 16,
+                                    color: tag.contained ? "white" : "#333",
+                                    fontWeight: tag.contained ? "bold" : "400",
                                   }}
                                 >
-                                  {subject.subjectCode} - {subject.subjectName}
+                                  {tag.problemTagName} x {tag.number}
                                 </Text>
+                              </View>
+                            ))}
+                            {tags.isExcluded.length > 0 && (
+                              <>
                                 <Text
                                   style={{
-                                    fontSize: 18,
-                                    color: "#333",
-                                    fontWeight: "500",
-                                  }}
-                                >
-                                  Semester:{" "}
-                                  {subject.semester !== "N/A" ? (
-                                    <Text
-                                      style={{
-                                        fontWeight: "600",
-                                        color: "#F39300",
-                                      }}
-                                    >
-                                      {subject.semester}
-                                    </Text>
-                                  ) : (
-                                    <Text
-                                      style={{
-                                        fontWeight: "600",
-                                        color: "gray",
-                                      }}
-                                    >
-                                      --
-                                    </Text>
-                                  )}
-                                </Text>
-                                <View
-                                  style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
+                                    fontSize: 14,
+                                    color: "#666",
                                     marginTop: 8,
                                   }}
                                 >
-                                  <Text
+                                  Excluded Tags:
+                                </Text>
+                                {tags.isExcluded.map((tag, tagIndex) => (
+                                  <View
+                                    key={tagIndex}
                                     style={{
-                                      fontSize: 18,
-                                      fontWeight: "500",
-                                      color: "#333",
+                                      backgroundColor: tag.contained
+                                        ? "#F39300"
+                                        : "#ededed",
+                                      padding: 8,
+                                      borderRadius: 20,
+                                      marginBottom: 8,
                                     }}
                                   >
-                                    Grade:{" "}
-                                    {subject.grade !== null ? (
-                                      <Text
-                                        style={{
-                                          fontWeight: "600",
-                                          color: "#F39300",
-                                        }}
-                                      >
-                                        {subject.grade}
-                                      </Text>
-                                    ) : (
-                                      <Text
-                                        style={{
-                                          fontWeight: "600",
-                                          color: "gray",
-                                        }}
-                                      >
-                                        --
-                                      </Text>
-                                    )}
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      fontSize: 16,
-                                      fontWeight: "bold",
-                                      paddingVertical: 2,
-                                      paddingHorizontal: 8,
-                                      borderRadius: 10,
-                                      backgroundColor:
-                                        subject.status === "PASSED"
-                                          ? "green"
-                                          : subject.status === "NOT_PASSED"
-                                          ? "red"
-                                          : subject.status === "STUDYING"
-                                          ? "#F39300"
-                                          : "gray",
-                                      color: "#fff",
-                                    }}
-                                  >
-                                    {subject.status}
-                                  </Text>
-                                </View>
-                              </View>
-                            ))}
-                        </View>
-                      )
+                                    <Text
+                                      style={{
+                                        fontSize: 16,
+                                        color: tag.contained ? "white" : "#333",
+                                        fontWeight: tag.contained
+                                          ? "bold"
+                                          : "400",
+                                      }}
+                                    >
+                                      {tag.problemTagName} x {tag.number}
+                                    </Text>
+                                  </View>
+                                ))}
+                              </>
+                            )}
+                          </View>
+                        ))}
+                      </ScrollView>
+                    ) : (
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontStyle: "italic",
+                          textAlign: "center",
+                          fontWeight: "600",
+                          color: "gray",
+                          opacity: 0.7,
+                        }}
+                      >
+                        You have no problem details in this term
+                      </Text>
                     )}
-                  </ScrollView>
-                ) : activeTab === 3 ? (
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginVertical: 38.5,
-                    }}
-                  >
-                    <ActivityIndicator size={60} color="#F39300" animating />
                   </View>
+                ) : activeTab === 3 ? (
+                  <></>
                 ) : null}
-                {activeTab === 5 && info3 ? (
+                {activeTab === 4 ? (
+                  info3Loading ? (
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginVertical: 38.5,
+                      }}
+                    >
+                      <ActivityIndicator size={40} color="#F39300" animating />
+                    </View>
+                  ) : info3 ? (
+                    <>
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          padding: 12,
+                          marginBottom: 20,
+                          elevation: 1,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#F39300",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Analysis Summary
+                        </Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "600",
+                              color: "#333",
+                            }}
+                          >
+                            Passed:{" "}
+                            <Text
+                              style={{ color: "green", fontWeight: "bold" }}
+                            >
+                              {
+                                info3.filter(
+                                  (subject) => subject.status === "PASSED"
+                                ).length
+                              }
+                            </Text>
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "600",
+                              color: "#333",
+                            }}
+                          >
+                            Failed:{" "}
+                            <Text style={{ color: "red", fontWeight: "bold" }}>
+                              {
+                                info3.filter(
+                                  (subject) => subject.status === "NOT_PASSED"
+                                ).length
+                              }
+                            </Text>
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "600",
+                              color: "#333",
+                            }}
+                          >
+                            GPA:{" "}
+                            <Text
+                              style={{ color: "#F39300", fontWeight: "bold" }}
+                            >
+                              {info3
+                                .filter((subject) => subject.grade !== null)
+                                .reduce(
+                                  (acc, subject, _, array) =>
+                                    acc +
+                                    parseFloat(subject.grade) / array.length,
+                                  0
+                                )
+                                .toFixed(2)}
+                            </Text>
+                          </Text>
+                        </View>
+                      </View>
+                      <ScrollView showsVerticalScrollIndicator={false}>
+                        {[...new Set(info3.map((item) => item.term))].map(
+                          (term) => (
+                            <View
+                              key={term}
+                              style={{
+                                backgroundColor: "white",
+                                borderRadius: 10,
+                                padding: 12,
+                                marginBottom: 20,
+                                elevation: 1,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontWeight: "bold",
+                                  fontSize: 20,
+                                  marginBottom: 4,
+                                  color: "#F39300",
+                                }}
+                              >
+                                Term {term}
+                              </Text>
+                              {info3
+                                .filter((subject) => subject.term === term)
+                                .map((subject, index) => (
+                                  <View
+                                    key={index}
+                                    style={{
+                                      paddingVertical: 12,
+                                      marginBottom: 8,
+                                      borderBottomWidth: 1,
+                                      borderBottomColor: "gray",
+                                    }}
+                                  >
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        fontWeight: "600",
+                                        marginBottom: 4,
+                                      }}
+                                    >
+                                      {subject.subjectCode} -{" "}
+                                      {subject.subjectName}
+                                    </Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 16,
+                                        color: "#333",
+                                        fontWeight: "500",
+                                      }}
+                                    >
+                                      Semester:{" "}
+                                      {subject.semester !== "N/A" ? (
+                                        <Text
+                                          style={{
+                                            fontWeight: "600",
+                                            color: "#F39300",
+                                          }}
+                                        >
+                                          {subject.semester}
+                                        </Text>
+                                      ) : (
+                                        <Text
+                                          style={{
+                                            fontWeight: "600",
+                                            color: "gray",
+                                          }}
+                                        >
+                                          --
+                                        </Text>
+                                      )}
+                                    </Text>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        marginTop: 8,
+                                      }}
+                                    >
+                                      <Text
+                                        style={{
+                                          fontSize: 16,
+                                          fontWeight: "500",
+                                          color: "#333",
+                                        }}
+                                      >
+                                        Grade:{" "}
+                                        {subject.grade !== null ? (
+                                          <Text
+                                            style={{
+                                              fontWeight: "600",
+                                              color: "#F39300",
+                                            }}
+                                          >
+                                            {subject.grade}
+                                          </Text>
+                                        ) : (
+                                          <Text
+                                            style={{
+                                              fontWeight: "600",
+                                              color: "gray",
+                                            }}
+                                          >
+                                            --
+                                          </Text>
+                                        )}
+                                      </Text>
+                                      <Text
+                                        style={{
+                                          fontWeight: "bold",
+                                          paddingVertical: 4,
+                                          paddingHorizontal: 12,
+                                          borderRadius: 20,
+                                          backgroundColor:
+                                            subject.status === "PASSED"
+                                              ? "green"
+                                              : subject.status === "NOT_PASSED"
+                                              ? "red"
+                                              : subject.status === "STUDYING"
+                                              ? "#F39300"
+                                              : "gray",
+                                          color: "#fff",
+                                        }}
+                                      >
+                                        {subject.status}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                ))}
+                            </View>
+                          )
+                        )}
+                      </ScrollView>
+                    </>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontStyle: "italic",
+                        fontWeight: "600",
+                        textAlign: "center",
+                        color: "gray",
+                        opacity: 0.7,
+                      }}
+                    >
+                      Can't find student academic transcript data
+                    </Text>
+                  )
+                ) : activeTab === 4 ? (
+                  <></>
+                ) : null}
+                {activeTab === 5 && semesters ? (
+                  <>
+                    <View style={{ flexDirection: "row", maxHeight: "32.5%" }}>
+                      <View
+                        style={{
+                          flex: 0.55,
+                          backgroundColor: "#fff",
+                          borderRadius: 10,
+                          padding: 12,
+                          marginBottom: 12,
+                          marginRight: 12,
+                          elevation: 1,
+                        }}
+                      >
+                        <View style={{ marginBottom: 8 }}>
+                          <Text
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 18,
+                              color: "#F39300",
+                            }}
+                          >
+                            TERM
+                          </Text>
+                        </View>
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                          {semesters.map((semester) => (
+                            <TouchableOpacity
+                              key={semester.id}
+                              onPress={() => setSelectedSemester(semester.name)}
+                              style={{
+                                flex: 1,
+                                padding: 8,
+                                marginBottom: 12,
+                                backgroundColor: "white",
+                                borderRadius: 10,
+                                borderWidth: 2,
+                                borderColor:
+                                  selectedSemester === semester.name
+                                    ? "#F39300"
+                                    : "black",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontWeight: "600",
+                                  color:
+                                    selectedSemester === semester.name
+                                      ? "#F39300"
+                                      : "black",
+                                  textAlign: "left",
+                                }}
+                              >
+                                {semester.name}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </ScrollView>
+                      </View>
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: "#fff",
+                          borderRadius: 10,
+                          padding: 12,
+                          marginBottom: 12,
+                          elevation: 1,
+                        }}
+                      >
+                        <View style={{ marginBottom: 8 }}>
+                          <Text
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 18,
+                              color: "#F39300",
+                            }}
+                          >
+                            COURSE
+                          </Text>
+                        </View>
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                          {coursesLoading ? (
+                            <View
+                              style={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginVertical: 38.5,
+                              }}
+                            >
+                              <ActivityIndicator
+                                size={40}
+                                color="#F39300"
+                                animating
+                              />
+                            </View>
+                          ) : courses ? (
+                            courses.map((course) => (
+                              <TouchableOpacity
+                                key={course.id}
+                                onPress={() => setSelectedCourse(course.id)}
+                                style={{
+                                  padding: 8,
+                                  marginRight: 8,
+                                  marginBottom: 12,
+                                  backgroundColor: "white",
+                                  borderRadius: 10,
+                                  borderWidth: 2,
+                                  borderColor:
+                                    selectedCourse === course.id
+                                      ? "#F39300"
+                                      : "black",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 14,
+                                    fontWeight: "600",
+                                    color:
+                                      selectedCourse === course.id
+                                        ? "#F39300"
+                                        : "black",
+                                    textAlign: "left",
+                                  }}
+                                >
+                                  {course.subjectName}
+                                </Text>
+                              </TouchableOpacity>
+                            ))
+                          ) : (
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontStyle: "italic",
+                                fontWeight: "600",
+                                color: "gray",
+                                opacity: 0.7,
+                              }}
+                            >
+                              You have no courses in this term
+                            </Text>
+                          )}
+                        </ScrollView>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        padding: 12,
+                        marginBottom: 20,
+                        elevation: 1,
+                        maxHeight: "67.5%",
+                      }}
+                    >
+                      <ScrollView showsVerticalScrollIndicator={false}>
+                        {attendanceLoading ? (
+                          <View
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ActivityIndicator
+                              size={40}
+                              color="#F39300"
+                              animating
+                            />
+                          </View>
+                        ) : info4 ? (
+                          info4?.map((item, index) => (
+                            <View
+                              key={index}
+                              style={{
+                                flex: 1,
+                                flexDirection: "row",
+                                justifyContent: "flex-start",
+                                padding: 12,
+                                backgroundColor: "#fdfdfd",
+                                borderRadius: 10,
+                                marginBottom: 12,
+                                elevation: 1,
+                              }}
+                            >
+                              <View style={{ flex: 0.08 }}>
+                                <Text
+                                  style={{
+                                    fontSize: 18,
+                                    fontWeight: "600",
+                                    color: "#333",
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {index + 1}
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  width: 2,
+                                  backgroundColor: "lightgrey",
+                                  height: "100%",
+                                  marginHorizontal: 12,
+                                }}
+                              />
+                              <View
+                                style={{
+                                  flex: 1,
+                                  flexDirection: "column",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                    color: "#333",
+                                  }}
+                                >
+                                  Date:{" "}
+                                  <Text style={{ fontWeight: "400" }}>
+                                    {item.date}
+                                  </Text>
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                    color: "#333",
+                                  }}
+                                >
+                                  Slot:{" "}
+                                  <Text style={{ fontWeight: "400" }}>
+                                    {item.slot}
+                                  </Text>
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                    color: "#333",
+                                  }}
+                                >
+                                  Room:{" "}
+                                  <Text style={{ fontWeight: "400" }}>
+                                    {item.room}
+                                  </Text>
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                    color: "#333",
+                                  }}
+                                >
+                                  Lecturer:{" "}
+                                  <Text style={{ fontWeight: "400" }}>
+                                    {item.lecturer}
+                                  </Text>
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                    color: "#333",
+                                  }}
+                                >
+                                  Group Name:{" "}
+                                  <Text style={{ fontWeight: "400" }}>
+                                    {item.groupName}
+                                  </Text>
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                    color: "#333",
+                                  }}
+                                >
+                                  Attendance Status:{" "}
+                                  <Text
+                                    style={{
+                                      fontWeight: "bold",
+                                      color:
+                                        item.status === "PRESENT"
+                                          ? "green"
+                                          : item.status === "ABSENT"
+                                          ? "red"
+                                          : item.status === "FUTURE"
+                                          ? "#f39033"
+                                          : "black",
+                                    }}
+                                  >
+                                    {item.status}
+                                  </Text>
+                                </Text>
+                                {item.lecturerComment && (
+                                  <Text
+                                    style={{
+                                      fontWeight: "bold",
+                                      color: "#F39300",
+                                      fontSize: 16,
+                                      marginTop: 8,
+                                    }}
+                                  >
+                                    Lecturer Note:{" "}
+                                    <Text
+                                      style={{
+                                        fontWeight: "500",
+                                        fontStyle: "italic",
+                                        color: "#333",
+                                        opacity: 0.5,
+                                      }}
+                                    >
+                                      {item.lecturerComment}
+                                    </Text>
+                                  </Text>
+                                )}
+                              </View>
+                            </View>
+                          ))
+                        ) : (
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontStyle: "italic",
+                              fontWeight: "600",
+                              color: "gray",
+                              opacity: 0.7,
+                            }}
+                          >
+                            Can't find attendance report because of no courses
+                            found. Please choose another courses or find courses
+                            in another term
+                          </Text>
+                        )}
+                      </ScrollView>
+                    </View>
+                  </>
+                ) : activeTab === 5 ? (
+                  <Text
+                    style={{ fontStyle: "italic", color: "gray", opacity: 0.7 }}
+                  ></Text>
+                ) : null}
+                {activeTab === 6 && info5 ? (
                   <>
                     <View
                       style={{
@@ -2211,12 +3456,12 @@ export default function Student() {
                       </View>
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false}>
-                      {info3.data
+                      {info5.data
                         .filter((item) => item.status === "ATTEND")
                         .map((item, index) => (
                           <TouchableOpacity
                             activeOpacity={0.7}
-                            onPress={() => handleOpenInfo(item)}
+                            onPress={() => handleOpenHistoryInfo(item)}
                             key={index}
                             style={{
                               backgroundColor: "white",
@@ -2382,8 +3627,8 @@ export default function Student() {
                             fontWeight: "600",
                           }}
                         >
-                          {info3?.data?.length != 0 ? currentPage2 : 0} /{" "}
-                          {info3.totalPages}
+                          {info5?.data?.length != 0 ? currentPage2 : 0} /{" "}
+                          {info5.totalPages}
                         </Text>
                       </View>
                       <TouchableOpacity
@@ -2395,20 +3640,20 @@ export default function Student() {
                           marginHorizontal: 4,
                           borderWidth: 1.5,
                           borderColor:
-                            info3.totalPages == 0 ||
-                            currentPage2 >= info3.totalPages
+                            info5.totalPages == 0 ||
+                            currentPage2 >= info5.totalPages
                               ? "#ccc"
                               : "#F39300",
                           opacity:
-                            info3.totalPages == 0 ||
-                            currentPage2 >= info3.totalPages
+                            info5.totalPages == 0 ||
+                            currentPage2 >= info5.totalPages
                               ? 0.5
                               : 1,
                         }}
                         onPress={() => setCurrentPage2(currentPage2 + 1)}
                         disabled={
-                          info3.totalPages == 0 ||
-                          currentPage2 >= info3.totalPages
+                          info5.totalPages == 0 ||
+                          currentPage2 >= info5.totalPages
                         }
                       >
                         <Text
@@ -2430,20 +3675,20 @@ export default function Student() {
                           marginHorizontal: 4,
                           borderWidth: 1.5,
                           borderColor:
-                            info3.totalPages == 0 ||
-                            currentPage2 >= info3.totalPages
+                            info5.totalPages == 0 ||
+                            currentPage2 >= info5.totalPages
                               ? "#ccc"
                               : "#F39300",
                           opacity:
-                            info3.totalPages == 0 ||
-                            currentPage2 >= info3.totalPages
+                            info5.totalPages == 0 ||
+                            currentPage2 >= info5.totalPages
                               ? 0.5
                               : 1,
                         }}
-                        onPress={() => setCurrentPage2(info3.totalPages)}
+                        onPress={() => setCurrentPage2(info5.totalPages)}
                         disabled={
-                          info3.totalPages == 0 ||
-                          currentPage2 >= info3.totalPages
+                          info5.totalPages == 0 ||
+                          currentPage2 >= info5.totalPages
                         }
                       >
                         <Text
@@ -2459,9 +3704,9 @@ export default function Student() {
                     </View>
                     <Modal
                       transparent={true}
-                      visible={openInfo2}
+                      visible={openInfo3}
                       animationType="slide"
-                      onRequestClose={handleCloseInfo}
+                      onRequestClose={handleCloseHistoryInfo}
                     >
                       <View
                         style={{
@@ -2498,7 +3743,7 @@ export default function Student() {
                                 alignSelf: "flex-start",
                                 alignItems: "flex-start",
                               }}
-                              onPress={handleCloseInfo}
+                              onPress={handleCloseHistoryInfo}
                             >
                               <Ionicons name="chevron-back" size={28} />
                             </TouchableOpacity>
@@ -2967,8 +4212,11 @@ export default function Student() {
                                   <Text
                                     style={{
                                       fontSize: 18,
-                                      color: "#333",
-                                      fontWeight: "500",
+                                      fontStyle: "italic",
+                                      fontWeight: "600",
+                                      textAlign: "center",
+                                      color: "gray",
+                                      opacity: 0.7,
                                     }}
                                   >
                                     There's no feedback yet
@@ -2981,13 +4229,15 @@ export default function Student() {
                       </View>
                     </Modal>
                   </>
-                ) : activeTab === 5 ? (
+                ) : activeTab === 6 ? (
                   <Text
                     style={{
                       fontSize: 18,
+                      fontStyle: "italic",
                       fontWeight: "600",
-                      color: "#333",
                       textAlign: "center",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     This student doesn't have any apppointments

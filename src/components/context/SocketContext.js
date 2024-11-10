@@ -24,7 +24,10 @@ export const SocketProvider = ({ children }) => {
     }, [userData, isLogin]);
 
     const connectSocketIO = (accountId) => {
-        socket.current = io(`http://localhost:4000`);
+        // socket.current = io(`http://localhost:4000`);
+        socket.current = io(`http://localhost:9092`,{
+            transports: ['websocket']
+        });
 
         socket.current.on("connect", () => {
             console.log("Socket.IO connection established");
