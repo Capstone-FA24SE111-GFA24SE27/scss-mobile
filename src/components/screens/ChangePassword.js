@@ -102,25 +102,24 @@ export default function ChangePassword() {
 
   const handleForgotPassword = async () => {
     setEmailError("");
-    if (!email.includes("@fpt.edu.vn") && !email.includes("@gmail.com")) {
-      setEmailError("Incorrect syntax of an email");
-      setOpenConfirm2(false);
-      return;
-    }
+    // if (!email.includes("@fpt.edu.vn") && !email.includes("@gmail.com")) {
+    //   setEmailError("Incorrect syntax of an email");
+    //   setOpenConfirm2(false);
+    //   return;
+    // }
     try {
-      //   const response = await axiosJWT.post(
-      //     `${BASE_URL}/account/forgot-password`,
-      //     {
-      //       email: email,
-      //     }
-      //   );
-      //   const data = await response.data;
-      //   if (data && data.status == 200) {
-      //     setOpenConfirm2(false);
-      //     setOpenSuccess2(true);
-      //   }
-    } catch (error) {
-      console.log("Can't send mail to provided email", error);
+      await axiosJWT.post(
+        `${BASE_URL}/account/forgot-password`,
+        {
+          email: email,
+        }
+      );
+      setOpenConfirm2(false);
+      setOpenSuccess2(true);
+    } catch (err) {
+      console.log("Can't send mail to provided email", err);
+      setEmailError("Can't send mail to provided email");
+      setOpenConfirm2(false);
     }
   };
 

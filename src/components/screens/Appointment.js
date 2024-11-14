@@ -27,7 +27,7 @@ export default function Appointment({ route }) {
   const navigation = useNavigation();
   const prevScreen = route?.params?.prevScreen;
   const { width, height } = Dimensions.get("screen");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const [appointments, setAppointments] = useState([]);
@@ -178,7 +178,6 @@ export default function Appointment({ route }) {
   };
 
   const fetchData = async (filters = {}) => {
-    setLoading(true);
     try {
       const appointmentsRes = await axiosJWT.get(
         `${BASE_URL}/appointments/student`,
@@ -210,6 +209,8 @@ export default function Appointment({ route }) {
   }, [currentPage]);
 
   const applyFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const newFilters = {
       fromDate: dateFrom,
       toDate: dateTo,
@@ -221,6 +222,8 @@ export default function Appointment({ route }) {
   };
 
   const cancelFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const resetFilters = {
       fromDate: "",
       toDate: "",
@@ -317,15 +320,12 @@ export default function Appointment({ route }) {
         });
       }
       // console.log(selectedAppointment, value)
-    } catch (error) {
-      console.log("Something error when cancel this appointment", error);
+    } catch (err) {
+      console.log("Can't cancel appointment", err);
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Something error when cancel this appointment",
-        onPress: () => {
-          Toast.hide();
-        },
+        text2: "Can't cancel appointment",
       });
     }
   };
@@ -362,8 +362,13 @@ export default function Appointment({ route }) {
         });
         handleCloseFeedback();
       }
-    } catch {
-      console.error("Something error", error);
+    } catch (err) {
+      console.log("Can't feedback this appointment", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't feedback this appointment",
+      });
     }
   };
 
@@ -723,16 +728,16 @@ export default function Appointment({ route }) {
                       paddingHorizontal: 12,
                       marginLeft: 16,
                     }}
-                    placeholderStyle={{ fontSize: 16 }}
+                    placeholderStyle={{ fontSize: 14 }}
                     selectedTextStyle={{
-                      fontSize: 18,
+                      fontSize: 14,
                       color: status ? "black" : "white",
                     }}
                     maxHeight={250}
                     data={statusList}
                     labelField="name"
                     value={status}
-                    placeholder={status != "" ? status : "Select item"}
+                    placeholder={status != "" ? status : "Select Status"}
                     onFocus={() => setExpanded(true)}
                     onBlur={() => setExpanded(false)}
                     onChange={(item) => {
@@ -773,7 +778,7 @@ export default function Appointment({ route }) {
                             <Ionicons
                               color="white"
                               name="checkmark"
-                              size={24}
+                              size={20}
                             />
                           )}
                         </View>
@@ -944,7 +949,7 @@ export default function Appointment({ route }) {
                         fontSize: 16,
                         fontWeight: "600",
                         marginLeft: 8,
-                        color: "#666",
+                        color: "#333",
                       }}
                     >
                       {
@@ -966,7 +971,7 @@ export default function Appointment({ route }) {
                         fontSize: 16,
                         fontWeight: "600",
                         marginLeft: 8,
-                        color: "#666",
+                        color: "#333",
                       }}
                     >
                       {appointment.startDateTime.split("T")[1].split(":")[0] +
@@ -1060,7 +1065,7 @@ export default function Appointment({ route }) {
                           fontWeight: "bold",
                           fontSize: 16,
                           marginLeft: 8,
-                          color: "#666",
+                          color: "#333",
                         }}
                       >
                         {appointment.meetUrl}
@@ -1074,7 +1079,7 @@ export default function Appointment({ route }) {
                           fontWeight: "bold",
                           fontSize: 16,
                           marginLeft: 8,
-                          color: "#666",
+                          color: "#333",
                         }}
                       >
                         {appointment.address}

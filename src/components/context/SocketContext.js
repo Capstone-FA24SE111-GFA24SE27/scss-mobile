@@ -25,7 +25,7 @@ export const SocketProvider = ({ children }) => {
 
     const connectSocketIO = (accountId) => {
         // socket.current = io(`http://localhost:4000`);
-        socket.current = io(`http://scss-server.southafricanorth.cloudapp.azure.com:9092`,{
+        socket.current = io(`http://localhost:9092`,{
             transports: ['websocket']
         });
 
@@ -34,7 +34,7 @@ export const SocketProvider = ({ children }) => {
         });
 
         socket.current.on("connect_error", (err) => {
-            console.error("Socket.IO connection error:", err.message);
+            console.log("Socket.IO connection error:", err.message);
         });
 
         socket.current.on("disconnect", (reason) => {

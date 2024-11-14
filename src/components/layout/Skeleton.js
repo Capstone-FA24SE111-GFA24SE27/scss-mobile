@@ -153,23 +153,22 @@ const CounselorSkeleton = () => {
           >
             <LinearGradient
               colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{ width: width * 0.4, height: 20, borderRadius: 4 }}
-            />
-            <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: "#e0e0e0",
+                width: width * 0.4,
+                height: width * 0.05,
+                borderRadius: 4,
+              }}
+            />
+            <LinearGradient
+              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              style={{
+                width: width * 0.14,
+                height: width * 0.05,
                 paddingHorizontal: 12,
                 paddingVertical: 2,
                 borderRadius: 20,
               }}
-            >
-              <LinearGradient
-                colors={["#f5f5f5", "#e0e0e0", "#f5f5f5"]}
-                style={{ width: 24, height: 24, borderRadius: 12 }}
-              />
-            </View>
+            />
           </View>
           <LinearGradient
             colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}

@@ -88,14 +88,26 @@ export default function Notification() {
             readStatus: true,
           }))
         );
+        if (
+          notifications?.filter(
+            (notification) => notification.readStatus == false
+          ).length > 0
+        ) {
+          Toast.show({
+            type: "info",
+            text1: "Info",
+            text2: `You have read ${
+              notifications?.filter(
+                (notification) => notification.readStatus == false
+              ).length
+            } notification(s)`,
+          });
+        }
       } else {
         Toast.show({
           type: "error",
           text1: "Error",
           text2: "Failed to mark all notifications as read.",
-          onPress: () => {
-            Toast.hide();
-          },
         });
       }
     } catch (error) {
@@ -147,9 +159,6 @@ export default function Notification() {
           type: "error",
           text1: "Error",
           text2: result.message || "Failed to mark all notifications as read.",
-          onPress: () => {
-            Toast.hide();
-          },
         });
       }
     } catch (error) {
@@ -290,27 +299,27 @@ export default function Notification() {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Tab bar */}
-
       {/* Notifications List */}
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item.notificationId.toString()} // Sử dụng notificationId làm key
-        renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={{ paddingHorizontal: 30 }}>
+        <FlatList
+          data={notifications}
+          keyExtractor={(item) => item.notificationId.toString()} // Sử dụng notificationId làm key
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </View>
   );
 }
 const { width, height } = Dimensions.get("screen");
 const styles = StyleSheet.create({
-  container: { backgroundColor: "#f5f7fd", flex: 1, paddingHorizontal: 16 },
+  container: { backgroundColor: "#f5f7fd", flex: 1 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 30,
     paddingTop: height * 0.035,
     paddingVertical: 10,
   },

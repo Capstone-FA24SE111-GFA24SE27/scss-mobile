@@ -25,7 +25,6 @@ import Profile from "../screens/Profile";
 import ProfileCounselor from "../screens/counselor/Profile";
 import ViewProfile from "../screens/ViewProfile";
 import ResetPassword from "../screens/ResetPassword";
-import CounselorProfile from "../screens/CounselorProfile";
 import Request from "../screens/Request";
 import RequestCounselor from "../screens/counselor/Request";
 import Appointment from "../screens/Appointment";

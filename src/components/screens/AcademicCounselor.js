@@ -21,7 +21,11 @@ import React, {
   useState,
 } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import {
   CalendarProvider,
@@ -39,7 +43,7 @@ import Pagination from "../layout/Pagination";
 export default function AcademicCounselor() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const scrollViewRef = useRef(null);
@@ -88,11 +92,11 @@ export default function AcademicCounselor() {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       fetchData(filters, { page: currentPage });
+      fetchDepartment();
     }, [debouncedKeyword, filters, currentPage])
   );
 
   const fetchData = async (filters = {}) => {
-    setLoading(true);
     try {
       const counselorRes = await axiosJWT.get(
         `${BASE_URL}/counselors/academic`,
@@ -168,6 +172,8 @@ export default function AcademicCounselor() {
   }, [keyword]);
 
   const applyFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const newFilters = {
       ratingFrom: selectedFrom,
       ratingTo: selectedTo,
@@ -181,6 +187,8 @@ export default function AcademicCounselor() {
   };
 
   const cancelFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const resetFilters = {
       ratingFrom: 1,
       ratingTo: 5,
@@ -307,8 +315,13 @@ export default function AcademicCounselor() {
         `${BASE_URL}/counselors/daily-slots/${counselorId}?from=${from}&to=${to}`
       );
       setSlots(response.data.content);
-    } catch (error) {
-      console.log("Error fetching slots", error);
+    } catch (err) {
+      console.log("Can't fetch slots on this day", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't fetch slots on this day",
+      });
     }
   };
 
@@ -365,8 +378,9 @@ export default function AcademicCounselor() {
             }
             style={{
               width: "auto",
-              padding: 10,
-              marginVertical: 8,
+              padding: 8,
+              marginVertical: 4,
+              marginRight: 6,
               backgroundColor:
                 slot.myAppointment === true
                   ? "#F39300"
@@ -377,10 +391,9 @@ export default function AcademicCounselor() {
                   : slot.status === "AVAILABLE"
                   ? "white"
                   : "#ededed",
-              borderRadius: 10,
               alignItems: "center",
+              borderRadius: 10,
               borderWidth: 1.5,
-              marginRight: 16,
               borderColor:
                 slot.myAppointment === true
                   ? "white"
@@ -397,7 +410,7 @@ export default function AcademicCounselor() {
               slot.status !== "EXPIRED" &&
               slot.status !== "UNAVAILABLE" &&
               slot.myAppointment !== true && (
-                <View style={{ position: "absolute", top: -10, right: -10 }}>
+                <View style={{ position: "absolute", top: -12, right: -8 }}>
                   <Ionicons
                     name="checkmark-circle"
                     size={24}
@@ -460,8 +473,8 @@ export default function AcademicCounselor() {
             updatedSlots[data.dateChange] = newSlot;
             return updatedSlots;
           });
-        } catch (error) {
-          console.error("Error parsing notification:", error);
+        } catch (err) {
+          console.log("Error parsing notification:", err);
         }
       };
 
@@ -518,8 +531,8 @@ export default function AcademicCounselor() {
         online,
         reason
       );
-    } catch (error) {
-      console.log("Something error when booking", error);
+    } catch (err) {
+      console.log("Something error when booking", err);
       setIsError(true);
       setErrorMessage(
         "You already created a request that have the same chosen slot on this day. Please choose a different slot"
@@ -945,7 +958,7 @@ export default function AcademicCounselor() {
                         fontSize: 16,
                         fontWeight: "bold",
                         color: "#333",
-                        minWidth: "30%",
+                        minWidth: "35%",
                       }}
                     >
                       Sort:
@@ -1035,7 +1048,7 @@ export default function AcademicCounselor() {
                         fontSize: 16,
                         fontWeight: "bold",
                         color: "#333",
-                        minWidth: "30%",
+                        minWidth: "35%",
                       }}
                     >
                       Department:
@@ -1052,9 +1065,9 @@ export default function AcademicCounselor() {
                         paddingHorizontal: 12,
                         marginLeft: 8,
                       }}
-                      placeholderStyle={{ fontSize: 16 }}
+                      placeholderStyle={{ fontSize: 14 }}
                       selectedTextStyle={{
-                        fontSize: 18,
+                        fontSize: 14,
                         color: selectedDepartment ? "black" : "white",
                       }}
                       inputSearchStyle={{ height: 40, fontSize: 16 }}
@@ -1065,14 +1078,14 @@ export default function AcademicCounselor() {
                       value={
                         selectedDepartment !== ""
                           ? selectedDepartment.name
-                          : "Select item"
+                          : "Select Department"
                       }
                       placeholder={
                         selectedDepartment !== ""
                           ? selectedDepartment.name
-                          : "Select item"
+                          : "Select Department"
                       }
-                      searchPlaceholder="Search Specialization"
+                      searchPlaceholder="Search Department"
                       onFocus={() => setExpanded(true)}
                       onBlur={() => setExpanded(false)}
                       onChange={(item) => {
@@ -1103,7 +1116,7 @@ export default function AcademicCounselor() {
                           >
                             <Text
                               style={{
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: "500",
                                 color:
                                   item.name == selectedDepartment.name
@@ -1117,7 +1130,7 @@ export default function AcademicCounselor() {
                               <Ionicons
                                 color="white"
                                 name="checkmark"
-                                size={24}
+                                size={20}
                               />
                             )}
                           </View>
@@ -1139,7 +1152,7 @@ export default function AcademicCounselor() {
                         fontSize: 16,
                         fontWeight: "bold",
                         color: "#333",
-                        minWidth: "30%",
+                        minWidth: "35%",
                       }}
                     >
                       Major:
@@ -1157,26 +1170,27 @@ export default function AcademicCounselor() {
                         paddingHorizontal: 12,
                         marginLeft: 8,
                       }}
-                      placeholderStyle={{ fontSize: 16 }}
+                      placeholderStyle={{ fontSize: 14 }}
                       selectedTextStyle={{
-                        fontSize: 18,
+                        fontSize: 14,
                         color: selectedMajor ? "black" : "white",
                       }}
                       inputSearchStyle={{ height: 40, fontSize: 16 }}
                       maxHeight={250}
                       data={majors}
                       labelField="name"
+                      search
                       value={
                         selectedMajor !== ""
                           ? selectedMajor.name
-                          : "Select item"
+                          : "Select Major"
                       }
                       placeholder={
                         selectedMajor !== ""
                           ? selectedMajor.name
-                          : "Select item"
+                          : "Select Major"
                       }
-                      searchPlaceholder="Search Specialization"
+                      searchPlaceholder="Search Major"
                       onFocus={() => setExpanded2(true)}
                       onBlur={() => setExpanded2(false)}
                       onChange={(item) => {
@@ -1207,7 +1221,7 @@ export default function AcademicCounselor() {
                           >
                             <Text
                               style={{
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: "500",
                                 color:
                                   item.name == selectedMajor.name
@@ -1221,7 +1235,7 @@ export default function AcademicCounselor() {
                               <Ionicons
                                 color="white"
                                 name="checkmark"
-                                size={24}
+                                size={20}
                               />
                             )}
                           </View>
@@ -1243,7 +1257,7 @@ export default function AcademicCounselor() {
                         fontSize: 16,
                         fontWeight: "bold",
                         color: "#333",
-                        minWidth: "30%",
+                        minWidth: "35%",
                       }}
                     >
                       Specialization:
@@ -1263,24 +1277,25 @@ export default function AcademicCounselor() {
                         paddingHorizontal: 12,
                         marginLeft: 8,
                       }}
-                      placeholderStyle={{ fontSize: 16 }}
+                      placeholderStyle={{ fontSize: 14 }}
                       selectedTextStyle={{
-                        fontSize: 18,
+                        fontSize: 14,
                         color: selectedSpecialization ? "black" : "white",
                       }}
                       inputSearchStyle={{ height: 40, fontSize: 16 }}
                       maxHeight={250}
                       data={specializations}
                       labelField="name"
+                      search
                       value={
                         selectedSpecialization !== ""
                           ? selectedSpecialization.name
-                          : "Select item"
+                          : "Select Specialization"
                       }
                       placeholder={
                         selectedSpecialization !== ""
                           ? selectedSpecialization.name
-                          : "Select item"
+                          : "Select Specialization"
                       }
                       searchPlaceholder="Search Specialization"
                       onFocus={() => setExpanded3(true)}
@@ -1313,7 +1328,7 @@ export default function AcademicCounselor() {
                           >
                             <Text
                               style={{
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: "500",
                                 color:
                                   item.name == selectedSpecialization.name
@@ -1327,7 +1342,7 @@ export default function AcademicCounselor() {
                               <Ionicons
                                 color="white"
                                 name="checkmark"
-                                size={24}
+                                size={20}
                               />
                             )}
                           </View>
@@ -1458,16 +1473,16 @@ export default function AcademicCounselor() {
                           borderRadius: 20,
                         }}
                       >
-                        <Ionicons name="star" size={18} color="white" />
+                        <Ionicons name="star" size={16} color="white" />
                         <Text
                           style={{
                             fontSize: 16,
-                            marginLeft: 6,
+                            marginLeft: 4,
                             fontWeight: "bold",
                             color: "white",
                           }}
                         >
-                          {item.rating.toFixed(1)}
+                          {item.rating}
                         </Text>
                       </View>
                     </View>
@@ -1608,21 +1623,53 @@ export default function AcademicCounselor() {
                     borderTopRightRadius: 16,
                   }}
                 >
-                  <TouchableOpacity
+                  <View
                     style={{
-                      backgroundColor: "#ededed",
-                      padding: 4,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                       marginHorizontal: 20,
                       marginTop: 16,
                       marginBottom: 8,
-                      borderRadius: 20,
-                      alignSelf: "flex-start",
-                      alignItems: "flex-start",
                     }}
-                    onPress={handleCloseBooking}
                   >
-                    <Ionicons name="chevron-back" size={28} />
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "#ededed",
+                        padding: 4,
+                        borderRadius: 20,
+                        alignSelf: "flex-start",
+                        alignItems: "flex-start",
+                      }}
+                      onPress={handleCloseBooking}
+                    >
+                      <Ionicons name="chevron-back" size={28} />
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        backgroundColor: "white",
+                        paddingHorizontal: 12,
+                        paddingVertical: 4,
+                        borderWidth: 1.5,
+                        borderColor: "#F39300",
+                        borderRadius: 20,
+                      }}
+                    >
+                      <Ionicons name="star" size={16} color="#F39300" />
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          marginLeft: 4,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                        }}
+                      >
+                        {selectedCounselor?.rating}
+                      </Text>
+                    </View>
+                  </View>
                   <CalendarProvider
                     date={selectedDate}
                     onDateChanged={(date) => (
@@ -1639,23 +1686,22 @@ export default function AcademicCounselor() {
                             alignItems: "center",
                           }}
                         >
-                          <Image
-                            source={{
-                              uri: selectedCounselor.profile?.avatarLink,
-                            }}
-                            style={{
-                              width: width * 0.32,
-                              height: width * 0.32,
-                              borderRadius: 100,
-                              marginBottom: 8,
-                            }}
-                          />
                           <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
+                            style={{ position: "relative", marginBottom: 12 }}
                           >
+                            <Image
+                              source={{
+                                uri: selectedCounselor.profile?.avatarLink,
+                              }}
+                              style={{
+                                width: width * 0.32,
+                                height: width * 0.32,
+                                borderRadius: 100,
+                                backgroundColor: "white",
+                                borderColor: "#F39300",
+                                borderWidth: 2,
+                              }}
+                            />
                             <Ionicons
                               name={
                                 selectedCounselor.profile?.gender == "MALE"
@@ -1663,24 +1709,40 @@ export default function AcademicCounselor() {
                                   : "female"
                               }
                               size={26}
-                              color={
-                                selectedCounselor.profile?.gender == "MALE"
-                                  ? "#0000fa"
-                                  : "#ff469e"
-                              }
+                              style={{
+                                position: "absolute",
+                                right: 4,
+                                bottom: 0,
+                                backgroundColor: "#F39300",
+                                color: "white",
+                                // color:
+                                //   selectedCounselor.profile?.gender == "MALE"
+                                //     ? "#0000fa"
+                                //     : "#ff469e",
+                                padding: 5,
+                                // borderWidth: 1.5,
+                                // borderColor: "#ededed",
+                                borderRadius: 40,
+                              }}
                             />
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
                             <Text
                               style={{
                                 fontSize: 24,
                                 fontWeight: "bold",
-                                marginBottom: 4,
-                                marginLeft: 6,
+                                marginBottom: 16,
                               }}
                             >
                               {selectedCounselor.profile?.fullName}
                             </Text>
                           </View>
-                          <Text
+                          {/* <Text
                             style={{
                               fontSize: 18,
                               color: "gray",
@@ -1688,7 +1750,7 @@ export default function AcademicCounselor() {
                             }}
                           >
                             {selectedCounselor.specialization?.name}
-                          </Text>
+                          </Text> */}
                         </View>
                         <View
                           style={{
@@ -1743,8 +1805,8 @@ export default function AcademicCounselor() {
                               width: "50%",
                             }}
                           >
-                            <Ionicons
-                              name="briefcase"
+                            <MaterialCommunityIcons
+                              name="certificate"
                               size={24}
                               color="#F39300"
                               style={{ marginHorizontal: 12 }}
@@ -1757,7 +1819,7 @@ export default function AcademicCounselor() {
                                   color: "gray",
                                 }}
                               >
-                                Degreee
+                                Degree
                               </Text>
                               <Text
                                 style={{
@@ -1775,6 +1837,7 @@ export default function AcademicCounselor() {
                           style={{
                             flexDirection: "row",
                             justifyContent: "space-between",
+                            alignItems: "flex-start",
                             backgroundColor: "white",
                             paddingVertical: 8,
                             marginHorizontal: 20,
@@ -1785,11 +1848,10 @@ export default function AcademicCounselor() {
                             style={{
                               flexDirection: "row",
                               alignItems: "center",
-                              width: "50%",
                             }}
                           >
                             <Ionicons
-                              name="star"
+                              name="briefcase"
                               size={24}
                               color="#F39300"
                               style={{ marginHorizontal: 12 }}
@@ -1802,7 +1864,7 @@ export default function AcademicCounselor() {
                                   color: "gray",
                                 }}
                               >
-                                Rating
+                                Department
                               </Text>
                               <Text
                                 style={{
@@ -1811,7 +1873,99 @@ export default function AcademicCounselor() {
                                   opacity: 0.7,
                                 }}
                               >
-                                {selectedCounselor.rating}
+                                {selectedCounselor?.department?.name} (
+                                {selectedCounselor?.department?.code})
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            backgroundColor: "white",
+                            paddingVertical: 8,
+                            marginHorizontal: 20,
+                            borderRadius: 10,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Ionicons
+                              name="briefcase"
+                              size={24}
+                              color="#F39300"
+                              style={{ marginHorizontal: 12 }}
+                            />
+                            <View>
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontWeight: "600",
+                                  color: "gray",
+                                }}
+                              >
+                                Major
+                              </Text>
+                              <Text
+                                style={{
+                                  fontSize: 18,
+                                  fontWeight: "bold",
+                                  opacity: 0.7,
+                                }}
+                              >
+                                {selectedCounselor?.major?.name} (
+                                {selectedCounselor?.major?.code})
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            backgroundColor: "white",
+                            paddingVertical: 8,
+                            marginHorizontal: 20,
+                            borderRadius: 10,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Ionicons
+                              name="briefcase"
+                              size={24}
+                              color="#F39300"
+                              style={{ marginHorizontal: 12 }}
+                            />
+                            <View>
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontWeight: "600",
+                                  color: "gray",
+                                }}
+                              >
+                                Specialization
+                              </Text>
+                              <Text
+                                style={{
+                                  fontSize: 18,
+                                  fontWeight: "bold",
+                                  opacity: 0.7,
+                                }}
+                              >
+                                {selectedCounselor?.specialization?.name}
                               </Text>
                             </View>
                           </View>

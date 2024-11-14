@@ -20,11 +20,12 @@ import { AuthContext } from "../context/AuthContext";
 import { SocketContext } from "../context/SocketContext";
 import { RequestSkeleton } from "../layout/Skeleton";
 import Pagination from "../layout/Pagination";
+import { Dropdown } from "react-native-element-dropdown";
 export default function Request({ route }) {
   const navigation = useNavigation();
   const prevScreen = route?.params?.prevScreen;
   const { width, height } = Dimensions.get("screen");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const [requests, setRequests] = useState([]);
@@ -33,11 +34,20 @@ export default function Request({ route }) {
     dateTo: "",
     meetingType: "",
     sortDirection: "",
+    status: ""
   });
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [online, isOnline] = useState("");
   const [sortDirection, setSortDirection] = useState("");
+  const [status, setStatus] = useState("");
+  const statusList = [
+    { name: "EXPIRED" },
+    { name: "DENIED" },
+    { name: "WAITING" },
+    { name: "APPROVED" },
+  ];
+  const [expanded, setExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
@@ -184,7 +194,6 @@ export default function Request({ route }) {
   };
 
   const fetchData = async (filters = {}) => {
-    setLoading(true);
     try {
       const requestsRes = await axiosJWT.get(
         `${BASE_URL}/booking-counseling/appointment-request`,
@@ -217,27 +226,34 @@ export default function Request({ route }) {
   }, [currentPage]);
 
   const applyFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const newFilters = {
       dateFrom: dateFrom,
       dateTo: dateTo,
       meetingType: online,
       sortDirection: sortDirection,
+      status: status,
     };
     setFilters(newFilters);
     fetchData(newFilters);
   };
 
   const cancelFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const resetFilters = {
       dateFrom: "",
       dateTo: "",
       meetingType: "",
       sortDirection: "",
+      status: ""
     };
     setDateFrom(resetFilters.dateFrom);
     setDateTo(resetFilters.dateTo);
     isOnline(resetFilters.meetingType);
     setSortDirection(resetFilters.sortDirection);
+    setStatus(resetFilters.status);
     setFilters(resetFilters);
     fetchData(resetFilters);
   };
@@ -687,6 +703,95 @@ export default function Request({ route }) {
                       </TouchableOpacity>
                     </View>
                   </View>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: 4,
+                    marginLeft: 4,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      color: "#333",
+                      minWidth: "30%",
+                    }}
+                  >
+                    Status:
+                  </Text>
+                  <Dropdown
+                    style={{
+                      backgroundColor: "white",
+                      borderColor: expanded ? "#F39300" : "black",
+                      flex: 1,
+                      height: 30,
+                      borderWidth: 1,
+                      borderColor: "grey",
+                      borderRadius: 10,
+                      paddingHorizontal: 12,
+                      marginLeft: 16,
+                    }}
+                    placeholderStyle={{ fontSize: 14 }}
+                    selectedTextStyle={{
+                      fontSize: 14,
+                      color: status ? "black" : "white",
+                    }}
+                    maxHeight={250}
+                    data={statusList}
+                    labelField="name"
+                    value={status}
+                    placeholder={status != "" ? status : "Select Status"}
+                    onFocus={() => setExpanded(true)}
+                    onBlur={() => setExpanded(false)}
+                    onChange={(item) => {
+                      setStatus(item.name);
+                      setExpanded(false);
+                      console.log(status);
+                    }}
+                    renderRightIcon={() => (
+                      <Ionicons
+                        color={expanded ? "#F39300" : "black"}
+                        name={expanded ? "caret-up" : "caret-down"}
+                        size={20}
+                      />
+                    )}
+                    renderItem={(item) => {
+                      return (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            paddingHorizontal: 16,
+                            paddingVertical: 8,
+                            backgroundColor:
+                              item.name == status ? "#F39300" : "white",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "500",
+                              color: item.name == status ? "white" : "black",
+                            }}
+                          >
+                            {item.name}
+                          </Text>
+                          {status == item.name && (
+                            <Ionicons
+                              color="white"
+                              name="checkmark"
+                              size={20}
+                            />
+                          )}
+                        </View>
+                      );
+                    }}
+                  />
                 </View>
                 <View
                   style={{

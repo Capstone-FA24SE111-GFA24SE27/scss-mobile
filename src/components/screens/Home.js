@@ -371,8 +371,8 @@ export default function Home() {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                  Recently Requests
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  Pending Requests
                 </Text>
                 <TouchableOpacity
                   onPress={() =>
@@ -381,7 +381,7 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: "600",
                       color: "#F39300",
                       opacity: 0.8,
@@ -406,10 +406,12 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 16,
-                      fontWeight: "500",
+                      fontSize: 18,
+                      fontStyle: "italic",
+                      fontWeight: "600",
                       textAlign: "center",
-                      color: "#F39300",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     No requests created
@@ -585,7 +587,7 @@ export default function Home() {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                   Upcoming Appointments
                 </Text>
                 <TouchableOpacity
@@ -595,7 +597,7 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: "600",
                       color: "#F39300",
                       opacity: 0.8,
@@ -613,7 +615,9 @@ export default function Home() {
                     date.setDate(date.getDate() + index);
                     const dateString = date.toISOString().split("T")[0];
                     const appointmentCount = appointments.filter(
-                      (appointment) => appointment.date === dateString
+                      (appointment) =>
+                        appointment.date === dateString &&
+                        appointment.status === "WAITING"
                     ).length;
                     return (
                       <TouchableOpacity
@@ -665,7 +669,9 @@ export default function Home() {
                   })}
               </ScrollView>
               {appointments?.filter(
-                (appointment) => appointment.date === selectedDate
+                (appointment) =>
+                  appointment.date === selectedDate &&
+                  appointment.status === "WAITING"
               ).length === 0 ? (
                 <View
                   style={{
@@ -680,10 +686,12 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 16,
-                      fontWeight: "500",
+                      fontSize: 18,
+                      fontStyle: "italic",
+                      fontWeight: "600",
                       textAlign: "center",
-                      color: "#F39300",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     No appointment on this day
@@ -692,7 +700,11 @@ export default function Home() {
               ) : (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {appointments
-                    ?.filter((appointment) => appointment.date === selectedDate)
+                    ?.filter(
+                      (appointment) =>
+                        appointment.date === selectedDate &&
+                        appointment.status === "WAITING"
+                    )
                     .map((appointment) => (
                       <TouchableOpacity
                         activeOpacity={0.7}
@@ -842,148 +854,6 @@ export default function Home() {
                           </View>
                         </View>
                       </TouchableOpacity>
-                      // <TouchableOpacity
-                      //   key={appointment.id}
-                      //   style={{
-                      //     width: width * 0.8,
-                      //     backgroundColor: "#F39300",
-                      //     borderRadius: 20,
-                      //     marginVertical: 12,
-                      //     marginRight: 12,
-                      //     borderColor: "lightgrey",
-                      //     borderWidth: 1,
-                      //   }}
-                      // >
-                      //   <View
-                      //     style={{
-                      //       flexDirection: "row",
-                      //       justifyContent: "space-between",
-                      //       alignItems: "center",
-                      //       paddingHorizontal: 16,
-                      //       paddingVertical: 16,
-                      //       borderRadius: 20,
-                      //     }}
-                      //   >
-                      //     <View>
-                      //       <Text
-                      //         style={{
-                      //           fontSize: 18,
-                      //           fontWeight: "bold",
-                      //           color: "white",
-                      //         }}
-                      //       >
-                      //         {appointment.counselorName}
-                      //       </Text>
-                      //       <Text
-                      //         style={{
-                      //           fontSize: 16,
-                      //           fontWeight: "400",
-                      //           color: "white",
-                      //           marginTop: 2,
-                      //         }}
-                      //       >
-                      //         {appointment.counselorSpec}
-                      //       </Text>
-                      //     </View>
-                      //     <Image
-                      //       source={{ uri: appointment.counselorImage }}
-                      //       style={{
-                      //         width: 50,
-                      //         height: 50,
-                      //         borderRadius: 40,
-                      //         borderColor: "white",
-                      //         borderWidth: 2,
-                      //       }}
-                      //     />
-                      //   </View>
-                      //   <View
-                      //     style={{
-                      //       flexDirection: "row",
-                      //       alignItems: "flex-start",
-                      //       justifyContent: "space-between",
-                      //       padding: 16,
-                      //       borderBottomRightRadius: 20,
-                      //       borderBottomLeftRadius: 20,
-                      //     }}
-                      //   >
-                      //     <View
-                      //       style={{
-                      //         flex: 0.58,
-                      //         flexDirection: "row",
-                      //         alignItems: "center",
-                      //         padding: 4,
-                      //         backgroundColor: "white",
-                      //         borderRadius: 10,
-                      //       }}
-                      //     >
-                      //       {appointment.meetingType === "ONLINE" ? (
-                      //         <Ionicons
-                      //           name="videocam-outline"
-                      //           size={24}
-                      //           color="#F39300"
-                      //         />
-                      //       ) : (
-                      //         <MaterialIcons
-                      //           name="place"
-                      //           size={24}
-                      //           color="#F39300"
-                      //         />
-                      //       )}
-                      //       <View style={{ marginLeft: 8, flex: 1 }}>
-                      //         <Text
-                      //           style={{
-                      //             fontSize: 16,
-                      //             color: "#333",
-                      //             fontWeight: "600",
-                      //           }}
-                      //         >
-                      //           {appointment.meetingType === "ONLINE"
-                      //             ? "Online"
-                      //             : "Offline"}
-                      //         </Text>
-                      //         <Text
-                      //           style={{
-                      //             fontSize: 14,
-                      //             color: "#333",
-                      //           }}
-                      //           numberOfLines={2}
-                      //         >
-                      //           {appointment.place}
-                      //         </Text>
-                      //       </View>
-                      //     </View>
-                      //     <View
-                      //       style={{
-                      //         flex: 0.38,
-                      //         flexDirection: "row",
-                      //         alignItems: "center",
-                      //         padding: 4,
-                      //         backgroundColor: "white",
-                      //         borderRadius: 10,
-                      //       }}
-                      //     >
-                      //       <Ionicons
-                      //         name="time-outline"
-                      //         size={24}
-                      //         color="#F39300"
-                      //       />
-                      //       <View style={{ marginLeft: 8 }}>
-                      //         <Text
-                      //           style={{
-                      //             fontSize: 16,
-                      //             color: "#333",
-                      //             fontWeight: "600",
-                      //           }}
-                      //         >
-                      //           {appointment.startTime}
-                      //         </Text>
-                      //         <Text style={{ fontSize: 14, color: "#333" }}>
-                      //           {appointment.date}
-                      //         </Text>
-                      //       </View>
-                      //     </View>
-                      //   </View>
-                      // </TouchableOpacity>
                     ))}
                 </ScrollView>
               )}
@@ -996,13 +866,13 @@ export default function Home() {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                   Answered Questions
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("QA")}>
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: "600",
                       color: "#F39300",
                       opacity: 0.8,
@@ -1026,10 +896,12 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 16,
-                      fontWeight: "500",
+                      fontSize: 18,
+                      fontStyle: "italic",
+                      fontWeight: "600",
                       textAlign: "center",
-                      color: "#F39300",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     No questions were answered
@@ -1045,6 +917,7 @@ export default function Home() {
                         backgroundColor: "white",
                         borderRadius: 20,
                         marginVertical: 12,
+                        marginRight: 12,
                         borderColor: "lightgrey",
                         borderWidth: 1,
                       }}
@@ -1059,33 +932,50 @@ export default function Home() {
                       >
                         <View
                           style={{
-                            backgroundColor: "#F39300",
-                            alignSelf: "flex-start",
-                            alignItems: "center",
-                            justifyContent: "center",
                             flexDirection: "row",
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
-                            marginBottom: 8,
-                            borderRadius: 20,
-                            borderWidth: 1.5,
-                            borderColor: "transparent",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 4,
                           }}
                         >
                           <Text
                             style={{
                               fontSize: 16,
-                              fontWeight: "600",
-                              color: "white",
+                              color: "gray",
+                              fontWeight: "500",
                             }}
                           >
-                            {question.questionType}
+                            Your question
                           </Text>
+                          <View
+                            style={{
+                              backgroundColor: "#F39300",
+                              alignSelf: "flex-start",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexDirection: "row",
+                              paddingHorizontal: 8,
+                              paddingVertical: 2,
+                              borderRadius: 20,
+                              borderWidth: 1.5,
+                              borderColor: "transparent",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "600",
+                                color: "white",
+                              }}
+                            >
+                              {question.questionType}
+                            </Text>
+                          </View>
                         </View>
                         <Text
                           style={{
-                            fontSize: 20,
-                            fontWeight: "bold",
+                            fontSize: 18,
+                            fontWeight: "600",
                             color: "#333",
                           }}
                         >
@@ -1096,7 +986,8 @@ export default function Home() {
                         style={{
                           flexDirection: "row",
                           alignItems: "center",
-                          padding: 16,
+                          paddingHorizontal: 20,
+                          paddingVertical: 8,
                           borderBottomRightRadius: 20,
                           borderBottomLeftRadius: 20,
                         }}
@@ -1145,10 +1036,10 @@ export default function Home() {
                           alignSelf: "flex-start",
                           backgroundColor: "#ededed",
                           paddingHorizontal: 12,
-                          paddingVertical: 8,
+                          paddingVertical: 6,
                           marginHorizontal: 20,
                           marginBottom: 16,
-                          borderRadius: 16,
+                          borderRadius: 10,
                           borderWidth: 0.5,
                           borderColor: "lightgrey",
                         }}

@@ -35,7 +35,7 @@ export default function Demand({ route }) {
   const navigation = useNavigation();
   const prevScreen = route?.params?.prevScreen;
   const { width, height } = Dimensions.get("screen");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const [demands, setDemands] = useState([]);
@@ -44,11 +44,7 @@ export default function Demand({ route }) {
     sortDirection: "",
   });
   const [status, setStatus] = useState("");
-  const statusList = [
-    { name: "WAITING" },
-    { name: "PROCESSING" },
-    { name: "SOLVE" },
-  ];
+  const statusList = [{ name: "PROCESSING" }, { name: "DONE" }];
   const [sortDirection, setSortDirection] = useState("");
   const [expanded, setExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,7 +81,6 @@ export default function Demand({ route }) {
   };
 
   const fetchData = async (filters = {}) => {
-    setLoading(true);
     try {
       const demandsRes = await axiosJWT.get(
         `${BASE_URL}/counseling-demand/counselor/filter`,
@@ -117,6 +112,8 @@ export default function Demand({ route }) {
   }, [currentPage]);
 
   const applyFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const newFilters = {
       status: status,
       sortDirection: sortDirection,
@@ -126,6 +123,8 @@ export default function Demand({ route }) {
   };
 
   const cancelFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const resetFilters = {
       fromDate: "",
       toDate: "",
@@ -199,8 +198,13 @@ export default function Demand({ route }) {
         `${BASE_URL}/counselors/daily-slots/${counselorId}?from=${from}&to=${to}`
       );
       setSlots(response.data.content);
-    } catch (error) {
-      console.log("Error fetching slots", error);
+    } catch (err) {
+      console.log("Can't fetch slots on this day", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't fetch slots on this day",
+      });
     }
   };
 
@@ -257,8 +261,9 @@ export default function Demand({ route }) {
             }
             style={{
               width: "auto",
-              padding: 10,
-              marginVertical: 8,
+              padding: 8,
+              marginVertical: 4,
+              marginRight: 6,
               backgroundColor:
                 slot.myAppointment === true
                   ? "#ededed"
@@ -269,10 +274,9 @@ export default function Demand({ route }) {
                   : slot.status === "AVAILABLE"
                   ? "white"
                   : "#ededed",
-              borderRadius: 10,
               alignItems: "center",
+              borderRadius: 10,
               borderWidth: 1.5,
-              marginRight: 16,
               borderColor:
                 slot.myAppointment === true
                   ? "transparent"
@@ -289,7 +293,7 @@ export default function Demand({ route }) {
               slot.status !== "EXPIRED" &&
               slot.status !== "UNAVAILABLE" &&
               slot.myAppointment !== true && (
-                <View style={{ position: "absolute", top: -10, right: -10 }}>
+                <View style={{ position: "absolute", top: -12, right: -8 }}>
                   <Ionicons
                     name="checkmark-circle"
                     size={24}
@@ -381,10 +385,20 @@ export default function Demand({ route }) {
       if (data && data.status == 200) {
         handleCloseCreate();
         fetchData(filters, { page: currentPage });
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: `New appointment with ${selectedStudent.profile.fullName} created`,
+        });
         navigation.navigate("Appointment", { prevScreen: "Demand" });
       }
-    } catch (error) {
-      console.error("Can't create appointment", error);
+    } catch (err) {
+      console.log("Can't create appointment", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't create appointment",
+      });
     }
   };
 
@@ -423,10 +437,15 @@ export default function Demand({ route }) {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        fetchData();
         setOpenSolve(false);
         setSelectedDemand(null);
         setValue("");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "This demand has been solved",
+        });
+        fetchData(filters);
       } else {
         Toast.show({
           type: "error",
@@ -437,15 +456,12 @@ export default function Demand({ route }) {
           },
         });
       }
-    } catch (error) {
-      console.log("Something error when solve this demand", error);
+    } catch (err) {
+      console.log("Can't solve this demand", err);
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Something error when solve this demand",
-        onPress: () => {
-          Toast.hide();
-        },
+        text2: "Can't solve this demand",
       });
     }
   };
@@ -588,6 +604,7 @@ export default function Demand({ route }) {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
+                      minWidth: "30%",
                     }}
                   >
                     Sort:
@@ -676,6 +693,7 @@ export default function Demand({ route }) {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
+                      minWidth: "30%",
                     }}
                   >
                     Status:
@@ -684,24 +702,24 @@ export default function Demand({ route }) {
                     style={{
                       backgroundColor: "white",
                       borderColor: expanded ? "#F39300" : "black",
-                      flex: 0.5,
+                      flex: 1,
                       height: 30,
                       borderWidth: 1,
                       borderColor: "grey",
                       borderRadius: 10,
                       paddingHorizontal: 12,
-                      marginLeft: 8,
+                      marginLeft: 16,
                     }}
-                    placeholderStyle={{ fontSize: 16 }}
+                    placeholderStyle={{ fontSize: 14 }}
                     selectedTextStyle={{
-                      fontSize: 18,
+                      fontSize: 14,
                       color: status ? "black" : "white",
                     }}
                     maxHeight={250}
                     data={statusList}
                     labelField="name"
                     value={status}
-                    placeholder={status != "" ? status : "Select item"}
+                    placeholder={status != "" ? status : "Select Status"}
                     onFocus={() => setExpanded(true)}
                     onBlur={() => setExpanded(false)}
                     onChange={(item) => {
@@ -742,7 +760,7 @@ export default function Demand({ route }) {
                             <Ionicons
                               color="white"
                               name="checkmark"
-                              size={24}
+                              size={20}
                             />
                           )}
                         </View>
@@ -907,6 +925,43 @@ export default function Demand({ route }) {
                       alignItems: "center",
                     }}
                   >
+                    <Ionicons name="time" size={20} color="#F39300" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                        color: "#333",
+                      }}
+                    >
+                      {demand?.startDateTime?.split("T")[1]?.split(":")[0] +
+                        ":" +
+                        demand?.startDateTime
+                          ?.split("T")[1]
+                          ?.split(":")[1]}{" "}
+                      -{" "}
+                      {demand.endDateTime !== null
+                        ? demand?.endDateTime?.split("T")[1]?.split(":")[0] +
+                          ":" +
+                          demand?.endDateTime?.split("T")[1]?.split(":")[1]
+                        : "?"}
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: 16,
@@ -917,7 +972,7 @@ export default function Demand({ route }) {
                       Status:{" "}
                       <Text
                         style={[
-                          demand.status === "SOLVE" && { color: "green" },
+                          demand.status === "DONE" && { color: "green" },
                           demand.status === "PROCESSING" && {
                             color: "#F39300",
                           },
@@ -1213,7 +1268,7 @@ export default function Demand({ route }) {
                           marginBottom: 8,
                         }}
                       >
-                        Created by
+                        Assigned by
                       </Text>
                       <View
                         style={{
@@ -1370,6 +1425,145 @@ export default function Demand({ route }) {
                       <View
                         style={{
                           flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 16,
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <Ionicons name="calendar" size={22} color="#F39300" />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "grey",
+                              fontWeight: "600",
+                              marginLeft: 8,
+                            }}
+                          >
+                            Date
+                          </Text>
+                        </View>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#333",
+                          }}
+                        >
+                          {selectedDemand?.startDateTime?.split("T")[0]}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 16,
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <Ionicons name="time" size={22} color="#F39300" />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "grey",
+                              fontWeight: "600",
+                              marginLeft: 8,
+                            }}
+                          >
+                            Time
+                          </Text>
+                        </View>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#333",
+                          }}
+                        >
+                          {selectedDemand?.startDateTime
+                            ?.split("T")[1]
+                            ?.split(":")[0] +
+                            ":" +
+                            selectedDemand?.startDateTime
+                              ?.split("T")[1]
+                              ?.split(":")[1]}{" "}
+                          -{" "}
+                          {selectedDemand.endDateTime !== null
+                            ? selectedDemand?.endDateTime
+                                ?.split("T")[1]
+                                ?.split(":")[0] +
+                              ":" +
+                              selectedDemand?.endDateTime
+                                ?.split("T")[1]
+                                ?.split(":")[1]
+                            : "?"}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <MaterialIcons
+                            name="priority-high"
+                            size={22}
+                            color="#F39300"
+                          />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "grey",
+                              fontWeight: "600",
+                              marginLeft: 8,
+                            }}
+                          >
+                            Priority Level
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            backgroundColor: "#F39300",
+                            borderRadius: 18,
+                            paddingVertical: 6,
+                            paddingHorizontal: 12,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "bold",
+                              color: "white",
+                            }}
+                          >
+                            {selectedDemand.priorityLevel}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        marginBottom: 20,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
                           alignItems: "center",
                         }}
                       >
@@ -1381,7 +1575,109 @@ export default function Demand({ route }) {
                             marginBottom: 8,
                           }}
                         >
-                          Contact Note
+                          Additional Information
+                        </Text>
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "#333",
+                          fontWeight: "500",
+                          marginTop: 4,
+                        }}
+                      >
+                        {selectedDemand.additionalInformation}
+                      </Text>
+                      <View
+                        style={{
+                          borderBottomWidth: 1.5,
+                          borderColor: "#F39300",
+                          marginVertical: 12,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#F39300",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Issue Description
+                        </Text>
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "#333",
+                          fontWeight: "500",
+                          marginTop: 4,
+                        }}
+                      >
+                        {selectedDemand.issueDescription}
+                      </Text>
+                      <View
+                        style={{
+                          borderBottomWidth: 1.5,
+                          borderColor: "#F39300",
+                          marginVertical: 12,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#F39300",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Cause Description
+                        </Text>
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "#333",
+                          fontWeight: "500",
+                          marginTop: 4,
+                        }}
+                      >
+                        {selectedDemand.causeDescription}
+                      </Text>
+                      <View
+                        style={{
+                          borderBottomWidth: 1.5,
+                          borderColor: "#F39300",
+                          marginVertical: 12,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#F39300",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Assigner Note
                         </Text>
                       </View>
                       <Text
@@ -1415,7 +1711,7 @@ export default function Demand({ route }) {
                             marginBottom: 8,
                           }}
                         >
-                          Summarize Note
+                          Your Note
                         </Text>
                       </View>
                       <Text
@@ -1426,17 +1722,19 @@ export default function Demand({ route }) {
                           marginTop: 4,
                         }}
                       >
-                        {selectedDemand.summarizeNote !== "" ? (
+                        {selectedDemand.summarizeNote !== null ? (
                           selectedDemand.summarizeNote
                         ) : (
                           <Text
                             style={{
+                              fontSize: 18,
                               fontStyle: "italic",
+                              fontWeight: "600",
                               color: "gray",
                               opacity: 0.7,
                             }}
                           >
-                            "There's no summarize note yet"
+                            "You have not left any note yet"
                           </Text>
                         )}
                       </Text>
@@ -2103,7 +2401,7 @@ export default function Demand({ route }) {
                   fontWeight: "600",
                 }}
               >
-                Summarize Note{" "}
+                Your Note{" "}
                 <Text style={{ color: "#F39300", fontSize: 20 }}>*</Text>
               </Text>
               <View>

@@ -4,6 +4,7 @@ import { Dimensions, Modal, View } from "react-native";
 import { AuthContext } from "./AuthContext";
 import GatherInfo from "../screens/GatherInfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 export const CounselingProfileContext = createContext();
 
@@ -59,8 +60,16 @@ export const CounselingProfileProvider = ({ children }) => {
       console.log("Data successfully sent!");
       setShowModal(false);
       fetchStudentDoc();
-    } catch (error) {
-      console.log("Error sending data", error);
+    } catch (err) {
+      console.log("Can't send counseling profile", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't send counseling profile",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
     }
   };
 

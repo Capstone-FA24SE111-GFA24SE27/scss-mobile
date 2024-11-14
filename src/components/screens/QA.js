@@ -20,12 +20,14 @@ import { SocketContext } from "../context/SocketContext";
 import { ChatContext } from "../context/ChatContext";
 import { QASkeleton } from "../layout/Skeleton";
 import Pagination from "../layout/Pagination";
+import Toast from "react-native-toast-message";
 export default function QA() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  const [loading, setLoading] = useState(false);
   const { userData } = useContext(AuthContext);
   const {
+    loading,
+    setLoading,
     fetchData,
     questions,
     setQuestions,
@@ -93,6 +95,8 @@ export default function QA() {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+  const [openCreateChatSessionConfirm, setOpenCreateChatSessionConfirm] =
+    useState(false);
   const [openCloseConfirm, setOpenCloseConfirm] = useState(false);
   const [openSucess, setOpenSuccess] = useState(false);
 
@@ -136,6 +140,8 @@ export default function QA() {
   }, [keyword]);
 
   const applyFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const newFilters = {
       status: status,
       isTaken: isTaken,
@@ -148,6 +154,8 @@ export default function QA() {
   };
 
   const cancelFilters = () => {
+    setLoading(true);
+    setCurrentPage(1);
     const resetFilters = {
       status: "",
       isTaken: "",
@@ -317,23 +325,6 @@ export default function QA() {
     outputRange: ["0deg", "90deg"],
   });
 
-  const handleSendMessage = async (chatSessionId) => {
-    try {
-      await axiosJWT.post(
-        `${BASE_URL}/question-cards/send/${chatSessionId}/messages`,
-        { content: content }
-      );
-      setContent("");
-      if (scrollViewRef2.current) {
-        setTimeout(() => {
-          scrollViewRef2.current.scrollToEnd({ animated: true });
-        }, 100);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // useEffect(() => {
   //   const chatSessionIds = questions?.data?.map(
   //     (question) => question?.chatSession?.id
@@ -384,21 +375,6 @@ export default function QA() {
   //   };
   // }, [questions, selectedQuestion]);
 
-  const handleReadMessage = async (chatSessionId) => {
-    try {
-      await axiosJWT.put(
-        `${BASE_URL}/question-cards/read/${chatSessionId}/messages`
-      );
-      fetchData(filters);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleOpenConfirm = () => {
-    setOpenConfirm(true);
-  };
-
   const handleCreateQuestion = async () => {
     try {
       const response = await axiosJWT.post(`${BASE_URL}/question-cards`, {
@@ -416,12 +392,17 @@ export default function QA() {
       const data = await response.data;
       if (data && data.status == 200) {
         setOpenCreate(false);
-        handleCloseConfirm();
+        setOpenConfirm(false);
         setOpenSuccess(true);
         fetchData(filters, { page: currentPage });
       }
-    } catch (error) {
-      console.error("Can't create question", error);
+    } catch (err) {
+      console.log("Can't create question", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't create question",
+      });
     }
   };
 
@@ -432,13 +413,6 @@ export default function QA() {
         {
           content: content,
           questionType: counselorType,
-          // ...(counselorType === "ACADEMIC"
-          //   ? {
-          //       departmentId: department?.id,
-          //       majorId: major?.id,
-          //       specialization: specialization?.id || "",
-          //     }
-          //   : { expertiseId: expertise?.id }),
         }
       );
       const data = await response.data;
@@ -446,13 +420,23 @@ export default function QA() {
         setOpenEditQuestion(false);
         setContent("");
         setCounselorType("ACADEMIC");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Your question has been updated",
+        });
         fetchData(filters, { page: currentPage });
         if (openInfo) {
           setInfo({ ...info, content: content });
         }
       }
-    } catch (error) {
-      console.error("Can't edit question", error);
+    } catch (err) {
+      console.log("Can't edit question", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't edit question",
+      });
     }
   };
 
@@ -463,13 +447,23 @@ export default function QA() {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        fetchData(filters);
-        setOpenInfo(false);
         setOpenDeleteConfirm(false);
+        setOpenInfo(false);
         setSelectedQuestion(null);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Your question has been deleted",
+        });
+        fetchData(filters);
       }
-    } catch (error) {
-      console.error("Can't delete question", error);
+    } catch (err) {
+      console.log("Can't delete question", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't delete question",
+      });
     }
   };
 
@@ -478,18 +472,83 @@ export default function QA() {
       await axiosJWT.post(
         `${BASE_URL}/question-cards/student/close/${questionId}`
       );
-      fetchData(filters);
       setOpenInfo(false);
       setOpenChat(false);
       setOpenCloseConfirm(false);
       setSelectedQuestion(null);
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Your question has been closed",
+      });
+      fetchData(filters);
     } catch (err) {
-      console.log(err);
+      console.log("Can't close question", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't close question",
+      });
     }
   };
 
-  const handleCloseConfirm = () => {
-    setOpenConfirm(false);
+  const handleCreateChatSession = async (questionId) => {
+    try {
+      await axiosJWT.post(
+        `${BASE_URL}/question-cards/student/chat-session/create/${questionId}`
+      );
+      fetchData(filters);
+      setOpenCreateChatSessionConfirm(false);
+      fetchQuestionCard(questionId);
+      setTimeout(() => {
+        setOpenChat(true);
+      }, 500);
+    } catch (err) {
+      console.log("Can't start a chat in this question", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't start a chat in this question",
+      });
+    }
+  };
+
+  const handleSendMessage = async (chatSessionId) => {
+    try {
+      await axiosJWT.post(
+        `${BASE_URL}/question-cards/send/${chatSessionId}/messages`,
+        { content: content }
+      );
+      setContent("");
+      if (scrollViewRef2.current) {
+        setTimeout(() => {
+          scrollViewRef2.current.scrollToEnd({ animated: true });
+        }, 100);
+      }
+    } catch (err) {
+      console.log("Can't send message to this chat", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't send message to this chat",
+      });
+    }
+  };
+
+  const handleReadMessage = async (chatSessionId) => {
+    try {
+      await axiosJWT.put(
+        `${BASE_URL}/question-cards/read/${chatSessionId}/messages`
+      );
+      fetchData(filters);
+    } catch (err) {
+      console.log("Can't read message in this chat", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't read message in this chat",
+      });
+    }
   };
 
   const handleCloseSuccess = () => {
@@ -727,16 +786,16 @@ export default function QA() {
                       paddingHorizontal: 12,
                       marginLeft: 16,
                     }}
-                    placeholderStyle={{ fontSize: 16 }}
+                    placeholderStyle={{ fontSize: 14 }}
                     selectedTextStyle={{
-                      fontSize: 18,
+                      fontSize: 14,
                       color: status ? "black" : "white",
                     }}
                     maxHeight={250}
                     data={statusList}
                     labelField="name"
                     value={status}
-                    placeholder={status != "" ? status : "Select item"}
+                    placeholder={status != "" ? status : "Select Status"}
                     onFocus={() => setExpanded(true)}
                     onBlur={() => setExpanded(false)}
                     onChange={(item) => {
@@ -777,7 +836,7 @@ export default function QA() {
                             <Ionicons
                               color="white"
                               name="checkmark"
-                              size={24}
+                              size={20}
                             />
                           )}
                         </View>
@@ -1531,8 +1590,8 @@ export default function QA() {
                           alignSelf: "flex-start",
                           backgroundColor: "#ededed",
                           paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderRadius: 16,
+                          paddingVertical: 6,
+                          borderRadius: 10,
                           borderWidth: 0.5,
                           borderColor: "lightgrey",
                         }}
@@ -1592,38 +1651,129 @@ export default function QA() {
                               </Text>
                             </TouchableOpacity>
                           )}
-                        <TouchableOpacity
-                          disabled={question.close == true}
-                          onPress={() => {
-                            fetchQuestionCard(question.id);
-                            setTimeout(() => {
-                              handleReadMessage(question.chatSession.id);
-                              setOpenChat(true);
-                            }, 100);
-                          }}
-                          style={{
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
-                            backgroundColor: "#F39300",
-                            borderRadius: 10,
-                            flexDirection: "row",
-                            alignItems: "center",
-                            borderWidth: 1.5,
-                            borderColor: "#F39300",
-                          }}
-                        >
-                          <Ionicons name="chatbox" size={16} color="white" />
-                          <Text
+
+                        {question.chatSession !== null ? (
+                          <TouchableOpacity
+                            onPress={() => {
+                              fetchQuestionCard(question.id);
+                              setTimeout(() => {
+                                handleReadMessage(question.chatSession.id);
+                                setOpenChat(true);
+                              }, 100);
+                            }}
                             style={{
-                              fontWeight: "500",
-                              color: "white",
-                              fontSize: 16,
-                              marginLeft: 8,
+                              paddingHorizontal: 8,
+                              paddingVertical: 4,
+                              backgroundColor: "#F39300",
+                              borderRadius: 10,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              borderWidth: 1.5,
+                              borderColor: "#F39300",
                             }}
                           >
-                            Chat
+                            <Ionicons name="chatbox" size={16} color="white" />
+                            <Text
+                              style={{
+                                fontWeight: "500",
+                                color: "white",
+                                fontSize: 16,
+                                marginLeft: 8,
+                              }}
+                            >
+                              Chat
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <TouchableOpacity
+                            onPress={() => {
+                              setOpenCreateChatSessionConfirm(true);
+                              setSelectedQuestion(question);
+                            }}
+                            style={{
+                              paddingHorizontal: 8,
+                              paddingVertical: 4,
+                              backgroundColor: "#F39300",
+                              borderRadius: 10,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              borderWidth: 1.5,
+                              borderColor: "#F39300",
+                            }}
+                          >
+                            <Ionicons
+                              name="chatbubble-ellipses"
+                              size={16}
+                              color="white"
+                            />
+                            <Text
+                              style={{
+                                fontWeight: "500",
+                                color: "white",
+                                fontSize: 16,
+                                marginLeft: 8,
+                              }}
+                            >
+                              Start a chat
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </>
+                  )}
+                  {question.reviewReason !== null && (
+                    <>
+                      <View
+                        style={{
+                          borderTopWidth: 1,
+                          borderColor: "lightgrey",
+                          marginVertical: 12,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignSelf: "flex-start",
+                          alignItems: "center",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "gray",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {question.status == "REJECTED"
+                            ? "Rejected"
+                            : "Flagged"}{" "}
+                          by{" "}
+                          <Text style={{ fontWeight: "bold", color: "#333" }}>
+                            {question.counselor.profile.fullName}
                           </Text>
-                        </TouchableOpacity>
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          alignSelf: "flex-start",
+                          backgroundColor: "#ededed",
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          borderRadius: 10,
+                          borderWidth: 0.5,
+                          borderColor: "lightgrey",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "#333",
+                          }}
+                          numberOfLines={2}
+                        >
+                          {question.reviewReason}
+                        </Text>
                       </View>
                     </>
                   )}
@@ -1833,18 +1983,20 @@ export default function QA() {
                       marginTop: 8,
                       marginBottom: 12,
                     }}
-                    placeholderStyle={{ fontSize: 16 }}
+                    placeholderStyle={{ fontSize: 14 }}
                     selectedTextStyle={{
-                      fontSize: 18,
+                      fontSize: 14,
                       color: department ? "black" : "white",
                     }}
                     maxHeight={150}
                     data={departments}
                     labelField="name"
                     search
-                    value={department !== "" ? department.name : "Select item"}
+                    value={
+                      department !== "" ? department.name : "Select Department"
+                    }
                     placeholder={
-                      department !== "" ? department.name : "Select item"
+                      department !== "" ? department.name : "Select Department"
                     }
                     searchPlaceholder="Search Department"
                     onFocus={() => setExpanded2(true)}
@@ -1891,7 +2043,7 @@ export default function QA() {
                             <Ionicons
                               color="white"
                               name="checkmark"
-                              size={24}
+                              size={20}
                             />
                           )}
                         </View>
@@ -1921,18 +2073,18 @@ export default function QA() {
                           marginTop: 8,
                           marginBottom: 12,
                         }}
-                        placeholderStyle={{ fontSize: 16 }}
+                        placeholderStyle={{ fontSize: 14 }}
                         selectedTextStyle={{
-                          fontSize: 18,
+                          fontSize: 14,
                           color: major ? "black" : "white",
                         }}
                         maxHeight={150}
                         data={majors}
                         labelField="name"
                         search
-                        value={major !== "" ? major.name : "Select item"}
-                        placeholder={major !== "" ? major.name : "Select item"}
-                        searchPlaceholder="Search major"
+                        value={major !== "" ? major.name : "Select Major"}
+                        placeholder={major !== "" ? major.name : "Select Major"}
+                        searchPlaceholder="Search Major"
                         onFocus={() => setExpanded3(true)}
                         onBlur={() => setExpanded3(false)}
                         onChange={(item) => {
@@ -1973,7 +2125,7 @@ export default function QA() {
                                 <Ionicons
                                   color="white"
                                   name="checkmark"
-                                  size={24}
+                                  size={20}
                                 />
                               )}
                             </View>
@@ -2005,9 +2157,9 @@ export default function QA() {
                           marginTop: 8,
                           marginBottom: 12,
                         }}
-                        placeholderStyle={{ fontSize: 16 }}
+                        placeholderStyle={{ fontSize: 14 }}
                         selectedTextStyle={{
-                          fontSize: 18,
+                          fontSize: 14,
                           color: specialization ? "black" : "white",
                         }}
                         maxHeight={150}
@@ -2017,12 +2169,12 @@ export default function QA() {
                         value={
                           specialization !== ""
                             ? specialization.name
-                            : "Select item"
+                            : "Select Specialization"
                         }
                         placeholder={
                           specialization !== ""
                             ? specialization.name
-                            : "Select item"
+                            : "Select Specialization"
                         }
                         searchPlaceholder="Search Specialization"
                         onFocus={() => setExpanded4(true)}
@@ -2069,7 +2221,7 @@ export default function QA() {
                                 <Ionicons
                                   color="white"
                                   name="checkmark"
-                                  size={24}
+                                  size={20}
                                 />
                               )}
                             </View>
@@ -2098,18 +2250,20 @@ export default function QA() {
                       marginTop: 8,
                       marginBottom: 12,
                     }}
-                    placeholderStyle={{ fontSize: 16 }}
+                    placeholderStyle={{ fontSize: 14 }}
                     selectedTextStyle={{
-                      fontSize: 18,
+                      fontSize: 14,
                       color: expertise ? "black" : "white",
                     }}
                     maxHeight={150}
                     data={expertises}
                     labelField="name"
                     search
-                    value={expertise !== "" ? expertise.name : "Select item"}
+                    value={
+                      expertise !== "" ? expertise.name : "Select Expertise"
+                    }
                     placeholder={
-                      expertise !== "" ? expertise.name : "Select item"
+                      expertise !== "" ? expertise.name : "Select Expertise"
                     }
                     searchPlaceholder="Search Expertise"
                     onFocus={() => setExpanded2(true)}
@@ -2152,7 +2306,7 @@ export default function QA() {
                             <Ionicons
                               color="white"
                               name="checkmark"
-                              size={24}
+                              size={20}
                             />
                           )}
                         </View>
@@ -2189,7 +2343,7 @@ export default function QA() {
                   left: 20,
                   right: 20,
                 }}
-                onPress={handleOpenConfirm}
+                onPress={() => setOpenConfirm(true)}
               >
                 <Text
                   style={{
@@ -2215,7 +2369,7 @@ export default function QA() {
           transparent={true}
           visible={openConfirm}
           animationType="fade"
-          onRequestClose={handleCloseConfirm}
+          onRequestClose={() => setOpenConfirm(false)}
         >
           <View
             style={{
@@ -2271,7 +2425,7 @@ export default function QA() {
                     borderWidth: 1,
                     borderColor: "gray",
                   }}
-                  onPress={handleCloseConfirm}
+                  onPress={() => setOpenConfirm(false)}
                 >
                   <Text
                     style={{
@@ -2432,109 +2586,6 @@ export default function QA() {
                 }}
                 multiline
               />
-              {/* <Text style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}>
-                Question Type:
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  marginVertical: 12,
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    width: "47.5%",
-                    alignItems: "center",
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setCounselorType("ACADEMIC")}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      backgroundColor:
-                        counselorType == "ACADEMIC" ? "white" : "#ededed",
-                      borderRadius: 10,
-                      paddingHorizontal: 12,
-                      paddingVertical: 4,
-                      borderWidth: 1.5,
-                      borderColor:
-                        counselorType == "ACADEMIC" ? "#F39300" : "transparent",
-                    }}
-                  >
-                    <Ionicons
-                      name={
-                        counselorType == "ACADEMIC"
-                          ? "checkmark-circle"
-                          : "radio-button-off"
-                      }
-                      size={24}
-                      color={counselorType == "ACADEMIC" ? "#F39300" : "gray"}
-                      style={{ marginRight: 8 }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color: counselorType == "ACADEMIC" ? "#F39300" : "gray",
-                        fontWeight: counselorType == "ACADEMIC" ? "600" : "500",
-                      }}
-                    >
-                      Academic
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    width: "50%",
-                    alignItems: "center",
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setCounselorType("NON_ACADEMIC")}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      backgroundColor:
-                        counselorType == "NON_ACADEMIC" ? "white" : "#ededed",
-                      borderRadius: 10,
-                      paddingHorizontal: 12,
-                      paddingVertical: 4,
-                      borderWidth: 1.5,
-                      borderColor:
-                        counselorType == "NON_ACADEMIC"
-                          ? "#F39300"
-                          : "transparent",
-                    }}
-                  >
-                    <Ionicons
-                      name={
-                        counselorType == "NON_ACADEMIC"
-                          ? "checkmark-circle"
-                          : "radio-button-off"
-                      }
-                      size={24}
-                      color={
-                        counselorType == "NON_ACADEMIC" ? "#F39300" : "gray"
-                      }
-                      style={{ marginRight: 8 }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color:
-                          counselorType == "NON_ACADEMIC" ? "#F39300" : "gray",
-                        fontWeight:
-                          counselorType == "NON_ACADEMIC" ? "600" : "500",
-                      }}
-                    >
-                      Non-academic
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View> */}
               <View
                 style={{
                   flexDirection: "row",
@@ -2586,6 +2637,106 @@ export default function QA() {
                     }}
                   >
                     Edit
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openDeleteConfirm}
+          animationType="fade"
+          onRequestClose={() => setOpenDeleteConfirm(false)}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <View
+              style={{
+                width: width * 0.8,
+                padding: 20,
+                backgroundColor: "white",
+                borderRadius: 10,
+                elevation: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginBottom: 10,
+                  textAlign: "center",
+                }}
+              >
+                Delete Question Confirmation
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  marginBottom: 30,
+                  textAlign: "center",
+                }}
+              >
+                Are you sure you want to delete this question?{"\n"}
+                You can't undo the change
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#ededed",
+                    padding: 10,
+                    borderRadius: 10,
+                    marginRight: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "gray",
+                  }}
+                  onPress={() => (
+                    setOpenDeleteConfirm(false), setSelectedQuestion(null)
+                  )}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "#333",
+                      fontWeight: "600",
+                    }}
+                  >
+                    No
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#F39300",
+                    padding: 10,
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={() => handleDeleteQuestion(selectedQuestion?.id)}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Yes
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -2692,9 +2843,9 @@ export default function QA() {
         </Modal>
         <Modal
           transparent={true}
-          visible={openDeleteConfirm}
+          visible={openCreateChatSessionConfirm}
           animationType="fade"
-          onRequestClose={() => setOpenDeleteConfirm(false)}
+          onRequestClose={() => setOpenCreateChatSessionConfirm(false)}
         >
           <View
             style={{
@@ -2721,7 +2872,7 @@ export default function QA() {
                   textAlign: "center",
                 }}
               >
-                Delete Question Confirmation
+                Start A Conversation Confirmation
               </Text>
               <Text
                 style={{
@@ -2730,8 +2881,8 @@ export default function QA() {
                   textAlign: "center",
                 }}
               >
-                Are you sure you want to delete this question?{"\n"}
-                You can't undo the change
+                Are you sure you want to start to chat in this question?{"\n"}A
+                new chat will be created
               </Text>
               <View
                 style={{
@@ -2752,7 +2903,8 @@ export default function QA() {
                     borderColor: "gray",
                   }}
                   onPress={() => (
-                    setOpenDeleteConfirm(false), setSelectedQuestion(null)
+                    setOpenCreateChatSessionConfirm(false),
+                    setSelectedQuestion(null)
                   )}
                 >
                   <Text
@@ -2774,7 +2926,7 @@ export default function QA() {
                     justifyContent: "center",
                     alignItems: "center",
                   }}
-                  onPress={() => handleDeleteQuestion(selectedQuestion?.id)}
+                  onPress={() => handleCreateChatSession(selectedQuestion?.id)}
                 >
                   <Text
                     style={{
@@ -3236,51 +3388,90 @@ export default function QA() {
                       </Text>
                     )}
                   </View>
-                  <View
-                    style={{
-                      marginBottom: 20,
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <Text
+                  {(info.status == "PENDING" || info.status == "VERIFIED") && (
+                    <View
                       style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                        marginBottom: 4,
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
                       }}
                     >
-                      Answer
-                    </Text>
-                    {info?.answer !== null ? (
                       <Text
                         style={{
-                          fontSize: 20,
-                          color: "#333",
-                          fontWeight: "500",
-                          opacity: 0.7,
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
                         }}
                       >
-                        {info?.answer}
+                        Answer
                       </Text>
-                    ) : (
+                      {info?.answer !== null ? (
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            color: "#333",
+                            fontWeight: "500",
+                            opacity: 0.7,
+                          }}
+                        >
+                          {info?.answer}
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontStyle: "italic",
+                            fontWeight: "600",
+                            color: "gray",
+                            opacity: 0.7,
+                          }}
+                        >
+                          There's no answer yet
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                  {(info.status == "REJECTED" || info.status == "FLAGGED") && (
+                    <View
+                      style={{
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
+                      }}
+                    >
                       <Text
                         style={{
-                          fontSize: 20,
-                          color: "#333",
-                          fontWeight: "500",
-                          opacity: 0.7,
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
                         }}
                       >
-                        There's no answer yet
+                        Reason
                       </Text>
-                    )}
-                  </View>
+                      {info?.reviewReason !== null && (
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            color: "#333",
+                            fontWeight: "500",
+                            opacity: 0.7,
+                          }}
+                        >
+                          {info?.reviewReason}
+                        </Text>
+                      )}
+                    </View>
+                  )}
                   {info.status == "PENDING" && (
                     <View
                       style={{
