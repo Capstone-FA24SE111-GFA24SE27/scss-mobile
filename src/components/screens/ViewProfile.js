@@ -96,7 +96,7 @@ export default function ViewProfile() {
       console.log("Can't update counseling profile", err);
       Toast.show({
         type: "error",
-        text1: "Updated failed",
+        text1: "Error",
         text2: "Can't update counseling profile",
         onPress: () => {
           Toast.hide();

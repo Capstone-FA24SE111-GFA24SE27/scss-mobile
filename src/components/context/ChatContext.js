@@ -23,7 +23,7 @@ export const ChatProvider = ({ children }) => {
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const scrollViewRef2 = useRef(null);
-
+  const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [keyword, setKeyword] = useState("");
@@ -70,7 +70,9 @@ export const ChatProvider = ({ children }) => {
         setQuestions(questionsRes?.data?.content || []);
       }
     } catch (err) {
-      console.log(err);
+      console.log("Can't fetch questions", err);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -96,7 +98,9 @@ export const ChatProvider = ({ children }) => {
         setSelectedQuestion(questionRes?.data?.content || []);
       }
     } catch (err) {
-      console.log(err);
+      console.log("Can't fetch selected question", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -235,6 +239,8 @@ export const ChatProvider = ({ children }) => {
   return (
     <ChatContext.Provider
       value={{
+        loading,
+        setLoading,
         fetchData,
         questions,
         setQuestions,

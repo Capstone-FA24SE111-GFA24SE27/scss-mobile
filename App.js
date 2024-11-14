@@ -45,6 +45,7 @@ export default function App() {
           opacity: 0.85,
         }}
         text2NumberOfLines={2}
+        onPress={() => Toast.hide()}
       />
     ),
 
@@ -68,6 +69,7 @@ export default function App() {
           opacity: 0.85,
         }}
         text2NumberOfLines={2}
+        onPress={() => Toast.hide()}
       />
     ),
 
@@ -91,6 +93,7 @@ export default function App() {
           opacity: 0.85,
         }}
         text2NumberOfLines={2}
+        onPress={() => Toast.hide()}
       />
     ),
   };

@@ -45,10 +45,6 @@ export default function Schedule() {
   const [value, setValue] = useState("");
   const statusOptions = ["ABSENT", "ATTEND"];
 
-  useEffect(() => {
-    console.log(items);
-  }, [items]);
-
   useFocusEffect(
     React.useCallback(() => {
       // const startDate = new Date(selectedDate);
@@ -116,7 +112,7 @@ export default function Schedule() {
 
   const openURL = (url) => {
     Linking.openURL(url).catch((err) =>
-      console.error("An error occurred", err)
+      console.log("An error occurred", err)
     );
   };
 
@@ -128,9 +124,7 @@ export default function Schedule() {
       const scheduleRes = await axiosJWT.get(
         `${BASE_URL}/booking-counseling/appointment?fromDate=${fromDate}&toDate=${toDate}`
       );
-
       const data = scheduleRes?.data;
-      console.log(data);
       if (data.status === 200) {
         const formattedItems = data?.content
           ?.sort(
@@ -181,7 +175,8 @@ export default function Schedule() {
         items.forEach((item) => {
           marked[item.title] = {
             marked: true,
-            dotColor: selectedDate === item.title ? "white" : "#F39300",
+            dotColor: "#F39300"
+            // dotColor: selectedDate === item.title ? "white" : "#F39300",
           };
         });
         setMarkedDates(marked);
@@ -195,8 +190,8 @@ export default function Schedule() {
           },
         });
       }
-    } catch (error) {
-      console.error("Failed to fetch data", error);
+    } catch (err) {
+      console.log("Failed to fetch data", err);
     }
   };
 
@@ -276,9 +271,13 @@ export default function Schedule() {
           },
         });
       }
-      // console.log(selectedAppointment, method.toLowerCase(), value);
-    } catch (error) {
-      console.error("Something error", error);
+    } catch (err) {
+      console.log("Can't update appointment", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't update appointment",
+      });
     }
   };
 
@@ -291,8 +290,13 @@ export default function Schedule() {
       if (data && data.status == 200) {
         handleCloseTakeAttendance();
       }
-    } catch {
-      console.error("Something error", error);
+    } catch (err) {
+      console.log("Can't take attendance on this appointment", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't take attendance on this appointment",
+      });
     }
   };
 
@@ -473,14 +477,14 @@ export default function Schedule() {
               disablePan
               initialPosition="close"
               theme={{
-                selectedDayBackgroundColor: "#F39300",
-                selectedDayTextColor: "white",
-                // selectedDayBackgroundColor: "white",
-                // selectedDayTextColor: "black",
+                // selectedDayBackgroundColor: "#F39300",
+                // selectedDayTextColor: "white",
+                selectedDayBackgroundColor: "white",
+                selectedDayTextColor: "black",
                 arrowColor: "#F39300",
                 textDayHeaderFontSize: 14,
                 textDayFontSize: 16,
-                todayTextColor: "#F39300",
+                todayTextColor: "black",
               }}
               style={{
                 elevation: 1,
@@ -1259,7 +1263,7 @@ export default function Schedule() {
                         borderWidth: 1.5,
                         borderColor: "#e3e3e3",
                         flexDirection: "row",
-                        justifyContent: "space-between",
+                        justifyContent: "center",
                         alignItems: "center",
                       }}
                     >

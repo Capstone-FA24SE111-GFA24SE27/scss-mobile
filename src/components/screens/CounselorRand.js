@@ -25,6 +25,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Calendar, CalendarProvider } from "react-native-calendars";
 import { Dropdown } from "react-native-element-dropdown";
 import ErrorModal from "../layout/ErrorModal";
+import Toast from "react-native-toast-message";
 export default function CounselorRand() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
@@ -92,8 +93,13 @@ export default function CounselorRand() {
       );
       setSlots(response.data.content);
       setLoading(false);
-    } catch (error) {
-      console.error("Error fetching slots", error);
+    } catch (err) {
+      console.log("Can't fetch slots on this day", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't fetch slot on this day",
+      });
     }
   };
 
@@ -268,8 +274,9 @@ export default function CounselorRand() {
             }
             style={{
               width: "auto",
-              padding: 10,
-              marginVertical: 8,
+              padding: 8,
+              marginVertical: 4,
+              marginRight: 6,
               backgroundColor:
                 slot.myAppointment === true
                   ? "#F39300"
@@ -281,10 +288,9 @@ export default function CounselorRand() {
                   : slot.status === "AVAILABLE"
                   ? "white"
                   : "#ededed",
-              borderRadius: 10,
               alignItems: "center",
+              borderRadius: 10,
               borderWidth: 1.5,
-              marginRight: 12,
               borderColor:
                 slot.myAppointment === true
                   ? "transparent"
@@ -302,7 +308,7 @@ export default function CounselorRand() {
               slot.status !== "EXPIRED" &&
               slot.status !== "UNAVAILABLE" &&
               slot.myAppointment !== true && (
-                <View style={{ position: "absolute", top: -10, right: -10 }}>
+                <View style={{ position: "absolute", top: -12, right: -8 }}>
                   <Ionicons
                     name="checkmark-circle"
                     size={24}
@@ -516,7 +522,7 @@ export default function CounselorRand() {
           marginVertical: 8,
           paddingHorizontal: 16,
         }}
-        placeholderStyle={{ fontSize: 16 }}
+        placeholderStyle={{ fontSize: 14 }}
         selectedTextStyle={{
           fontSize: 18,
           color: selectedDepartment ? "black" : "white",
@@ -527,10 +533,10 @@ export default function CounselorRand() {
         labelField="name"
         search
         value={
-          selectedDepartment !== "" ? selectedDepartment.name : "Select item"
+          selectedDepartment !== "" ? selectedDepartment.name : "Select Department"
         }
         placeholder={
-          selectedDepartment !== "" ? selectedDepartment.name : "Select item"
+          selectedDepartment !== "" ? selectedDepartment.name : "Select Department"
         }
         searchPlaceholder="Search Department"
         onFocus={() => setExpanded(true)}
@@ -591,7 +597,7 @@ export default function CounselorRand() {
           marginVertical: 8,
           paddingHorizontal: 16,
         }}
-        placeholderStyle={{ fontSize: 16 }}
+        placeholderStyle={{ fontSize: 14 }}
         selectedTextStyle={{
           fontSize: 18,
           color: selectedMajor ? "black" : "white",
@@ -601,8 +607,8 @@ export default function CounselorRand() {
         data={majors}
         labelField="name"
         search
-        value={selectedMajor !== "" ? selectedMajor.name : "Select item"}
-        placeholder={selectedMajor !== "" ? selectedMajor.name : "Select item"}
+        value={selectedMajor !== "" ? selectedMajor.name : "Select Major"}
+        placeholder={selectedMajor !== "" ? selectedMajor.name : "Select Major"}
         searchPlaceholder="Search Major"
         onFocus={() => setExpanded2(true)}
         onBlur={() => setExpanded2(false)}
@@ -661,7 +667,7 @@ export default function CounselorRand() {
           marginVertical: 8,
           paddingHorizontal: 16,
         }}
-        placeholderStyle={{ fontSize: 16 }}
+        placeholderStyle={{ fontSize: 14 }}
         selectedTextStyle={{
           fontSize: 18,
           color: selectedSpecialization ? "black" : "white",
@@ -674,12 +680,12 @@ export default function CounselorRand() {
         value={
           selectedSpecialization !== ""
             ? selectedSpecialization.name
-            : "Select item"
+            : "Select Specialization"
         }
         placeholder={
           selectedSpecialization !== ""
             ? selectedSpecialization.name
-            : "Select item"
+            : "Select Specialization"
         }
         searchPlaceholder="Search Specialization"
         onFocus={() => setExpanded3(true)}
@@ -744,7 +750,7 @@ export default function CounselorRand() {
           marginVertical: 8,
           paddingHorizontal: 16,
         }}
-        placeholderStyle={{ fontSize: 16 }}
+        placeholderStyle={{ fontSize: 14 }}
         selectedTextStyle={{
           fontSize: 18,
           color: selectedExpertise ? "black" : "white",
@@ -755,10 +761,10 @@ export default function CounselorRand() {
         labelField="name"
         search
         value={
-          selectedExpertise !== "" ? selectedExpertise.name : "Select item"
+          selectedExpertise !== "" ? selectedExpertise.name : "Select Expertise"
         }
         placeholder={
-          selectedExpertise !== "" ? selectedExpertise.name : "Select item"
+          selectedExpertise !== "" ? selectedExpertise.name : "Select Expertise"
         }
         searchPlaceholder="Search Expertise"
         onFocus={() => setExpanded(true)}
@@ -1035,6 +1041,7 @@ export default function CounselorRand() {
   };
 
   const handleMatch = async () => {
+    setMatcher(null);
     setError(null);
     setLoading2(true);
     try {
@@ -1068,8 +1075,8 @@ export default function CounselorRand() {
         );
         setMatcher(response.data.content);
       }
-    } catch (error) {
-      console.log("Can't find counselor", error);
+    } catch (err) {
+      console.log("Can't find counselor", err);
       setError("No Counselor found");
     }
   };

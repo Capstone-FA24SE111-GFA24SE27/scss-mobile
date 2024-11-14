@@ -310,8 +310,8 @@ export default function Home() {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                  Recently Requests
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  Pending Requests
                 </Text>
                 <TouchableOpacity
                   onPress={() =>
@@ -320,7 +320,7 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: "600",
                       color: "#F39300",
                       opacity: 0.8,
@@ -344,10 +344,12 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 16,
-                      fontWeight: "500",
+                      fontSize: 18,
+                      fontStyle: "italic",
+                      fontWeight: "600",
                       textAlign: "center",
-                      color: "#F39300",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     No requests received
@@ -521,7 +523,7 @@ export default function Home() {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                   Upcoming Appointments
                 </Text>
                 <TouchableOpacity
@@ -531,7 +533,7 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: "600",
                       color: "#F39300",
                       opacity: 0.8,
@@ -620,10 +622,12 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 16,
-                      fontWeight: "500",
+                      fontSize: 18,
+                      fontStyle: "italic",
+                      fontWeight: "600",
                       textAlign: "center",
-                      color: "#F39300",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     No appointment on this day
@@ -798,7 +802,7 @@ export default function Home() {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                   Assigned Demands
                 </Text>
                 <TouchableOpacity
@@ -808,7 +812,7 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: "600",
                       color: "#F39300",
                       opacity: 0.8,
@@ -833,10 +837,12 @@ export default function Home() {
                 >
                   <Text
                     style={{
-                      fontSize: 16,
-                      fontWeight: "500",
+                      fontSize: 18,
+                      fontStyle: "italic",
+                      fontWeight: "600",
                       textAlign: "center",
-                      color: "#F39300",
+                      color: "gray",
+                      opacity: 0.7,
                     }}
                   >
                     No demands assigned
