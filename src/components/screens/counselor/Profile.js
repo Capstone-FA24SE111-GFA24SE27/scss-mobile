@@ -210,90 +210,7 @@ export default function Profile({ route }) {
                         {profile.status}
                       </Text>
                     </View>
-                    <View style={{ width: "50%" }}>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        Phone Number:
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: "gray",
-                          maxWidth: "90%",
-                        }}
-                      >
-                        {profile.phoneNumber}
-                      </Text>
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      flexWrap: "wrap",
-                      alignItems: "flex-start",
-                      marginTop: 16,
-                    }}
-                  >
-                    <View style={{ width: "50%" }}>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        Date of birth:
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: "gray",
-                          maxWidth: "90%",
-                        }}
-                      >
-                        {formatDate(profile.dateOfBirth)}
-                      </Text>
-                    </View>
-                    <View style={{ width: "50%" }}>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        {profile.specialization != null
-                          ? "Specialization:"
-                          : "Expertise:"}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: "gray",
-                          maxWidth: "90%",
-                        }}
-                      >
-                        {profile.specialization?.name ||
-                          profile.expertise?.name}
-                      </Text>
-                    </View>
-                  </View>
-                  {profile.specialization != null && (
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        alignItems: "flex-start",
-                        marginTop: 16,
-                      }}
-                    >
+                    {profile.specialization != null && (
                       <View style={{ width: "50%" }}>
                         <Text
                           style={{
@@ -315,6 +232,40 @@ export default function Profile({ route }) {
                           )
                         </Text>
                       </View>
+                    )}
+                    {profile.expertise != null && (
+                      <View style={{ width: "50%" }}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "bold",
+                            color: "#333",
+                          }}
+                        >
+                          Expertise:
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            color: "gray",
+                            maxWidth: "90%",
+                          }}
+                        >
+                          {profile.expertise?.name}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  {profile.specialization != null && (
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        alignItems: "flex-start",
+                        marginTop: 16,
+                      }}
+                    >
                       <View style={{ width: "50%" }}>
                         <Text
                           style={{
@@ -335,8 +286,79 @@ export default function Profile({ route }) {
                           {profile.major?.name} ({profile.major?.code})
                         </Text>
                       </View>
+
+                      <View style={{ width: "50%" }}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "bold",
+                            color: "#333",
+                          }}
+                        >
+                          Specialization:
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            color: "gray",
+                            maxWidth: "90%",
+                          }}
+                        >
+                          {profile.specialization?.name}
+                        </Text>
+                      </View>
                     </View>
                   )}
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "flex-start",
+                      marginTop: 16,
+                    }}
+                  >
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Phone Number:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {profile.phoneNumber}
+                      </Text>
+                    </View>
+                    <View style={{ width: "50%" }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Date of birth:
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "gray",
+                          maxWidth: "90%",
+                        }}
+                      >
+                        {formatDate(profile.dateOfBirth)}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               )}
             </View>

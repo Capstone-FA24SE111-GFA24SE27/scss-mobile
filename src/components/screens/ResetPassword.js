@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import axiosJWT, { BASE_URL } from "../../config/Config";
 
 export default function ResetPassword() {
   const navigation = useNavigation();

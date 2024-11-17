@@ -95,7 +95,7 @@ export default function Notification() {
         ) {
           Toast.show({
             type: "info",
-            text1: "Info",
+            text1: "Read All",
             text2: `You have read ${
               notifications?.filter(
                 (notification) => notification.readStatus == false
@@ -300,12 +300,11 @@ export default function Notification() {
         </View>
       </View>
       {/* Notifications List */}
-      <View style={{ paddingHorizontal: 30 }}>
+      <View style={{ paddingHorizontal: 30, paddingBottom: 80 }}>
         <FlatList
           data={notifications}
           keyExtractor={(item) => item.notificationId.toString()} // Sử dụng notificationId làm key
           renderItem={renderItem}
-          contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
         />
       </View>

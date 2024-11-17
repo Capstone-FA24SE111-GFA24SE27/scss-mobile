@@ -18,6 +18,19 @@ export default function Personal() {
   const navigation = useNavigation();
   const { fetchProfile, profile, userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
+  const [requestCount, setRequestCount] = useState(0);
+  const [appointmentCount, setAppointmentCount] = useState(0);
+  const [demandCount, setDemandCount] = useState(0);
+  const [weekSlots, setWeekSlots] = useState([]);
+  const daysOfWeek = [
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+    "SUNDAY",
+  ];
   const scrollViewRef = useRef(null);
   useFocusEffect(
     React.useCallback(() => {
@@ -27,6 +40,7 @@ export default function Personal() {
       fetchRequestAllPages();
       fetchAppointmentAllPages();
       fetchDemandAllPages();
+      fetchWeekTimetableSlots();
     }, [])
   );
 
@@ -53,10 +67,6 @@ export default function Personal() {
       ])
     ).start();
   }, []);
-
-  const [requestCount, setRequestCount] = useState(0);
-  const [appointmentCount, setAppointmentCount] = useState(0);
-  const [demandCount, setDemandCount] = useState(0);
 
   useEffect(() => {
     socket.on(`/user/${userData?.id}/private/notification`, () => {
@@ -137,6 +147,18 @@ export default function Personal() {
     } catch (error) {
       console.log("Error fetching demands", error);
       setDemandCount(0);
+    }
+  };
+
+  const fetchWeekTimetableSlots = async () => {
+    try {
+      const weekRes = await axiosJWT.get(
+        `${BASE_URL}/manage/counselors/${userData?.id}/counseling-slots`
+      );
+      const weeKData = weekRes.data.content;
+      setWeekSlots(weeKData);
+    } catch (err) {
+      console.log("Can't fetch week timetable", err);
     }
   };
 
@@ -278,7 +300,7 @@ export default function Personal() {
                   fontSize: 16,
                   color: "#F39300",
                   fontWeight: "600",
-                  opacity: 0.8
+                  opacity: 0.8,
                 }}
               >
                 VIEW ALL
@@ -352,7 +374,7 @@ export default function Personal() {
                   fontSize: 16,
                   color: "#F39300",
                   fontWeight: "600",
-                  opacity: 0.8
+                  opacity: 0.8,
                 }}
               >
                 VIEW ALL
@@ -434,7 +456,7 @@ export default function Personal() {
                   fontSize: 16,
                   color: "#F39300",
                   fontWeight: "600",
-                  opacity: 0.8
+                  opacity: 0.8,
                 }}
               >
                 VIEW ALL
@@ -448,19 +470,97 @@ export default function Personal() {
             </TouchableOpacity>
           </View>
         </View>
-        {/* <ScrollView
-          ref={scrollViewRef}
-          showsVerticalScrollIndicator={false}
+        <View
           style={{
-            flex: 0.65,
             backgroundColor: "white",
+            flex: 1,
+            padding: 12,
+            marginBottom: 16,
+            marginHorizontal: 30,
             borderRadius: 10,
             elevation: 3,
-            marginHorizontal: 30,
-            paddingHorizontal: 5,
-            marginBottom: 20,
           }}
-        ></ScrollView> */}
+        >
+          <View style={{ marginBottom: 8 }}>
+            <Text style={{ fontSize: 20, fontWeight: "700", color: "#333" }}>
+              Week Timetable
+            </Text>
+          </View>
+          <ScrollView
+            ref={scrollViewRef}
+            showsVerticalScrollIndicator={false}
+            style={{ backgroundColor: "white" }}
+          >
+            {daysOfWeek.map((day) => {
+              const slots = weekSlots.filter((slot) => slot.dayOfWeek === day);
+              return (
+                <View key={day} style={{ marginBottom: 8 }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#F39300",
+                      fontWeight: "600",
+                      opacity: 0.8,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {day}
+                  </Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                    {slots.length > 0 ? (
+                      slots.map((slot) => (
+                        <View
+                          key={slot.id}
+                          style={{
+                            backgroundColor: "white",
+                            padding: 8,
+                            marginVertical: 4,
+                            marginRight: 6,
+                            borderRadius: 10,
+                            borderWidth: 1.5,
+                            borderColor: "black",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: "600",
+                              color: "#333",
+                            }}
+                          >
+                            {slot.startTime.substring(0, 5)} -{" "}
+                            {slot.endTime.substring(0, 5)}
+                          </Text>
+                        </View>
+                      ))
+                    ) : (
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          color: "gray",
+                          opacity: 0.7,
+                        }}
+                      >
+                        No slots on this day
+                      </Text>
+                    )}
+                  </View>
+                  {day !== "SUNDAY" && (
+                    <View
+                      style={{
+                        borderBottomWidth: 1.5,
+                        borderColor: "#F39300",
+                        marginVertical: 8,
+                      }}
+                    />
+                  )}
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
       </View>
     </>
   );

@@ -108,12 +108,9 @@ export default function ChangePassword() {
     //   return;
     // }
     try {
-      await axiosJWT.post(
-        `${BASE_URL}/account/forgot-password`,
-        {
-          email: email,
-        }
-      );
+      await axiosJWT.post(`${BASE_URL}/account/forgot-password`, {
+        email: email,
+      });
       setOpenConfirm2(false);
       setOpenSuccess2(true);
     } catch (err) {
@@ -135,7 +132,15 @@ export default function ChangePassword() {
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <TouchableOpacity
+              onPress={() => (
+                navigation.navigate("Profile"),
+                setCurrentPasswordError(""),
+                setNewPasswordError(""),
+                setConfirmPasswordError(""),
+                setEmailError("")
+              )}
+            >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
           </View>
@@ -346,7 +351,7 @@ export default function ChangePassword() {
               </Text>
             ) : null}
           </View>
-          <View style={{ marginVertical: 15 }}>
+          <View style={{ marginVertical: 12 }}>
             <Text style={{ fontSize: 16, color: "gray" }}>
               * Your new password must be different from current password
             </Text>
@@ -357,37 +362,39 @@ export default function ChangePassword() {
               * Do not share your password to others
             </Text>
           </View>
-          <View
+        </ScrollView>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            paddingHorizontal: 30,
+            paddingVertical: 16,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => setOpenConfirm(true)}
             style={{
-              flexDirection: "row",
-              marginTop: 4,
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              backgroundColor: "#F39300",
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: "white",
+              width: "100%",
             }}
           >
-            <TouchableOpacity
-              onPress={() => setOpenConfirm(true)}
+            <Text
               style={{
-                paddingHorizontal: 16,
-                paddingVertical: 10,
-                backgroundColor: "#F39300",
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: "white",
-                width: "100%",
+                fontSize: 20,
+                color: "white",
+                textAlign: "center",
+                fontWeight: "600",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: "white",
-                  textAlign: "center",
-                  fontWeight: "600",
-                }}
-              >
-                Save Changes
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+              Save Changes
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <Modal
         transparent={true}

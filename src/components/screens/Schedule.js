@@ -7,6 +7,7 @@ import {
   Modal,
   ScrollView,
   TextInput,
+  Linking,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -109,7 +110,8 @@ export default function Schedule() {
       const data = scheduleRes?.data;
       if (data.status === 200) {
         const formattedItems = data?.content
-          ?.sort(
+          ?.filter((appointment) => appointment?.status !== "CANCELED")
+          .sort(
             (a, b) =>
               new Date(a.startDateTime).getTime() -
               new Date(b.startDateTime).getTime()
@@ -155,7 +157,7 @@ export default function Schedule() {
         items.forEach((item) => {
           marked[item.title] = {
             marked: true,
-            dotColor: "#F39300"
+            dotColor: "#F39300",
             // dotColor: selectedDate === item.title ? "white" : "#F39300",
           };
         });
@@ -179,11 +181,6 @@ export default function Schedule() {
   console.error = (...args) => {
     if (/defaultProps/.test(args[0])) return;
     error(...args);
-  };
-
-  const handleOpenInfo = (info) => {
-    setInfo(info);
-    setOpenInfo(true);
   };
 
   const handleOpenFeedback = async (id) => {
@@ -252,7 +249,7 @@ export default function Schedule() {
   const renderItem = ({ item }) => (
     <>
       <TouchableOpacity
-        onPress={() => handleOpenInfo(item)}
+        onPress={() => (setInfo(item), setOpenInfo(true))}
         activeOpacity={0.8}
         style={{
           backgroundColor: "white",
@@ -360,7 +357,7 @@ export default function Schedule() {
                 // selectedDayBackgroundColor: "#F39300",
                 // selectedDayTextColor: "white",
                 selectedDayBackgroundColor: "white",
-                selectedDayTextColor: "black",
+                selectedDayTextColor: "#F39300",
                 arrowColor: "#F39300",
                 textDayHeaderFontSize: 14,
                 textDayFontSize: 16,
@@ -702,17 +699,39 @@ export default function Schedule() {
                             : "Address"}
                         </Text>
                       </View>
-                      <View style={{ flexDirection: "row", maxWidth: "50%" }}>
+                      <TouchableOpacity
+                        disabled={info.meetingType !== "ONLINE"}
+                        onPress={() =>
+                          Linking.openURL(
+                            `https://meet.google.com/${info.place}`
+                          ).catch((err) => {
+                            console.log("Can't open this link", err);
+                            Toast.show({
+                              type: "error",
+                              text1: "Error",
+                              text2: "Can't open this link",
+                            });
+                          })
+                        }
+                        style={{ maxWidth: "45%" }}
+                      >
                         <Text
                           style={{
                             fontSize: 18,
                             fontWeight: "bold",
-                            color: "#333",
+                            color:
+                              info.meetingType === "ONLINE"
+                                ? "#F39300"
+                                : "#333",
+                            textDecorationLine:
+                              info.meetingType === "ONLINE"
+                                ? "underline"
+                                : "none",
                           }}
                         >
                           {info.place}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                   </View>
                   {info?.feedback !== null ? (
@@ -791,7 +810,7 @@ export default function Schedule() {
                     <View
                       style={{
                         margin: 20,
-                        borderRadius: 20,
+                        borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
                         elevation: 1,

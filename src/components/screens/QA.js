@@ -1022,7 +1022,7 @@ export default function QA() {
                     </View>
                   </View>
                 </View>
-                <View
+                {/* <View
                   style={{
                     flex: 1,
                     flexDirection: "row",
@@ -1109,7 +1109,7 @@ export default function QA() {
                       </TouchableOpacity>
                     </View>
                   </View>
-                </View>
+                </View> */}
                 <View
                   style={{
                     flex: 1,

@@ -235,7 +235,7 @@ export default function Profile({ route }) {
                           color: "#333",
                         }}
                       >
-                        Phone Number:
+                        Department:
                       </Text>
                       <Text
                         style={{
@@ -244,7 +244,7 @@ export default function Profile({ route }) {
                           maxWidth: "90%",
                         }}
                       >
-                        {profile.phoneNumber}
+                        {profile.department?.name} ({profile.department?.code})
                       </Text>
                     </View>
                   </View>
@@ -265,7 +265,7 @@ export default function Profile({ route }) {
                           color: "#333",
                         }}
                       >
-                        Date of birth:
+                        Major:
                       </Text>
                       <Text
                         style={{
@@ -274,7 +274,7 @@ export default function Profile({ route }) {
                           maxWidth: "90%",
                         }}
                       >
-                        {formatDate(profile.dateOfBirth)}
+                        {profile.major?.name} ({profile.major?.code})
                       </Text>
                     </View>
                     <View style={{ width: "50%" }}>
@@ -315,7 +315,7 @@ export default function Profile({ route }) {
                           color: "#333",
                         }}
                       >
-                        Department:
+                        Phone Number:
                       </Text>
                       <Text
                         style={{
@@ -324,7 +324,7 @@ export default function Profile({ route }) {
                           maxWidth: "90%",
                         }}
                       >
-                        {profile.department?.name} ({profile.department?.code})
+                        {profile.phoneNumber}
                       </Text>
                     </View>
                     <View style={{ width: "50%" }}>
@@ -335,7 +335,7 @@ export default function Profile({ route }) {
                           color: "#333",
                         }}
                       >
-                        Major:
+                        Date of birth:
                       </Text>
                       <Text
                         style={{
@@ -344,7 +344,7 @@ export default function Profile({ route }) {
                           maxWidth: "90%",
                         }}
                       >
-                        {profile.major?.name} ({profile.major?.code})
+                        {formatDate(profile.dateOfBirth)}
                       </Text>
                     </View>
                   </View>

@@ -19,6 +19,7 @@ import {
   Alert,
   Modal,
   FlatList,
+  Linking,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -74,6 +75,8 @@ export default function Appointment({ route }) {
   const [openInfo, setOpenInfo] = useState(false);
   const [openCancel, setOpenCancel] = useState(false);
   const [info, setInfo] = useState({});
+  const [openReport, setOpenReport] = useState(false);
+  const [report, setReport] = useState(null);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openAttendance, setOpenAttendance] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -546,16 +549,6 @@ export default function Appointment({ route }) {
     setOpenCreate(false);
   };
 
-  const handleOpenInfo = (info) => {
-    setInfo(info);
-    setOpenInfo(true);
-  };
-
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
-  };
-
   const handleOpenCancel = (id) => {
     setOpenCancel(true);
     setSelectedAppointment(id);
@@ -679,6 +672,24 @@ export default function Appointment({ route }) {
     setOpenUpdate(false);
     fetchData(filters);
   };
+
+  const fetchAppointmentReport = async () => {
+    try {
+      const reportRes = await axiosJWT.get(
+        `${BASE_URL}/appointments/report/${selectedAppointment}`
+      );
+      const reportData = reportRes.data.content;
+      setReport(reportData);
+    } catch (err) {
+      console.log("Can't fetch appointment report", err);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedAppointment) {
+      fetchAppointmentReport();
+    }
+  }, [selectedAppointment]);
 
   return (
     <>
@@ -1217,7 +1228,11 @@ export default function Appointment({ route }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => handleOpenInfo(appointment)}
+                    onPress={() => (
+                      setInfo(appointment),
+                      setOpenInfo(true),
+                      setSelectedAppointment(appointment.id)
+                    )}
                     style={{ position: "absolute", top: 0, right: -4 }}
                   >
                     <Ionicons
@@ -1352,11 +1367,12 @@ export default function Appointment({ route }) {
                         </TouchableOpacity>
                       </View>
                     )}
-                    {appointment.status === "WAITING" && (
+                    {appointment.status !== "CANCELED" && (
                       <TouchableOpacity
                         onPress={() => {
                           setSelectedAppointment(appointment.id);
                           setOpenAttendance(true);
+                          setValue(appointment.status);
                         }}
                         style={{
                           paddingHorizontal: 8,
@@ -2085,7 +2101,7 @@ export default function Appointment({ route }) {
           transparent={true}
           visible={openInfo}
           animationType="slide"
-          onRequestClose={handleCloseInfo}
+          onRequestClose={() => setOpenInfo(false)}
         >
           <View
             style={{
@@ -2122,7 +2138,7 @@ export default function Appointment({ route }) {
                     alignSelf: "flex-start",
                     alignItems: "flex-start",
                   }}
-                  onPress={handleCloseInfo}
+                  onPress={() => (setOpenInfo(false), setInfo(""))}
                 >
                   <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
@@ -2138,7 +2154,7 @@ export default function Appointment({ route }) {
                       alignSelf: "flex-end",
                       alignItems: "flex-end",
                     }}
-                    // onPress={handleOpenReport}
+                    onPress={() => setOpenReport(true)}
                   >
                     <Ionicons name="newspaper" size={28} color="#F39300" />
                   </TouchableOpacity>
@@ -2580,17 +2596,40 @@ export default function Appointment({ route }) {
                               </Modal>
                             </View>
                           )}
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color: "#333",
-                          }}
+                        <TouchableOpacity
+                          disabled={info.meetingType !== "ONLINE"}
+                          onPress={() =>
+                            Linking.openURL(
+                              `https://meet.google.com/${info?.meetUrl}`
+                            ).catch((err) => {
+                              console.log("Can't open this link", err);
+                              Toast.show({
+                                type: "error",
+                                text1: "Error",
+                                text2: "Can't open this link",
+                              });
+                            })
+                          }
                         >
-                          {info.meetingType === "ONLINE"
-                            ? info?.meetUrl || "N/A"
-                            : info?.address || "N/A"}
-                        </Text>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              color:
+                                info.meetingType === "ONLINE"
+                                  ? "#F39300"
+                                  : "#333",
+                              textDecorationLine:
+                                info.meetingType === "ONLINE"
+                                  ? "underline"
+                                  : "none",
+                            }}
+                          >
+                            {info.meetingType === "ONLINE"
+                              ? info?.meetUrl || "N/A"
+                              : info?.address || "N/A"}
+                          </Text>
+                        </TouchableOpacity>
                       </View>
                     </View>
                   </View>
@@ -2691,8 +2730,6 @@ export default function Appointment({ route }) {
                         elevation: 1,
                         borderWidth: 1.5,
                         borderColor: "#e3e3e3",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
@@ -2764,7 +2801,9 @@ export default function Appointment({ route }) {
                     alignSelf: "flex-end",
                   }}
                   onPress={() => (
-                    setOpenAttendance(false), setSelectedAppointment(null)
+                    setOpenAttendance(false),
+                    setSelectedAppointment(null),
+                    setValue("")
                   )}
                 >
                   <Ionicons name="close" size={24} />
@@ -2962,238 +3001,317 @@ export default function Appointment({ route }) {
             </View>
           </View>
         </Modal>
-        {/* <Modal
+        <Modal
           transparent={true}
           visible={openReport}
           animationType="slide"
-          onRequestClose={handleCloseReport}
+          onRequestClose={() => setOpenReport(false)}
         >
           <View
             style={{
-              width: "100%",
-              height: "100%",
-              backgroundColor: "#f5f7fd",
+              flex: 1,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
             }}
           >
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
+                width: "100%",
+                height: report ? "98%" : "20%",
+                backgroundColor: "#f5f7fd",
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
               }}
             >
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#ededed",
-                  padding: 4,
-                  marginHorizontal: 20,
-                  marginTop: 16,
-                  marginBottom: 8,
-                  borderRadius: 20,
-                  alignSelf: "flex-start",
-                  alignItems: "flex-start",
-                }}
-                onPress={handleCloseReport}
-              >
-                <Ionicons name="chevron-back" size={28} />
-              </TouchableOpacity>
-              <View style={{ flex: 3, justifyContent: "center" }}>
-                <Text
-                  style={{
-                    color: "#F39300",
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  Counseling Report
-                </Text>
-              </View>
-              <View style={{ flex: 1 }} />
-            </View>
-            <ScrollView
-              style={{
-                flex: 1,
-                paddingHorizontal: 20,
-                marginVertical: 12,
-              }}
-              showsVerticalScrollIndicator={false}
-            >
               <View
                 style={{
-                  backgroundColor: "#F39300",
-                  paddingHorizontal: 8,
-                  paddingVertical: 6,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingVertical: 12,
+                  paddingHorizontal: 20,
                 }}
               >
                 <Text
                   style={{
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: "bold",
-                    color: "white",
+                    color: "#333",
                   }}
                 >
-                  Consultation Goal
+                  Appointment Report
                 </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: "#ededed",
-                  padding: 8,
-                  marginBottom: 16,
-                }}
-              >
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>• Specific Goal:</Text>
-                  {"\n"}
-                  {reportData.consultationGoal.specificGoal}
-                </Text>
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>• Reason:</Text>
-                  {"\n"}
-                  {reportData.consultationGoal.reason}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  backgroundColor: "#F39300",
-                  paddingHorizontal: 8,
-                  paddingVertical: 6,
-                }}
-              >
-                <Text
+                <TouchableOpacity
                   style={{
-                    fontSize: 18,
-                    fontWeight: "bold",
-                    color: "white",
+                    backgroundColor: "#ededed",
+                    padding: 4,
+                    borderRadius: 20,
                   }}
+                  onPress={() => (
+                    setOpenReport(false), setSelectedAppointment(null)
+                  )}
                 >
-                  Consultation Content
-                </Text>
+                  <Ionicons name="close" size={28} color="#333" />
+                </TouchableOpacity>
               </View>
-              <View
-                style={{
-                  backgroundColor: "#ededed",
-                  padding: 8,
-                  marginBottom: 16,
-                }}
-              >
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>
-                    • Summary of Discussion:
-                  </Text>
-                  {"\n"}
-                  {reportData.consultationContent.summaryOfDiscussion}
-                </Text>
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>• Main Issues:</Text>
-                  {"\n"}
-                  {reportData.consultationContent.mainIssues}
-                </Text>
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>• Student Emotions:</Text>
-                  {"\n"}
-                  {reportData.consultationContent.studentEmotions}
-                </Text>
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>
-                    • Student Reactions:
-                  </Text>
-                  {"\n"}
-                  {reportData.consultationContent.studentReactions}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  backgroundColor: "#F39300",
-                  paddingHorizontal: 8,
-                  paddingVertical: 6,
-                }}
-              >
-                <Text
+              {report ? (
+                <ScrollView
                   style={{
-                    fontSize: 18,
-                    fontWeight: "bold",
-                    color: "white",
+                    flex: 1,
+                    paddingHorizontal: 20,
+                    marginVertical: 12,
                   }}
+                  showsVerticalScrollIndicator={false}
                 >
-                  Consultation Conclusion
-                </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: "#ededed",
-                  padding: 8,
-                  marginBottom: 16,
-                }}
-              >
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>
-                    • Counselor Conclusion:
-                  </Text>
-                  {"\n"}
-                  {reportData.consultationConclusion.counselorConclusion}
-                </Text>
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>• Follow-up Needed:</Text>
-                  {"\n"}
-                  {reportData.consultationConclusion.followUpNeeded
-                    ? "Yes"
-                    : "No"}
-                </Text>
-                {reportData.consultationConclusion.followUpNeeded && (
-                  <Text
-                    style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                  <View
+                    style={{
+                      backgroundColor: "#F39300",
+                      paddingHorizontal: 8,
+                      paddingVertical: 6,
+                      borderTopLeftRadius: 10,
+                      borderTopRightRadius: 10,
+                    }}
                   >
-                    <Text style={{ fontWeight: "600" }}>
-                      • Follow-up Notes:
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      Intervention
                     </Text>
-                    {"\n"}
-                    {reportData.consultationConclusion.followUpNotes}
-                  </Text>
-                )}
-              </View>
-
-              <View
-                style={{
-                  backgroundColor: "#F39300",
-                  paddingHorizontal: 8,
-                  paddingVertical: 6,
-                }}
-              >
-                <Text
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      padding: 8,
+                      marginBottom: 16,
+                      borderLeftWidth: 1.5,
+                      borderRightWidth: 1.5,
+                      borderBottomWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                      borderBottomLeftRadius: 10,
+                      borderBottomRightRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>• Type:</Text>
+                      {"\n"}
+                      {report.intervention.type}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>• Description:</Text>
+                      {"\n"}
+                      {report.intervention.description}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "#F39300",
+                      paddingHorizontal: 8,
+                      paddingVertical: 6,
+                      borderTopLeftRadius: 10,
+                      borderTopRightRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      Consultation Goal
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      padding: 8,
+                      marginBottom: 16,
+                      borderLeftWidth: 1.5,
+                      borderRightWidth: 1.5,
+                      borderBottomWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                      borderBottomLeftRadius: 10,
+                      borderBottomRightRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        • Specific Goal:
+                      </Text>
+                      {"\n"}
+                      {report.consultationGoal.specificGoal}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>• Reason:</Text>
+                      {"\n"}
+                      {report.consultationGoal.reason}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "#F39300",
+                      paddingHorizontal: 8,
+                      paddingVertical: 6,
+                      borderTopLeftRadius: 10,
+                      borderTopRightRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      Consultation Content
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      padding: 8,
+                      marginBottom: 16,
+                      borderLeftWidth: 1.5,
+                      borderRightWidth: 1.5,
+                      borderBottomWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                      borderBottomLeftRadius: 10,
+                      borderBottomRightRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        • Summary of Discussion:
+                      </Text>
+                      {"\n"}
+                      {report.consultationContent.summaryOfDiscussion}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>• Main Issues:</Text>
+                      {"\n"}
+                      {report.consultationContent.mainIssues}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        • Student Emotions:
+                      </Text>
+                      {"\n"}
+                      {report.consultationContent.studentEmotions}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        • Student Reactions:
+                      </Text>
+                      {"\n"}
+                      {report.consultationContent.studentReactions}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "#F39300",
+                      paddingHorizontal: 8,
+                      paddingVertical: 6,
+                      borderTopLeftRadius: 10,
+                      borderTopRightRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      Consultation Conclusion
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      padding: 8,
+                      marginBottom: 16,
+                      borderLeftWidth: 1.5,
+                      borderRightWidth: 1.5,
+                      borderBottomWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                      borderBottomLeftRadius: 10,
+                      borderBottomRightRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        • Counselor Conclusion:
+                      </Text>
+                      {"\n"}
+                      {report.consultationConclusion.counselorConclusion}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                    >
+                      <Text style={{ fontWeight: "600" }}>
+                        • Follow-up Needed:
+                      </Text>
+                      {"\n"}
+                      {report.consultationConclusion.followUpNeeded
+                        ? "Yes"
+                        : "No"}
+                    </Text>
+                    {report.consultationConclusion.followUpNeeded && (
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "#333",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <Text style={{ fontWeight: "600" }}>
+                          • Follow-up Notes:
+                        </Text>
+                        {"\n"}
+                        {report.consultationConclusion.followUpNotes}
+                      </Text>
+                    )}
+                  </View>
+                </ScrollView>
+              ) : (
+                <View
                   style={{
-                    fontSize: 18,
-                    fontWeight: "bold",
-                    color: "white",
+                    flex: 1,
+                    alignItems: "center",
+                    marginTop: 20,
                   }}
                 >
-                  Intervention
-                </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: "#ededed",
-                  padding: 8,
-                  marginBottom: 16,
-                }}
-              >
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>• Type:</Text>
-                  {"\n"}
-                  {reportData.intervention.type}
-                </Text>
-                <Text style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>
-                  <Text style={{ fontWeight: "600" }}>• Description:</Text>
-                  {"\n"}
-                  {reportData.intervention.description}
-                </Text>
-              </View>
-            </ScrollView>
+                  <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                    This appointment has no report yet
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
-        </Modal> */}
+        </Modal>
       </View>
     </>
   );

@@ -89,7 +89,7 @@ const GatherInfo = ({
             width: width * 0.95,
             backgroundColor: "white",
             borderRadius: 10,
-            marginTop: 30,
+            marginTop: 20,
           }}
         >
           <ScrollView
@@ -105,7 +105,7 @@ const GatherInfo = ({
                 width: width * 0.95,
                 paddingHorizontal: 20,
                 paddingTop: 20,
-                paddingBottom: 12,
+                paddingBottom: 8,
               }}
             >
               <View
@@ -113,7 +113,7 @@ const GatherInfo = ({
                   backgroundColor: "#fff",
                   borderRadius: 10,
                   padding: 12,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   elevation: 3,
                 }}
               >
@@ -124,7 +124,7 @@ const GatherInfo = ({
                   backgroundColor: "#fff",
                   borderRadius: 10,
                   padding: 12,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   elevation: 3,
                 }}
               >
@@ -151,7 +151,7 @@ const GatherInfo = ({
                 width: width * 0.95,
                 paddingHorizontal: 20,
                 paddingTop: 20,
-                paddingBottom: 12,
+                paddingBottom: 8,
               }}
             >
               <View
@@ -159,7 +159,7 @@ const GatherInfo = ({
                   backgroundColor: "#fff",
                   borderRadius: 10,
                   padding: 12,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   elevation: 3,
                 }}
               >
@@ -185,7 +185,7 @@ const GatherInfo = ({
                 width: width * 0.95,
                 paddingHorizontal: 20,
                 paddingTop: 20,
-                paddingBottom: 12,
+                paddingBottom: 8,
               }}
             >
               <View
@@ -193,7 +193,7 @@ const GatherInfo = ({
                   backgroundColor: "#fff",
                   borderRadius: 10,
                   padding: 12,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   elevation: 3,
                 }}
               >
@@ -217,7 +217,7 @@ const GatherInfo = ({
                 width: width * 0.95,
                 paddingHorizontal: 20,
                 paddingTop: 20,
-                paddingBottom: 12,
+                paddingBottom: 8,
               }}
             >
               <View
@@ -225,7 +225,7 @@ const GatherInfo = ({
                   backgroundColor: "#fff",
                   borderRadius: 10,
                   padding: 12,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   elevation: 3,
                 }}
               >
@@ -252,7 +252,7 @@ const GatherInfo = ({
                 width: width * 0.95,
                 paddingHorizontal: 20,
                 paddingTop: 20,
-                paddingBottom: 12,
+                paddingBottom: 8,
               }}
             >
               <View
@@ -260,7 +260,7 @@ const GatherInfo = ({
                   backgroundColor: "#fff",
                   borderRadius: 10,
                   padding: 12,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   elevation: 3,
                 }}
               >
@@ -283,7 +283,7 @@ const GatherInfo = ({
                 width: width * 0.95,
                 paddingHorizontal: 20,
                 paddingTop: 20,
-                paddingBottom: 12,
+                paddingBottom: 8,
               }}
             >
               <View
@@ -291,7 +291,7 @@ const GatherInfo = ({
                   backgroundColor: "#fff",
                   borderRadius: 10,
                   padding: 12,
-                  marginBottom: 20,
+                  marginBottom: 16,
                   elevation: 3,
                 }}
               >
@@ -340,7 +340,7 @@ const GatherInfo = ({
                   borderRadius: 20,
                 }}
               >
-                <Ionicons name="chevron-back" size={30} color="black" />
+                <Ionicons name="chevron-back" size={30} color="gray" />
               </TouchableOpacity>
             )}
             <View
@@ -388,9 +388,15 @@ const GatherInfo = ({
                   borderRadius: 20,
                 }}
               >
-                <Ionicons name="chevron-forward" size={30} color="black" />
+                <Ionicons name="chevron-forward" size={30} color="gray" />
               </TouchableOpacity>
             )}
+          </View>
+          <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
+            <Text style={{ fontSize: 16, color: "gray" }}>
+              * Providing these information can assist counselors in better
+              understanding and supporting you during the counseling process.
+            </Text>
           </View>
           <View
             style={{
@@ -415,7 +421,7 @@ const GatherInfo = ({
             >
               <Text
                 style={{
-                  color: "#333",
+                  color: "gray",
                   fontSize: 18,
                   fontWeight: "600",
                   opacity: 0.8,
@@ -445,7 +451,7 @@ const GatherInfo = ({
                 borderColor: !Object.values(formValues).some(
                   (value) => value !== ""
                 )
-                  ? "gray"
+                  ? "#e3e3e3"
                   : "#F39300",
               }}
             >
