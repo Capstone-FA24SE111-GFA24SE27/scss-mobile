@@ -102,8 +102,10 @@ export default function Student() {
   const [attendanceLoading, setAttendanceLoading] = useState(false);
   const [info4, setInfo4] = useState(null);
   const [info5, setInfo5] = useState(null);
-  const [openInfo3, setOpenInfo3] = useState(false);
+  const [openHistoryInfo, setOpenHistoryInfo] = useState(false);
   const [historyInfo, setHistoryInfo] = useState(null);
+  const [openReport, setOpenReport] = useState(false);
+  const [report, setReport] = useState(null);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [showFromPicker, setShowFromPicker] = useState(false);
@@ -618,15 +620,24 @@ export default function Student() {
     }
   };
 
-  const handleOpenHistoryInfo = (info) => {
-    setHistoryInfo(info);
-    setOpenInfo3(true);
+  const fetchAppointmentReport = async () => {
+    try {
+      const reportRes = await axiosJWT.get(
+        `${BASE_URL}/appointments/report/${historyInfo?.id}`
+      );
+      const reportData = reportRes.data.content;
+      setReport(reportData);
+    } catch (err) {
+      console.log("Can't fetch appointment report", err);
+    }
   };
 
-  const handleCloseHistoryInfo = () => {
-    setHistoryInfo("");
-    setOpenInfo3(false);
-  };
+  useEffect(() => {
+    if (historyInfo) {
+      setReport(null);
+      fetchAppointmentReport();
+    }
+  }, [historyInfo, selectedStudent]);
 
   return (
     <>
@@ -2775,6 +2786,8 @@ export default function Student() {
                               <View
                                 style={{
                                   paddingHorizontal: 20,
+                                  paddingTop: 8,
+                                  paddingBottom: 20,
                                   backgroundColor: "#f5f7fd",
                                   borderRadius: 16,
                                 }}
@@ -3847,103 +3860,19 @@ export default function Student() {
                       {info5.data
                         .filter((item) => item.status === "ATTEND")
                         .map((item, index) => (
-                          // <TouchableOpacity
-                          //   activeOpacity={0.7}
-                          //   onPress={() => handleOpenHistoryInfo(item)}
-                          //   key={index}
-                          //   style={{
-                          //     backgroundColor: "white",
-                          //     borderRadius: 10,
-                          //     padding: 12,
-                          //     marginBottom: 20,
-                          //     elevation: 3,
-                          //     flexDirection: "row",
-                          //     alignItems: "center",
-                          //   }}
-                          // >
-                          //   <Image
-                          //     source={{
-                          //       uri: item.counselorInfo.profile.avatarLink,
-                          //     }}
-                          //     style={{
-                          //       width: 50,
-                          //       height: 50,
-                          //       borderRadius: 25,
-                          //       marginRight: 12,
-                          //     }}
-                          //   />
-                          //   <View style={{ flex: 1 }}>
-                          //     <Text
-                          //       style={{
-                          //         fontWeight: "bold",
-                          //         fontSize: 18,
-                          //         color: "#333",
-                          //         marginBottom: 4,
-                          //       }}
-                          //     >
-                          //       Counselor: {item.counselorInfo.profile.fullName}
-                          //     </Text>
-                          //     <Text
-                          //       style={{
-                          //         fontSize: 16,
-                          //         fontWeight: "500",
-                          //         color: "#333",
-                          //         marginBottom: 4,
-                          //       }}
-                          //     >
-                          //       Date:{" "}
-                          //       <Text
-                          //         style={{
-                          //           color: "#F39300",
-                          //           fontWeight: "600",
-                          //         }}
-                          //       >
-                          //         {item.startDateTime.split("T")[0]}
-                          //       </Text>
-                          //     </Text>
-                          //     <Text
-                          //       style={{
-                          //         fontSize: 16,
-                          //         fontWeight: "500",
-                          //         color: "#333",
-                          //       }}
-                          //     >
-                          //       Time:{" "}
-                          //       <Text
-                          //         style={{
-                          //           color: "#F39300",
-                          //           fontWeight: "600",
-                          //         }}
-                          //       >
-                          //         {item.startDateTime
-                          //           .split("T")[1]
-                          //           .split(":")[0] +
-                          //           ":" +
-                          //           item.startDateTime
-                          //             .split("T")[1]
-                          //             .split(":")[1]}{" "}
-                          //         -{" "}
-                          //         {item.endDateTime
-                          //           .split("T")[1]
-                          //           .split(":")[0] +
-                          //           ":" +
-                          //           item.endDateTime
-                          //             .split("T")[1]
-                          //             .split(":")[1]}
-                          //       </Text>
-                          //     </Text>
-                          //   </View>
-                          // </TouchableOpacity>
                           <TouchableOpacity
                             activeOpacity={0.7}
-                            onPress={() => handleOpenHistoryInfo(item)}
+                            onPress={() => (
+                              setHistoryInfo(item), setOpenHistoryInfo(true)
+                            )}
                             key={index}
                             style={{
                               backgroundColor: "#F39300",
                               borderRadius: 20,
-                              marginBottom: 20,
+                              marginBottom: 12,
                             }}
                           >
+                            
                             <View
                               style={{
                                 backgroundColor: "#fff0e0",
@@ -4085,9 +4014,9 @@ export default function Student() {
                     />
                     <Modal
                       transparent={true}
-                      visible={openInfo3}
+                      visible={openHistoryInfo}
                       animationType="slide"
-                      onRequestClose={handleCloseHistoryInfo}
+                      onRequestClose={() => setOpenHistoryInfo(false)}
                     >
                       <View
                         style={{
@@ -4124,31 +4053,35 @@ export default function Student() {
                                 alignSelf: "flex-start",
                                 alignItems: "flex-start",
                               }}
-                              onPress={handleCloseHistoryInfo}
+                              onPress={() => (
+                                setHistoryInfo(""), setOpenHistoryInfo(false)
+                              )}
                             >
                               <Ionicons name="chevron-back" size={28} />
                             </TouchableOpacity>
-                            {historyInfo?.status != "WAITING" && (
-                              <TouchableOpacity
-                                style={{
-                                  backgroundColor: "white",
-                                  padding: 4,
-                                  marginHorizontal: 20,
-                                  marginTop: 16,
-                                  marginBottom: 8,
-                                  borderRadius: 10,
-                                  alignSelf: "flex-end",
-                                  alignItems: "flex-end",
-                                }}
-                                // onPress={handleOpenReport}
-                              >
-                                <Ionicons
-                                  name="newspaper"
-                                  size={28}
-                                  color="#F39300"
-                                />
-                              </TouchableOpacity>
-                            )}
+                            {historyInfo?.status != "WAITING" &&
+                              historyInfo?.counselorInfo?.id ==
+                                userData?.id && (
+                                <TouchableOpacity
+                                  style={{
+                                    backgroundColor: "white",
+                                    padding: 4,
+                                    marginHorizontal: 20,
+                                    marginTop: 16,
+                                    marginBottom: 8,
+                                    borderRadius: 10,
+                                    alignSelf: "flex-end",
+                                    alignItems: "flex-end",
+                                  }}
+                                  onPress={() => setOpenReport(true)}
+                                >
+                                  <Ionicons
+                                    name="newspaper"
+                                    size={28}
+                                    color="#F39300"
+                                  />
+                                </TouchableOpacity>
+                              )}
                           </View>
                           <ScrollView showsVerticalScrollIndicator={false}>
                             <View
@@ -4585,8 +4518,6 @@ export default function Student() {
                                     elevation: 1,
                                     borderWidth: 1.5,
                                     borderColor: "#e3e3e3",
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
                                     alignItems: "center",
                                   }}
                                 >
@@ -4606,6 +4537,375 @@ export default function Student() {
                               )}
                             </View>
                           </ScrollView>
+                        </View>
+                      </View>
+                    </Modal>
+                    <Modal
+                      transparent={true}
+                      visible={openReport}
+                      animationType="slide"
+                      onRequestClose={() => setOpenReport(false)}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          backgroundColor: "rgba(0, 0, 0, 0.2)",
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: "100%",
+                            height: report ? "98%" : "20%",
+                            backgroundColor: "#f5f7fd",
+                            borderTopLeftRadius: 16,
+                            borderTopRightRadius: 16,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingVertical: 12,
+                              paddingHorizontal: 20,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 22,
+                                fontWeight: "bold",
+                                color: "#333",
+                              }}
+                            >
+                              Appointment Report
+                            </Text>
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#ededed",
+                                padding: 4,
+                                borderRadius: 20,
+                              }}
+                              onPress={() => setOpenReport(false)}
+                            >
+                              <Ionicons name="close" size={28} color="#333" />
+                            </TouchableOpacity>
+                          </View>
+                          {report ? (
+                            <ScrollView
+                              style={{
+                                flex: 1,
+                                paddingHorizontal: 20,
+                                marginVertical: 12,
+                              }}
+                              showsVerticalScrollIndicator={false}
+                            >
+                              <View
+                                style={{
+                                  backgroundColor: "#F39300",
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 6,
+                                  borderTopLeftRadius: 10,
+                                  borderTopRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 18,
+                                    fontWeight: "bold",
+                                    color: "white",
+                                  }}
+                                >
+                                  Intervention
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "white",
+                                  padding: 8,
+                                  marginBottom: 16,
+                                  borderLeftWidth: 1.5,
+                                  borderRightWidth: 1.5,
+                                  borderBottomWidth: 1.5,
+                                  borderColor: "#e3e3e3",
+                                  borderBottomLeftRadius: 10,
+                                  borderBottomRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Type:
+                                  </Text>
+                                  {"\n"}
+                                  {report.intervention.type}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Description:
+                                  </Text>
+                                  {"\n"}
+                                  {report.intervention.description}
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "#F39300",
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 6,
+                                  borderTopLeftRadius: 10,
+                                  borderTopRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 20,
+                                    fontWeight: "bold",
+                                    color: "white",
+                                  }}
+                                >
+                                  Consultation Goal
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "white",
+                                  padding: 8,
+                                  marginBottom: 16,
+                                  borderLeftWidth: 1.5,
+                                  borderRightWidth: 1.5,
+                                  borderBottomWidth: 1.5,
+                                  borderColor: "#e3e3e3",
+                                  borderBottomLeftRadius: 10,
+                                  borderBottomRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Specific Goal:
+                                  </Text>
+                                  {"\n"}
+                                  {report.consultationGoal.specificGoal}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Reason:
+                                  </Text>
+                                  {"\n"}
+                                  {report.consultationGoal.reason}
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "#F39300",
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 6,
+                                  borderTopLeftRadius: 10,
+                                  borderTopRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 18,
+                                    fontWeight: "bold",
+                                    color: "white",
+                                  }}
+                                >
+                                  Consultation Content
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "white",
+                                  padding: 8,
+                                  marginBottom: 16,
+                                  borderLeftWidth: 1.5,
+                                  borderRightWidth: 1.5,
+                                  borderBottomWidth: 1.5,
+                                  borderColor: "#e3e3e3",
+                                  borderBottomLeftRadius: 10,
+                                  borderBottomRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Summary of Discussion:
+                                  </Text>
+                                  {"\n"}
+                                  {
+                                    report.consultationContent
+                                      .summaryOfDiscussion
+                                  }
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Main Issues:
+                                  </Text>
+                                  {"\n"}
+                                  {report.consultationContent.mainIssues}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Student Emotions:
+                                  </Text>
+                                  {"\n"}
+                                  {report.consultationContent.studentEmotions}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Student Reactions:
+                                  </Text>
+                                  {"\n"}
+                                  {report.consultationContent.studentReactions}
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "#F39300",
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 6,
+                                  borderTopLeftRadius: 10,
+                                  borderTopRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 18,
+                                    fontWeight: "bold",
+                                    color: "white",
+                                  }}
+                                >
+                                  Consultation Conclusion
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  backgroundColor: "white",
+                                  padding: 8,
+                                  marginBottom: 16,
+                                  borderLeftWidth: 1.5,
+                                  borderRightWidth: 1.5,
+                                  borderBottomWidth: 1.5,
+                                  borderColor: "#e3e3e3",
+                                  borderBottomLeftRadius: 10,
+                                  borderBottomRightRadius: 10,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Counselor Conclusion:
+                                  </Text>
+                                  {"\n"}
+                                  {
+                                    report.consultationConclusion
+                                      .counselorConclusion
+                                  }
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: "#333",
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  <Text style={{ fontWeight: "600" }}>
+                                    • Follow-up Needed:
+                                  </Text>
+                                  {"\n"}
+                                  {report.consultationConclusion.followUpNeeded
+                                    ? "Yes"
+                                    : "No"}
+                                </Text>
+                                {report.consultationConclusion
+                                  .followUpNeeded && (
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      color: "#333",
+                                      marginBottom: 8,
+                                    }}
+                                  >
+                                    <Text style={{ fontWeight: "600" }}>
+                                      • Follow-up Notes:
+                                    </Text>
+                                    {"\n"}
+                                    {
+                                      report.consultationConclusion
+                                        .followUpNotes
+                                    }
+                                  </Text>
+                                )}
+                              </View>
+                            </ScrollView>
+                          ) : (
+                            <View
+                              style={{
+                                flex: 1,
+                                alignItems: "center",
+                                marginTop: 20,
+                              }}
+                            >
+                              <Text
+                                style={{ fontWeight: "bold", fontSize: 20 }}
+                              >
+                                This appointment has no report yet
+                              </Text>
+                            </View>
+                          )}
                         </View>
                       </View>
                     </Modal>

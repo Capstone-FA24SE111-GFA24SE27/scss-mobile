@@ -12,6 +12,7 @@ import {
   Platform,
   Alert,
   Modal,
+  Linking,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -1398,19 +1399,42 @@ export default function Appointment({ route }) {
                             : "Address"}
                         </Text>
                       </View>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#333",
-                          maxWidth: "50%",
-                          textAlign: "right",
-                        }}
+                      <TouchableOpacity
+                        disabled={info.meetingType !== "ONLINE"}
+                        onPress={() =>
+                          Linking.openURL(
+                            `https://meet.google.com/${info?.meetUrl}`
+                          ).catch((err) => {
+                            console.log("Can't open this link", err);
+                            Toast.show({
+                              type: "error",
+                              text1: "Error",
+                              text2: "Can't open this link",
+                            });
+                          })
+                        }
+                        style={{ maxWidth: "45%" }}
                       >
-                        {info.meetingType === "ONLINE"
-                          ? info?.meetUrl || "N/A"
-                          : info?.address || "N/A"}
-                      </Text>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color:
+                              info.meetingType === "ONLINE"
+                                ? "#F39300"
+                                : "#333",
+                            textDecorationLine:
+                              info.meetingType === "ONLINE"
+                                ? "underline"
+                                : "none",
+                            textAlign: "right",
+                          }}
+                        >
+                          {info.meetingType === "ONLINE"
+                            ? info?.meetUrl || "N/A"
+                            : info?.address || "N/A"}
+                        </Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                   {info?.appointmentFeedback !== null ? (

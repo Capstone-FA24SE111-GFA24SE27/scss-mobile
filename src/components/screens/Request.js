@@ -1270,7 +1270,7 @@ export default function Request({ route }) {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        marginBottom: 16,
+                        // marginBottom: 16,
                       }}
                     >
                       <View
@@ -1311,7 +1311,7 @@ export default function Request({ route }) {
                         </Text>
                       </View>
                     </View>
-                    <View
+                    {/* <View
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
@@ -1357,7 +1357,7 @@ export default function Request({ route }) {
                           ? info?.appointmentDetails?.meetUrl || "N/A"
                           : info?.appointmentDetails?.address || "N/A"}
                       </Text>
-                    </View>
+                    </View> */}
                   </View>
                 </View>
               </ScrollView>

@@ -18,6 +18,9 @@ export default function Personal() {
   const navigation = useNavigation();
   const { profile, userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
+  const [requestCount, setRequestCount] = useState(0);
+  const [appoinmentCount, setAppointmentCount] = useState(0);
+  
   const scrollViewRef = useRef(null);
   useFocusEffect(
     React.useCallback(() => {
@@ -51,9 +54,6 @@ export default function Personal() {
       ])
     ).start();
   }, []);
-
-  const [requestCount, setRequestCount] = useState(0);
-  const [appoinmentCount, setAppointmentCount] = useState(0);
 
   useEffect(() => {
     socket.on(`/user/${userData?.id}/private/notification`, () => {

@@ -8,6 +8,7 @@ import {
   TextInput,
   Dimensions,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -420,7 +421,7 @@ export default function Home() {
               ) : (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {requests?.data?.map((request, index) => (
-                    <TouchableOpacity
+                    <View
                       key={request.id}
                       style={{
                         width: width * 0.65,
@@ -574,7 +575,7 @@ export default function Home() {
                           New
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    </View>
                   ))}
                 </ScrollView>
               )}
@@ -706,8 +707,7 @@ export default function Home() {
                         appointment.status === "WAITING"
                     )
                     .map((appointment) => (
-                      <TouchableOpacity
-                        activeOpacity={0.7}
+                      <View
                         key={appointment.id}
                         style={{
                           width: width * 0.85,
@@ -810,15 +810,38 @@ export default function Home() {
                                   ? "Online"
                                   : "Offline"}
                               </Text>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  color: "#333",
-                                }}
-                                numberOfLines={1}
+                              <TouchableOpacity
+                                disabled={appointment.meetingType !== "ONLINE"}
+                                onPress={() =>
+                                  Linking.openURL(
+                                    `https://meet.google.com/${appointment.place}`
+                                  ).catch((err) => {
+                                    console.log("Can't open this link", err);
+                                    Toast.show({
+                                      type: "error",
+                                      text1: "Error",
+                                      text2: "Can't open this link",
+                                    });
+                                  })
+                                }
                               >
-                                {appointment.place}
-                              </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 14,
+                                    color:
+                                      appointment.meetingType === "ONLINE"
+                                        ? "#F39300"
+                                        : "#333",
+                                    textDecorationLine:
+                                      appointment.meetingType === "ONLINE"
+                                        ? "underline"
+                                        : "none",
+                                  }}
+                                  numberOfLines={1}
+                                >
+                                  {appointment.place}
+                                </Text>
+                              </TouchableOpacity>
                             </View>
                           </View>
                           <View
@@ -853,7 +876,7 @@ export default function Home() {
                             </View>
                           </View>
                         </View>
-                      </TouchableOpacity>
+                      </View>
                     ))}
                 </ScrollView>
               )}
@@ -910,7 +933,7 @@ export default function Home() {
               ) : (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {questions?.map((question) => (
-                    <TouchableOpacity
+                    <View
                       key={question.id}
                       style={{
                         width: width * 0.85,
@@ -1054,7 +1077,7 @@ export default function Home() {
                           {question.answer}
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    </View>
                   ))}
                 </ScrollView>
               )}

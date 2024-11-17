@@ -84,12 +84,9 @@ export default function ViewProfile() {
         setEditMode(false);
         Toast.show({
           type: "success",
-          text1: "Updated successfully",
+          text1: "Success",
           text2:
-            "This will improve your counseling experience as providing to counselors these information",
-          onPress: () => {
-            Toast.hide();
-          },
+            "Updated information successfully!",
         });
       }
     } catch (err) {
@@ -97,10 +94,7 @@ export default function ViewProfile() {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Can't update counseling profile",
-        onPress: () => {
-          Toast.hide();
-        },
+        text2: "Can't update these information",
       });
     }
   };
@@ -151,8 +145,8 @@ export default function ViewProfile() {
           style={{
             flexDirection: "row",
             paddingHorizontal: 30,
-            paddingTop: height * 0.04,
-            paddingVertical: 10,
+            paddingTop: height * 0.035,
+            paddingBottom: 10,
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
@@ -337,11 +331,17 @@ export default function ViewProfile() {
         />
         <View
           style={{
-            paddingHorizontal: 20,
+            paddingHorizontal: 30,
             paddingVertical: 16,
             backgroundColor: "#f5f7fd",
           }}
         >
+          <View style={{ marginBottom: 8 }}>
+            <Text style={{ fontSize: 16, color: "gray" }}>
+              * Providing these information can assist counselors in better
+              understanding and supporting you during the counseling process.
+            </Text>
+          </View>
           {editMode ? (
             <View
               style={{
@@ -350,7 +350,7 @@ export default function ViewProfile() {
               }}
             >
               <TouchableOpacity
-                onPress={() => setEditMode(false)}
+                onPress={() => (setEditMode(false), setFormValues({}))}
                 style={{
                   width: "49%",
                   marginRight: 8,
@@ -375,17 +375,33 @@ export default function ViewProfile() {
                 style={{
                   width: "49%",
                   padding: 8,
-                  backgroundColor: "#F39300",
+                  backgroundColor: !Object.values(formValues).some(
+                    (value) => value !== ""
+                  )
+                    ? "#e3e3e3"
+                    : "#F39300",
                   borderRadius: 20,
                   flexDirection: "row",
                   justifyContent: "center",
                   alignItems: "center",
                   borderWidth: 1.5,
-                  borderColor: "#F39300",
+                  borderColor: !Object.values(formValues).some(
+                    (value) => value !== ""
+                  )
+                    ? "#e3e3e3"
+                    : "#F39300",
                 }}
               >
                 <Text
-                  style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
+                  style={{
+                    color: !Object.values(formValues).some(
+                      (value) => value !== ""
+                    )
+                      ? "gray"
+                      : "white",
+                    fontSize: 18,
+                    fontWeight: "bold",
+                  }}
                 >
                   Save Changes
                 </Text>
@@ -408,7 +424,7 @@ export default function ViewProfile() {
               <Text
                 style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
               >
-                Edit
+                Update Information
               </Text>
             </TouchableOpacity>
           )}

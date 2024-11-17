@@ -58,6 +58,11 @@ export const CounselingProfileProvider = ({ children }) => {
       };
       await axiosJWT.post(`${BASE_URL}/students/document/info`, profileData);
       console.log("Data successfully sent!");
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Data sent successfully!"
+      })
       setShowModal(false);
       fetchStudentDoc();
     } catch (err) {

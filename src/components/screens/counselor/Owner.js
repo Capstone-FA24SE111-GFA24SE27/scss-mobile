@@ -512,30 +512,28 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
-                      minWidth: 54,
+                      minWidth: "30%",
                     }}
                   >
                     Student Code:
                   </Text>
-                  <View style={{ flexDirection: "row" }}>
-                    <TextInput
-                      value={studentCode}
-                      onChangeText={(value) => setStudentCode(value)}
-                      placeholder="Input Student Code"
-                      style={{
-                        backgroundColor: "white",
-                        borderColor: "black",
-                        flex: 0.75,
-                        height: 30,
-                        borderWidth: 1,
-                        borderColor: "grey",
-                        borderRadius: 10,
-                        paddingHorizontal: 12,
-                        marginLeft: 8,
-                      }}
-                      placeholderTextColor="gray"
-                    />
-                  </View>
+                  <TextInput
+                    value={studentCode}
+                    onChangeText={(value) => setStudentCode(value)}
+                    placeholder="Input Student Code"
+                    style={{
+                      backgroundColor: "white",
+                      borderColor: "black",
+                      height: 30,
+                      flex: 1,
+                      borderWidth: 1,
+                      borderColor: "grey",
+                      borderRadius: 10,
+                      paddingHorizontal: 12,
+                      marginLeft: 16,
+                    }}
+                    placeholderTextColor="gray"
+                  />
                 </View>
                 <View
                   style={{
@@ -551,7 +549,7 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
-                      minWidth: 54,
+                      minWidth: "30%",
                     }}
                   >
                     Sort:
@@ -640,7 +638,7 @@ export default function QA() {
                       fontSize: 16,
                       fontWeight: "bold",
                       color: "#333",
-                      minWidth: 54,
+                      minWidth: "30%",
                     }}
                   >
                     Closed:

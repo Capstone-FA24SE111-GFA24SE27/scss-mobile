@@ -194,7 +194,6 @@ export default function Request({ route }) {
       const requestsData = requestsRes?.data?.content || [];
       setRequests(requestsData);
       setLoading(false);
-      console.log(requests);
     } catch (err) {
       console.log("Can't fetch request", err);
     } finally {
@@ -316,8 +315,8 @@ export default function Request({ route }) {
       const data = await response.data;
       if (data && data.status == 200) {
         handleCloseConfirmDeny();
-        fetchData(filters);
-        setOpenSuccess(true);
+        fetchData(filters, { page: currentPage });
+        // setOpenSuccess(true);
       } else {
         Toast.show({
           type: "error",
@@ -328,7 +327,6 @@ export default function Request({ route }) {
           },
         });
       }
-      console.log(selectedRequest);
     } catch (err) {
       console.log("Can't deny this request", err);
       Toast.show({
@@ -350,8 +348,8 @@ export default function Request({ route }) {
       const data = await response.data;
       if (data && data.status == 200) {
         handleCloseConfirm();
-        fetchData(filters);
-        setOpenSuccess(true);
+        fetchData(filters, { page: currentPage });
+        // setOpenSuccess(true);
       } else {
         Toast.show({
           type: "error",
@@ -1711,7 +1709,7 @@ export default function Request({ route }) {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        marginBottom: 16,
+                        // marginBottom: 16,
                       }}
                     >
                       <View
@@ -1752,7 +1750,7 @@ export default function Request({ route }) {
                         </Text>
                       </View>
                     </View>
-                    <View
+                    {/* <View
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
@@ -1798,7 +1796,7 @@ export default function Request({ route }) {
                           ? info?.appointmentDetails?.meetUrl || "N/A"
                           : info?.appointmentDetails?.address || "N/A"}
                       </Text>
-                    </View>
+                    </View> */}
                   </View>
                 </View>
               </ScrollView>
