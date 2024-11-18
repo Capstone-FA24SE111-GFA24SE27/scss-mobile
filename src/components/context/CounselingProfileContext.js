@@ -2,8 +2,7 @@ import React, { createContext, useEffect, useContext, useState } from "react";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import { Dimensions, Modal, View } from "react-native";
 import { AuthContext } from "./AuthContext";
-import GatherInfo from "../screens/GatherInfo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import GatherInfo from "../screens/student/GatherInfo";
 import Toast from "react-native-toast-message";
 
 export const CounselingProfileContext = createContext();
@@ -57,11 +56,11 @@ export const CounselingProfileProvider = ({ children }) => {
         desiredCounselingFields: formValues.desiredCounselingFields || "",
       };
       await axiosJWT.post(`${BASE_URL}/students/document/info`, profileData);
-      console.log("Data successfully sent!");
+      console.log("Information updated successfully!");
       Toast.show({
         type: "success",
         text1: "Success",
-        text2: "Data sent successfully!"
+        text2: "Information updated successfully!"
       })
       setShowModal(false);
       fetchStudentDoc();

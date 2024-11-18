@@ -327,7 +327,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    VIEW ALL
+                    View all
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -540,7 +540,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    VIEW ALL
+                    View all
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -841,7 +841,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    VIEW ALL
+                    View all
                   </Text>
                 </TouchableOpacity>
               </View>

@@ -14,15 +14,15 @@ import {
   Modal,
   Linking,
 } from "react-native";
-import axiosJWT, { BASE_URL } from "../../config/Config";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { AuthContext } from "../context/AuthContext";
-import { SocketContext } from "../context/SocketContext";
-import { RequestSkeleton } from "../layout/Skeleton";
+import { AuthContext } from "../../context/AuthContext";
+import { SocketContext } from "../../context/SocketContext";
+import { RequestSkeleton } from "../../layout/Skeleton";
 import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
-import Pagination from "../layout/Pagination";
+import Pagination from "../../layout/Pagination";
 
 export default function Appointment({ route }) {
   const navigation = useNavigation();

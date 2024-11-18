@@ -17,10 +17,10 @@ import {
   ExpandableCalendar,
 } from "react-native-calendars";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import axiosJWT, { BASE_URL } from "../../config/Config";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { useFocusEffect } from "@react-navigation/native";
-import { SocketContext } from "../context/SocketContext";
-import { AuthContext } from "../context/AuthContext";
+import { SocketContext } from "../../context/SocketContext";
+import { AuthContext } from "../../context/AuthContext";
 import Toast from "react-native-toast-message";
 export default function Schedule() {
   const { width, height } = Dimensions.get("screen");

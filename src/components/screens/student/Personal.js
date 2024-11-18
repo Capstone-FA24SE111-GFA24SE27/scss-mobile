@@ -10,9 +10,9 @@ import {
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { AuthContext } from "../context/AuthContext";
-import { SocketContext } from "../context/SocketContext";
-import axiosJWT, { BASE_URL } from "../../config/Config";
+import { AuthContext } from "../../context/AuthContext";
+import { SocketContext } from "../../context/SocketContext";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
 
 export default function Personal() {
   const navigation = useNavigation();
