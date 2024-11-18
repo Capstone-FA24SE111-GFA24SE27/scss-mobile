@@ -18,13 +18,13 @@ import React, {
   useCallback,
 } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../context/AuthContext";
-import { SocketContext } from "../context/SocketContext";
-import axiosJWT, { BASE_URL } from "../../config/Config";
+import { AuthContext } from "../../context/AuthContext";
+import { SocketContext } from "../../context/SocketContext";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Ionicons } from "@expo/vector-icons";
 import { Calendar, CalendarProvider } from "react-native-calendars";
 import { Dropdown } from "react-native-element-dropdown";
-import ErrorModal from "../layout/ErrorModal";
+import ErrorModal from "../../layout/ErrorModal";
 import Toast from "react-native-toast-message";
 export default function CounselorRand() {
   const navigation = useNavigation();

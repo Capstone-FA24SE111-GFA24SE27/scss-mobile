@@ -13,13 +13,13 @@ import {
   Alert,
   Modal,
 } from "react-native";
-import axiosJWT, { BASE_URL } from "../../config/Config";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { AuthContext } from "../context/AuthContext";
-import { SocketContext } from "../context/SocketContext";
-import { RequestSkeleton } from "../layout/Skeleton";
-import Pagination from "../layout/Pagination";
+import { AuthContext } from "../../context/AuthContext";
+import { SocketContext } from "../../context/SocketContext";
+import { RequestSkeleton } from "../../layout/Skeleton";
+import Pagination from "../../layout/Pagination";
 import { Dropdown } from "react-native-element-dropdown";
 export default function Request({ route }) {
   const navigation = useNavigation();

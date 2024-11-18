@@ -21,26 +21,22 @@ import React, {
   useState,
 } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import axiosJWT, { BASE_URL } from "../../config/Config";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
 import {
   CalendarProvider,
   ExpandableCalendar,
   WeekCalendar,
 } from "react-native-calendars";
-import { SocketContext } from "../context/SocketContext";
-import { AuthContext } from "../context/AuthContext";
-import { CounselorSkeleton } from "../layout/Skeleton";
+import { SocketContext } from "../../context/SocketContext";
+import { AuthContext } from "../../context/AuthContext";
+import { CounselorSkeleton } from "../../layout/Skeleton";
 import Toast from "react-native-toast-message";
 import { Dropdown } from "react-native-element-dropdown";
-import ErrorModal from "../layout/ErrorModal";
-import Pagination from "../layout/Pagination";
+import ErrorModal from "../../layout/ErrorModal";
+import Pagination from "../../layout/Pagination";
 
-export default function AcademicCounselor() {
+export default function NonAcademicCounselor() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
   const [loading, setLoading] = useState(true);
@@ -52,9 +48,7 @@ export default function AcademicCounselor() {
     ratingFrom: 1,
     ratingTo: 5,
     SortDirection: "",
-    departmentId: "",
-    majorId: "",
-    specializationId: "",
+    expertiseId: "",
   });
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
@@ -62,15 +56,9 @@ export default function AcademicCounselor() {
   const [selectedTo, setSelectedTo] = useState(5);
   const ratings = [1, 2, 3, 4, 5];
   const [sortDirection, setSortDirection] = useState("");
+  const [expertises, setExpertises] = useState([]);
   const [expanded, setExpanded] = useState(false);
-  const [expanded2, setExpanded2] = useState(false);
-  const [expanded3, setExpanded3] = useState(false);
-  const [departments, setDepartments] = useState([]);
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [majors, setMajors] = useState([]);
-  const [selectedMajor, setSelectedMajor] = useState("");
-  const [specializations, setSpecializations] = useState([]);
-  const [selectedSpecialization, setSelectedSpecialization] = useState("");
+  const [selectedExpertise, setSelectedExpertise] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCounselor, setSelectedCounselor] = useState({});
   const [open, setOpen] = useState(false);
@@ -82,7 +70,7 @@ export default function AcademicCounselor() {
   const [online, isOnline] = useState(null);
   const [reason, setReason] = useState("");
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [openSuccess, setOpenSuccess] = useState(false);
+  const [openSucess, setOpenSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -92,14 +80,14 @@ export default function AcademicCounselor() {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       fetchData(filters, { page: currentPage });
-      fetchDepartment();
+      fetchExpertise();
     }, [debouncedKeyword, filters, currentPage])
   );
 
   const fetchData = async (filters = {}) => {
     try {
       const counselorRes = await axiosJWT.get(
-        `${BASE_URL}/counselors/academic`,
+        `${BASE_URL}/counselors/non-academic`,
         {
           params: {
             search: debouncedKeyword,
@@ -112,57 +100,20 @@ export default function AcademicCounselor() {
       setCounselors(counselorData);
       setLoading(false);
     } catch (err) {
-      console.log("Can't fetch academic counselors");
+      console.log("Can't fetch non-academic counselors");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchDepartment = async () => {
+  const fetchExpertise = async () => {
     try {
-      const departmentsRes = await axiosJWT.get(
-        `${BASE_URL}/academic/departments`
-      );
-      const departmentsData = departmentsRes?.data || [];
-      setDepartments(departmentsData);
-    } catch (err) {
-      console.log("Can't fetch departments");
+      const response = await axiosJWT.get(`${BASE_URL}/counselors/expertise`);
+      setExpertises(response.data.content);
+    } catch (error) {
+      console.log("Error fetching expertises");
     }
   };
-
-  const fetchMajor = async () => {
-    try {
-      const majorsRes = await axiosJWT.get(
-        `${BASE_URL}/academic/departments/${selectedDepartment?.id}/majors`
-      );
-      const majorsData = majorsRes?.data || [];
-      setMajors(majorsData);
-    } catch (err) {
-      console.log("Can't fetch majors");
-    }
-  };
-
-  const fetchSpecialization = async () => {
-    try {
-      const specializationsRes = await axiosJWT.get(
-        `${BASE_URL}/academic/majors/${selectedMajor?.id}/specializations`
-      );
-      const specializationsData = specializationsRes?.data || [];
-      setSpecializations(specializationsData);
-    } catch (err) {
-      console.log("Can't fetch specializations");
-    }
-  };
-
-  useEffect(() => {
-    fetchDepartment();
-    if (selectedDepartment !== "") {
-      fetchMajor();
-      if (selectedMajor !== "") {
-        fetchSpecialization();
-      }
-    }
-  }, [selectedDepartment, selectedMajor, selectedSpecialization]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -178,9 +129,7 @@ export default function AcademicCounselor() {
       ratingFrom: selectedFrom,
       ratingTo: selectedTo,
       SortDirection: sortDirection,
-      departmentId: selectedDepartment.id,
-      majorId: selectedMajor.id,
-      specializationId: selectedSpecialization.id,
+      expertiseId: selectedExpertise.id,
     };
     setFilters(newFilters);
     fetchData(newFilters);
@@ -193,17 +142,13 @@ export default function AcademicCounselor() {
       ratingFrom: 1,
       ratingTo: 5,
       SortDirection: "",
-      departmentId: "",
-      majorId: "",
-      specializationId: "",
+      expertiseId: "",
     };
     setKeyword("");
     setSelectedFrom(resetFilters.ratingFrom);
     setSelectedTo(resetFilters.ratingTo);
     setSortDirection(resetFilters.SortDirection);
-    setSelectedDepartment(resetFilters.departmentId);
-    setSelectedMajor(resetFilters.majorId);
-    setSelectedSpecialization(resetFilters.specializationId);
+    setSelectedExpertise(resetFilters.expertiseId);
     setFilters(resetFilters);
     fetchData(resetFilters);
   };
@@ -265,7 +210,7 @@ export default function AcademicCounselor() {
   const handleOpenBooking = async (counselorId) => {
     try {
       const counselorRes = await axiosJWT.get(
-        `${BASE_URL}/counselors/academic/${counselorId}`
+        `${BASE_URL}/counselors/non-academic/${counselorId}`
       );
       const counselorData = counselorRes?.data || [];
       setSelectedCounselor(counselorData);
@@ -473,8 +418,8 @@ export default function AcademicCounselor() {
             updatedSlots[data.dateChange] = newSlot;
             return updatedSlots;
           });
-        } catch (err) {
-          console.log("Error parsing notification:", err);
+        } catch (error) {
+          console.error("Error parsing notification:", error);
         }
       };
 
@@ -531,8 +476,8 @@ export default function AcademicCounselor() {
         online,
         reason
       );
-    } catch (err) {
-      console.log("Something error when booking", err);
+    } catch (error) {
+      console.log("Something error when booking", error);
       setIsError(true);
       setErrorMessage(
         "You already created a request that have the same chosen slot on this day. Please choose a different slot"
@@ -643,7 +588,7 @@ export default function AcademicCounselor() {
                 ) : (
                   <View
                     style={{
-                      width: width * 0.7,
+                      width: width * 0.6,
                       height: 20,
                       backgroundColor: "#ededed",
                       borderRadius: 20,
@@ -826,124 +771,6 @@ export default function AcademicCounselor() {
                       </View>
                     </View>
                   </View>
-                  {/* <View
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginVertical: 4,
-                        marginLeft: 4,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          marginRight: 4,
-                        }}
-                      >
-                        Rating:
-                      </Text>
-                      <View
-                        style={{ flexDirection: "row", marginHorizontal: 16 }}
-                      >
-                        <View style={{ flexDirection: "row" }}>
-                          {ratings.map((item, index) => (
-                            <View key={index}>
-                              {item < selectedTo && (
-                                <TouchableOpacity
-                                  onPress={() => {
-                                    if (item < selectedTo)
-                                      setSelectedFrom(item);
-                                  }}
-                                  disabled={item >= selectedTo}
-                                  style={[
-                                    {
-                                      paddingHorizontal: 10,
-                                      paddingVertical: 4,
-                                      borderRadius: 20,
-                                      marginRight: 3,
-                                      backgroundColor: "white",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      elevation: 2,
-                                      opacity: item >= selectedTo ? 0.6 : 1,
-                                    },
-                                    selectedFrom === item && {
-                                      backgroundColor: "#F39300",
-                                    },
-                                  ]}
-                                >
-                                  <Text
-                                    style={{
-                                      color:
-                                        selectedFrom === item
-                                          ? "white"
-                                          : "black",
-                                      fontSize: 14,
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    {item}
-                                  </Text>
-                                </TouchableOpacity>
-                              )}
-                            </View>
-                          ))}
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "600",
-                            marginHorizontal: 8,
-                          }}
-                        >
-                          -
-                        </Text>
-                        <View style={{ flexDirection: "row" }}>
-                          {ratings.map((item, index) => (
-                            <View key={index}>
-                              {item > selectedFrom && (
-                                <TouchableOpacity
-                                  onPress={() => {
-                                    if (item > selectedFrom)
-                                      setSelectedTo(item);
-                                  }}
-                                  disabled={item <= selectedFrom}
-                                  style={[
-                                    {
-                                      paddingHorizontal: 10,
-                                      paddingVertical: 4,
-                                      borderRadius: 20,
-                                      marginLeft: 3,
-                                      backgroundColor: "white",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      elevation: 2,
-                                      opacity: item <= selectedFrom ? 0.6 : 1,
-                                    },
-                                    selectedTo === item && {
-                                      backgroundColor: "#F39300",
-                                    },
-                                  ]}
-                                >
-                                  <Text
-                                    style={{
-                                      color:
-                                        selectedTo === item ? "white" : "black",
-                                      fontSize: 14,
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    {item}
-                                  </Text>
-                                </TouchableOpacity>
-                              )}
-                            </View>
-                          ))}
-                        </View>
-                      </View>
-                    </View> */}
                   <View
                     style={{
                       flex: 1,
@@ -958,7 +785,7 @@ export default function AcademicCounselor() {
                         fontSize: 16,
                         fontWeight: "bold",
                         color: "#333",
-                        minWidth: "35%",
+                        minWidth: "30%",
                       }}
                     >
                       Sort:
@@ -1048,10 +875,10 @@ export default function AcademicCounselor() {
                         fontSize: 16,
                         fontWeight: "bold",
                         color: "#333",
-                        minWidth: "35%",
+                        minWidth: "30%",
                       }}
                     >
-                      Department:
+                      Expertise:
                     </Text>
                     <Dropdown
                       style={{
@@ -1068,28 +895,28 @@ export default function AcademicCounselor() {
                       placeholderStyle={{ fontSize: 14 }}
                       selectedTextStyle={{
                         fontSize: 14,
-                        color: selectedDepartment ? "black" : "white",
+                        color: selectedExpertise ? "black" : "white",
                       }}
                       inputSearchStyle={{ height: 40, fontSize: 16 }}
                       maxHeight={250}
-                      data={departments}
+                      data={expertises}
                       labelField="name"
                       search
                       value={
-                        selectedDepartment !== ""
-                          ? selectedDepartment.name
-                          : "Select Department"
+                        selectedExpertise !== ""
+                          ? selectedExpertise.name
+                          : "Select Expertise"
                       }
                       placeholder={
-                        selectedDepartment !== ""
-                          ? selectedDepartment.name
-                          : "Select Department"
+                        selectedExpertise !== ""
+                          ? selectedExpertise.name
+                          : "Select Expertise"
                       }
-                      searchPlaceholder="Search Department"
+                      searchPlaceholder="Search Expertise"
                       onFocus={() => setExpanded(true)}
                       onBlur={() => setExpanded(false)}
                       onChange={(item) => {
-                        setSelectedDepartment(item);
+                        setSelectedExpertise(item);
                         setExpanded(false);
                       }}
                       renderRightIcon={() => (
@@ -1109,7 +936,7 @@ export default function AcademicCounselor() {
                               paddingHorizontal: 16,
                               paddingVertical: 8,
                               backgroundColor:
-                                item.name == selectedDepartment.name
+                                item.name == selectedExpertise.name
                                   ? "#F39300"
                                   : "white",
                             }}
@@ -1119,226 +946,14 @@ export default function AcademicCounselor() {
                                 fontSize: 16,
                                 fontWeight: "500",
                                 color:
-                                  item.name == selectedDepartment.name
+                                  item.name == selectedExpertise.name
                                     ? "white"
                                     : "black",
                               }}
                             >
                               {item.name}
                             </Text>
-                            {selectedDepartment.name === item.name && (
-                              <Ionicons
-                                color="white"
-                                name="checkmark"
-                                size={20}
-                              />
-                            )}
-                          </View>
-                        );
-                      }}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      marginVertical: 4,
-                      marginLeft: 4,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        color: "#333",
-                        minWidth: "35%",
-                      }}
-                    >
-                      Major:
-                    </Text>
-                    <Dropdown
-                      disable={selectedDepartment === ""}
-                      style={{
-                        backgroundColor: "white",
-                        borderColor: expanded2 ? "#F39300" : "black",
-                        flex: 1,
-                        height: 30,
-                        borderWidth: 1,
-                        borderColor: "grey",
-                        borderRadius: 10,
-                        paddingHorizontal: 12,
-                        marginLeft: 8,
-                      }}
-                      placeholderStyle={{ fontSize: 14 }}
-                      selectedTextStyle={{
-                        fontSize: 14,
-                        color: selectedMajor ? "black" : "white",
-                      }}
-                      inputSearchStyle={{ height: 40, fontSize: 16 }}
-                      maxHeight={250}
-                      data={majors}
-                      labelField="name"
-                      search
-                      value={
-                        selectedMajor !== ""
-                          ? selectedMajor.name
-                          : "Select Major"
-                      }
-                      placeholder={
-                        selectedMajor !== ""
-                          ? selectedMajor.name
-                          : "Select Major"
-                      }
-                      searchPlaceholder="Search Major"
-                      onFocus={() => setExpanded2(true)}
-                      onBlur={() => setExpanded2(false)}
-                      onChange={(item) => {
-                        setSelectedMajor(item);
-                        setExpanded2(false);
-                      }}
-                      renderRightIcon={() => (
-                        <Ionicons
-                          color={expanded2 ? "#F39300" : "black"}
-                          name={expanded2 ? "caret-up" : "caret-down"}
-                          size={20}
-                        />
-                      )}
-                      renderItem={(item) => {
-                        return (
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              paddingHorizontal: 16,
-                              paddingVertical: 8,
-                              backgroundColor:
-                                item.name == selectedMajor.name
-                                  ? "#F39300"
-                                  : "white",
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                fontWeight: "500",
-                                color:
-                                  item.name == selectedMajor.name
-                                    ? "white"
-                                    : "black",
-                              }}
-                            >
-                              {item.name}
-                            </Text>
-                            {selectedMajor.name === item.name && (
-                              <Ionicons
-                                color="white"
-                                name="checkmark"
-                                size={20}
-                              />
-                            )}
-                          </View>
-                        );
-                      }}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      marginVertical: 4,
-                      marginLeft: 4,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        color: "#333",
-                        minWidth: "35%",
-                      }}
-                    >
-                      Specialization:
-                    </Text>
-                    <Dropdown
-                      disable={
-                        selectedDepartment === "" || selectedMajor === ""
-                      }
-                      style={{
-                        backgroundColor: "white",
-                        borderColor: expanded3 ? "#F39300" : "black",
-                        flex: 1,
-                        height: 30,
-                        borderWidth: 1,
-                        borderColor: "grey",
-                        borderRadius: 10,
-                        paddingHorizontal: 12,
-                        marginLeft: 8,
-                      }}
-                      placeholderStyle={{ fontSize: 14 }}
-                      selectedTextStyle={{
-                        fontSize: 14,
-                        color: selectedSpecialization ? "black" : "white",
-                      }}
-                      inputSearchStyle={{ height: 40, fontSize: 16 }}
-                      maxHeight={250}
-                      data={specializations}
-                      labelField="name"
-                      search
-                      value={
-                        selectedSpecialization !== ""
-                          ? selectedSpecialization.name
-                          : "Select Specialization"
-                      }
-                      placeholder={
-                        selectedSpecialization !== ""
-                          ? selectedSpecialization.name
-                          : "Select Specialization"
-                      }
-                      searchPlaceholder="Search Specialization"
-                      onFocus={() => setExpanded3(true)}
-                      onBlur={() => setExpanded3(false)}
-                      onChange={(item) => {
-                        setSelectedSpecialization(item);
-                        setExpanded3(false);
-                      }}
-                      renderRightIcon={() => (
-                        <Ionicons
-                          color={expanded3 ? "#F39300" : "black"}
-                          name={expanded3 ? "caret-up" : "caret-down"}
-                          size={20}
-                        />
-                      )}
-                      renderItem={(item) => {
-                        return (
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              paddingHorizontal: 16,
-                              paddingVertical: 8,
-                              backgroundColor:
-                                item.name == selectedSpecialization.name
-                                  ? "#F39300"
-                                  : "white",
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                fontWeight: "500",
-                                color:
-                                  item.name == selectedSpecialization.name
-                                    ? "white"
-                                    : "black",
-                              }}
-                            >
-                              {item.name}
-                            </Text>
-                            {selectedSpecialization.name === item.name && (
+                            {selectedExpertise.name === item.name && (
                               <Ionicons
                                 color="white"
                                 name="checkmark"
@@ -1493,7 +1108,7 @@ export default function AcademicCounselor() {
                         marginVertical: 2,
                       }}
                     >
-                      {item.specialization.name}
+                      {item.expertise.name}
                     </Text>
                   </View>
                 </View>
@@ -1715,13 +1330,7 @@ export default function AcademicCounselor() {
                                 bottom: 0,
                                 backgroundColor: "#F39300",
                                 color: "white",
-                                // color:
-                                //   selectedCounselor.profile?.gender == "MALE"
-                                //     ? "#0000fa"
-                                //     : "#ff469e",
                                 padding: 5,
-                                // borderWidth: 1.5,
-                                // borderColor: "#ededed",
                                 borderRadius: 40,
                               }}
                             />
@@ -1742,15 +1351,6 @@ export default function AcademicCounselor() {
                               {selectedCounselor.profile?.fullName}
                             </Text>
                           </View>
-                          {/* <Text
-                            style={{
-                              fontSize: 18,
-                              color: "gray",
-                              marginBottom: 16,
-                            }}
-                          >
-                            {selectedCounselor.specialization?.name}
-                          </Text> */}
                         </View>
                         <View
                           style={{
@@ -1805,8 +1405,8 @@ export default function AcademicCounselor() {
                               width: "50%",
                             }}
                           >
-                            <MaterialCommunityIcons
-                              name="certificate"
+                            <Ionicons
+                              name="accessibility"
                               size={24}
                               color="#F39300"
                               style={{ marginHorizontal: 12 }}
@@ -1819,7 +1419,7 @@ export default function AcademicCounselor() {
                                   color: "gray",
                                 }}
                               >
-                                Degree
+                                Industry Experience
                               </Text>
                               <Text
                                 style={{
@@ -1828,7 +1428,7 @@ export default function AcademicCounselor() {
                                   opacity: 0.7,
                                 }}
                               >
-                                {selectedCounselor.academicDegree}
+                                {selectedCounselor.industryExperience} years
                               </Text>
                             </View>
                           </View>
@@ -1864,7 +1464,7 @@ export default function AcademicCounselor() {
                                   color: "gray",
                                 }}
                               >
-                                Department
+                                Expertise
                               </Text>
                               <Text
                                 style={{
@@ -1873,99 +1473,7 @@ export default function AcademicCounselor() {
                                   opacity: 0.7,
                                 }}
                               >
-                                {selectedCounselor?.department?.name} (
-                                {selectedCounselor?.department?.code})
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            backgroundColor: "white",
-                            paddingVertical: 8,
-                            marginHorizontal: 20,
-                            borderRadius: 10,
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Ionicons
-                              name="briefcase"
-                              size={24}
-                              color="#F39300"
-                              style={{ marginHorizontal: 12 }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                  color: "gray",
-                                }}
-                              >
-                                Major
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {selectedCounselor?.major?.name} (
-                                {selectedCounselor?.major?.code})
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            backgroundColor: "white",
-                            paddingVertical: 8,
-                            marginHorizontal: 20,
-                            borderRadius: 10,
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Ionicons
-                              name="briefcase"
-                              size={24}
-                              color="#F39300"
-                              style={{ marginHorizontal: 12 }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                  color: "gray",
-                                }}
-                              >
-                                Specialization
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {selectedCounselor?.specialization?.name}
+                                {selectedCounselor?.expertise?.name}
                               </Text>
                             </View>
                           </View>
@@ -2034,7 +1542,6 @@ export default function AcademicCounselor() {
                               );
                             }}
                             onDayPress={handleSocketChange}
-                            // onWeekChange={(newWeek) => handleWeekChange(newWeek.dateString)}
                           />
 
                           <View
@@ -2239,13 +1746,13 @@ export default function AcademicCounselor() {
                       </View>
                     </ScrollView>
                     {/* <SectionList
-                            showsVerticalScrollIndicator={false}
-                            sections={[]}
-                            renderItem={() => null}
-                            ListHeaderComponent={() => (                              
-                            )}
-                            keyExtractor={selectedCounselor}
-                          /> */}
+                              showsVerticalScrollIndicator={false}
+                              sections={[]}
+                              renderItem={() => null}
+                              ListHeaderComponent={() => (                              
+                              )}
+                              keyExtractor={selectedCounselor}
+                            /> */}
                   </CalendarProvider>
                   <View
                     style={{
@@ -2421,7 +1928,7 @@ export default function AcademicCounselor() {
                   </Modal>
                   <Modal
                     transparent={true}
-                    visible={openSuccess}
+                    visible={openSucess}
                     animationType="fade"
                     onRequestClose={handleCloseSuccess}
                   >
@@ -2502,7 +2009,7 @@ export default function AcademicCounselor() {
                             handleCloseSuccess(),
                             handleCloseBooking(),
                             navigation.navigate("Request", {
-                              prevScreen: "Academic",
+                              prevScreen: "Non Academic",
                             })
                           )}
                           activeOpacity={0.8}
@@ -2532,136 +2039,6 @@ export default function AcademicCounselor() {
           </Modal>
         </ScrollView>
         {!loading && (
-          // <View
-          //   style={{
-          //     justifyContent: "center",
-          //     alignItems: "center",
-          //     flexDirection: "row",
-          //     marginHorizontal: 20,
-          //     marginVertical: 10,
-          //   }}
-          // >
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-          //       opacity: currentPage <= 1 ? 0.5 : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(1)}
-          //     disabled={currentPage <= 1}
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {"<<"}
-          //     </Text>
-          //   </TouchableOpacity>
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-          //       opacity: currentPage === 1 ? 0.5 : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(currentPage - 1)}
-          //     disabled={currentPage <= 1}
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {"<"}
-          //     </Text>
-          //   </TouchableOpacity>
-          //   <View
-          //     style={{
-          //       paddingHorizontal: 16,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       marginHorizontal: 4,
-          //       width: "auto",
-          //       height: width * 0.1,
-          //       justifyContent: "center",
-          //       alignItems: "center",
-          //       backgroundColor: "white",
-          //       borderWidth: 1.5,
-          //       borderColor: "#F39300",
-          //     }}
-          //   >
-          //     <Text
-          //       style={{
-          //         fontSize: 16,
-          //         color: "#333",
-          //         fontWeight: "600",
-          //       }}
-          //     >
-          //       {counselors?.data?.length != 0 ? currentPage : 0} /{" "}
-          //       {counselors.totalPages}
-          //     </Text>
-          //   </View>
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? "#ccc"
-          //           : "#F39300",
-          //       opacity:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? 0.5
-          //           : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(currentPage + 1)}
-          //     disabled={
-          //       counselors.totalPages == 0 ||
-          //       currentPage >= counselors.totalPages
-          //     }
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {">"}
-          //     </Text>
-          //   </TouchableOpacity>
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? "#ccc"
-          //           : "#F39300",
-          //       opacity:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? 0.5
-          //           : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(counselors.totalPages)}
-          //     disabled={
-          //       counselors.totalPages == 0 ||
-          //       currentPage >= counselors.totalPages
-          //     }
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {">>"}
-          //     </Text>
-          //   </TouchableOpacity>
-          // </View>
           <Pagination
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}

@@ -13,10 +13,10 @@ import {
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../context/AuthContext";
-import { NotificationContext } from "../context/NotificationContext";
-import { HomeSkeleton } from "../layout/Skeleton";
-import axiosJWT, { BASE_URL } from "../../config/Config";
+import { AuthContext } from "../../context/AuthContext";
+import { NotificationContext } from "../../context/NotificationContext";
+import { HomeSkeleton } from "../../layout/Skeleton";
+import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function Home() {
@@ -268,7 +268,8 @@ export default function Home() {
                 </Animated.View>
               )}
             </TouchableOpacity>
-            <Pressable
+            <TouchableOpacity
+              activeOpacity={0.7}
               onPress={() =>
                 navigation.navigate("Profile", { prevScreen: "Home" })
               }
@@ -296,7 +297,7 @@ export default function Home() {
                   }}
                 />
               )}
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
         <View
@@ -388,7 +389,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    VIEW ALL
+                    View all
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -604,7 +605,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    VIEW ALL
+                    View all
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -901,7 +902,7 @@ export default function Home() {
                       opacity: 0.8,
                     }}
                   >
-                    VIEW ALL
+                    View all
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1102,7 +1103,7 @@ export default function Home() {
                     marginRight: 4,
                   }}
                 >
-                  VIEW ALL
+                  View all
                 </Text>
               </TouchableOpacity>
             </View>

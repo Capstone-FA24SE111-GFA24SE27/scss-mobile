@@ -1,9 +1,9 @@
 import { View, Text, Dimensions } from "react-native";
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import CounselorRand from "../screens/CounselorRand";
-import AcademicCounselor from "../screens/AcademicCounselor";
-import NonAcademicCounselor from "../screens/NonAcademicCounselor";
+import CounselorRand from "../screens/student/CounselorRand";
+import AcademicCounselor from "../screens/student/AcademicCounselor";
+import NonAcademicCounselor from "../screens/student/NonAcademicCounselor";
 const Tab = createMaterialTopTabNavigator();
 
 export default function CounselorNavigation() {
