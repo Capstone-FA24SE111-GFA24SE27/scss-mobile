@@ -120,6 +120,11 @@ export default function GettingStart() {
           SIGNUP
         </Text>
       </TouchableOpacity>
+      <View style={{ position: "absolute", bottom: 0, right: 0, margin: 10 }}>
+        <Text style={{ fontSize: 16, color: "gray", fontWeight: "500" }}>
+          Ver_1.0.0
+        </Text>
+      </View>
     </View>
   );
 }

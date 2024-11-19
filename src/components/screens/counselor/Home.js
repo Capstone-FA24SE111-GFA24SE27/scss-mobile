@@ -204,7 +204,8 @@ export default function Home() {
           <View
             style={{ display: "flex", flexDirection: "row", marginTop: 12 }}
           >
-            <Pressable
+            <TouchableOpacity
+              activeOpacity={0.7}
               onPress={() => navigation.navigate("Notification")}
               style={{ position: "relative", marginRight: 20, marginTop: 2 }}
             >
@@ -237,8 +238,9 @@ export default function Home() {
                   />
                 </Animated.View>
               )}
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.7}
               onPress={() =>
                 navigation.navigate("Profile", { prevScreen: "Home" })
               }
@@ -265,7 +267,7 @@ export default function Home() {
                   }}
                 />
               )}
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
         <View
@@ -353,7 +355,7 @@ export default function Home() {
                       opacity: 0.7,
                     }}
                   >
-                    No requests received
+                    No request received
                   </Text>
                 </View>
               ) : (
@@ -868,7 +870,7 @@ export default function Home() {
                       opacity: 0.7,
                     }}
                   >
-                    No demands assigned
+                    No demand assigned
                   </Text>
                 </View>
               ) : (

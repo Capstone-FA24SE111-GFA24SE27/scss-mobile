@@ -4,14 +4,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 export default function NotificationDetail({ route }) {
-  const { notificationData } = route.params; // Data passed from Notification component
+  const { notificationData } = route.params;
   const prevScreen = route.params.prevScreen;
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  // Convert createdDate to a human-readable format
-  const formattedDate = new Date(
-    notificationData?.createdDate
-  ).toLocaleString();
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    const hour = d.getHours();
+    const minute = d.getMinutes();
+    return `${year}-${month}-${day}, ${hour}:${minute}`;
+  };
 
   return (
     <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
@@ -34,12 +40,11 @@ export default function NotificationDetail({ route }) {
         <View style={{ flex: 2, alignItems: "center" }}>
           <Text style={{ fontSize: 24, fontWeight: "bold" }}>
             {/* No. {notificationData?.notificationId}  */}
-            {/* Detail */}
           </Text>
         </View>
         <View style={{ flex: 1 }} />
       </View>
-      <View style={{ paddingHorizontal: 30 }}>
+      <View style={{ paddingHorizontal: 20 }}>
         <View
           style={{
             backgroundColor: "white",
@@ -47,6 +52,7 @@ export default function NotificationDetail({ route }) {
             borderRadius: 10,
             borderWidth: 1.5,
             borderColor: "#e3e3e3",
+            elevation: 1,
             marginBottom: 20,
           }}
         >
@@ -57,86 +63,107 @@ export default function NotificationDetail({ route }) {
               marginBottom: 8,
             }}
           >
-            <Ionicons name="person-outline" size={22} color="#F39300" />
+            <Ionicons name="person-outline" size={24} color="#F39300" />
             <Text
               style={{
                 fontSize: 18,
-                fontWeight: "600",
-                color: "#333",
+                fontWeight: "700",
+                color: "#F39300",
                 marginLeft: 10,
               }}
             >
-              Sender:
+              Sender
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: "#555", marginLeft: 35 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: "#333",
+              marginLeft: 34,
+              marginBottom: 8,
+            }}
+          >
             {notificationData?.sender}
           </Text>
-
+          <View
+            style={{
+              height: 1,
+              backgroundColor: "#e3e3e3",
+              marginVertical: 10,
+            }}
+          />
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
-              marginTop: 20,
               marginBottom: 8,
             }}
           >
             <Ionicons
               name="information-circle-outline"
-              size={22}
+              size={24}
               color="#F39300"
             />
             <Text
               style={{
                 fontSize: 18,
-                fontWeight: "600",
-                color: "#333",
+                fontWeight: "700",
+                color: "#F39300",
                 marginLeft: 10,
               }}
             >
-              Title:
+              Title
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: "#555", marginLeft: 35 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: "#333",
+              marginLeft: 34,
+              marginBottom: 8,
+            }}
+          >
             {notificationData?.title}
           </Text>
 
           <View
             style={{
+              height: 1,
+              backgroundColor: "#e3e3e3",
+              marginVertical: 10,
+            }}
+          />
+          <View
+            style={{
               flexDirection: "row",
               alignItems: "center",
-              marginTop: 20,
               marginBottom: 8,
             }}
           >
-            <Ionicons name="calendar-outline" size={22} color="#F39300" />
+            <Ionicons name="calendar-outline" size={24} color="#F39300" />
             <Text
               style={{
                 fontSize: 18,
-                fontWeight: "600",
-                color: "#333",
+                fontWeight: "700",
+                color: "#F39300",
                 marginLeft: 10,
               }}
             >
-              Date:
+              Sent At
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: "#555", marginLeft: 35 }}>
-            {formattedDate}
+          <Text style={{ fontSize: 16, color: "#333", marginLeft: 34 }}>
+            {formatDate(notificationData?.createdDate)}
           </Text>
         </View>
         <View
           style={{
             backgroundColor: "white",
             padding: 20,
-            borderRadius: 15,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.1,
-            shadowRadius: 6,
-            elevation: 5,
-            borderWidth: 1,
+            borderRadius: 10,
+            borderWidth: 1.5,
             borderColor: "#e3e3e3",
+            elevation: 1,
           }}
         >
           <View
@@ -146,24 +173,24 @@ export default function NotificationDetail({ route }) {
               marginBottom: 8,
             }}
           >
-            <Ionicons name="mail-outline" size={22} color="#F39300" />
+            <Ionicons name="mail-outline" size={24} color="#F39300" />
             <Text
               style={{
                 fontSize: 18,
-                fontWeight: "600",
-                color: "#333",
+                fontWeight: "700",
+                color: "#F39300",
                 marginLeft: 10,
               }}
             >
-              Message:
+              Message
             </Text>
           </View>
           <Text
             style={{
               fontSize: 16,
-              color: "#555",
-              lineHeight: 22, // Slightly increased line height for better readability
-              marginLeft: 35,
+              color: "#333",
+              marginLeft: 34,
+              lineHeight: 24,
             }}
           >
             {notificationData?.message}

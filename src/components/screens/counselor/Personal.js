@@ -303,7 +303,7 @@ export default function Personal() {
                   opacity: 0.8,
                 }}
               >
-                VIEW ALL
+                View all
               </Text>
               <Ionicons
                 name="chevron-forward"
@@ -377,7 +377,7 @@ export default function Personal() {
                   opacity: 0.8,
                 }}
               >
-                VIEW ALL
+                View all
               </Text>
               <Ionicons
                 name="chevron-forward"
@@ -459,7 +459,7 @@ export default function Personal() {
                   opacity: 0.8,
                 }}
               >
-                VIEW ALL
+                View all
               </Text>
               <Ionicons
                 name="chevron-forward"

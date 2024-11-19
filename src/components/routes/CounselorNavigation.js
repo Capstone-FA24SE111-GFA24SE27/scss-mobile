@@ -47,7 +47,7 @@ export default function CounselorNavigation() {
 
   return (
     <Tab.Navigator
-      initialRouteName="CounselorRand"
+      initialRouteName="Quick Booking"
       screenOptions={screenOptions}
     >
       <Tab.Screen name="Quick Booking" component={CounselorRand} />

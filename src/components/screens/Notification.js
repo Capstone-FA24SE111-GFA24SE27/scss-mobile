@@ -4,29 +4,47 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  Pressable,
   ActivityIndicator,
-  StyleSheet,
-  Alert,
   Animated,
   Dimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
-import { SocketContext } from "../context/SocketContext"; // Import SocketContext
 import { NotificationContext } from "../context/NotificationContext";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import Toast from "react-native-toast-message";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 
 export default function Notification() {
   const navigation = useNavigation();
+  const { width, height } = Dimensions.get("screen");
   const { isLogin, userData, session } = useContext(AuthContext);
   // const socket = useContext(SocketContext);
   // const [notifications, setNotifications] = useState([]);
-  const { notifications, setNotifications } = useContext(NotificationContext);
-  const [loading, setLoading] = useState(false);
+  const {
+    notifications,
+    setNotifications,
+    loadMoreNotifications,
+    loading,
+    currentPage,
+    totalPages,
+  } = useContext(NotificationContext);
+  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const scrollViewRef = useRef(null);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (
+        scrollViewRef.current &&
+        notifications.filter(
+          (notification) => notification.readStatus === false
+        ).length >= 1
+      ) {
+        scrollViewRef.current.scrollToOffset({ offset: 0, animated: false });
+      }
+    }, [])
+  );
   const blinking = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -56,13 +74,8 @@ export default function Notification() {
       navigation.navigate("Login");
       return;
     }
-
     // Lấy thông báo từ server khi component render
-
-    console.log("///////////////////////" + userData?.id);
-
-    // console.log(notifications)
-
+    console.log("/" + userData?.id);
     // Dọn dẹp socket khi component bị unmount
     return () => {};
   }, [isLogin, userData, session, navigation]);
@@ -78,9 +91,6 @@ export default function Notification() {
       const result = response.data;
 
       if (result && result.status === 200) {
-        // Hiển thị thông báo thành công từ API
-        // Alert.alert("Success", result.message);
-
         // Cập nhật tất cả thông báo thành đã đọc trong UI
         setNotifications((prevNotifications) =>
           prevNotifications.map((notification) => ({
@@ -95,12 +105,15 @@ export default function Notification() {
         ) {
           Toast.show({
             type: "info",
-            text1: "Read All",
+            text1: "Mark All Read",
             text2: `You have read ${
               notifications?.filter(
                 (notification) => notification.readStatus == false
               ).length
             } notification(s)`,
+            onPress: () => {
+              Toast.hide();
+            },
           });
         }
       } else {
@@ -110,7 +123,7 @@ export default function Notification() {
           text2: "Failed to mark all notifications as read.",
         });
       }
-    } catch (error) {
+    } catch (err) {
       Toast.show({
         type: "error",
         text1: "Error",
@@ -119,7 +132,7 @@ export default function Notification() {
           Toast.hide();
         },
       });
-      console.error("Error marking all notifications as read:", error);
+      console.lpg("Error marking all notifications as read:", err);
     }
   };
 
@@ -140,10 +153,7 @@ export default function Notification() {
       const result = response.data;
 
       if (result && result.status === 200) {
-        // Hiển thị thông báo thành công từ API
-        // Alert.alert("Success", result.message);
-
-        // Cập nhật trạng thái trong UI
+        // Cập nhật trạng thái trên UI
         setNotifications((prevNotifications) =>
           prevNotifications.map((notification) =>
             notification.notificationId === notificationId
@@ -151,8 +161,7 @@ export default function Notification() {
               : notification
           )
         );
-        //điều hướng sang detail
-        //truyền dũ liệu sang detail
+        // Điều hướng và truyền dũ liệu sang detail
         navigation.navigate("NotificationDetail", { notificationData: item });
       } else {
         Toast.show({
@@ -175,35 +184,47 @@ export default function Notification() {
   };
 
   // Render thông báo
-  const renderItem = React.useCallback(({ item }) => {
+  const renderItem = React.useCallback(({ item, index }) => {
     if (!item) {
       return (
-        <View style={styles.notificationItem}>
-          <Text>No notification data available.</Text>
+        <View
+          style={{
+            backgroundColor: "#ededed",
+            padding: 12,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontStyle: "italic",
+              fontWeight: "600",
+              textAlign: "center",
+              color: "gray",
+              opacity: 0.7,
+            }}
+          >
+            No notification data available.
+          </Text>
         </View>
       );
     }
 
-    // Thay đổi màu nền dựa trên trạng thái thông báo
-    const backgroundColor = item.readStatus ? "#e0e0e0" : "#f9f9f9";
-
     try {
       return (
         <TouchableOpacity
-          onPress={() => markAsRead(item.notificationId, item)} // Đánh dấu thông báo khi nhấn
-          //truyền cả item
+          key={index}
+          onPress={() => markAsRead(item.notificationId, item)}
           style={{
             flexDirection: "row",
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-            backgroundColor: backgroundColor, // Màu nền thay đổi dựa trên trạng thái
-            borderRadius: 12,
-            marginBottom: 10,
+            backgroundColor: item.readStatus ? "#e0e0e0" : "#fdfdfd",
+            padding: 12,
+            marginBottom: 12,
+            borderRadius: 10,
             elevation: 1,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 5,
+            borderWidth: 1.5,
+            borderColor: "#e3e3e3",
           }}
         >
           <View style={{ flex: 1 }}>
@@ -222,20 +243,42 @@ export default function Notification() {
               style={{
                 fontSize: 16,
                 color: item.readStatus ? "gray" : "black",
-                marginTop: 4,
+                marginVertical: 4,
               }}
             >
               {item.message}
             </Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontStyle: "italic",
+                  fontWeight: "600",
+                  textAlign: "right",
+                  color: "gray",
+                  opacity: 0.7,
+                }}
+              >
+                {formatDistanceToNow(new Date(item.createdDate), {
+                  addSuffix: true,
+                })}
+              </Text>
+            </View>
           </View>
-          <View style={styles.notificationStatus}>
+
+          <View
+            style={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+            }}
+          >
             {item.readStatus ? (
               <Ionicons name="checkmark-done" size={24} color="gray" />
             ) : (
               <Animated.View
                 style={{
                   opacity: blinking,
-                  marginVertical: 4,
                 }}
               >
                 <View
@@ -251,112 +294,116 @@ export default function Notification() {
           </View>
         </TouchableOpacity>
       );
-    } catch (error) {
-      console.error("Error rendering notification:", error);
+    } catch (err) {
+      console.log("Error rendering notification:", err);
       return (
-        <View style={styles.notificationItem}>
-          <Text>Error displaying notification.</Text>
+        <View
+          style={{
+            backgroundColor: "#ededed",
+            padding: 12,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontStyle: "italic",
+              fontWeight: "600",
+              textAlign: "center",
+              color: "gray",
+              opacity: 0.7,
+            }}
+          >
+            Error displaying notification.
+          </Text>
         </View>
       );
     }
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.centeredContainer}>
-        <ActivityIndicator size="large" color="#F39300" />
-      </View>
-    );
-  }
+  const handleEndReached = () => {
+    if (currentPage < totalPages) {
+      loadMoreNotifications();
+    }
+  };
 
   if (error) {
     return (
-      <View style={styles.centeredContainer}>
-        <Text>{error}</Text>
+      <View
+        style={{
+          backgroundColor: "#ededed",
+          padding: 12,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 18,
+            fontStyle: "italic",
+            fontWeight: "600",
+            textAlign: "center",
+            color: "gray",
+            opacity: 0.7,
+          }}
+        >
+          {error}
+        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity
-            hitSlop={30}
-            onPress={() => navigation.navigate("Home")}
-          >
-            <Ionicons name="return-up-back" size={36} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Notifications</Text>
-        </View>
-        <View style={styles.headerRight}>
-          {/* Icon để đánh dấu tất cả thông báo là đã đọc */}
-          <TouchableOpacity hitSlop={30} onPress={markAllAsRead}>
-            <MaterialIcons name="done-all" size={36} color="#F39300" />
-          </TouchableOpacity>
-        </View>
+    <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingHorizontal: 30,
+          paddingTop: height * 0.035,
+          paddingBottom: 10,
+        }}
+      >
+        <TouchableOpacity
+          hitSlop={30}
+          onPress={() => navigation.navigate("Home")}
+        >
+          <Ionicons name="return-up-back" size={36} />
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 24,
+            flex: 3,
+            textAlign: "center",
+          }}
+        >
+          Notifications
+        </Text>
+        <TouchableOpacity hitSlop={30} onPress={markAllAsRead}>
+          <MaterialIcons name="done-all" size={36} color="#F39300" />
+        </TouchableOpacity>
       </View>
-      {/* Notifications List */}
       <View style={{ paddingHorizontal: 30, paddingBottom: 80 }}>
         <FlatList
+          ref={scrollViewRef}
           data={notifications}
-          keyExtractor={(item) => item.notificationId.toString()} // Sử dụng notificationId làm key
+          keyExtractor={(item, index) => index + item.notificationId.toString()}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
+          onEndReached={() => handleEndReached()}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() =>
+            loading ? (
+              <View style={{ padding: 16 }}>
+                <ActivityIndicator size={40} color="#F39300" />
+              </View>
+            ) : null
+          }
         />
       </View>
     </View>
   );
 }
-const { width, height } = Dimensions.get("screen");
-const styles = StyleSheet.create({
-  container: { backgroundColor: "#f5f7fd", flex: 1 },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 30,
-    paddingTop: height * 0.035,
-    paddingVertical: 10,
-  },
-  headerLeft: { flex: 1 },
-  headerCenter: { flex: 3, alignItems: "center" },
-  headerRight: { flex: 1, alignItems: "flex-end" },
-  headerTitle: { fontWeight: "bold", fontSize: 24 },
-
-  tabBar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e3e3e3",
-  },
-  tabActive: {
-    fontSize: 18,
-    color: "white",
-    paddingVertical: 4,
-    paddingHorizontal: 20,
-    fontWeight: "600",
-    backgroundColor: "#F39300",
-    borderRadius: 10,
-  },
-  tab: {
-    fontSize: 18,
-    color: "gray",
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-  },
-  notificationStatus: {
-    position: "absolute",
-    top: 12,
-    right: 8,
-  },
-  centeredContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

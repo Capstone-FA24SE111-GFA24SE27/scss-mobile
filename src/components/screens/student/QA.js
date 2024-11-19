@@ -21,6 +21,7 @@ import { ChatContext } from "../../context/ChatContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import Toast from "react-native-toast-message";
+import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 export default function QA() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
@@ -47,6 +48,7 @@ export default function QA() {
     setOpenChat,
   } = useContext(ChatContext);
   const socket = useContext(SocketContext);
+  const [isExpanded, setIsExpanded] = useState(false);
   const scrollViewRef = useRef(null);
   // const scrollViewRef2 = useRef(null);
   // const [questions, setQuestions] = useState([]);
@@ -283,48 +285,6 @@ export default function QA() {
     }
   }, [counselorType, department, major, specialization, expertise]);
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const layoutHeight = useRef({ container: 0, text: 0 });
-  const accordionHeight = useRef(new Animated.Value(-1)).current;
-  const iconRotation = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.spring(accordionHeight, {
-        toValue:
-          layoutHeight.current.container + isExpanded
-            ? layoutHeight.current.text
-            : 0,
-        useNativeDriver: false,
-      }),
-      Animated.spring(iconRotation, {
-        toValue: isExpanded ? 180 : 0,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [isExpanded]);
-
-  const calculateLayout = (e) => {
-    if (Platform.OS === "web" || layoutHeight.current.container === 0) {
-      layoutHeight.current.container = 0;
-      setInitHeight();
-    }
-  };
-
-  const setInitHeight = () => {
-    const newHeight = layoutHeight.current.container;
-    if (newHeight > 0) {
-      accordionHeight.setValue(
-        newHeight + (isExpanded ? layoutHeight.current.text : 0)
-      );
-    }
-  };
-
-  const rotateIcon = iconRotation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ["0deg", "90deg"],
-  });
-
   // useEffect(() => {
   //   const chatSessionIds = questions?.data?.map(
   //     (question) => question?.chatSession?.id
@@ -402,6 +362,9 @@ export default function QA() {
         type: "error",
         text1: "Error",
         text2: "Can't create question",
+        onPress: () => {
+          Toast.hide();
+        }
       });
     }
   };
@@ -424,6 +387,9 @@ export default function QA() {
           type: "success",
           text1: "Success",
           text2: "Your question has been updated",
+          onPress: () => {
+            Toast.hide();
+          }
         });
         fetchData(filters, { page: currentPage });
         if (openInfo) {
@@ -454,6 +420,9 @@ export default function QA() {
           type: "success",
           text1: "Success",
           text2: "Your question has been deleted",
+          onPress: () => {
+            Toast.hide();
+          }
         });
         fetchData(filters);
       }
@@ -463,6 +432,9 @@ export default function QA() {
         type: "error",
         text1: "Error",
         text2: "Can't delete question",
+        onPress: () => {
+          Toast.hide();
+        }
       });
     }
   };
@@ -480,6 +452,9 @@ export default function QA() {
         type: "success",
         text1: "Success",
         text2: "Your question has been closed",
+        onPress: () => {
+          Toast.hide();
+        }
       });
       fetchData(filters);
     } catch (err) {
@@ -488,6 +463,9 @@ export default function QA() {
         type: "error",
         text1: "Error",
         text2: "Can't close question",
+        onPress: () => {
+          Toast.hide();
+        }
       });
     }
   };
@@ -498,6 +476,14 @@ export default function QA() {
         `${BASE_URL}/question-cards/student/chat-session/create/${questionId}`
       );
       fetchData(filters);
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Chat sesstion of this question has been created",
+        onPress: () => {
+          Toast.hide();
+        }
+      });
       setOpenCreateChatSessionConfirm(false);
       fetchQuestionCard(questionId);
       setTimeout(() => {
@@ -509,6 +495,9 @@ export default function QA() {
         type: "error",
         text1: "Error",
         text2: "Can't start a chat in this question",
+        onPress: () => {
+          Toast.hide();
+        }
       });
     }
   };
@@ -547,6 +536,9 @@ export default function QA() {
         type: "error",
         text1: "Error",
         text2: "Can't read message in this chat",
+        onPress: () => {
+          Toast.hide();
+        }
       });
     }
   };
@@ -716,313 +708,277 @@ export default function QA() {
                   style={{ color: banInfo?.ban === true ? "black" : "white" }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setIsExpanded(!isExpanded)}
-                onLayout={calculateLayout}
-                style={{
-                  backgroundColor: isExpanded ? "#F39300" : "#e3e3e3",
-                  borderRadius: 40,
-                  padding: 8,
-                }}
-              >
-                <Animated.View style={{ transform: [{ rotate: rotateIcon }] }}>
-                  <Ionicons
-                    name="filter"
-                    size={26}
-                    style={{ color: isExpanded ? "white" : "black" }}
-                  />
-                </Animated.View>
-              </TouchableOpacity>
+              <FilterToggle
+                isExpanded={isExpanded}
+                toggleExpanded={() => setIsExpanded((prev) => !prev)}
+              />
             </View>
           </View>
-          <Animated.View
-            style={{
-              height: accordionHeight,
-              marginTop: 8,
-              overflow: "hidden",
-              backgroundColor: "#ededed",
-              borderRadius: 20,
-            }}
-          >
-            <View
-              style={{
-                position: "absolute",
-                width: "100%",
-                paddingVertical: 4,
-              }}
-              onLayout={(e) =>
-                (layoutHeight.current.text = e.nativeEvent.layout.height)
-              }
-            >
-              <View style={{ paddingHorizontal: 10 }}>
-                <View
+          <FilterAccordion isExpanded={isExpanded}>
+            <View style={{ paddingHorizontal: 10 }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 4,
+                  marginLeft: 4,
+                }}
+              >
+                <Text
                   style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: "#333",
+                    minWidth: "20%",
                   }}
                 >
-                  <Text
+                  Status:
+                </Text>
+                <Dropdown
+                  style={{
+                    backgroundColor: "white",
+                    borderColor: expanded ? "#F39300" : "black",
+                    flex: 1,
+                    height: 30,
+                    borderWidth: 1,
+                    borderColor: "grey",
+                    borderRadius: 10,
+                    paddingHorizontal: 12,
+                    marginLeft: 16,
+                  }}
+                  placeholderStyle={{ fontSize: 14 }}
+                  selectedTextStyle={{
+                    fontSize: 14,
+                    color: status ? "black" : "white",
+                  }}
+                  maxHeight={250}
+                  data={statusList}
+                  labelField="name"
+                  value={status}
+                  placeholder={status != "" ? status : "Select Status"}
+                  onFocus={() => setExpanded(true)}
+                  onBlur={() => setExpanded(false)}
+                  onChange={(item) => {
+                    setStatus(item.name);
+                    setExpanded(false);
+                    console.log(status);
+                  }}
+                  renderRightIcon={() => (
+                    <Ionicons
+                      color={expanded ? "#F39300" : "black"}
+                      name={expanded ? "caret-up" : "caret-down"}
+                      size={20}
+                    />
+                  )}
+                  renderItem={(item) => {
+                    return (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          paddingHorizontal: 16,
+                          paddingVertical: 8,
+                          backgroundColor:
+                            item.name == status ? "#F39300" : "white",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "500",
+                            color: item.name == status ? "white" : "black",
+                          }}
+                        >
+                          {item.name}
+                        </Text>
+                        {status == item.name && (
+                          <Ionicons color="white" name="checkmark" size={20} />
+                        )}
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 4,
+                  marginLeft: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: "#333",
+                    minWidth: "20%",
+                  }}
+                >
+                  Sort:
+                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <View
                     style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
-                      color: "#333",
-                      minWidth: "20%",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 16,
                     }}
                   >
-                    Status:
-                  </Text>
-                  <Dropdown
-                    style={{
-                      backgroundColor: "white",
-                      borderColor: expanded ? "#F39300" : "black",
-                      flex: 1,
-                      height: 30,
-                      borderWidth: 1,
-                      borderColor: "grey",
-                      borderRadius: 10,
-                      paddingHorizontal: 12,
-                      marginLeft: 16,
-                    }}
-                    placeholderStyle={{ fontSize: 14 }}
-                    selectedTextStyle={{
-                      fontSize: 14,
-                      color: status ? "black" : "white",
-                    }}
-                    maxHeight={250}
-                    data={statusList}
-                    labelField="name"
-                    value={status}
-                    placeholder={status != "" ? status : "Select Status"}
-                    onFocus={() => setExpanded(true)}
-                    onBlur={() => setExpanded(false)}
-                    onChange={(item) => {
-                      setStatus(item.name);
-                      setExpanded(false);
-                      console.log(status);
-                    }}
-                    renderRightIcon={() => (
+                    <TouchableOpacity
+                      onPress={() => setSortDirection("ASC")}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
                       <Ionicons
-                        color={expanded ? "#F39300" : "black"}
-                        name={expanded ? "caret-up" : "caret-down"}
+                        name={
+                          sortDirection == "ASC"
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
                         size={20}
+                        color={sortDirection == "ASC" ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
                       />
-                    )}
-                    renderItem={(item) => {
-                      return (
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingHorizontal: 16,
-                            paddingVertical: 8,
-                            backgroundColor:
-                              item.name == status ? "#F39300" : "white",
-                          }}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              fontWeight: "500",
-                              color: item.name == status ? "white" : "black",
-                            }}
-                          >
-                            {item.name}
-                          </Text>
-                          {status == item.name && (
-                            <Ionicons
-                              color="white"
-                              name="checkmark"
-                              size={20}
-                            />
-                          )}
-                        </View>
-                      );
-                    }}
-                  />
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
-                  }}
-                >
-                  <Text
+                      <Ionicons
+                        name="arrow-up"
+                        size={20}
+                        style={{
+                          color: sortDirection == "ASC" ? "#F39300" : "black",
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View
                     style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
-                      color: "#333",
-                      minWidth: "20%",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 4,
                     }}
                   >
-                    Sort:
-                  </Text>
-                  <View style={{ flexDirection: "row" }}>
-                    <View
+                    <TouchableOpacity
+                      onPress={() => setSortDirection("DESC")}
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
-                        marginHorizontal: 16,
                       }}
                     >
-                      <TouchableOpacity
-                        onPress={() => setSortDirection("ASC")}
+                      <Ionicons
+                        name={
+                          sortDirection == "DESC"
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={sortDirection == "DESC" ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Ionicons
+                        name="arrow-down"
+                        size={20}
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
+                          color: sortDirection == "DESC" ? "#F39300" : "black",
                         }}
-                      >
-                        <Ionicons
-                          name={
-                            sortDirection == "ASC"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={sortDirection == "ASC" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Ionicons
-                          name="arrow-up"
-                          size={20}
-                          style={{
-                            color: sortDirection == "ASC" ? "#F39300" : "black",
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 4,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => setSortDirection("DESC")}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            sortDirection == "DESC"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={sortDirection == "DESC" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Ionicons
-                          name="arrow-down"
-                          size={20}
-                          style={{
-                            color:
-                              sortDirection == "DESC" ? "#F39300" : "black",
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <View
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 4,
+                  marginLeft: 4,
+                }}
+              >
+                <Text
                   style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: "#333",
+                    minWidth: "20%",
                   }}
                 >
-                  <Text
+                  Type:
+                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <View
                     style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
-                      color: "#333",
-                      minWidth: "20%",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 16,
                     }}
                   >
-                    Type:
-                  </Text>
-                  <View style={{ flexDirection: "row" }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 16,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => setType("ACADEMIC")}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            type == "ACADEMIC"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={type == "ACADEMIC" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text
-                          style={{
-                            color: type == "ACADEMIC" ? "#F39300" : "black",
-                            fontSize: 15,
-                          }}
-                        >
-                          Academic
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View
+                    <TouchableOpacity
+                      onPress={() => setType("ACADEMIC")}
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
                       }}
                     >
-                      <TouchableOpacity
-                        onPress={() => setType("NON_ACADEMIC")}
+                      <Ionicons
+                        name={
+                          type == "ACADEMIC"
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={type == "ACADEMIC" ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
+                          color: type == "ACADEMIC" ? "#F39300" : "black",
+                          fontSize: 15,
                         }}
                       >
-                        <Ionicons
-                          name={
-                            type == "NON_ACADEMIC"
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={type == "NON_ACADEMIC" ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Text
-                          style={{
-                            color: type == "NON_ACADEMIC" ? "#F39300" : "black",
-                            fontSize: 15,
-                          }}
-                        >
-                          Non-Academic
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
+                        Academic
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => setType("NON_ACADEMIC")}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          type == "NON_ACADEMIC"
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={type == "NON_ACADEMIC" ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text
+                        style={{
+                          color: type == "NON_ACADEMIC" ? "#F39300" : "black",
+                          fontSize: 15,
+                        }}
+                      >
+                        Non-Academic
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-                {/* <View
+              </View>
+              {/* <View
                   style={{
                     flex: 1,
                     flexDirection: "row",
@@ -1110,150 +1066,149 @@ export default function QA() {
                     </View>
                   </View>
                 </View> */}
-                <View
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 4,
+                  marginLeft: 4,
+                }}
+              >
+                <Text
                   style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: "#333",
+                    minWidth: "20%",
+                  }}
+                >
+                  Closed:
+                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 16,
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => setIsClosed(true)}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          isClosed === true
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={isClosed === true ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Ionicons
+                        name="checkmark"
+                        size={20}
+                        style={{
+                          color: isClosed === true ? "#F39300" : "black",
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 4,
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => setIsClosed(false)}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          isClosed === false
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={isClosed === false ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Ionicons
+                        name="close"
+                        size={20}
+                        style={{
+                          color: isClosed === false ? "#F39300" : "black",
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  margin: 8,
+                  flex: 1,
+                  justifyContent: "flex-end",
+                  alignItems: "flex-end",
+                  flexDirection: "row",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={cancelFilters}
+                  style={{
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    backgroundColor: "white",
+                    borderRadius: 10,
+                    elevation: 2,
+                    marginHorizontal: 4,
                   }}
                 >
                   <Text
                     style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
                       color: "#333",
-                      minWidth: "20%",
+                      fontSize: 16,
+                      fontWeight: "600",
+                      opacity: 0.7,
                     }}
                   >
-                    Closed:
+                    Clear
                   </Text>
-                  <View style={{ flexDirection: "row" }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 16,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => setIsClosed(true)}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            isClosed === true
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={isClosed === true ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Ionicons
-                          name="checkmark"
-                          size={20}
-                          style={{
-                            color: isClosed === true ? "#F39300" : "black",
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginHorizontal: 4,
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => setIsClosed(false)}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            isClosed === false
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={isClosed === false ? "#F39300" : "gray"}
-                          style={{ marginRight: 4 }}
-                        />
-                        <Ionicons
-                          name="close"
-                          size={20}
-                          style={{
-                            color: isClosed === false ? "#F39300" : "black",
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-                <View
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={applyFilters}
                   style={{
-                    margin: 8,
-                    flex: 1,
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                    flexDirection: "row",
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    backgroundColor: "#F39300",
+                    borderRadius: 10,
+                    elevation: 2,
+                    marginHorizontal: 4,
                   }}
                 >
-                  <TouchableOpacity
-                    onPress={cancelFilters}
+                  <Text
                     style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      backgroundColor: "white",
-                      borderRadius: 10,
-                      elevation: 2,
-                      marginHorizontal: 4,
+                      color: "white",
+                      fontSize: 16,
+                      fontWeight: "600",
                     }}
                   >
-                    <Text
-                      style={{
-                        color: "#333",
-                        fontSize: 16,
-                        fontWeight: "600",
-                        opacity: 0.7,
-                      }}
-                    >
-                      Clear
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={applyFilters}
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      backgroundColor: "#F39300",
-                      borderRadius: 10,
-                      elevation: 2,
-                      marginHorizontal: 4,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "white",
-                        fontSize: 16,
-                        fontWeight: "600",
-                      }}
-                    >
-                      Apply
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                    Apply
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Animated.View>
+          </FilterAccordion>
         </>
         <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
           {loading ? (
@@ -1652,7 +1607,7 @@ export default function QA() {
                             </TouchableOpacity>
                           )}
 
-                        {question.chatSession !== null ? (
+                        {question.chatSession !== null && (
                           <TouchableOpacity
                             onPress={() => {
                               fetchQuestionCard(question.id);
@@ -1684,7 +1639,8 @@ export default function QA() {
                               Chat
                             </Text>
                           </TouchableOpacity>
-                        ) : (
+                        )}
+                        {(question.chatSession === null && (question.closed === false || question.status === "VERIFIED") ) && (
                           <TouchableOpacity
                             onPress={() => {
                               setOpenCreateChatSessionConfirm(true);
