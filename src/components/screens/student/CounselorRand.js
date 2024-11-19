@@ -275,7 +275,7 @@ export default function CounselorRand() {
             style={{
               width: "auto",
               padding: 8,
-              marginVertical: 4,
+              marginVertical: 6,
               marginRight: 6,
               backgroundColor:
                 slot.myAppointment === true
@@ -368,7 +368,7 @@ export default function CounselorRand() {
               borderRadius: 10,
               paddingHorizontal: 12,
               paddingVertical: 4,
-              marginTop: 10,
+              marginTop: 4,
               borderWidth: 1.5,
               borderColor: type == "ACADEMIC" ? "#F39300" : "transparent",
             }}
@@ -408,7 +408,7 @@ export default function CounselorRand() {
               borderRadius: 10,
               paddingHorizontal: 12,
               paddingVertical: 4,
-              marginTop: 10,
+              marginTop: 4,
               borderWidth: 1.5,
               borderColor: type == "NON-ACADEMIC" ? "#F39300" : "transparent",
             }}
@@ -460,7 +460,7 @@ export default function CounselorRand() {
               backgroundColor: "white",
               borderRadius: 10,
               padding: 12,
-              marginTop: 10,
+              marginTop: 4,
               borderWidth: 4,
               marginRight: 4,
               borderColor: gender == "MALE" ? "#F39300" : "transparent",
@@ -491,7 +491,7 @@ export default function CounselorRand() {
               backgroundColor: "white",
               borderRadius: 10,
               padding: 12,
-              marginTop: 10,
+              marginTop: 4,
               borderWidth: 4,
               marginLeft: 4,
               borderColor: gender == "FEMALE" ? "#F39300" : "transparent",
@@ -533,10 +533,14 @@ export default function CounselorRand() {
         labelField="name"
         search
         value={
-          selectedDepartment !== "" ? selectedDepartment.name : "Select Department"
+          selectedDepartment !== ""
+            ? selectedDepartment.name
+            : "Select Department"
         }
         placeholder={
-          selectedDepartment !== "" ? selectedDepartment.name : "Select Department"
+          selectedDepartment !== ""
+            ? selectedDepartment.name
+            : "Select Department"
         }
         searchPlaceholder="Search Department"
         onFocus={() => setExpanded(true)}
@@ -861,6 +865,7 @@ export default function CounselorRand() {
             style={{
               fontSize: 18,
               fontWeight: "600",
+              marginBottom: 4
             }}
           >
             {item.title}{" "}
@@ -920,10 +925,19 @@ export default function CounselorRand() {
                 borderRadius: 20,
               }}
             >
-              <Ionicons name="chevron-back" size={28} color="white" />
+              <Ionicons name="chevron-back" size={30} color="white" />
             </TouchableOpacity>
           ) : (
-            <View style={{ width: 28, height: 28 }} />
+            <TouchableOpacity
+              disabled
+              style={{
+                backgroundColor: "#e3e3e3",
+                padding: 4,
+                borderRadius: 20,
+              }}
+            >
+              <Ionicons name="chevron-back" size={30} color="gray" />
+            </TouchableOpacity>
           )}
           <View
             style={{
@@ -942,7 +956,7 @@ export default function CounselorRand() {
                   width: currentPage === index ? 16 : 12,
                   borderRadius: 20,
                   backgroundColor: "#F39300",
-                  marginHorizontal: 8,
+                  marginHorizontal: 4,
                   opacity: currentPage === index ? 1 : 0.3,
                 }}
               />
@@ -958,10 +972,19 @@ export default function CounselorRand() {
                 borderRadius: 20,
               }}
             >
-              <Ionicons name="chevron-forward" size={28} color="white" />
+              <Ionicons name="chevron-forward" size={30} color="white" />
             </TouchableOpacity>
           ) : (
-            <View style={{ width: 28, height: 28 }} />
+            <TouchableOpacity
+              disabled
+              style={{
+                backgroundColor: "#e3e3e3",
+                padding: 4,
+                borderRadius: 20,
+              }}
+            >
+              <Ionicons name="chevron-forward" size={30} color="gray" />
+            </TouchableOpacity>
           )}
         </View>
         <View

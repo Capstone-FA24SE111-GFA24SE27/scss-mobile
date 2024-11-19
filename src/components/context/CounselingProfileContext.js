@@ -60,7 +60,10 @@ export const CounselingProfileProvider = ({ children }) => {
       Toast.show({
         type: "success",
         text1: "Success",
-        text2: "Information updated successfully!"
+        text2: "Information updated successfully!",
+        onPress: () => {
+          Toast.hide();
+        }
       })
       setShowModal(false);
       fetchStudentDoc();

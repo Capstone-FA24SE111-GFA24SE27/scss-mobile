@@ -234,9 +234,9 @@ export default function Home() {
             style={{ display: "flex", flexDirection: "row", marginTop: 12 }}
           >
             <TouchableOpacity
+              activeOpacity={0.7}
               onPress={() => navigation.navigate("Notification")}
               style={{ position: "relative", marginRight: 20, marginTop: 2 }}
-              activeOpacity={0.7}
             >
               <Animated.View style={{ transform: [{ rotate: rotation }] }}>
                 <Ionicons
@@ -335,7 +335,7 @@ export default function Home() {
             showsVerticalScrollIndicator={false}
             style={{ marginHorizontal: 30 }}
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               activeOpacity={0.5}
               onPress={() => navigation.navigate("Counselor")}
               style={{
@@ -363,8 +363,73 @@ export default function Home() {
               >
                 Create your first appointment request
               </Text>
-            </TouchableOpacity>
-
+            </TouchableOpacity> */}
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate("Counselor", { screen: "Quick Booking" })
+                }
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  borderWidth: 2,
+                  borderColor: "#F39300",
+                  width: "49%",
+                  borderStyle: "dashed",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginVertical: 16,
+                  paddingHorizontal: 8,
+                  paddingVertical: 16,
+                }}
+              >
+                <Ionicons name="add-circle" size={48} color="#F39300" />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontSize: 18,
+                    fontWeight: "600",
+                    opacity: 0.7,
+                  }}
+                >
+                  Quick Booking
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() =>
+                  navigation.navigate("Counselor", { screen: "Academic" })
+                }
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  borderWidth: 2,
+                  borderColor: "#F39300",
+                  width: "49%",
+                  borderStyle: "dashed",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginVertical: 16,
+                  paddingHorizontal: 8,
+                  paddingVertical: 16,
+                }}
+              >
+                <Ionicons name="people" size={48} color="#F39300" />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontSize: 18,
+                    fontWeight: "600",
+                    opacity: 0.7,
+                  }}
+                >
+                  Find Counselors
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View>
               <View
                 style={{
@@ -416,7 +481,7 @@ export default function Home() {
                       opacity: 0.7,
                     }}
                   >
-                    No requests created
+                    No request created
                   </Text>
                 </View>
               ) : (
@@ -928,7 +993,7 @@ export default function Home() {
                       opacity: 0.7,
                     }}
                   >
-                    No questions were answered
+                    No question was answered
                   </Text>
                 </View>
               ) : (
