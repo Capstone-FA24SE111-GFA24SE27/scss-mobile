@@ -70,6 +70,8 @@ export default function Appointment({ route }) {
   const [selectedDate2, setSelectedDate2] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempDate, setTempDate] = useState(new Date());
   const [selectedSlot, setSelectedSlot] = useState("");
   const [online, isOnline] = useState(null);
   const [reason, setReason] = useState("");
@@ -272,6 +274,17 @@ export default function Appointment({ route }) {
     const from = startOfWeek.toISOString().split("T")[0];
     const to = endOfWeek.toISOString().split("T")[0];
     await fetchSlots(userData?.id, from, to);
+  };
+
+  const onDateChange = (e, newDate) => {
+    if (e?.type === "dismissed") {
+      setShowDatePicker(false);
+      return;
+    }
+    const currentDate = newDate || new Date();
+    setShowDatePicker(Platform.OS === "ios");
+    const formattedDate = formatDate(currentDate);
+    setSelectedDate2(formattedDate);
   };
 
   const fetchSlots = async (counselorId, from, to) => {
@@ -1393,31 +1406,54 @@ export default function Appointment({ route }) {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingHorizontal: 20,
+                        marginBottom: 12,
                       }}
                     >
                       <Text
                         style={{
                           fontSize: 18,
-                          marginHorizontal: 20,
                           fontWeight: "600",
-                          marginBottom: 12,
                         }}
                       >
                         Available Time
                       </Text>
-                      <Text
+                      <View
                         style={{
-                          fontSize: 18,
-                          marginHorizontal: 20,
-                          fontWeight: "400",
-                          marginBottom: 12,
+                          flex: 0.65,
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          borderRadius: 20,
+                          paddingHorizontal: 12,
+                          alignItems: "center",
+                          backgroundColor: "white",
+                          height: 30,
+                          borderWidth: 1,
+                          borderColor: "gray",
                         }}
                       >
-                        Date:{" "}
-                        <Text style={{ fontWeight: "600", color: "#F39300" }}>
-                          {selectedDate2}
+                        <Text style={{ fontSize: 16, opacity: 0.8 }}>
+                          {selectedDate2 !== "" ? selectedDate2 : "xxxx-xx-xx"}
                         </Text>
-                      </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowDatePicker(true)}
+                        >
+                          <Ionicons
+                            name="calendar-outline"
+                            size={20}
+                            color="#F39300"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      {showDatePicker && (
+                        <RNDateTimePicker
+                          value={tempDate}
+                          mode="date"
+                          display="default"
+                          onChange={onDateChange}
+                        />
+                      )}
                     </View>
                     <WeekCalendar
                       hideKnob
@@ -2088,7 +2124,6 @@ export default function Appointment({ route }) {
                   style={{
                     padding: 20,
                     backgroundColor: "#f5f7fd",
-                    borderRadius: 16,
                   }}
                 >
                   <View
@@ -2560,7 +2595,7 @@ export default function Appointment({ route }) {
                     <View
                       style={{
                         marginTop: 20,
-                        borderRadius: 20,
+                        borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
                         borderWidth: 1.5,
@@ -2672,26 +2707,26 @@ export default function Appointment({ route }) {
                   )}
                   {info?.reason !== null && (
                     <View
-                    style={{
-                      marginBottom: 20,
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <Text
                       style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                        marginBottom: 4,
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
                       }}
                     >
-                      Canceled Reason
-                    </Text>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
+                        }}
+                      >
+                        Canceled Reason
+                      </Text>
                       <Text
                         style={{
                           fontSize: 20,
@@ -2702,7 +2737,7 @@ export default function Appointment({ route }) {
                       >
                         {info?.reason}
                       </Text>
-                  </View>
+                    </View>
                   )}
                 </View>
               </ScrollView>

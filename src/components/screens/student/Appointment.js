@@ -1066,7 +1066,6 @@ export default function Appointment({ route }) {
                   style={{
                     padding: 20,
                     backgroundColor: "#f5f7fd",
-                    borderRadius: 16,
                   }}
                 >
                   <View
@@ -1369,13 +1368,28 @@ export default function Appointment({ route }) {
                         padding: 16,
                         elevation: 1,
                         borderWidth: 1.5,
-                        borderColor: "#e3e3e3",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.2,
-                        shadowRadius: 4,
+                        borderColor: "lightgrey",
                       }}
                     >
+                      <View style={{ marginBottom: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            fontWeight: "500",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: "#F39300",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            You
+                          </Text>{" "}
+                          had leave a review
+                        </Text>
+                      </View>
                       <View
                         style={{
                           flexDirection: "row",
@@ -1384,21 +1398,12 @@ export default function Appointment({ route }) {
                           marginBottom: 12,
                         }}
                       >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
-                            color: "#333",
-                          }}
-                        >
-                          {formatDate(info?.appointmentFeedback?.createdAt)}
-                        </Text>
                         <View
                           style={{
                             flexDirection: "row",
                             alignItems: "center",
                             backgroundColor: "#F39300",
-                            paddingHorizontal: 10,
+                            paddingHorizontal: 12,
                             paddingVertical: 4,
                             borderRadius: 16,
                           }}
@@ -1415,12 +1420,30 @@ export default function Appointment({ route }) {
                             {info?.appointmentFeedback?.rating.toFixed(1)}
                           </Text>
                         </View>
+                        <View
+                          style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderWidth: 1,
+                            borderColor: "gray",
+                            borderRadius: 20,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "500",
+                              color: "#333",
+                            }}
+                          >
+                            {formatDate(info?.appointmentFeedback?.createdAt)}
+                          </Text>
+                        </View>
                       </View>
                       <Text
                         style={{
                           fontSize: 18,
                           color: "#333",
-                          fontWeight: "500",
                           lineHeight: 24,
                         }}
                       >
@@ -1645,26 +1668,26 @@ export default function Appointment({ route }) {
                   )}
                   {info?.reason !== null && (
                     <View
-                    style={{
-                      marginBottom: 20,
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <Text
                       style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                        marginBottom: 4,
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
                       }}
                     >
-                      Canceled Reason
-                    </Text>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
+                        }}
+                      >
+                        Canceled Reason
+                      </Text>
                       <Text
                         style={{
                           fontSize: 20,
@@ -1675,7 +1698,7 @@ export default function Appointment({ route }) {
                       >
                         {info?.reason}
                       </Text>
-                  </View>
+                    </View>
                   )}
                 </View>
               </ScrollView>
