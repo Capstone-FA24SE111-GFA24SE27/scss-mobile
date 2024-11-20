@@ -432,7 +432,7 @@ export default function Schedule() {
                       flexDirection: "row",
                       padding: 16,
                       backgroundColor: "white",
-                      borderRadius: 12,
+                      borderRadius: 10,
                       marginVertical: 20,
                       marginHorizontal: 20,
                       elevation: 1,
@@ -518,7 +518,7 @@ export default function Schedule() {
                   <View
                     style={{
                       marginHorizontal: 20,
-                      borderRadius: 20,
+                      borderRadius: 10,
                       backgroundColor: "white",
                       paddingVertical: 12,
                       paddingHorizontal: 20,
@@ -738,7 +738,7 @@ export default function Schedule() {
                     <View
                       style={{
                         margin: 20,
-                        borderRadius: 20,
+                        borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
                         elevation: 1,
@@ -746,6 +746,25 @@ export default function Schedule() {
                         borderColor: "lightgrey",
                       }}
                     >
+                      <View style={{ marginBottom: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            fontWeight: "500",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: "#F39300",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            You
+                          </Text>{" "}
+                          had leave a review
+                        </Text>
+                      </View>
                       <View
                         style={{
                           flexDirection: "row",

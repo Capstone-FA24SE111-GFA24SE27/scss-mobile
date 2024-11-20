@@ -36,6 +36,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import ErrorModal from "../../layout/ErrorModal";
 import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 export default function NonAcademicCounselor() {
   const navigation = useNavigation();
@@ -68,6 +69,8 @@ export default function NonAcademicCounselor() {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempDate, setTempDate] = useState(new Date());
   const [selectedSlot, setSelectedSlot] = useState("");
   const [online, isOnline] = useState(null);
   const [reason, setReason] = useState("");
@@ -199,6 +202,17 @@ export default function NonAcademicCounselor() {
     const day = String(date.getDate()).padStart(2, "0");
     const formattedDate = `${year}-${month}-${day}`;
     return formattedDate;
+  };
+
+  const onDateChange = (e, newDate) => {
+    if (e?.type === "dismissed") {
+      setShowDatePicker(false);
+      return;
+    }
+    const currentDate = newDate || new Date();
+    setShowDatePicker(Platform.OS === "ios");
+    const formattedDate = formatDate(currentDate);
+    setSelectedDate(formattedDate);
   };
 
   const handleCloseBooking = () => {
@@ -352,10 +366,6 @@ export default function NonAcademicCounselor() {
     );
   };
 
-  const handleOpenConfirm = () => {
-    setOpenConfirm(true);
-  };
-
   useEffect(() => {}, [socket, selectedDate]);
 
   const handleSocketChange = useCallback(
@@ -411,7 +421,7 @@ export default function NonAcademicCounselor() {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        handleCloseConfirm();
+        setOpenConfirm(false);
         const startOfWeek = new Date(selectedDate);
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 31);
@@ -443,10 +453,6 @@ export default function NonAcademicCounselor() {
         "You already created a request that have the same chosen slot on this day. Please choose a different slot"
       );
     }
-  };
-
-  const handleCloseConfirm = () => {
-    setOpenConfirm(false);
   };
 
   const handleCloseSuccess = () => {
@@ -1418,33 +1424,56 @@ export default function NonAcademicCounselor() {
                             style={{
                               flexDirection: "row",
                               justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 20,
+                              marginBottom: 12,
                             }}
                           >
                             <Text
                               style={{
                                 fontSize: 18,
-                                marginHorizontal: 20,
                                 fontWeight: "600",
-                                marginBottom: 12,
                               }}
                             >
                               Available Time
                             </Text>
-                            <Text
+                            <View
                               style={{
-                                fontSize: 18,
-                                marginHorizontal: 20,
-                                fontWeight: "400",
-                                marginBottom: 12,
+                                flex: 0.65,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                borderRadius: 20,
+                                paddingHorizontal: 12,
+                                alignItems: "center",
+                                backgroundColor: "white",
+                                height: 30,
+                                borderWidth: 1,
+                                borderColor: "gray",
                               }}
                             >
-                              Date:{" "}
-                              <Text
-                                style={{ fontWeight: "600", color: "#F39300" }}
-                              >
-                                {selectedDate}
+                              <Text style={{ fontSize: 16, opacity: 0.8 }}>
+                                {selectedDate !== ""
+                                  ? selectedDate
+                                  : "xxxx-xx-xx"}
                               </Text>
-                            </Text>
+                              <TouchableOpacity
+                                onPress={() => setShowDatePicker(true)}
+                              >
+                                <Ionicons
+                                  name="calendar-outline"
+                                  size={20}
+                                  color="#F39300"
+                                />
+                              </TouchableOpacity>
+                            </View>
+                            {showDatePicker && (
+                              <RNDateTimePicker
+                                value={tempDate}
+                                mode="date"
+                                display="default"
+                                onChange={onDateChange}
+                              />
+                            )}
                           </View>
                           <WeekCalendar
                             hideKnob
@@ -1725,7 +1754,7 @@ export default function NonAcademicCounselor() {
                       online === null ||
                       reason === ""
                     }
-                    onPress={handleOpenConfirm}
+                    onPress={() => setOpenConfirm(true)}
                     activeOpacity={0.8}
                   >
                     <Text
@@ -1768,7 +1797,7 @@ export default function NonAcademicCounselor() {
                     transparent={true}
                     visible={openConfirm}
                     animationType="fade"
-                    onRequestClose={handleCloseConfirm}
+                    onRequestClose={() => setOpenConfirm(false)}
                   >
                     <View
                       style={{
@@ -1824,7 +1853,7 @@ export default function NonAcademicCounselor() {
                               borderWidth: 1,
                               borderColor: "gray",
                             }}
-                            onPress={handleCloseConfirm}
+                            onPress={() => setOpenConfirm(false)}
                           >
                             <Text
                               style={{

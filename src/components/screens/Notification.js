@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Animated,
   Dimensions,
+  Image,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -387,6 +388,29 @@ export default function Notification() {
         </TouchableOpacity>
       </View>
       <View style={{ paddingHorizontal: 30, paddingBottom: 80 }}>
+        {notifications.length === 0 && (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 30,
+            }}
+          >
+            {/* <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+              You don't have no notifications right now
+            </Text> */}
+            <Image
+              source={{
+                uri: "https://img.freepik.com/premium-vector/modern-design-concept-no-notification-found-design_637684-237.jpg?semt=ais_hybrid",
+              }}
+              style={{
+                width: width * 0.85,
+                height: height * 0.6,
+                resizeMode: "cover",
+              }}
+            />
+          </View>
+        )}
         <FlatList
           ref={scrollViewRef}
           data={notifications}

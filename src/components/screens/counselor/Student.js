@@ -3971,7 +3971,6 @@ export default function Student() {
                               style={{
                                 padding: 20,
                                 backgroundColor: "#f5f7fd",
-                                borderRadius: 16,
                               }}
                             >
                               <View
@@ -3979,7 +3978,7 @@ export default function Student() {
                                   flexDirection: "row",
                                   padding: 16,
                                   backgroundColor: "white",
-                                  borderRadius: 12,
+                                  borderRadius: 10,
                                   marginBottom: 20,
                                   elevation: 1,
                                   borderWidth: 1.5,
@@ -4078,7 +4077,7 @@ export default function Student() {
                               <View
                                 style={{
                                   backgroundColor: "white",
-                                  borderRadius: 16,
+                                  borderRadius: 10,
                                   padding: 20,
                                   elevation: 1,
                                   borderWidth: 1.5,
@@ -4293,7 +4292,7 @@ export default function Student() {
                                 <View
                                   style={{
                                     marginTop: 20,
-                                    borderRadius: 20,
+                                    borderRadius: 10,
                                     backgroundColor: "white",
                                     padding: 16,
                                     borderWidth: 1.5,

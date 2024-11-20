@@ -670,7 +670,7 @@ export default function Schedule() {
                       flexDirection: "row",
                       padding: 16,
                       backgroundColor: "white",
-                      borderRadius: 12,
+                      borderRadius: 10,
                       marginVertical: 20,
                       marginHorizontal: 20,
                       elevation: 1,
@@ -754,7 +754,7 @@ export default function Schedule() {
                   <View
                     style={{
                       marginHorizontal: 20,
-                      borderRadius: 20,
+                      borderRadius: 10,
                       backgroundColor: "white",
                       paddingVertical: 12,
                       paddingHorizontal: 20,
@@ -1166,7 +1166,7 @@ export default function Schedule() {
                     <View
                       style={{
                         margin: 20,
-                        borderRadius: 20,
+                        borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
                         elevation: 1,
