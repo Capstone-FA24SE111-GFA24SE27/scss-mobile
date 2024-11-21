@@ -1,17 +1,13 @@
 import {
   View,
   Text,
-  Pressable,
   ScrollView,
   TextInput,
   Image,
   TouchableOpacity,
-  Animated,
   Platform,
   Modal,
   Dimensions,
-  SectionList,
-  Alert,
 } from "react-native";
 import React, {
   useCallback,
@@ -27,11 +23,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
-import {
-  CalendarProvider,
-  ExpandableCalendar,
-  WeekCalendar,
-} from "react-native-calendars";
+import { CalendarProvider, WeekCalendar } from "react-native-calendars";
 import { SocketContext } from "../../context/SocketContext";
 import { AuthContext } from "../../context/AuthContext";
 import { CounselorSkeleton } from "../../layout/Skeleton";
@@ -75,7 +67,7 @@ export default function AcademicCounselor() {
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCounselor, setSelectedCounselor] = useState({});
-  const [open, setOpen] = useState(false);
+  const [openBooking, setOpenBooking] = useState(false);
   const [slots, setSlots] = useState({});
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -285,7 +277,7 @@ export default function AcademicCounselor() {
       const to = endOfWeek.toISOString().split("T")[0];
 
       await fetchSlots(counselorId, from, to);
-      setOpen(true);
+      setOpenBooking(true);
     } catch (err) {
       console.log("Failed to open booking site");
     }
@@ -315,7 +307,7 @@ export default function AcademicCounselor() {
     setSelectedCounselor({});
     setSelectedSlot(null);
     isOnline(null);
-    setOpen(false);
+    setOpenBooking(false);
   };
 
   const error = console.error;
@@ -451,10 +443,7 @@ export default function AcademicCounselor() {
               }}
             >
               {/* {slot.slotCode}{"\n"} */}
-              {slot.startTime.split(":")[0] +
-                ":" +
-                slot.startTime.split(":")[1]}{" "}
-              - {slot.endTime.split(":")[0] + ":" + slot.endTime.split(":")[1]}
+              {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -1624,150 +1613,159 @@ export default function AcademicCounselor() {
               </View>
             ))
           )}
-          <Modal
-            transparent={true}
-            visible={open}
-            animationType="slide"
-            onRequestClose={handleCloseBooking}
+        </ScrollView>
+        {!loading && (
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            length={counselors?.data?.length}
+            totalPages={counselors?.totalPages}
+          />
+        )}
+        <Modal
+          transparent={true}
+          visible={openBooking}
+          animationType="slide"
+          onRequestClose={handleCloseBooking}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+            }}
           >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "flex-end",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.2)",
-              }}
-            >
-              {selectedCounselor && (
+            {selectedCounselor && (
+              <View
+                style={{
+                  width: "100%",
+                  height: "98%",
+                  backgroundColor: "#f5f7fd",
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                }}
+              >
                 <View
                   style={{
-                    width: "100%",
-                    height: "98%",
-                    backgroundColor: "#f5f7fd",
-                    borderTopLeftRadius: 16,
-                    borderTopRightRadius: 16,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginHorizontal: 20,
+                    marginTop: 16,
+                    marginBottom: 8,
                   }}
                 >
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ededed",
+                      padding: 4,
+                      borderRadius: 20,
+                      alignSelf: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                    onPress={handleCloseBooking}
+                  >
+                    <Ionicons name="chevron-back" size={28} />
+                  </TouchableOpacity>
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-between",
                       alignItems: "center",
-                      marginHorizontal: 20,
-                      marginTop: 16,
-                      marginBottom: 8,
+                      backgroundColor: "white",
+                      paddingHorizontal: 12,
+                      paddingVertical: 4,
+                      borderWidth: 1.5,
+                      borderColor: "#F39300",
+                      borderRadius: 20,
                     }}
                   >
-                    <TouchableOpacity
+                    <Ionicons name="star" size={16} color="#F39300" />
+                    <Text
                       style={{
-                        backgroundColor: "#ededed",
-                        padding: 4,
-                        borderRadius: 20,
-                        alignSelf: "flex-start",
-                        alignItems: "flex-start",
-                      }}
-                      onPress={handleCloseBooking}
-                    >
-                      <Ionicons name="chevron-back" size={28} />
-                    </TouchableOpacity>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        backgroundColor: "white",
-                        paddingHorizontal: 12,
-                        paddingVertical: 4,
-                        borderWidth: 1.5,
-                        borderColor: "#F39300",
-                        borderRadius: 20,
+                        fontSize: 16,
+                        marginLeft: 4,
+                        fontWeight: "bold",
+                        color: "#F39300",
                       }}
                     >
-                      <Ionicons name="star" size={16} color="#F39300" />
-                      <Text
+                      {selectedCounselor?.rating}
+                    </Text>
+                  </View>
+                </View>
+                <CalendarProvider
+                  date={selectedDate}
+                  onDateChanged={(date) => (
+                    setSelectedDate(date), setSelectedSlot("")
+                  )}
+                  onMonthChange={(newDate) =>
+                    handleMonthChange(newDate.dateString)
+                  }
+                >
+                  <ScrollView showsVerticalScrollIndicator={false}>
+                    <View>
+                      <View
                         style={{
-                          fontSize: 16,
-                          marginLeft: 4,
-                          fontWeight: "bold",
-                          color: "#F39300",
+                          alignItems: "center",
                         }}
                       >
-                        {selectedCounselor?.rating}
-                      </Text>
-                    </View>
-                  </View>
-                  <CalendarProvider
-                    date={selectedDate}
-                    onDateChanged={(date) => (
-                      setSelectedDate(date), setSelectedSlot("")
-                    )}
-                    onMonthChange={(newDate) =>
-                      handleMonthChange(newDate.dateString)
-                    }
-                  >
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                      <View>
+                        <View
+                          style={{ position: "relative", marginBottom: 12 }}
+                        >
+                          <Image
+                            source={{
+                              uri: selectedCounselor.profile?.avatarLink,
+                            }}
+                            style={{
+                              width: width * 0.32,
+                              height: width * 0.32,
+                              borderRadius: 100,
+                              backgroundColor: "white",
+                              borderColor: "#F39300",
+                              borderWidth: 2,
+                            }}
+                          />
+                          <Ionicons
+                            name={
+                              selectedCounselor.profile?.gender == "MALE"
+                                ? "male"
+                                : "female"
+                            }
+                            size={26}
+                            style={{
+                              position: "absolute",
+                              right: 4,
+                              bottom: 0,
+                              backgroundColor: "#F39300",
+                              color: "white",
+                              // color:
+                              //   selectedCounselor.profile?.gender == "MALE"
+                              //     ? "#0000fa"
+                              //     : "#ff469e",
+                              padding: 5,
+                              // borderWidth: 1.5,
+                              // borderColor: "#ededed",
+                              borderRadius: 40,
+                            }}
+                          />
+                        </View>
                         <View
                           style={{
+                            flexDirection: "row",
                             alignItems: "center",
                           }}
                         >
-                          <View
-                            style={{ position: "relative", marginBottom: 12 }}
-                          >
-                            <Image
-                              source={{
-                                uri: selectedCounselor.profile?.avatarLink,
-                              }}
-                              style={{
-                                width: width * 0.32,
-                                height: width * 0.32,
-                                borderRadius: 100,
-                                backgroundColor: "white",
-                                borderColor: "#F39300",
-                                borderWidth: 2,
-                              }}
-                            />
-                            <Ionicons
-                              name={
-                                selectedCounselor.profile?.gender == "MALE"
-                                  ? "male"
-                                  : "female"
-                              }
-                              size={26}
-                              style={{
-                                position: "absolute",
-                                right: 4,
-                                bottom: 0,
-                                backgroundColor: "#F39300",
-                                color: "white",
-                                // color:
-                                //   selectedCounselor.profile?.gender == "MALE"
-                                //     ? "#0000fa"
-                                //     : "#ff469e",
-                                padding: 5,
-                                // borderWidth: 1.5,
-                                // borderColor: "#ededed",
-                                borderRadius: 40,
-                              }}
-                            />
-                          </View>
-                          <View
+                          <Text
                             style={{
-                              flexDirection: "row",
-                              alignItems: "center",
+                              fontSize: 24,
+                              fontWeight: "bold",
+                              marginBottom: 16,
                             }}
                           >
-                            <Text
-                              style={{
-                                fontSize: 24,
-                                fontWeight: "bold",
-                                marginBottom: 16,
-                              }}
-                            >
-                              {selectedCounselor.profile?.fullName}
-                            </Text>
-                          </View>
-                          {/* <Text
+                            {selectedCounselor.profile?.fullName}
+                          </Text>
+                        </View>
+                        {/* <Text
                             style={{
                               fontSize: 18,
                               color: "gray",
@@ -1776,283 +1774,281 @@ export default function AcademicCounselor() {
                           >
                             {selectedCounselor.specialization?.name}
                           </Text> */}
-                        </View>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          backgroundColor: "white",
+                          paddingVertical: 8,
+                          marginHorizontal: 20,
+                          borderRadius: 10,
+                        }}
+                      >
                         <View
                           style={{
                             flexDirection: "row",
-                            justifyContent: "space-between",
-                            backgroundColor: "white",
-                            paddingVertical: 8,
-                            marginHorizontal: 20,
-                            borderRadius: 10,
+                            alignItems: "center",
+                            width: "50%",
                           }}
                         >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              width: "50%",
-                            }}
-                          >
-                            <MaterialIcons
-                              name="cake"
-                              size={24}
-                              color="#F39300"
-                              style={{ marginHorizontal: 12 }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                  color: "gray",
-                                }}
-                              >
-                                Date of Birth
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {formatDate(
-                                  selectedCounselor.profile?.dateOfBirth
-                                )}
-                              </Text>
-                            </View>
-                          </View>
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              width: "50%",
-                            }}
-                          >
-                            <MaterialCommunityIcons
-                              name="certificate"
-                              size={24}
-                              color="#F39300"
-                              style={{ marginHorizontal: 12 }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                  color: "gray",
-                                }}
-                              >
-                                Degree
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {selectedCounselor.academicDegree}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            backgroundColor: "white",
-                            paddingVertical: 8,
-                            marginHorizontal: 20,
-                            borderRadius: 10,
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Ionicons
-                              name="briefcase"
-                              size={24}
-                              color="#F39300"
-                              style={{ marginHorizontal: 12 }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                  color: "gray",
-                                }}
-                              >
-                                Department
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {selectedCounselor?.department?.name} (
-                                {selectedCounselor?.department?.code})
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            backgroundColor: "white",
-                            paddingVertical: 8,
-                            marginHorizontal: 20,
-                            borderRadius: 10,
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Ionicons
-                              name="briefcase"
-                              size={24}
-                              color="#F39300"
-                              style={{ marginHorizontal: 12 }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                  color: "gray",
-                                }}
-                              >
-                                Major
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {selectedCounselor?.major?.name} (
-                                {selectedCounselor?.major?.code})
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            backgroundColor: "white",
-                            paddingVertical: 8,
-                            marginHorizontal: 20,
-                            borderRadius: 10,
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Ionicons
-                              name="briefcase"
-                              size={24}
-                              color="#F39300"
-                              style={{ marginHorizontal: 12 }}
-                            />
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                  color: "gray",
-                                }}
-                              >
-                                Specialization
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                {selectedCounselor?.specialization?.name}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View style={{ marginVertical: 12 }}>
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              paddingHorizontal: 20,
-                              marginBottom: 12,
-                            }}
-                          >
+                          <MaterialIcons
+                            name="cake"
+                            size={24}
+                            color="#F39300"
+                            style={{ marginHorizontal: 12 }}
+                          />
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "600",
+                                color: "gray",
+                              }}
+                            >
+                              Date of Birth
+                            </Text>
                             <Text
                               style={{
                                 fontSize: 18,
-                                fontWeight: "600",
+                                fontWeight: "bold",
+                                opacity: 0.7,
                               }}
                             >
-                              Available Time
+                              {formatDate(
+                                selectedCounselor.profile?.dateOfBirth
+                              )}
                             </Text>
-                            <View
+                          </View>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            width: "50%",
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name="certificate"
+                            size={24}
+                            color="#F39300"
+                            style={{ marginHorizontal: 12 }}
+                          />
+                          <View>
+                            <Text
                               style={{
-                                flex: 0.65,
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                borderRadius: 20,
-                                paddingHorizontal: 12,
-                                alignItems: "center",
-                                backgroundColor: "white",
-                                height: 30,
-                                borderWidth: 1,
-                                borderColor: "gray",
+                                fontSize: 14,
+                                fontWeight: "600",
+                                color: "gray",
                               }}
                             >
-                              <Text
-                                style={{ fontSize: 16, opacity: 0.8 }}
-                              >
-                                {selectedDate !== ""
-                                  ? selectedDate
-                                  : "xxxx-xx-xx"}
-                              </Text>
-                              <TouchableOpacity
-                                onPress={() => setShowDatePicker(true)}
-                              >
-                                <Ionicons
-                                  name="calendar-outline"
-                                  size={20}
-                                  color="#F39300"
-                                />
-                              </TouchableOpacity>
-                            </View>
-                            {showDatePicker && (
-                              <RNDateTimePicker
-                                value={tempDate}
-                                mode="date"
-                                display="default"
-                                onChange={onDateChange}
+                              Degree
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                opacity: 0.7,
+                              }}
+                            >
+                              {selectedCounselor.academicDegree}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          backgroundColor: "white",
+                          paddingVertical: 8,
+                          marginHorizontal: 20,
+                          borderRadius: 10,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Ionicons
+                            name="briefcase"
+                            size={24}
+                            color="#F39300"
+                            style={{ marginHorizontal: 12 }}
+                          />
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "600",
+                                color: "gray",
+                              }}
+                            >
+                              Department
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                opacity: 0.7,
+                              }}
+                            >
+                              {selectedCounselor?.department?.name} (
+                              {selectedCounselor?.department?.code})
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          backgroundColor: "white",
+                          paddingVertical: 8,
+                          marginHorizontal: 20,
+                          borderRadius: 10,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Ionicons
+                            name="briefcase"
+                            size={24}
+                            color="#F39300"
+                            style={{ marginHorizontal: 12 }}
+                          />
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "600",
+                                color: "gray",
+                              }}
+                            >
+                              Major
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                opacity: 0.7,
+                              }}
+                            >
+                              {selectedCounselor?.major?.name} (
+                              {selectedCounselor?.major?.code})
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          backgroundColor: "white",
+                          paddingVertical: 8,
+                          marginHorizontal: 20,
+                          borderRadius: 10,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Ionicons
+                            name="briefcase"
+                            size={24}
+                            color="#F39300"
+                            style={{ marginHorizontal: 12 }}
+                          />
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: "600",
+                                color: "gray",
+                              }}
+                            >
+                              Specialization
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                opacity: 0.7,
+                              }}
+                            >
+                              {selectedCounselor?.specialization?.name}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View style={{ marginVertical: 12 }}>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            paddingHorizontal: 20,
+                            marginBottom: 12,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "600",
+                            }}
+                          >
+                            Available Time
+                          </Text>
+                          <View
+                            style={{
+                              flex: 0.65,
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              borderRadius: 20,
+                              paddingHorizontal: 12,
+                              alignItems: "center",
+                              backgroundColor: "white",
+                              height: 30,
+                              borderWidth: 1,
+                              borderColor: "gray",
+                            }}
+                          >
+                            <Text style={{ fontSize: 16, opacity: 0.8 }}>
+                              {selectedDate !== ""
+                                ? selectedDate
+                                : "xxxx-xx-xx"}
+                            </Text>
+                            <TouchableOpacity
+                              onPress={() => setShowDatePicker(true)}
+                            >
+                              <Ionicons
+                                name="calendar-outline"
+                                size={20}
+                                color="#F39300"
                               />
-                            )}
-                            {/* <Text
+                            </TouchableOpacity>
+                          </View>
+                          {showDatePicker && (
+                            <RNDateTimePicker
+                              value={tempDate}
+                              mode="date"
+                              display="default"
+                              onChange={onDateChange}
+                            />
+                          )}
+                          {/* <Text
                               style={{
                                 fontSize: 18,
                                 marginHorizontal: 20,
@@ -2066,279 +2062,256 @@ export default function AcademicCounselor() {
                               >
                                 {selectedDate}
                               </Text>
-                            </Text> */}  
-                          </View>
-                          <WeekCalendar
-                            hideKnob
-                            initialPosition="close"
-                            theme={{
-                              selectedDayBackgroundColor: "#F39300",
-                              selectedDayTextColor: "white",
-                              arrowColor: "#F39300",
-                              textDayHeaderFontSize: 14,
-                              textDayFontSize: 16,
-                              todayTextColor: "#F39300",
-                            }}
+                            </Text> */}
+                        </View>
+                        <WeekCalendar
+                          hideKnob
+                          initialPosition="close"
+                          theme={{
+                            selectedDayBackgroundColor: "#F39300",
+                            selectedDayTextColor: "white",
+                            arrowColor: "#F39300",
+                            textDayHeaderFontSize: 14,
+                            textDayFontSize: 16,
+                            todayTextColor: "#F39300",
+                          }}
+                          style={{
+                            justifyContent: "center",
+                            elevation: 1,
+                          }}
+                          renderArrow={(direction) => {
+                            return direction === "left" ? (
+                              <Ionicons
+                                name="chevron-back"
+                                size={22}
+                                color="#F39300"
+                              />
+                            ) : (
+                              <Ionicons
+                                name="chevron-forward"
+                                size={22}
+                                color="#F39300"
+                              />
+                            );
+                          }}
+                          onDayPress={handleSocketChange}
+                          // onWeekChange={(newWeek) => handleWeekChange(newWeek.dateString)}
+                        />
+                        <View
+                          style={{
+                            paddingVertical: 12,
+                            paddingHorizontal: 20,
+                          }}
+                        >
+                          <Text
                             style={{
-                              justifyContent: "center",
-                              elevation: 1,
-                            }}
-                            renderArrow={(direction) => {
-                              return direction === "left" ? (
-                                <Ionicons
-                                  name="chevron-back"
-                                  size={22}
-                                  color="#F39300"
-                                />
-                              ) : (
-                                <Ionicons
-                                  name="chevron-forward"
-                                  size={22}
-                                  color="#F39300"
-                                />
-                              );
-                            }}
-                            onDayPress={handleSocketChange}
-                            // onWeekChange={(newWeek) => handleWeekChange(newWeek.dateString)}
-                          />
-                          <View
-                            style={{
-                              paddingVertical: 12,
-                              paddingHorizontal: 20,
+                              fontSize: 18,
+                              fontWeight: "600",
                             }}
                           >
-                            <Text
-                              style={{
-                                fontSize: 18,
-                                fontWeight: "600",
-                              }}
-                            >
-                              Select a slot{" "}
-                              <Text style={{ color: "#F39300" }}>*</Text>
-                            </Text>
-                            {renderSlotsForSelectedDate()}
-                          </View>
-                          {slots[selectedDate]?.length !== 0 &&
-                            slots[selectedDate]?.some(
-                              (item) =>
-                                item.status !== "EXPIRED" &&
-                                item.status !== "UNAVAILABLE"
-                            ) && (
-                              <>
-                                <View
+                            Select a slot{" "}
+                            <Text style={{ color: "#F39300" }}>*</Text>
+                          </Text>
+                          {renderSlotsForSelectedDate()}
+                        </View>
+                        {slots[selectedDate]?.length !== 0 &&
+                          slots[selectedDate]?.some(
+                            (item) =>
+                              item.status !== "EXPIRED" &&
+                              item.status !== "UNAVAILABLE"
+                          ) && (
+                            <>
+                              <View
+                                style={{
+                                  paddingVertical: 12,
+                                  paddingHorizontal: 20,
+                                }}
+                              >
+                                <Text
                                   style={{
-                                    paddingVertical: 12,
-                                    paddingHorizontal: 20,
+                                    fontSize: 18,
+                                    fontWeight: "600",
                                   }}
                                 >
-                                  <Text
-                                    style={{
-                                      fontSize: 18,
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    Form of counseling{" "}
-                                    <Text style={{ color: "#F39300" }}>*</Text>
-                                  </Text>
+                                  Form of counseling{" "}
+                                  <Text style={{ color: "#F39300" }}>*</Text>
+                                </Text>
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
                                   <View
                                     style={{
                                       flexDirection: "row",
-                                      flexWrap: "wrap",
+                                      width: "50%",
+                                      alignItems: "center",
                                     }}
                                   >
-                                    <View
+                                    <TouchableOpacity
+                                      onPress={() => isOnline(true)}
                                       style={{
                                         flexDirection: "row",
-                                        width: "50%",
                                         alignItems: "center",
+                                        backgroundColor:
+                                          online == true ? "white" : "#ededed",
+                                        borderRadius: 10,
+                                        paddingHorizontal: 12,
+                                        paddingVertical: 4,
+                                        marginTop: 10,
+                                        borderWidth: 1.5,
+                                        borderColor:
+                                          online == true
+                                            ? "#F39300"
+                                            : "transparent",
                                       }}
                                     >
-                                      <TouchableOpacity
-                                        onPress={() => isOnline(true)}
+                                      <Ionicons
+                                        name={
+                                          online == true
+                                            ? "checkmark-circle"
+                                            : "radio-button-off"
+                                        }
+                                        size={24}
+                                        color={
+                                          online == true ? "#F39300" : "gray"
+                                        }
+                                        style={{ marginRight: 8 }}
+                                      />
+                                      <Text
                                         style={{
-                                          flexDirection: "row",
-                                          alignItems: "center",
-                                          backgroundColor:
-                                            online == true
-                                              ? "white"
-                                              : "#ededed",
-                                          borderRadius: 10,
-                                          paddingHorizontal: 12,
-                                          paddingVertical: 4,
-                                          marginTop: 10,
-                                          borderWidth: 1.5,
-                                          borderColor:
+                                          fontSize: 20,
+                                          color:
                                             online == true
                                               ? "#F39300"
-                                              : "transparent",
+                                              : "black",
+                                          fontWeight:
+                                            online == true ? "600" : "0",
                                         }}
                                       >
-                                        <Ionicons
-                                          name={
-                                            online == true
-                                              ? "checkmark-circle"
-                                              : "radio-button-off"
-                                          }
-                                          size={24}
-                                          color={
-                                            online == true ? "#F39300" : "gray"
-                                          }
-                                          style={{ marginRight: 8 }}
-                                        />
-                                        <Text
-                                          style={{
-                                            fontSize: 20,
-                                            color:
-                                              online == true
-                                                ? "#F39300"
-                                                : "black",
-                                            fontWeight:
-                                              online == true ? "600" : "0",
-                                          }}
-                                        >
-                                          Online
-                                        </Text>
-                                      </TouchableOpacity>
-                                    </View>
-                                    <View
+                                        Online
+                                      </Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      width: "50%",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <TouchableOpacity
+                                      onPress={() => isOnline(false)}
                                       style={{
                                         flexDirection: "row",
-                                        width: "50%",
                                         alignItems: "center",
+                                        backgroundColor:
+                                          online == false ? "white" : "#ededed",
+                                        borderRadius: 10,
+                                        paddingHorizontal: 12,
+                                        paddingVertical: 4,
+                                        marginTop: 10,
+                                        borderWidth: 1.5,
+                                        borderColor:
+                                          online == false
+                                            ? "#F39300"
+                                            : "transparent",
                                       }}
                                     >
-                                      <TouchableOpacity
-                                        onPress={() => isOnline(false)}
+                                      <Ionicons
+                                        name={
+                                          online == false
+                                            ? "checkmark-circle"
+                                            : "radio-button-off"
+                                        }
+                                        size={24}
+                                        color={
+                                          online == false ? "#F39300" : "gray"
+                                        }
+                                        style={{ marginRight: 8 }}
+                                      />
+                                      <Text
                                         style={{
-                                          flexDirection: "row",
-                                          alignItems: "center",
-                                          backgroundColor:
-                                            online == false
-                                              ? "white"
-                                              : "#ededed",
-                                          borderRadius: 10,
-                                          paddingHorizontal: 12,
-                                          paddingVertical: 4,
-                                          marginTop: 10,
-                                          borderWidth: 1.5,
-                                          borderColor:
+                                          fontSize: 20,
+                                          color:
                                             online == false
                                               ? "#F39300"
-                                              : "transparent",
+                                              : "black",
+                                          fontWeight:
+                                            online == false ? "600" : "0",
                                         }}
                                       >
-                                        <Ionicons
-                                          name={
-                                            online == false
-                                              ? "checkmark-circle"
-                                              : "radio-button-off"
-                                          }
-                                          size={24}
-                                          color={
-                                            online == false ? "#F39300" : "gray"
-                                          }
-                                          style={{ marginRight: 8 }}
-                                        />
-                                        <Text
-                                          style={{
-                                            fontSize: 20,
-                                            color:
-                                              online == false
-                                                ? "#F39300"
-                                                : "black",
-                                            fontWeight:
-                                              online == false ? "600" : "0",
-                                          }}
-                                        >
-                                          Offline
-                                        </Text>
-                                      </TouchableOpacity>
-                                    </View>
+                                        Offline
+                                      </Text>
+                                    </TouchableOpacity>
                                   </View>
                                 </View>
-                                <View
+                              </View>
+                              <View
+                                style={{
+                                  paddingVertical: 12,
+                                  paddingHorizontal: 20,
+                                }}
+                              >
+                                <Text
                                   style={{
-                                    paddingVertical: 12,
-                                    paddingHorizontal: 20,
+                                    fontSize: 18,
+                                    fontWeight: "600",
+                                    marginBottom: 12,
                                   }}
                                 >
-                                  <Text
+                                  What subject do you want counsel on?{" "}
+                                  <Text style={{ color: "#F39300" }}>*</Text>
+                                </Text>
+                                <View>
+                                  <TextInput
+                                    placeholder="Write for your right"
+                                    placeholderTextColor="gray"
+                                    keyboardType="default"
+                                    multiline={true}
+                                    numberOfLines={2}
+                                    value={reason}
+                                    onChangeText={(value) => setReason(value)}
                                     style={{
-                                      fontSize: 18,
+                                      flex: 1,
                                       fontWeight: "600",
-                                      marginBottom: 12,
+                                      fontSize: 16,
+                                      opacity: 0.8,
+                                      paddingVertical: 8,
+                                      textAlignVertical: "top",
+                                      paddingHorizontal: 12,
+                                      backgroundColor: "#ededed",
+                                      borderColor: "gray",
+                                      borderWidth: 1,
+                                      borderRadius: 10,
                                     }}
-                                  >
-                                    What subject do you want counsel on?{" "}
-                                    <Text style={{ color: "#F39300" }}>*</Text>
-                                  </Text>
-                                  <View>
-                                    <TextInput
-                                      placeholder="Write for your right"
-                                      placeholderTextColor="gray"
-                                      keyboardType="default"
-                                      multiline={true}
-                                      numberOfLines={2}
-                                      value={reason}
-                                      onChangeText={(value) => setReason(value)}
-                                      style={{
-                                        flex: 1,
-                                        fontWeight: "600",
-                                        fontSize: 16,
-                                        opacity: 0.8,
-                                        paddingVertical: 8,
-                                        textAlignVertical: "top",
-                                        paddingHorizontal: 12,
-                                        backgroundColor: "#ededed",
-                                        borderColor: "gray",
-                                        borderWidth: 1,
-                                        borderRadius: 10,
-                                      }}
-                                    />
-                                  </View>
+                                  />
                                 </View>
-                              </>
-                            )}
-                        </View>
+                              </View>
+                            </>
+                          )}
                       </View>
-                    </ScrollView>
-                    {/* <SectionList
-                            showsVerticalScrollIndicator={false}
-                            sections={[]}
-                            renderItem={() => null}
-                            ListHeaderComponent={() => (                              
-                            )}
-                            keyExtractor={selectedCounselor}
-                          /> */}
-                  </CalendarProvider>
-                  <View
-                    style={{
-                      width: "100%",
-                      borderBottomWidth: 1,
-                      borderColor: "lightgrey",
-                    }}
-                  />
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor:
-                        slots[selectedDate]?.length === 0 ||
-                        slots[selectedDate]?.every(
-                          (item) => item.status === "EXPIRED"
-                        ) ||
-                        selectedSlot === "" ||
-                        online === null ||
-                        reason === ""
-                          ? "#ededed"
-                          : "#F39300",
-                      borderRadius: 20,
-                      paddingVertical: 12,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexDirection: "row",
-                      marginHorizontal: 20,
-                      marginVertical: 16,
-                    }}
-                    disabled={
+                    </View>
+                  </ScrollView>
+                  {/* <SectionList
+                        showsVerticalScrollIndicator={false}
+                        sections={[]}
+                        renderItem={() => null}
+                        ListHeaderComponent={() => ()}
+                        keyExtractor={selectedCounselor}
+                  /> */}
+                </CalendarProvider>
+                <View
+                  style={{
+                    width: "100%",
+                    borderBottomWidth: 1,
+                    borderColor: "lightgrey",
+                  }}
+                />
+                <TouchableOpacity
+                  style={{
+                    backgroundColor:
                       slots[selectedDate]?.length === 0 ||
                       slots[selectedDate]?.every(
                         (item) => item.status === "EXPIRED"
@@ -2346,393 +2319,263 @@ export default function AcademicCounselor() {
                       selectedSlot === "" ||
                       online === null ||
                       reason === ""
-                    }
-                    onPress={() => setOpenConfirm(true)}
-                    activeOpacity={0.8}
+                        ? "#ededed"
+                        : "#F39300",
+                    borderRadius: 20,
+                    paddingVertical: 12,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginHorizontal: 20,
+                    marginVertical: 16,
+                  }}
+                  disabled={
+                    slots[selectedDate]?.length === 0 ||
+                    slots[selectedDate]?.every(
+                      (item) => item.status === "EXPIRED"
+                    ) ||
+                    selectedSlot === "" ||
+                    online === null ||
+                    reason === ""
+                  }
+                  onPress={() => setOpenConfirm(true)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={{
+                      fontWeight: "600",
+                      color:
+                        slots[selectedDate]?.length === 0 ||
+                        slots[selectedDate]?.every(
+                          (item) => item.status === "EXPIRED"
+                        ) ||
+                        selectedSlot === "" ||
+                        online === null ||
+                        reason === ""
+                          ? "gray"
+                          : "white",
+                      fontSize: 20,
+                      marginRight: 8,
+                    }}
                   >
-                    <Text
-                      style={{
-                        fontWeight: "600",
-                        color:
-                          slots[selectedDate]?.length === 0 ||
-                          slots[selectedDate]?.every(
-                            (item) => item.status === "EXPIRED"
-                          ) ||
-                          selectedSlot === "" ||
-                          online === null ||
-                          reason === ""
-                            ? "gray"
-                            : "white",
-                        fontSize: 20,
-                        marginRight: 8,
-                      }}
-                    >
-                      Book Appointment
-                    </Text>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={24}
-                      style={{
-                        color:
-                          slots[selectedDate]?.length === 0 ||
-                          slots[selectedDate]?.every(
-                            (item) => item.status === "EXPIRED"
-                          ) ||
-                          selectedSlot === "" ||
-                          online === null ||
-                          reason === ""
-                            ? "gray"
-                            : "white",
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <Modal
-                    transparent={true}
-                    visible={openConfirm}
-                    animationType="fade"
-                    onRequestClose={() => setOpenConfirm(false)}
-                  >
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: width * 0.8,
-                          padding: 20,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          elevation: 10,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 22,
-                            fontWeight: "bold",
-                            marginBottom: 10,
-                            textAlign: "center",
-                          }}
-                        >
-                          Booking Confirmation
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            marginBottom: 30,
-                            textAlign: "center",
-                          }}
-                        >
-                          Are you sure you want to book this slot?
-                        </Text>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <TouchableOpacity
-                            style={{
-                              flex: 1,
-                              backgroundColor: "#ededed",
-                              padding: 10,
-                              borderRadius: 10,
-                              marginRight: 10,
-                              justifyContent: "center",
-                              alignItems: "center",
-                              borderWidth: 1,
-                              borderColor: "gray",
-                            }}
-                            onPress={() => setOpenConfirm(false)}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 18,
-                                color: "#333",
-                                fontWeight: "600",
-                              }}
-                            >
-                              No
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={{
-                              flex: 1,
-                              backgroundColor: "#F39300",
-                              padding: 10,
-                              borderRadius: 10,
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                            onPress={handleCreateRequest}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 18,
-                                color: "white",
-                                fontWeight: "600",
-                              }}
-                            >
-                              Yes
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </Modal>
-                  <Modal
-                    transparent={true}
-                    visible={openSuccess}
-                    animationType="fade"
-                    onRequestClose={handleCloseSuccess}
-                  >
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: width * 0.85,
-                          paddingVertical: 25,
-                          paddingHorizontal: 20,
-                          backgroundColor: "white",
-                          borderRadius: 20,
-                        }}
-                      >
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: "#ededed",
-                            padding: 4,
-                            borderRadius: 30,
-                            alignSelf: "flex-start",
-                          }}
-                          onPress={handleCloseSuccess}
-                        >
-                          <Ionicons
-                            name="chevron-back"
-                            size={28}
-                            color="black"
-                          />
-                        </TouchableOpacity>
-                        <View
-                          style={{
-                            alignItems: "center",
-                            marginVertical: 12,
-                          }}
-                        >
-                          <Ionicons
-                            name="checkmark-circle"
-                            size={80}
-                            color="#F39300"
-                          />
-                          <Text
-                            style={{
-                              color: "#F39300",
-                              fontSize: 30,
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Success!
-                          </Text>
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            textAlign: "center",
-                            marginBottom: 20,
-                          }}
-                        >
-                          Your request has been sent successfully! {"\n"}
-                          Please wait while the counselor processes your
-                          request.
-                        </Text>
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: "#F39300",
-                            paddingVertical: 12,
-                            paddingHorizontal: 16,
-                            borderRadius: 30,
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                          onPress={() => (
-                            handleCloseSuccess(),
-                            handleCloseBooking(),
-                            navigation.navigate("Request", {
-                              prevScreen: "Academic",
-                            })
-                          )}
-                          activeOpacity={0.8}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              color: "white",
-                              fontWeight: "600",
-                            }}
-                          >
-                            See your request
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </Modal>
-                  <ErrorModal
-                    isError={isError}
-                    setIsError={setIsError}
-                    errorMessage={errorMessage}
-                    setErrorMessage={setErrorMessage}
+                    Book Appointment
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={24}
+                    style={{
+                      color:
+                        slots[selectedDate]?.length === 0 ||
+                        slots[selectedDate]?.every(
+                          (item) => item.status === "EXPIRED"
+                        ) ||
+                        selectedSlot === "" ||
+                        online === null ||
+                        reason === ""
+                          ? "gray"
+                          : "white",
+                    }}
                   />
-                </View>
-              )}
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openConfirm}
+          animationType="fade"
+          onRequestClose={() => setOpenConfirm(false)}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <View
+              style={{
+                width: width * 0.8,
+                padding: 20,
+                backgroundColor: "white",
+                borderRadius: 10,
+                elevation: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginBottom: 10,
+                  textAlign: "center",
+                }}
+              >
+                Booking Confirmation
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  marginBottom: 30,
+                  textAlign: "center",
+                }}
+              >
+                Are you sure you want to book this slot?
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#ededed",
+                    padding: 10,
+                    borderRadius: 10,
+                    marginRight: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "gray",
+                  }}
+                  onPress={() => setOpenConfirm(false)}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "#333",
+                      fontWeight: "600",
+                    }}
+                  >
+                    No
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#F39300",
+                    padding: 10,
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={handleCreateRequest}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Yes
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </Modal>
-        </ScrollView>
-        {!loading && (
-          // <View
-          //   style={{
-          //     justifyContent: "center",
-          //     alignItems: "center",
-          //     flexDirection: "row",
-          //     marginHorizontal: 20,
-          //     marginVertical: 10,
-          //   }}
-          // >
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor: currentPage <= 1 ? "#ccc" : "#F39300",
-          //       opacity: currentPage <= 1 ? 0.5 : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(1)}
-          //     disabled={currentPage <= 1}
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {"<<"}
-          //     </Text>
-          //   </TouchableOpacity>
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor: currentPage === 1 ? "#ccc" : "#F39300",
-          //       opacity: currentPage === 1 ? 0.5 : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(currentPage - 1)}
-          //     disabled={currentPage <= 1}
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {"<"}
-          //     </Text>
-          //   </TouchableOpacity>
-          //   <View
-          //     style={{
-          //       paddingHorizontal: 16,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       marginHorizontal: 4,
-          //       width: "auto",
-          //       height: width * 0.1,
-          //       justifyContent: "center",
-          //       alignItems: "center",
-          //       backgroundColor: "white",
-          //       borderWidth: 1.5,
-          //       borderColor: "#F39300",
-          //     }}
-          //   >
-          //     <Text
-          //       style={{
-          //         fontSize: 16,
-          //         color: "#333",
-          //         fontWeight: "600",
-          //       }}
-          //     >
-          //       {counselors?.data?.length != 0 ? currentPage : 0} /{" "}
-          //       {counselors.totalPages}
-          //     </Text>
-          //   </View>
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? "#ccc"
-          //           : "#F39300",
-          //       opacity:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? 0.5
-          //           : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(currentPage + 1)}
-          //     disabled={
-          //       counselors.totalPages == 0 ||
-          //       currentPage >= counselors.totalPages
-          //     }
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {">"}
-          //     </Text>
-          //   </TouchableOpacity>
-          //   <TouchableOpacity
-          //     style={{
-          //       paddingHorizontal: 12,
-          //       paddingVertical: 8,
-          //       borderRadius: 10,
-          //       backgroundColor: "white",
-          //       marginHorizontal: 4,
-          //       borderWidth: 1.5,
-          //       borderColor:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? "#ccc"
-          //           : "#F39300",
-          //       opacity:
-          //         counselors.totalPages == 0 ||
-          //         currentPage >= counselors.totalPages
-          //           ? 0.5
-          //           : 1,
-          //     }}
-          //     onPress={() => setCurrentPage(counselors.totalPages)}
-          //     disabled={
-          //       counselors.totalPages == 0 ||
-          //       currentPage >= counselors.totalPages
-          //     }
-          //   >
-          //     <Text style={{ color: "#333", fontSize: 18, fontWeight: "600" }}>
-          //       {">>"}
-          //     </Text>
-          //   </TouchableOpacity>
-          // </View>
-          <Pagination
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            length={counselors?.data?.length}
-            totalPages={counselors?.totalPages}
-          />
-        )}
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openSuccess}
+          animationType="fade"
+          onRequestClose={handleCloseSuccess}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <View
+              style={{
+                width: width * 0.85,
+                paddingVertical: 25,
+                paddingHorizontal: 20,
+                backgroundColor: "white",
+                borderRadius: 20,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#ededed",
+                  padding: 4,
+                  borderRadius: 30,
+                  alignSelf: "flex-start",
+                }}
+                onPress={handleCloseSuccess}
+              >
+                <Ionicons name="chevron-back" size={28} color="black" />
+              </TouchableOpacity>
+              <View
+                style={{
+                  alignItems: "center",
+                  marginVertical: 12,
+                }}
+              >
+                <Ionicons name="checkmark-circle" size={80} color="#F39300" />
+                <Text
+                  style={{
+                    color: "#F39300",
+                    fontSize: 30,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Success!
+                </Text>
+              </View>
+              <Text
+                style={{
+                  fontSize: 16,
+                  textAlign: "center",
+                  marginBottom: 20,
+                }}
+              >
+                Your request has been sent successfully! {"\n"}
+                Please wait while the counselor processes your request.
+              </Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#F39300",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderRadius: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={() => (
+                  handleCloseSuccess(),
+                  handleCloseBooking(),
+                  navigation.navigate("Request", {
+                    prevScreen: "Academic",
+                  })
+                )}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                >
+                  See your request
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <ErrorModal
+          isError={isError}
+          setIsError={setIsError}
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
       </View>
     </>
   );

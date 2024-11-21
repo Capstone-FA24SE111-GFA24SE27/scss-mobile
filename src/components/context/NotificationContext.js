@@ -44,8 +44,7 @@ export const NotificationProvider = ({ children }) => {
     };
   }, []);
 
-  console.log(appState);
-
+  // console.log(appState);
   const markAsRead = async (notificationId, item) => {
     try {
       console.log("Marking as read - Noti ID: ", notificationId, "Item:", item);
@@ -93,9 +92,8 @@ export const NotificationProvider = ({ children }) => {
           page: page,
         },
       });
-      console.log("Notification List: ", notiRes.data);
+      // console.log("Notification List: ", notiRes.data);
       const notiData = notiRes.data;
-
       if (notiData && notiData.status === 200) {
         // setNotifications(notiData.content.data);
         const newNotifications = notiData.content.data;

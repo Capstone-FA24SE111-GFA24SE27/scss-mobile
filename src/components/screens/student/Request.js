@@ -4,13 +4,10 @@ import {
   View,
   Text,
   Image,
-  TextInput,
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Animated,
   Platform,
-  Alert,
   Modal,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
@@ -22,6 +19,7 @@ import { RequestSkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import { Dropdown } from "react-native-element-dropdown";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+
 export default function Request({ route }) {
   const navigation = useNavigation();
   const prevScreen = route?.params?.prevScreen;
@@ -892,13 +890,9 @@ export default function Request({ route }) {
                           marginLeft: 8,
                         }}
                       >
-                        {request.startTime.split(":")[0] +
-                          ":" +
-                          request.startTime.split(":")[1]}{" "}
+                        {request?.startTime?.slice(0, 5)}{" "}
                         -{" "}
-                        {request.endTime.split(":")[0] +
-                          ":" +
-                          request.endTime.split(":")[1]}
+                        {request?.endTime?.slice(0, 5)}
                       </Text>
                     </View>
                   </View>
@@ -1179,13 +1173,9 @@ export default function Request({ route }) {
                           color: "#333",
                         }}
                       >
-                        {info?.startTime?.split(":")[0] +
-                          ":" +
-                          info?.startTime?.split(":")[1]}{" "}
+                        {info?.startTime?.slice(0, 5)}{" "}
                         -{" "}
-                        {info?.endTime?.split(":")[0] +
-                          ":" +
-                          info?.endTime?.split(":")[1]}
+                        {info?.endTime?.slice(0, 5)}
                       </Text>
                     </View>
                     <View

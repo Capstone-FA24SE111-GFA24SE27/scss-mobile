@@ -3,7 +3,6 @@ import {
   Text,
   Image,
   ScrollView,
-  Pressable,
   Animated,
   TextInput,
   Dimensions,
@@ -128,7 +127,7 @@ export default function Home() {
       const requestsData = requestsRes?.data?.content || [];
       setRequests(requestsData);
     } catch (err) {
-      console.log(err);
+      console.log("Can't fetch request", err);
     }
   };
 
@@ -156,8 +155,8 @@ export default function Home() {
         }));
         setAppointments(formattedAppointments);
       }
-    } catch (error) {
-      console.log("Failed to fetch appointments", error);
+    } catch (err) {
+      console.log("Can't fetch upcoming appointments", err);
     }
   };
 
@@ -169,7 +168,7 @@ export default function Home() {
       const demandsData = demandsRes?.data?.content || [];
       setDemands(demandsData);
     } catch (err) {
-      console.log(err);
+      console.log("Can't fetch assigned demand", err);
     }
   };
 
@@ -458,13 +457,8 @@ export default function Home() {
                               marginLeft: 8,
                             }}
                           >
-                            {request.startTime.split(":")[0] +
-                              ":" +
-                              request.startTime.split(":")[1]}{" "}
-                            -{" "}
-                            {request.endTime.split(":")[0] +
-                              ":" +
-                              request.endTime.split(":")[1]}
+                            {request?.startTime?.slice(0, 5)} -{" "}
+                            {request?.endTime?.slice(0, 5)}
                           </Text>
                         </View>
                         <View

@@ -1,12 +1,10 @@
 import {
   View,
   Text,
-  Pressable,
   ScrollView,
   Image,
   Switch,
   Dimensions,
-  Alert,
   Modal,
   TouchableOpacity,
 } from "react-native";
@@ -532,7 +530,7 @@ export default function Profile({ route }) {
                   width: "90%",
                 }}
               ></View>
-              <Pressable
+              <TouchableOpacity
                 onPress={() => navigation.navigate("ChangePassword")}
                 style={{
                   flexDirection: "row",
@@ -565,7 +563,7 @@ export default function Profile({ route }) {
                   size={width * 0.065}
                   style={{ color: "#e3e3e3" }}
                 />
-              </Pressable>
+              </TouchableOpacity>
               <View
                 style={{
                   borderBottomWidth: 1,

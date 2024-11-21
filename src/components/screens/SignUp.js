@@ -4,8 +4,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Pressable,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../context/AuthContext";
@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function SignUp() {
   const navigation = useNavigation();
+  const { width, height } = Dimensions.get("screen");
   const { login } = useContext(AuthContext);
   const [isFocused1, setIsFocused1] = useState(false);
   const [isFocused2, setIsFocused2] = useState(false);
@@ -31,14 +32,14 @@ export default function SignUp() {
       style={{
         flex: 1,
         backgroundColor: "#f5f7fd",
-        paddingHorizontal: 25
+        paddingHorizontal: 20,
       }}
     >
       <View
         style={{
           display: "flex",
           flexDirection: "row",
-          paddingTop: 40,
+          paddingTop: height * 0.05,
         }}
       >
         <View style={{ flex: 1, alignItems: "flex-start" }}>
@@ -55,7 +56,7 @@ export default function SignUp() {
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{ marginTop: 20 }}
+        style={{ marginTop: height * 0.025 }}
       >
         <View>
           <Text style={{ fontSize: 40, fontWeight: "bold" }}>Hi!</Text>
@@ -71,7 +72,7 @@ export default function SignUp() {
             Create an account
           </Text>
         </View>
-        <View style={{ marginTop: 40 }}>
+        <View style={{ marginTop: height * 0.05 }}>
           <View>
             <View
               style={{

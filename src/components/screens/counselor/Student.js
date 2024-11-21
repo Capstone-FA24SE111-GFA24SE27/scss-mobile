@@ -14,11 +14,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Animated,
   Platform,
   Modal,
   ActivityIndicator,
-  FlatList,
   SectionList,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
@@ -27,7 +25,6 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import Toast from "react-native-toast-message";
 import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import { StudentSkeleton } from "../../layout/Skeleton";
@@ -54,6 +51,7 @@ export default function Student() {
     semesterIdForGPA: "",
     minGPA: "",
     maxGPA: "",
+    semesterIdForBehaviour: "",
   });
   const [filters2, setFilters2] = useState({
     fromDate: "",
@@ -224,6 +222,7 @@ export default function Student() {
       semesterIdForGPA: selectedSemester.id,
       minGPA: minGPA,
       maxGPA: maxGPA,
+      semesterIdForBehaviour: selectedSemester2.id,
     };
     setFilters(newFilters);
     fetchData(newFilters);
@@ -240,6 +239,7 @@ export default function Student() {
       semesterIdForGPA: "",
       minGPA: "",
       maxGPA: "",
+      semesterIdForBehaviour: "",
     };
     setKeyword("");
     setPromptForBehavior(null);
@@ -250,6 +250,7 @@ export default function Student() {
     setSelectedSemester(resetFilters.semesterIdForGPA);
     setMinGPA(resetFilters.minGPA);
     setMaxGPA(resetFilters.maxGPA);
+    setSelectedSemester2(resetFilters.semesterIdForBehaviour);
     setFilters(resetFilters);
     fetchData(resetFilters);
   };
@@ -457,7 +458,7 @@ export default function Student() {
       toDate: dateTo,
       SortDirection: sortDirection2,
     };
-    setFilters(newFilters);
+    setFilters2(newFilters);
     fetchStudentInfo5(newFilters);
   };
 
@@ -470,7 +471,7 @@ export default function Student() {
     setDateFrom(resetFilters.fromDate);
     setDateTo(resetFilters.toDate);
     setSortDirection2(resetFilters.SortDirection);
-    setFilters(resetFilters);
+    setFilters2(resetFilters);
     fetchStudentInfo5(resetFilters);
   };
 
@@ -663,11 +664,18 @@ export default function Student() {
             </View>
             <TouchableOpacity
               // disabled
-              onPress={() => (
-                setIsIncludeBehaviour(!isIncludeBehavior),
-                setCurrentPage(1),
-                setPromptForBehavior(null)
-              )}
+              onPress={() => {
+                setLoading(true);
+                setIsExpanded(false);
+                setCurrentPage(1);
+                setPromptForBehavior(null);
+                setTimeout(() => {
+                  setIsIncludeBehaviour(!isIncludeBehavior);
+                }, 500);
+                setTimeout(() => {
+                  setLoading(false);
+                }, 1000)
+              }}
               style={{
                 backgroundColor: isIncludeBehavior ? "#F39300" : "#e3e3e3",
                 flexDirection: "row",
@@ -708,7 +716,7 @@ export default function Student() {
                 style={{ marginRight: 10, color: "#F39300", opacity: 0.7 }}
               />
               <TextInput
-                placeholder="Search by Advanced Prompt"
+                placeholder="Search by Prompt"
                 placeholderTextColor="#F39300"
                 value={promptForBehavior}
                 onChangeText={(value) => setPromptForBehavior(value)}
@@ -895,7 +903,7 @@ export default function Student() {
                       color: "#333",
                     }}
                   >
-                    Academic Fields:
+                    Filter by Academic Fields:
                   </Text>
                 </View>
                 <View
@@ -1175,195 +1183,286 @@ export default function Student() {
                     }}
                   />
                 </View>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
-                      color: "#333",
-                      minWidth: "30%",
-                    }}
-                  >
-                    GPA:
-                  </Text>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "400",
-                          color: "#333",
-                          marginRight: 12,
-                        }}
-                      >
-                        Min:
-                      </Text>
-                      <TextInput
-                        placeholder="0.0"
-                        placeholderTextColor="gray"
-                        value={minGPA}
-                        onChangeText={setMinGPA}
-                        style={{
-                          backgroundColor: "white",
-                          height: 30,
-                          borderWidth: 1,
-                          borderColor: "grey",
-                          borderRadius: 10,
-                          paddingHorizontal: 12,
-                          fontSize: 16,
-                          opacity: 0.8,
-                        }}
-                      />
-                    </View>
+                {!isIncludeBehavior ? (
+                  <>
                     <View
                       style={{
+                        flex: 1,
                         flexDirection: "row",
                         alignItems: "center",
-                        marginLeft: 16,
+                        marginVertical: 4,
+                        marginLeft: 4,
                       }}
                     >
                       <Text
                         style={{
                           fontSize: 16,
-                          fontWeight: "400",
+                          fontWeight: "bold",
                           color: "#333",
-                          marginRight: 12,
+                          minWidth: "30%",
                         }}
                       >
-                        Max:
+                        GPA:
                       </Text>
-                      <TextInput
-                        placeholder="10.0"
-                        placeholderTextColor="gray"
-                        value={maxGPA}
-                        onChangeText={setMaxGPA}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <TextInput
+                          placeholder="0.0"
+                          placeholderTextColor="gray"
+                          value={minGPA}
+                          onChangeText={setMinGPA}
+                          style={{
+                            backgroundColor: "white",
+                            height: 30,
+                            borderWidth: 1,
+                            borderColor: "grey",
+                            borderRadius: 10,
+                            paddingHorizontal: 12,
+                            fontSize: 16,
+                            opacity: 0.8,
+                          }}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 24,
+                            fontWeight: "400",
+                            color: "#333",
+                            marginHorizontal: 20,
+                          }}
+                        >
+                          -
+                        </Text>
+                        <TextInput
+                          placeholder="10.0"
+                          placeholderTextColor="gray"
+                          value={maxGPA}
+                          onChangeText={setMaxGPA}
+                          style={{
+                            backgroundColor: "white",
+                            height: 30,
+                            borderWidth: 1,
+                            borderColor: "grey",
+                            borderRadius: 10,
+                            paddingHorizontal: 12,
+                            fontSize: 16,
+                            opacity: 0.8,
+                          }}
+                        />
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginVertical: 4,
+                        marginLeft: 4,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                          minWidth: "30%",
+                        }}
+                      >
+                        Semester:
+                      </Text>
+                      <Dropdown
                         style={{
                           backgroundColor: "white",
+                          borderColor: expanded4 ? "#F39300" : "black",
+                          flex: 1,
                           height: 30,
                           borderWidth: 1,
                           borderColor: "grey",
                           borderRadius: 10,
                           paddingHorizontal: 12,
-                          fontSize: 16,
-                          opacity: 0.8,
+                        }}
+                        placeholderStyle={{ fontSize: 14 }}
+                        selectedTextStyle={{
+                          fontSize: 14,
+                          color: selectedSemester ? "black" : "white",
+                        }}
+                        inputSearchStyle={{ height: 40, fontSize: 16 }}
+                        maxHeight={250}
+                        data={semesters}
+                        labelField="name"
+                        value={
+                          selectedSemester !== ""
+                            ? selectedSemester.name
+                            : "Select Semester"
+                        }
+                        placeholder={
+                          selectedSemester !== ""
+                            ? selectedSemester.name
+                            : "Select Semester"
+                        }
+                        search
+                        searchPlaceholder="Search Semester"
+                        onFocus={() => setExpanded4(true)}
+                        onBlur={() => setExpanded4(false)}
+                        onChange={(item) => {
+                          setSelectedSemester(item);
+                          setExpanded4(false);
+                        }}
+                        renderRightIcon={() => (
+                          <Ionicons
+                            color={expanded4 ? "#F39300" : "black"}
+                            name={expanded4 ? "caret-up" : "caret-down"}
+                            size={20}
+                          />
+                        )}
+                        renderItem={(item) => {
+                          return (
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                paddingHorizontal: 16,
+                                paddingVertical: 8,
+                                backgroundColor:
+                                  item.name == selectedSemester.name
+                                    ? "#F39300"
+                                    : "white",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  fontWeight: "500",
+                                  color:
+                                    item.name == selectedSemester.name
+                                      ? "white"
+                                      : "black",
+                                }}
+                              >
+                                {item.name}
+                              </Text>
+                              {selectedSemester.name === item.name && (
+                                <Ionicons
+                                  color="white"
+                                  name="checkmark"
+                                  size={20}
+                                />
+                              )}
+                            </View>
+                          );
                         }}
                       />
                     </View>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginVertical: 4,
-                    marginLeft: 4,
-                  }}
-                >
-                  <Text
+                  </>
+                ) : (
+                  <View
                     style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
-                      color: "#333",
-                      minWidth: "30%",
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginVertical: 4,
+                      marginLeft: 4,
                     }}
                   >
-                    Semester:
-                  </Text>
-                  <Dropdown
-                    style={{
-                      backgroundColor: "white",
-                      borderColor: expanded4 ? "#F39300" : "black",
-                      flex: 1,
-                      height: 30,
-                      borderWidth: 1,
-                      borderColor: "grey",
-                      borderRadius: 10,
-                      paddingHorizontal: 12,
-                    }}
-                    placeholderStyle={{ fontSize: 14 }}
-                    selectedTextStyle={{
-                      fontSize: 14,
-                      color: selectedSemester ? "black" : "white",
-                    }}
-                    inputSearchStyle={{ height: 40, fontSize: 16 }}
-                    maxHeight={250}
-                    data={semesters}
-                    labelField="name"
-                    value={
-                      selectedSemester !== ""
-                        ? selectedSemester.name
-                        : "Select Semester"
-                    }
-                    placeholder={
-                      selectedSemester !== ""
-                        ? selectedSemester.name
-                        : "Select Semester"
-                    }
-                    search
-                    searchPlaceholder="Search Semester"
-                    onFocus={() => setExpanded4(true)}
-                    onBlur={() => setExpanded4(false)}
-                    onChange={(item) => {
-                      setSelectedSemester(item);
-                      setExpanded4(false);
-                    }}
-                    renderRightIcon={() => (
-                      <Ionicons
-                        color={expanded4 ? "#F39300" : "black"}
-                        name={expanded4 ? "caret-up" : "caret-down"}
-                        size={20}
-                      />
-                    )}
-                    renderItem={(item) => {
-                      return (
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingHorizontal: 16,
-                            paddingVertical: 8,
-                            backgroundColor:
-                              item.name == selectedSemester.name
-                                ? "#F39300"
-                                : "white",
-                          }}
-                        >
-                          <Text
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                        minWidth: "30%",
+                      }}
+                    >
+                      Semester:
+                    </Text>
+                    <Dropdown
+                      style={{
+                        backgroundColor: "white",
+                        borderColor: expanded5 ? "#F39300" : "black",
+                        flex: 1,
+                        height: 30,
+                        borderWidth: 1,
+                        borderColor: "grey",
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                      }}
+                      placeholderStyle={{ fontSize: 14 }}
+                      selectedTextStyle={{
+                        fontSize: 14,
+                        color: selectedSemester2 ? "black" : "white",
+                      }}
+                      inputSearchStyle={{ height: 40, fontSize: 16 }}
+                      maxHeight={250}
+                      data={semesters}
+                      labelField="name"
+                      value={
+                        selectedSemester2 !== ""
+                          ? selectedSemester2.name
+                          : "Select Semester"
+                      }
+                      placeholder={
+                        selectedSemester2 !== ""
+                          ? selectedSemester2.name
+                          : "Select Semester"
+                      }
+                      search
+                      searchPlaceholder="Search Semester"
+                      onFocus={() => setExpanded5(true)}
+                      onBlur={() => setExpanded5(false)}
+                      onChange={(item) => {
+                        setSelectedSemester2(item);
+                        setExpanded5(false);
+                      }}
+                      renderRightIcon={() => (
+                        <Ionicons
+                          color={expanded5 ? "#F39300" : "black"}
+                          name={expanded5 ? "caret-up" : "caret-down"}
+                          size={20}
+                        />
+                      )}
+                      renderItem={(item) => {
+                        return (
+                          <View
                             style={{
-                              fontSize: 16,
-                              fontWeight: "500",
-                              color:
-                                item.name == selectedSemester.name
-                                  ? "white"
-                                  : "black",
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 16,
+                              paddingVertical: 8,
+                              backgroundColor:
+                                item.name == selectedSemester2.name
+                                  ? "#F39300"
+                                  : "white",
                             }}
                           >
-                            {item.name}
-                          </Text>
-                          {selectedSemester.name === item.name && (
-                            <Ionicons
-                              color="white"
-                              name="checkmark"
-                              size={20}
-                            />
-                          )}
-                        </View>
-                      );
-                    }}
-                  />
-                </View>
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "500",
+                                color:
+                                  item.name == selectedSemester2.name
+                                    ? "white"
+                                    : "black",
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            {selectedSemester2.name === item.name && (
+                              <Ionicons
+                                color="white"
+                                name="checkmark"
+                                size={20}
+                              />
+                            )}
+                          </View>
+                        );
+                      }}
+                    />
+                  </View>
+                )}
                 <View
                   style={{
                     margin: 8,
@@ -3617,7 +3716,7 @@ export default function Student() {
                             }}
                           >
                             <TouchableOpacity
-                              onPress={() => setSortDirection("ASC")}
+                              onPress={() => setSortDirection2("ASC")}
                               style={{
                                 flexDirection: "row",
                                 alignItems: "center",
@@ -3625,13 +3724,13 @@ export default function Student() {
                             >
                               <Ionicons
                                 name={
-                                  sortDirection == "ASC"
+                                  sortDirection2 == "ASC"
                                     ? "radio-button-on"
                                     : "radio-button-off"
                                 }
                                 size={20}
                                 color={
-                                  sortDirection == "ASC" ? "#F39300" : "gray"
+                                  sortDirection2 == "ASC" ? "#F39300" : "gray"
                                 }
                                 style={{ marginRight: 4 }}
                               />
@@ -3640,7 +3739,7 @@ export default function Student() {
                                 size={20}
                                 style={{
                                   color:
-                                    sortDirection == "ASC"
+                                    sortDirection2 == "ASC"
                                       ? "#F39300"
                                       : "black",
                                 }}
@@ -3655,7 +3754,7 @@ export default function Student() {
                             }}
                           >
                             <TouchableOpacity
-                              onPress={() => setSortDirection("DESC")}
+                              onPress={() => setSortDirection2("DESC")}
                               style={{
                                 flexDirection: "row",
                                 alignItems: "center",
@@ -3663,13 +3762,13 @@ export default function Student() {
                             >
                               <Ionicons
                                 name={
-                                  sortDirection == "DESC"
+                                  sortDirection2 == "DESC"
                                     ? "radio-button-on"
                                     : "radio-button-off"
                                 }
                                 size={20}
                                 color={
-                                  sortDirection == "DESC" ? "#F39300" : "gray"
+                                  sortDirection2 == "DESC" ? "#F39300" : "gray"
                                 }
                                 style={{ marginRight: 4 }}
                               />
@@ -3678,7 +3777,7 @@ export default function Student() {
                                 size={20}
                                 style={{
                                   color:
-                                    sortDirection == "DESC"
+                                    sortDirection2 == "DESC"
                                       ? "#F39300"
                                       : "black",
                                 }}
@@ -3867,21 +3966,13 @@ export default function Student() {
                                       fontWeight: "500",
                                     }}
                                   >
-                                    {item.startDateTime
-                                      .split("T")[1]
-                                      .split(":")[0] +
-                                      ":" +
-                                      item.startDateTime
-                                        .split("T")[1]
-                                        .split(":")[1]}{" "}
+                                    {item?.startDateTime
+                                      ?.split("T")[1]
+                                      .slice(0, 5)}{" "}
                                     -{" "}
-                                    {item.endDateTime
-                                      .split("T")[1]
-                                      .split(":")[0] +
-                                      ":" +
-                                      item.endDateTime
-                                        .split("T")[1]
-                                        .split(":")[1]}
+                                    {item?.endDateTime
+                                      ?.split("T")[1]
+                                      .slice(0, 5)}
                                   </Text>
                                 </View>
                               </View>
@@ -4163,19 +4254,11 @@ export default function Student() {
                                   >
                                     {historyInfo?.startDateTime
                                       ?.split("T")[1]
-                                      ?.split(":")[0] +
-                                      ":" +
-                                      historyInfo?.startDateTime
-                                        ?.split("T")[1]
-                                        ?.split(":")[1]}{" "}
+                                      .slice(0, 5)}{" "}
                                     -{" "}
                                     {historyInfo?.endDateTime
                                       ?.split("T")[1]
-                                      ?.split(":")[0] +
-                                      ":" +
-                                      historyInfo?.endDateTime
-                                        ?.split("T")[1]
-                                        ?.split(":")[1]}
+                                      .slice(0, 5)}
                                   </Text>
                                 </View>
                                 <View

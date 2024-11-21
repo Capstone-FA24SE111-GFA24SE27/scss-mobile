@@ -1,12 +1,10 @@
 import {
   View,
   Text,
-  Pressable,
   ScrollView,
   Image,
   Switch,
   Dimensions,
-  Alert,
   Modal,
   TouchableOpacity,
 } from "react-native";

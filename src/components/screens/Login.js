@@ -7,12 +7,10 @@ import {
   ScrollView,
   Dimensions,
   Image,
-  Alert,
-  Animated,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import Toast from "react-native-toast-message";
 import Loading from "../layout/Loading";
@@ -29,6 +27,13 @@ export default function Login() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setEmailError("");
+      setPasswordError("");
+    }, [])
+  );
 
   const handleLogin = async () => {
     setEmailError("");
@@ -60,6 +65,7 @@ export default function Login() {
           },
         });
         login(data.content.account, data.content.accessToken);
+        // login(data.content.account, data.content.accessToken, data.content.refreshToken);
       } else {
         Toast.show({
           type: "error",
@@ -88,7 +94,7 @@ export default function Login() {
       style={{
         flex: 1,
         backgroundColor: "#f5f7fd",
-        paddingHorizontal: 25,
+        paddingHorizontal: 20,
       }}
     >
       {loading ? (
@@ -99,11 +105,12 @@ export default function Login() {
             style={{
               display: "flex",
               flexDirection: "row",
-              paddingTop: 40,
+              paddingTop: height * 0.05,
             }}
           >
             <View style={{ flex: 1, alignItems: "flex-start" }}>
               <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() => navigation.navigate("GettingStart")}
               >
                 <Ionicons
@@ -118,7 +125,7 @@ export default function Login() {
           </View>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: height * 0.025 }}
           >
             <View>
               <Text style={{ fontSize: 40, fontWeight: "bold" }}>Welcome!</Text>
@@ -134,7 +141,7 @@ export default function Login() {
                 Sign in to continue
               </Text>
             </View>
-            <View style={{ marginTop: 40 }}>
+            <View style={{ marginTop: height * 0.05 }}>
               <View>
                 {emailError ? (
                   <Text
@@ -188,6 +195,18 @@ export default function Login() {
                       opacity: 0.8,
                     }}
                   />
+                  {/* {email !== "" && (
+                    <TouchableOpacity onPress={() => setEmail("")}>
+                      <Ionicons
+                        name="close"
+                        size={28}
+                        style={{
+                          color: "#F39300",
+                          opacity: 0.7,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  )} */}
                 </View>
                 {passwordError ? (
                   <Text
@@ -243,6 +262,18 @@ export default function Login() {
                       opacity: 0.8,
                     }}
                   />
+                  {/* {password !== "" && (
+                    <TouchableOpacity onPress={() => setPassword("")}>
+                      <Ionicons
+                        name="close"
+                        size={28}
+                        style={{
+                          color: "#F39300",
+                          opacity: 0.7,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  )} */}
                   <TouchableOpacity
                     onPress={() => setPasswordVisible(!passwordVisible)}
                     style={{
@@ -257,19 +288,18 @@ export default function Login() {
                   </TouchableOpacity>
                 </View>
               </View>
-
               <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() => handleLogin()}
                 style={{
+                  width: "75%",
+                  alignItems: "center",
+                  alignSelf: "center",
                   backgroundColor: "#F39300",
                   paddingVertical: 8,
+                  marginVertical: 20,
                   borderRadius: 10,
-                  alignItems: "center",
-                  elevation: 2,
-                  marginTop: 24,
-                  marginBottom: 16,
-                  width: "75%",
-                  alignSelf: "center",
+                  elevation: 3,
                 }}
               >
                 <Text
@@ -285,15 +315,17 @@ export default function Login() {
               <TouchableOpacity
                 onPress={() => handleLogin()}
                 style={{
+                  width: "75%",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  alignSelf: "center",
+                  justifyContent: "center",
                   backgroundColor: "#f9f9f9",
                   paddingVertical: 8,
                   borderRadius: 10,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  elevation: 2,
-                  width: "75%",
-                  alignSelf: "center",
+                  paddingVertical: 8,
+                  borderRadius: 10,
+                  elevation: 3,
                 }}
               >
                 <Image
@@ -315,16 +347,21 @@ export default function Login() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{ marginTop: 12, alignItems: "center" }}
+                style={{ marginTop: 20, alignItems: "center" }}
                 onPress={() => navigation.navigate("ResetPassword")}
               >
                 <Text
-                  style={{ fontSize: 18, fontWeight: "bold", opacity: 0.4 }}
+                  style={{
+                    color: "gray",
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    opacity: 0.8,
+                  }}
                 >
                   Forgot Password?
                 </Text>
               </TouchableOpacity>
-              <View style={{ flexDirection: "row", marginVertical: 24 }}>
+              {/* <View style={{ flexDirection: "row", marginVertical: 24 }}>
                 <View
                   style={{
                     borderBottomWidth: 1,
@@ -335,7 +372,12 @@ export default function Login() {
                 />
                 <View style={{ marginHorizontal: 8 }}>
                   <Text
-                    style={{ fontSize: 16, fontWeight: "bold", opacity: 0.6 }}
+                    style={{
+                      color: "gray",
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      opacity: 0.7,
+                    }}
                   >
                     Or
                   </Text>
@@ -368,7 +410,7 @@ export default function Login() {
                     Sign Up Here
                   </Text>
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </ScrollView>
         </>

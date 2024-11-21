@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  Pressable,
   TextInput,
   TouchableOpacity,
   ScrollView,
@@ -20,6 +19,7 @@ export default function ChangePassword() {
   const [isFocused1, setIsFocused1] = useState(false);
   const [isFocused2, setIsFocused2] = useState(false);
   const [isFocused3, setIsFocused3] = useState(false);
+  const [isFocused4, setIsFocused4] = useState(false);
   const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] =
     useState(false);
   const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
@@ -38,13 +38,17 @@ export default function ChangePassword() {
   const [emailError, setEmailError] = useState("");
   const [openConfirm2, setOpenConfirm2] = useState(false);
   const [openSuccess2, setOpenSuccess2] = useState(false);
-  const { userData, profile, fetchProfile, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const scrollViewRef = useRef(null);
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
+      setCurrentPasswordError("");
+      setNewPasswordError("");
+      setConfirmPasswordError("");
+      setEmailError("");
     }, [])
   );
 
@@ -132,15 +136,7 @@ export default function ChangePassword() {
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
-            <TouchableOpacity
-              onPress={() => (
-                navigation.navigate("Profile"),
-                setCurrentPasswordError(""),
-                setNewPasswordError(""),
-                setConfirmPasswordError(""),
-                setEmailError("")
-              )}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
           </View>
@@ -207,6 +203,19 @@ export default function ChangePassword() {
                   opacity: 0.8,
                 }}
               />
+              {currentPassword !== "" && (
+                <TouchableOpacity onPress={() => setCurrentPassword("")}>
+                  <Ionicons
+                    name="close"
+                    size={28}
+                    style={{
+                      color: "#F39300",
+                      opacity: 0.7,
+                      paddingHorizontal: 4,
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 onPress={() =>
                   setIsCurrentPasswordVisible(!isCurrentPasswordVisible)
@@ -266,6 +275,19 @@ export default function ChangePassword() {
                   opacity: 0.8,
                 }}
               />
+              {newPassword !== "" && (
+                <TouchableOpacity onPress={() => setNewPassword("")}>
+                  <Ionicons
+                    name="close"
+                    size={28}
+                    style={{
+                      color: "#F39300",
+                      opacity: 0.7,
+                      paddingHorizontal: 4,
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
                 style={{
@@ -324,6 +346,19 @@ export default function ChangePassword() {
                   opacity: 0.8,
                 }}
               />
+              {confirmPassword !== "" && (
+                <TouchableOpacity onPress={() => setConfirmPassword("")}>
+                  <Ionicons
+                    name="close"
+                    size={28}
+                    style={{
+                      color: "#F39300",
+                      opacity: 0.7,
+                      paddingHorizontal: 4,
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 onPress={() =>
                   setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
@@ -592,7 +627,8 @@ export default function ChangePassword() {
           <View
             style={{
               width: width * 0.85,
-              padding: 20,
+              paddingHorizontal: 12,
+              paddingVertical: 20,
               backgroundColor: "white",
               borderRadius: 10,
               elevation: 10,
@@ -600,43 +636,72 @@ export default function ChangePassword() {
           >
             <Text
               style={{
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: "bold",
-                marginVertical: 12,
+                marginBottom: 12,
                 textAlign: "center",
               }}
             >
-              Forgot your password
+              Reset Password
             </Text>
-            <View style={{ marginVertical: 8 }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  color: "#333",
-                  marginBottom: 8,
-                }}
-              >
-                Enter your email:
+            <View style={{ marginBottom: 12 }}>
+              <Text style={{ fontSize: 16, color: "gray" }}>
+                * By providing your valid email, we will send a reset mail for
+                you to start your reset password process.
               </Text>
-              <TextInput
-                placeholder="Type email here"
-                placeholderTextColor="gray"
-                keyboardType="default"
-                value={email}
-                onChangeText={(value) => setEmail(value)}
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                borderWidth: 1,
+                borderRadius: 10,
+                paddingHorizontal: 16,
+                height: 50,
+                marginVertical: 8,
+                alignItems: "center",
+                backgroundColor: isFocused4 ? "white" : "#ededed",
+                borderColor: isFocused4
+                  ? "#F39300"
+                  : emailError
+                  ? "red"
+                  : "gray",
+                alignContent: "center",
+              }}
+            >
+              <Ionicons
+                name="mail"
+                size={24}
                 style={{
-                  fontWeight: "600",
-                  fontSize: 16,
-                  opacity: 0.8,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  backgroundColor: "#ededed",
-                  borderColor: "gray",
-                  borderWidth: 1,
-                  borderRadius: 10,
+                  marginRight: 10,
+                  color: isFocused4 ? "#F39300" : "gray",
+                  opacity: 0.7,
                 }}
               />
+              <TextInput
+                placeholder="Enter Email"
+                placeholderTextColor="gray"
+                value={email}
+                onFocus={() => setIsFocused4(true)}
+                onBlur={() => setIsFocused4(false)}
+                onChangeText={(text) => setEmail(text)}
+                style={{
+                  flex: 1,
+                  fontSize: 18,
+                  opacity: 0.8,
+                }}
+              />
+              {email !== "" && (
+                <TouchableOpacity onPress={() => setEmail("")}>
+                  <Ionicons
+                    name="close"
+                    size={28}
+                    style={{
+                      color: "#F39300",
+                      opacity: 0.7,
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
               {emailError ? (
                 <Text
                   style={{
@@ -669,7 +734,7 @@ export default function ChangePassword() {
                   borderWidth: 1,
                   borderColor: "gray",
                 }}
-                onPress={() => setOpenForgot(false)}
+                onPress={() => (setOpenForgot(false), setIsFocused4(false))}
               >
                 <Text
                   style={{

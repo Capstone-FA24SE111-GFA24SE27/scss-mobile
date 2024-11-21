@@ -1,9 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef } from "react";
-import { View, Text, Image, TouchableOpacity, Animated } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+} from "react-native";
 import logo from "../../assets/logo-fpt.png";
+
 export default function GettingStart() {
   const navigation = useNavigation();
+  const { width, height } = Dimensions.get("screen");
   const fadeAnim1 = useRef(new Animated.Value(0)).current;
   const fadeAnim2 = useRef(new Animated.Value(0)).current;
 
@@ -32,10 +41,10 @@ export default function GettingStart() {
         padding: 20,
       }}
     >
-      <View style={{ position: "absolute", top: 8, left: 12 }}>
+      <View style={{ position: "absolute", top: 8, left: 8 }}>
         <Image
           source={logo}
-          style={{ width: 160, height: 128, resizeMode: "contain" }}
+          style={{ width: 200, height: 160, resizeMode: "contain" }}
         />
       </View>
       <View
@@ -46,7 +55,7 @@ export default function GettingStart() {
         <Animated.Text
           style={{
             opacity: fadeAnim1,
-            fontSize: 34,
+            fontSize: 40,
             fontWeight: "bold",
             color: "#F39300",
           }}
@@ -59,8 +68,7 @@ export default function GettingStart() {
             fontSize: 18,
             color: "gray",
             textAlign: "center",
-            marginTop: 10,
-            paddingHorizontal: 10,
+            marginTop: 12,
             fontWeight: "600",
           }}
         >
@@ -72,27 +80,30 @@ export default function GettingStart() {
           uri: "https://static.vecteezy.com/system/resources/thumbnails/006/054/695/small/flat-design-counseling-concept-art-free-vector.jpg",
         }}
         style={{
-          width: 200,
-          height: 200,
-          marginVertical: 40,
+          width: width * 0.6,
+          height: width * 0.6,
+          marginVertical: height * 0.025,
           resizeMode: "stretch",
         }}
       />
       <TouchableOpacity
+        activeOpacity={0.7}
         style={{
           width: "75%",
           backgroundColor: "#F39300",
-          paddingVertical: 10,
+          paddingVertical: 8,
           borderRadius: 10,
           marginBottom: 20,
+          borderWidth: 3,
+          borderColor: "#F39300",
           alignItems: "center",
         }}
         onPress={() => navigation.navigate("Login")}
       >
         <Text
           style={{
-            color: "#FFF",
-            fontSize: 18,
+            color: "white",
+            fontSize: 20,
             fontWeight: "600",
           }}
         >
@@ -100,6 +111,7 @@ export default function GettingStart() {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
+        activeOpacity={0.7}
         style={{
           width: "75%",
           paddingVertical: 8,
@@ -113,7 +125,7 @@ export default function GettingStart() {
         <Text
           style={{
             color: "#F39300",
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: "600",
           }}
         >

@@ -3,7 +3,6 @@ import {
   Text,
   Image,
   ScrollView,
-  Pressable,
   Animated,
   TextInput,
   Dimensions,
@@ -120,15 +119,6 @@ export default function Home() {
     fetchQuestion();
   }, []);
 
-  const formatDate = (value) => {
-    const date = new Date(value);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
-  };
-
   const fetchRequest = async () => {
     try {
       const requestsRes = await axiosJWT.get(
@@ -136,9 +126,8 @@ export default function Home() {
       );
       const requestsData = requestsRes?.data?.content || [];
       setRequests(requestsData);
-      console.log(requests);
     } catch (err) {
-      console.log(err);
+      console.log("Can't fetch request", err);
     }
   };
 
@@ -168,8 +157,8 @@ export default function Home() {
         }));
         setAppointments(formattedAppointments);
       }
-    } catch (error) {
-      console.log("Failed to fetch appointments", error);
+    } catch (err) {
+      console.log("Can't fetch upcoming appointments", err);
     }
   };
 
@@ -198,9 +187,8 @@ export default function Home() {
         totalPages = questionsRes?.data?.content?.totalPages || 1;
       }
       setQuestions(allQuestions);
-      console.log(questions);
     } catch (err) {
-      console.log(err);
+      console.log("Can't fetch answered question", err);
     }
   };
 
@@ -586,13 +574,8 @@ export default function Home() {
                               marginLeft: 8,
                             }}
                           >
-                            {request.startTime.split(":")[0] +
-                              ":" +
-                              request.startTime.split(":")[1]}{" "}
-                            -{" "}
-                            {request.endTime.split(":")[0] +
-                              ":" +
-                              request.endTime.split(":")[1]}
+                            {request?.startTime?.slice(0, 5)} -{" "}
+                            {request?.endTime?.slice(0, 5)}
                           </Text>
                         </View>
                         <View
