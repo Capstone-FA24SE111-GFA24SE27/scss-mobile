@@ -8,9 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Animated,
   Platform,
-  Alert,
   Modal,
   Linking,
 } from "react-native";
@@ -898,15 +896,8 @@ export default function Appointment({ route }) {
                         color: "#333",
                       }}
                     >
-                      {appointment.startDateTime.split("T")[1].split(":")[0] +
-                        ":" +
-                        appointment.startDateTime
-                          .split("T")[1]
-                          .split(":")[1]}{" "}
-                      -{" "}
-                      {appointment.endDateTime.split("T")[1].split(":")[0] +
-                        ":" +
-                        appointment.endDateTime.split("T")[1].split(":")[1]}
+                      {appointment?.startDateTime?.split("T")[1].slice(0, 5)} -{" "}
+                      {appointment?.endDateTime?.split("T")[1].slice(0, 5)}
                     </Text>
                   </View>
                 </View>
@@ -1231,15 +1222,8 @@ export default function Appointment({ route }) {
                           color: "#333",
                         }}
                       >
-                        {info?.startDateTime?.split("T")[1]?.split(":")[0] +
-                          ":" +
-                          info?.startDateTime
-                            ?.split("T")[1]
-                            ?.split(":")[1]}{" "}
-                        -{" "}
-                        {info?.endDateTime?.split("T")[1]?.split(":")[0] +
-                          ":" +
-                          info?.endDateTime?.split("T")[1]?.split(":")[1]}
+                        {info?.startDateTime?.split("T")[1].slice(0, 5)} -{" "}
+                        {info?.endDateTime?.split("T")[1].slice(0, 5)}
                       </Text>
                     </View>
                     <View

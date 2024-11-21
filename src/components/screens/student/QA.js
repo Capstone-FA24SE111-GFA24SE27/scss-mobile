@@ -8,8 +8,6 @@ import {
   Modal,
   TextInput,
   Dimensions,
-  Animated,
-  Platform,
   Image,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -22,6 +20,7 @@ import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import Toast from "react-native-toast-message";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+
 export default function QA() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");

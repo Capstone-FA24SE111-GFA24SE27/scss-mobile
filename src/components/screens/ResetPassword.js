@@ -4,12 +4,11 @@ import {
   TextInput,
   TouchableOpacity,
   Text,
-  StyleSheet,
   Dimensions,
   Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 
 export default function ResetPassword() {
@@ -21,6 +20,12 @@ export default function ResetPassword() {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setEmailError("");
+    }, [])
+  );
+
   const handleForgotPassword = async () => {
     setEmailError("");
     // if (!email.includes("@fpt.edu.vn") && !email.includes("@gmail.com")) {
@@ -29,12 +34,9 @@ export default function ResetPassword() {
     //   return;
     // }
     try {
-      await axiosJWT.post(
-        `${BASE_URL}/account/forgot-password`,
-        {
-          email: email,
-        }
-      );
+      await axiosJWT.post(`${BASE_URL}/account/forgot-password`, {
+        email: email,
+      });
       setOpenConfirm(false);
       setOpenSuccess(true);
     } catch (error) {
@@ -49,14 +51,14 @@ export default function ResetPassword() {
       style={{
         flex: 1,
         backgroundColor: "#f5f7fd",
-        paddingHorizontal: 25,
+        paddingHorizontal: 20,
       }}
     >
       <View
         style={{
           display: "flex",
           flexDirection: "row",
-          paddingTop: 40,
+          paddingTop: height * 0.05,
         }}
       >
         <View style={{ flex: 1, alignItems: "flex-start" }}>
@@ -71,20 +73,25 @@ export default function ResetPassword() {
       </View>
       <View
         style={{
-          justifyContent: "center",
-          marginTop: width * 0.5,
+          marginTop: height * 0.25,
         }}
       >
         <Text
           style={{
             fontSize: 24,
             fontWeight: "bold",
-            marginBottom: 20,
+            marginBottom: 8,
             textAlign: "center",
           }}
         >
           Reset Password
         </Text>
+        <View style={{ marginBottom: 12 }}>
+          <Text style={{ fontSize: 16, color: "gray" }}>
+            * By providing your valid email, we will send a reset mail for you
+            to start your reset password process.
+          </Text>
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -121,6 +128,18 @@ export default function ResetPassword() {
               opacity: 0.8,
             }}
           />
+          {email !== "" && (
+            <TouchableOpacity onPress={() => setEmail("")}>
+              <Ionicons
+                name="close"
+                size={28}
+                style={{
+                  color: "#F39300",
+                  opacity: 0.7,
+                }}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         {emailError ? (
           <Text

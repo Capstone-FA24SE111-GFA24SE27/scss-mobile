@@ -27,9 +27,8 @@ export const AuthProvider = ({ children }) => {
         setIsLogin(true);
         // }
       }
-      console.log("Async");
       console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4));
-      console.log(sessionAsync);
+      // console.log(sessionAsync);
     };
 
     checkUserSession();
@@ -38,12 +37,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (userInfo, sessionInfo) => {
     await AsyncStorage.setItem("userData", JSON.stringify(userInfo));
     await AsyncStorage.setItem("session", sessionInfo);
+    // await AsyncStorage.setItem("refreshToken", refreshToken);
     setUserData(userInfo);
     setSession(sessionInfo);
-    const userDataAsync = await AsyncStorage.getItem("userData");
-    const sessionAsync = await AsyncStorage.getItem("session");
-    console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4));
-    console.log(sessionAsync);
+    // const userDataAsync = await AsyncStorage.getItem("userData");
+    // const sessionAsync = await AsyncStorage.getItem("session");
+    // console.log(JSON.stringify(JSON.parse(userDataAsync), undefined, 4));
+    // console.log(sessionAsync);
     setIsLogin(true);
   };
 

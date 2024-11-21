@@ -8,10 +8,7 @@ import {
   Modal,
   TextInput,
   Dimensions,
-  Animated,
-  Platform,
   Image,
-  FlatList,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";

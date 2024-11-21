@@ -10,13 +10,7 @@ import {
   ActivityIndicator,
   Animated,
 } from "react-native";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
@@ -26,6 +20,7 @@ import { Calendar, CalendarProvider } from "react-native-calendars";
 import { Dropdown } from "react-native-element-dropdown";
 import ErrorModal from "../../layout/ErrorModal";
 import Toast from "react-native-toast-message";
+
 export default function CounselorRand() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
@@ -224,7 +219,7 @@ export default function CounselorRand() {
     );
   };
 
-  const renderSlots = () => {
+  const renderSlotsForSelectedDate = () => {
     if (loading) {
       return (
         <View
@@ -333,10 +328,7 @@ export default function CounselorRand() {
                     : "gray",
               }}
             >
-              {slot.startTime.split(":")[0] +
-                ":" +
-                slot.startTime.split(":")[1]}{" "}
-              - {slot.endTime.split(":")[0] + ":" + slot.endTime.split(":")[1]}
+              {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -825,7 +817,7 @@ export default function CounselorRand() {
       },
       {
         title: "Select a slot",
-        content: renderSlots(),
+        content: renderSlotsForSelectedDate(),
       },
       {
         title: "Select counselor type",
@@ -865,7 +857,7 @@ export default function CounselorRand() {
             style={{
               fontSize: 18,
               fontWeight: "600",
-              marginBottom: 4
+              marginBottom: 4,
             }}
           >
             {item.title}{" "}

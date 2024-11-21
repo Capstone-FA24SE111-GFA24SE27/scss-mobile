@@ -8,11 +8,9 @@ import {
   ScrollView,
   Linking,
   TextInput,
-  FlatList,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
-  Agenda,
   AgendaList,
   CalendarProvider,
   ExpandableCalendar,
@@ -44,7 +42,6 @@ export default function Schedule() {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [method, setMethod] = useState("");
   const [value, setValue] = useState("");
-  const statusOptions = ["ABSENT", "ATTEND"];
 
   useFocusEffect(
     React.useCallback(() => {
@@ -213,7 +210,9 @@ export default function Schedule() {
   const handleUpdateAppointment = async () => {
     try {
       const dataToSend =
-        method === "ONLINE" ? { meetUrl: value, address: "" } : { meetUrl: "", address: value };
+        method === "ONLINE"
+          ? { meetUrl: value, address: "" }
+          : { meetUrl: "", address: value };
       const response = await axiosJWT.put(
         `${BASE_URL}/booking-counseling/${selectedAppointment}/update-details`,
         dataToSend
@@ -387,7 +386,7 @@ export default function Schedule() {
           >
             <TouchableOpacity
               onPress={() => handleOpenTakeAttendance(item.id, item.status)}
-              disabled={new Date().toISOString().split("T")[0] > item.date}
+              disabled={item.date < new Date().toISOString().split("T")[0]}
               activeOpacity={0.6}
               style={[
                 item.status === "ATTEND" && { borderColor: "green" },
@@ -405,8 +404,12 @@ export default function Schedule() {
                 },
               ]}
             >
-              <MaterialIcons name="edit-calendar" size={20} color="gray" />
-              <Text style={{ fontSize: 16, marginHorizontal: 6 }}>-</Text>
+              {item.date >= new Date().toISOString().split("T")[0] && (
+                <>
+                  <MaterialIcons name="edit-calendar" size={20} color="gray" />
+                  <Text style={{ fontSize: 16, marginHorizontal: 6 }}>-</Text>
+                </>
+              )}
               <Text
                 style={[
                   { fontSize: 16, fontWeight: "bold" },
@@ -539,22 +542,23 @@ export default function Schedule() {
                     <Ionicons name="close" size={24} />
                   </TouchableOpacity>
                 </View>
-                <FlatList
-                  data={statusOptions}
-                  keyExtractor={(item) => item}
-                  numColumns={2}
-                  columnWrapperStyle={{ justifyContent: "space-between" }}
-                  renderItem={({ item }) => {
+                <View
+                  style={{
+                    flexDirection: "row",
+                  }}
+                >
+                  {["ABSENT", "ATTEND"].map((item) => {
                     const isSelected = item === value;
                     const itemColor = item === "ATTEND" ? "green" : "red";
                     return (
                       <TouchableOpacity
+                        key={item}
                         onPress={() => setValue(item)}
                         style={{
+                          flex: 0.5,
                           flexDirection: "row",
                           alignItems: "center",
                           marginVertical: 6,
-                          paddingHorizontal: 20,
                         }}
                       >
                         <Ionicons
@@ -576,8 +580,8 @@ export default function Schedule() {
                         </Text>
                       </TouchableOpacity>
                     );
-                  }}
-                />
+                  })}
+                </View>
                 <TouchableOpacity
                   onPress={handleTakeAttendance}
                   style={{

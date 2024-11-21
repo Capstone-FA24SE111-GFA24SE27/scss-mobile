@@ -6,17 +6,15 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { AuthContext } from "../../context/AuthContext";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import Toast from "react-native-toast-message";
 
 export default function ViewProfile() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  const { fetchProfile } = useContext(AuthContext);
   const [counselingProfile, setCounselingProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [formValues, setFormValues] = useState({});

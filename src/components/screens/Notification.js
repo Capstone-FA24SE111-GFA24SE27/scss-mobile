@@ -393,7 +393,7 @@ export default function Notification() {
             style={{
               justifyContent: "center",
               alignItems: "center",
-              marginTop: 30,
+              marginTop: height * 0.1,
             }}
           >
             {/* <Text style={{ fontWeight: "bold", fontSize: 18 }}>

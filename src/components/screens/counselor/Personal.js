@@ -16,7 +16,7 @@ import { SocketContext } from "../../context/SocketContext";
 
 export default function Personal() {
   const navigation = useNavigation();
-  const { fetchProfile, profile, userData } = useContext(AuthContext);
+  const { profile, userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const [requestCount, setRequestCount] = useState(0);
   const [appointmentCount, setAppointmentCount] = useState(0);

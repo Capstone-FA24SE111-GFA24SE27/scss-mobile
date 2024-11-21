@@ -14,11 +14,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Animated,
   Platform,
-  Alert,
   Modal,
-  FlatList,
   Linking,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
@@ -87,7 +84,6 @@ export default function Appointment({ route }) {
   const [method, setMethod] = useState("");
   const [value, setValue] = useState("");
   const [value2, setValue2] = useState("");
-  const statusOptions = ["ABSENT", "ATTEND"];
 
   const scrollViewRef = useRef(null);
   useFocusEffect(
@@ -413,10 +409,7 @@ export default function Appointment({ route }) {
                     : "gray",
               }}
             >
-              {slot.startTime.split(":")[0] +
-                ":" +
-                slot.startTime.split(":")[1]}{" "}
-              - {slot.endTime.split(":")[0] + ":" + slot.endTime.split(":")[1]}
+              {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -1223,15 +1216,8 @@ export default function Appointment({ route }) {
                         color: "#333",
                       }}
                     >
-                      {appointment.startDateTime.split("T")[1].split(":")[0] +
-                        ":" +
-                        appointment.startDateTime
-                          .split("T")[1]
-                          .split(":")[1]}{" "}
-                      -{" "}
-                      {appointment.endDateTime.split("T")[1].split(":")[0] +
-                        ":" +
-                        appointment.endDateTime.split("T")[1].split(":")[1]}
+                      {appointment?.startDateTime?.split("T")[1].slice(0, 5)} -{" "}
+                      {appointment?.endDateTime?.split("T")[1].slice(0, 5)}
                     </Text>
                   </View>
                 </View>
@@ -1303,42 +1289,46 @@ export default function Appointment({ route }) {
                         </TouchableOpacity>
                       </View>
                     )}
-                    {appointment.status !== "CANCELED" && (
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedAppointment(appointment.id);
-                          setOpenAttendance(true);
-                          setValue(appointment.status);
-                        }}
-                        style={{
-                          paddingHorizontal: 8,
-                          paddingVertical: 2,
-                          backgroundColor: "#F39300",
-                          borderRadius: 10,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          borderWidth: 1.5,
-                          borderColor: "#F39300",
-                        }}
-                      >
-                        <MaterialIcons
-                          name="edit-calendar"
-                          size={18}
-                          color="white"
-                        />
-
-                        <Text
+                    {appointment.status !== "CANCELED" &&
+                      new Date(appointment.startDateTime)
+                        .toISOString()
+                        .split("T")[0] >=
+                        new Date().toISOString().split("T")[0] && (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSelectedAppointment(appointment.id);
+                            setOpenAttendance(true);
+                            setValue(appointment.status);
+                          }}
                           style={{
-                            fontWeight: "500",
-                            color: "white",
-                            fontSize: 16,
-                            marginLeft: 4,
+                            paddingHorizontal: 8,
+                            paddingVertical: 2,
+                            backgroundColor: "#F39300",
+                            borderRadius: 10,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            borderWidth: 1.5,
+                            borderColor: "#F39300",
                           }}
                         >
-                          Check
-                        </Text>
-                      </TouchableOpacity>
-                    )}
+                          <MaterialIcons
+                            name="edit-calendar"
+                            size={18}
+                            color="white"
+                          />
+
+                          <Text
+                            style={{
+                              fontWeight: "500",
+                              color: "white",
+                              fontSize: 16,
+                              marginLeft: 4,
+                            }}
+                          >
+                            Check
+                          </Text>
+                        </TouchableOpacity>
+                      )}
                   </View>
                 </View>
               </View>
@@ -2288,15 +2278,8 @@ export default function Appointment({ route }) {
                           color: "#333",
                         }}
                       >
-                        {info?.startDateTime?.split("T")[1]?.split(":")[0] +
-                          ":" +
-                          info?.startDateTime
-                            ?.split("T")[1]
-                            ?.split(":")[1]}{" "}
-                        -{" "}
-                        {info?.endDateTime?.split("T")[1]?.split(":")[0] +
-                          ":" +
-                          info?.endDateTime?.split("T")[1]?.split(":")[1]}
+                        {info?.startDateTime?.split("T")[1].slice(0, 5)} -{" "}
+                        {info?.endDateTime?.split("T")[1].slice(0, 5)}
                       </Text>
                     </View>
                     <View
@@ -2801,22 +2784,23 @@ export default function Appointment({ route }) {
                   <Ionicons name="close" size={24} />
                 </TouchableOpacity>
               </View>
-              <FlatList
-                data={statusOptions}
-                keyExtractor={(item) => item}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: "space-between" }}
-                renderItem={({ item }) => {
+              <View
+                style={{
+                  flexDirection: "row",
+                }}
+              >
+                {["ABSENT", "ATTEND"].map((item) => {
                   const isSelected = item === value;
                   const itemColor = item === "ATTEND" ? "green" : "red";
                   return (
                     <TouchableOpacity
+                      key={item}
                       onPress={() => setValue(item)}
                       style={{
+                        flex: 0.5,
                         flexDirection: "row",
                         alignItems: "center",
                         marginVertical: 6,
-                        paddingHorizontal: 20,
                       }}
                     >
                       <Ionicons
@@ -2838,8 +2822,8 @@ export default function Appointment({ route }) {
                       </Text>
                     </TouchableOpacity>
                   );
-                }}
-              />
+                })}
+              </View>
               <TouchableOpacity
                 onPress={handleTakeAttendance}
                 style={{

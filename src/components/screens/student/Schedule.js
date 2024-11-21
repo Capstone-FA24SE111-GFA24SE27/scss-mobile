@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
-  Agenda,
   AgendaList,
   CalendarProvider,
   ExpandableCalendar,
@@ -22,6 +21,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SocketContext } from "../../context/SocketContext";
 import { AuthContext } from "../../context/AuthContext";
 import Toast from "react-native-toast-message";
+
 export default function Schedule() {
   const { width, height } = Dimensions.get("screen");
   const socket = useContext(SocketContext);
@@ -1049,61 +1049,64 @@ export default function Schedule() {
     </>
   );
 }
-
 {
-  /* <Calendar
-            style={{
-              marginHorizontal: 12,
-              padding: 10,
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: "#F39300",
-            }}
-            enableSwipeMonths
-            arrowsHitSlop={4}
-            renderArrow={(direction) => {
-              return direction === "left" ? (
-                <Ionicons name="caret-back-circle-outline" size={30} color="#F39300" />
-              ) : (
-                <Ionicons name="caret-forward-circle-outline" size={30} color="#F39300"/>
-              );
-            }}
-            theme={{
-              monthTextColor: "#F39300",
-              textMonthFontSize: 24,
-              textMonthFontWeight: "bold",
-              // arrowColor: "#F39300",
-              calendarBackground: "#ffe4ec",
-              dayTextColor: "black",
-              textInactiveColor: "#adadad",
-              todayTextColor: "#F39300",
-              textSectionTitleColor: "#F39300",
-              textDayHeaderFontSize: 14,
-              textDayFontSize: 14,
-              textDayFontWeight: "semibold",
-              textDisabledColor: "#adadad",
-            }}
-            markingType="period"
-            markedDates={{
-              // Default markingType
-              // '2024-09-15': {selected: true, marked: true, selectedColor: '#F39300'},
+  // <Calendar
+  //   style={{
+  //     marginHorizontal: 12,
+  //     padding: 10,
+  //     borderRadius: 20,
+  //     borderWidth: 1,
+  //     borderColor: "#F39300",
+  //   }}
+  //   enableSwipeMonths
+  //   arrowsHitSlop={4}
+  //   renderArrow={(direction) => {
+  //     return direction === "left" ? (
+  //       <Ionicons name="caret-back-circle-outline" size={30} color="#F39300" />
+  //     ) : (
+  //       <Ionicons
+  //         name="caret-forward-circle-outline"
+  //         size={30}
+  //         color="#F39300"
+  //       />
+  //     );
+  //   }}
+  //   theme={{
+  //     monthTextColor: "#F39300",
+  //     textMonthFontSize: 24,
+  //     textMonthFontWeight: "bold",
+  //     // arrowColor: "#F39300",
+  //     calendarBackground: "#ffe4ec",
+  //     dayTextColor: "black",
+  //     textInactiveColor: "#adadad",
+  //     todayTextColor: "#F39300",
+  //     textSectionTitleColor: "#F39300",
+  //     textDayHeaderFontSize: 14,
+  //     textDayFontSize: 14,
+  //     textDayFontWeight: "semibold",
+  //     textDisabledColor: "#adadad",
+  //   }}
+  //   markingType="period"
+  //   markedDates={{
+  //     // Default markingType
+  //     // '2024-09-15': {selected: true, marked: true, selectedColor: '#F39300'},
 
-              // *Multi-dot
-              // '2024-09-16': {selected: true, dots: [{key: 'running', color: 'red', selectedDotColor: 'yellow'}, {key: 'lifting', color: 'blue', selectedDotColor: 'green'}] , selectedColor: "#F39300", selectedTextColor: "white"},
+  //     // *Multi-dot
+  //     // '2024-09-16': {selected: true, dots: [{key: 'running', color: 'red', selectedDotColor: 'yellow'}, {key: 'lifting', color: 'blue', selectedDotColor: 'green'}] , selectedColor: "#F39300", selectedTextColor: "white"},
 
-              // *Period
-              "2024-09-22": {
-                startingDay: true,
-                color: "#F39300",
-                textColor: "white",
-              },
-              "2024-09-23": { color: "#FA9F54FF", textColor: "white" },
-              "2024-09-24": { color: "#FF9C4BFF", textColor: "white" },
-              "2024-09-25": {
-                endingDay: true,
-                color: "#F39300",
-                textColor: "white",
-              },
-            }}
-          /> */
+  //     // *Period
+  //     "2024-09-22": {
+  //       startingDay: true,
+  //       color: "#F39300",
+  //       textColor: "white",
+  //     },
+  //     "2024-09-23": { color: "#FA9F54FF", textColor: "white" },
+  //     "2024-09-24": { color: "#FF9C4BFF", textColor: "white" },
+  //     "2024-09-25": {
+  //       endingDay: true,
+  //       color: "#F39300",
+  //       textColor: "white",
+  //     },
+  //   }}
+  // />
 }

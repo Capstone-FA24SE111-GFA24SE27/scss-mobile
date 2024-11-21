@@ -14,11 +14,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Animated,
   Platform,
-  Alert,
   Modal,
-  FlatList,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -293,10 +290,7 @@ export default function Demand({ route }) {
                     : "gray",
               }}
             >
-              {slot.startTime.split(":")[0] +
-                ":" +
-                slot.startTime.split(":")[1]}{" "}
-              - {slot.endTime.split(":")[0] + ":" + slot.endTime.split(":")[1]}
+              {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
             </Text>
           </TouchableOpacity>
         ))}
