@@ -123,6 +123,7 @@ export default function Schedule() {
             }
             acc[date].push({
               id: appointment?.id,
+              reason: appointment?.reason,
               date: formatDate(date),
               startTime: appointment?.startDateTime.split("T")[1].slice(0, 5),
               endTime: appointment?.endDateTime.split("T")[1].slice(0, 5),
@@ -239,11 +240,6 @@ export default function Schedule() {
     if (fromDate && toDate) {
       fetchData(fromDate, toDate);
     }
-  };
-
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
   };
 
   const renderItem = ({ item }) => (
@@ -392,7 +388,7 @@ export default function Schedule() {
             transparent={true}
             visible={openInfo}
             animationType="slide"
-            onRequestClose={handleCloseInfo}
+            onRequestClose={() => setOpenInfo(false)}
           >
             <View
               style={{
@@ -417,12 +413,13 @@ export default function Schedule() {
                     padding: 4,
                     marginHorizontal: 20,
                     marginTop: 16,
-                    marginBottom: 8,
+                    marginBottom: 20,
                     borderRadius: 20,
                     alignSelf: "flex-start",
                     alignItems: "flex-start",
                   }}
-                  onPress={handleCloseInfo}
+                  onPress={() => (setInfo(""),
+                    setOpenInfo(false))}
                 >
                   <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
@@ -433,8 +430,8 @@ export default function Schedule() {
                       padding: 16,
                       backgroundColor: "white",
                       borderRadius: 10,
-                      marginVertical: 20,
                       marginHorizontal: 20,
+                      marginBottom: 20,
                       elevation: 1,
                       borderWidth: 1.5,
                       borderColor: "#e3e3e3",
@@ -518,6 +515,40 @@ export default function Schedule() {
                   <View
                     style={{
                       marginHorizontal: 20,
+                      marginBottom: 20,
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#F39300",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Appointment Topic
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: "#333",
+                        fontWeight: "500",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {info?.reason}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      marginHorizontal: 20,
+                      marginBottom: 20,
                       borderRadius: 10,
                       backgroundColor: "white",
                       paddingVertical: 12,
@@ -737,7 +768,8 @@ export default function Schedule() {
                   {info?.feedback !== null ? (
                     <View
                       style={{
-                        margin: 20,
+                        marginHorizontal: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
@@ -828,7 +860,8 @@ export default function Schedule() {
                   ) : (
                     <View
                       style={{
-                        margin: 20,
+                        marginHorizontal: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
@@ -870,177 +903,168 @@ export default function Schedule() {
                             </Text>
                           </TouchableOpacity>
                         )}
-                      <Modal
-                        transparent={true}
-                        visible={openFeedback}
-                        animationType="slide"
-                        onRequestClose={handleCloseFeedback}
-                      >
-                        <View
-                          style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor: "rgba(0, 0, 0, 0.5)",
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: width * 0.85,
-                              padding: 20,
-                              backgroundColor: "white",
-                              borderRadius: 10,
-                              elevation: 10,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 22,
-                                fontWeight: "bold",
-                                marginVertical: 12,
-                                textAlign: "center",
-                              }}
-                            >
-                              Write a Review
-                            </Text>
-                            <View style={{ marginVertical: 8 }}>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "600",
-                                  marginBottom: 8,
-                                }}
-                              >
-                                What do you think?
-                              </Text>
-                              <TextInput
-                                placeholder="Type message here..."
-                                placeholderTextColor="gray"
-                                keyboardType="default"
-                                multiline={true}
-                                numberOfLines={2}
-                                value={value}
-                                onChangeText={(value) => setValue(value)}
-                                style={{
-                                  fontWeight: "600",
-                                  fontSize: 16,
-                                  opacity: 0.8,
-                                  paddingVertical: 8,
-                                  textAlignVertical: "top",
-                                  paddingHorizontal: 12,
-                                  backgroundColor: "#ededed",
-                                  borderColor: "gray",
-                                  borderWidth: 1,
-                                  borderRadius: 10,
-                                }}
-                              />
-                            </View>
-                            <View style={{ marginVertical: 8 }}>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "600",
-                                  marginBottom: 8,
-                                }}
-                              >
-                                Give a rating
-                              </Text>
-                              <View
-                                style={{
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                }}
-                              >
-                                {[1, 2, 3, 4, 5].map((star, index) => (
-                                  <TouchableOpacity
-                                    key={index}
-                                    activeOpacity={0.6}
-                                    onPress={() => setRating(star)}
-                                  >
-                                    <Ionicons
-                                      name="star"
-                                      size={24}
-                                      color={
-                                        rating >= star ? "#F39300" : "gray"
-                                      }
-                                      style={{ marginHorizontal: 2 }}
-                                    />
-                                  </TouchableOpacity>
-                                ))}
-                              </View>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: "row",
-                                justifyContent: "flex-end",
-                                alignItems: "flex-end",
-                                marginTop: 8,
-                              }}
-                            >
-                              <TouchableOpacity
-                                style={{
-                                  backgroundColor: "#ededed",
-                                  paddingHorizontal: 12,
-                                  paddingVertical: 6,
-                                  borderRadius: 10,
-                                  marginRight: 10,
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  borderWidth: 1,
-                                  borderColor: "gray",
-                                }}
-                                onPress={handleCloseFeedback}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    color: "#333",
-                                  }}
-                                >
-                                  Cancel
-                                </Text>
-                              </TouchableOpacity>
-                              <TouchableOpacity
-                                disabled={value === "" || rating === 0}
-                                style={{
-                                  backgroundColor:
-                                    value === "" || rating === 0
-                                      ? "#ededed"
-                                      : "#F39300",
-                                  paddingHorizontal: 12,
-                                  paddingVertical: 6,
-                                  borderRadius: 10,
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  borderWidth: 1,
-                                  borderColor:
-                                    value === "" || rating === 0
-                                      ? "gray"
-                                      : "#F39300",
-                                }}
-                                onPress={handleTakeFeedback}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    color:
-                                      value === "" || rating === 0
-                                        ? "gray"
-                                        : "white",
-                                  }}
-                                >
-                                  Save
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                        </View>
-                      </Modal>
                     </View>
                   )}
                 </ScrollView>
+              </View>
+            </View>
+          </Modal>
+          <Modal
+            transparent={true}
+            visible={openFeedback}
+            animationType="slide"
+            onRequestClose={handleCloseFeedback}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              }}
+            >
+              <View
+                style={{
+                  width: width * 0.85,
+                  padding: 20,
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  elevation: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    marginVertical: 12,
+                    textAlign: "center",
+                  }}
+                >
+                  Write a Review
+                </Text>
+                <View style={{ marginVertical: 8 }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "600",
+                      marginBottom: 8,
+                    }}
+                  >
+                    What do you think?
+                  </Text>
+                  <TextInput
+                    placeholder="Type message here..."
+                    placeholderTextColor="gray"
+                    keyboardType="default"
+                    multiline={true}
+                    numberOfLines={2}
+                    value={value}
+                    onChangeText={(value) => setValue(value)}
+                    style={{
+                      fontWeight: "600",
+                      fontSize: 16,
+                      opacity: 0.8,
+                      paddingVertical: 8,
+                      textAlignVertical: "top",
+                      paddingHorizontal: 12,
+                      backgroundColor: "#ededed",
+                      borderColor: "gray",
+                      borderWidth: 1,
+                      borderRadius: 10,
+                    }}
+                  />
+                </View>
+                <View style={{ marginVertical: 8 }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "600",
+                      marginBottom: 8,
+                    }}
+                  >
+                    Give a rating
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    {[1, 2, 3, 4, 5].map((star, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        activeOpacity={0.6}
+                        onPress={() => setRating(star)}
+                      >
+                        <Ionicons
+                          name="star"
+                          size={24}
+                          color={rating >= star ? "#F39300" : "gray"}
+                          style={{ marginHorizontal: 2 }}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end",
+                    marginTop: 8,
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ededed",
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      borderRadius: 10,
+                      marginRight: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: "gray",
+                    }}
+                    onPress={handleCloseFeedback}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    disabled={value === "" || rating === 0}
+                    style={{
+                      backgroundColor:
+                        value === "" || rating === 0 ? "#ededed" : "#F39300",
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      borderRadius: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor:
+                        value === "" || rating === 0 ? "gray" : "#F39300",
+                    }}
+                    onPress={handleTakeFeedback}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: value === "" || rating === 0 ? "gray" : "white",
+                      }}
+                    >
+                      Save
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </Modal>
@@ -1090,10 +1114,8 @@ export default function Schedule() {
   //   markedDates={{
   //     // Default markingType
   //     // '2024-09-15': {selected: true, marked: true, selectedColor: '#F39300'},
-
   //     // *Multi-dot
   //     // '2024-09-16': {selected: true, dots: [{key: 'running', color: 'red', selectedDotColor: 'yellow'}, {key: 'lifting', color: 'blue', selectedDotColor: 'green'}] , selectedColor: "#F39300", selectedTextColor: "white"},
-
   //     // *Period
   //     "2024-09-22": {
   //       startingDay: true,

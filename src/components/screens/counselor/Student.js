@@ -453,6 +453,7 @@ export default function Student() {
   }, [selectedStudent]);
 
   const applyFilters2 = () => {
+    setCurrentPage2(1);
     const newFilters = {
       fromDate: dateFrom,
       toDate: dateTo,
@@ -463,6 +464,7 @@ export default function Student() {
   };
 
   const cancelFilters2 = () => {
+    setCurrentPage2(1);
     const resetFilters = {
       fromDate: "",
       toDate: "",
@@ -668,13 +670,15 @@ export default function Student() {
                 setLoading(true);
                 setIsExpanded(false);
                 setCurrentPage(1);
+                setSelectedSemester("");
+                setSelectedSemester2("");
                 setPromptForBehavior(null);
                 setTimeout(() => {
                   setIsIncludeBehaviour(!isIncludeBehavior);
-                }, 500);
+                }, 1000);
                 setTimeout(() => {
                   setLoading(false);
-                }, 1000)
+                }, 1500);
               }}
               style={{
                 backgroundColor: isIncludeBehavior ? "#F39300" : "#e3e3e3",
@@ -4022,7 +4026,7 @@ export default function Student() {
                                 padding: 4,
                                 marginHorizontal: 20,
                                 marginTop: 16,
-                                marginBottom: 8,
+                                marginBottom: 20,
                                 borderRadius: 20,
                                 alignSelf: "flex-start",
                                 alignItems: "flex-start",
@@ -4042,7 +4046,7 @@ export default function Student() {
                                     padding: 4,
                                     marginHorizontal: 20,
                                     marginTop: 16,
-                                    marginBottom: 8,
+                                    marginBottom: 20,
                                     borderRadius: 10,
                                     alignSelf: "flex-end",
                                     alignItems: "flex-end",
@@ -4060,7 +4064,7 @@ export default function Student() {
                           <ScrollView showsVerticalScrollIndicator={false}>
                             <View
                               style={{
-                                padding: 20,
+                                marginHorizontal: 20,
                                 backgroundColor: "#f5f7fd",
                               }}
                             >
@@ -4167,9 +4171,42 @@ export default function Student() {
                               </View>
                               <View
                                 style={{
+                                  marginBottom: 20,
+                                  padding: 16,
+                                  backgroundColor: "white",
+                                  borderRadius: 12,
+                                  elevation: 1,
+                                  borderWidth: 1.5,
+                                  borderColor: "#e3e3e3",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 18,
+                                    fontWeight: "bold",
+                                    color: "#F39300",
+                                    marginBottom: 4,
+                                  }}
+                                >
+                                  Appointment Topic
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 20,
+                                    color: "#333",
+                                    fontWeight: "500",
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {historyInfo?.reason}
+                                </Text>
+                              </View>
+                              <View
+                                style={{
                                   backgroundColor: "white",
                                   borderRadius: 10,
                                   padding: 20,
+                                  marginBottom: 20,
                                   elevation: 1,
                                   borderWidth: 1.5,
                                   borderColor: "#e3e3e3",
@@ -4374,7 +4411,7 @@ export default function Student() {
                               {historyInfo?.appointmentFeedback !== null ? (
                                 <View
                                   style={{
-                                    marginTop: 20,
+                                    marginBottom: 20,
                                     borderRadius: 10,
                                     backgroundColor: "white",
                                     padding: 16,
@@ -4476,7 +4513,7 @@ export default function Student() {
                               ) : (
                                 <View
                                   style={{
-                                    marginTop: 20,
+                                    marginBottom: 20,
                                     borderRadius: 10,
                                     backgroundColor: "white",
                                     padding: 16,

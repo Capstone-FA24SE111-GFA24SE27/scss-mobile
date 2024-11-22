@@ -381,16 +381,6 @@ export default function Demand({ route }) {
     setOpenCreate(false);
   };
 
-  const handleOpenInfo = (info) => {
-    setSelectedDemand(info);
-    setOpenInfo(true);
-  };
-
-  const handleCloseInfo = () => {
-    setSelectedDemand(null);
-    setOpenInfo(false);
-  };
-
   const handleOpenSolve = (selectedDemand) => {
     setOpenSolve(true);
     setSelectedDemand(selectedDemand);
@@ -413,6 +403,9 @@ export default function Demand({ route }) {
           type: "success",
           text1: "Success",
           text2: "This demand has been solved",
+          onPress: () => {
+            Toast.hide();
+          },
         });
         fetchData(filters);
       } else {
@@ -811,7 +804,9 @@ export default function Demand({ route }) {
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => handleOpenInfo(demand)}
+                    onPress={() => (
+                      setSelectedDemand(demand), setOpenInfo(true)
+                    )}
                     style={{ position: "absolute", top: 0, right: -4 }}
                   >
                     <Ionicons
@@ -1131,7 +1126,7 @@ export default function Demand({ route }) {
           transparent={true}
           visible={openInfo}
           animationType="slide"
-          onRequestClose={handleCloseInfo}
+          onRequestClose={() => setOpenInfo(false)}
         >
           <View
             style={{
@@ -1168,7 +1163,7 @@ export default function Demand({ route }) {
                     alignSelf: "flex-start",
                     alignItems: "flex-start",
                   }}
-                  onPress={handleCloseInfo}
+                  onPress={() => (setSelectedDemand(null), setOpenInfo(false))}
                 >
                   <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
@@ -1419,20 +1414,12 @@ export default function Demand({ route }) {
                         >
                           {selectedDemand?.startDateTime
                             ?.split("T")[1]
-                            ?.split(":")[0] +
-                            ":" +
-                            selectedDemand?.startDateTime
-                              ?.split("T")[1]
-                              ?.split(":")[1]}{" "}
+                            ?.slice(0, 5)}{" "}
                           -{" "}
                           {selectedDemand.endDateTime !== null
                             ? selectedDemand?.endDateTime
                                 ?.split("T")[1]
-                                ?.split(":")[0] +
-                              ":" +
-                              selectedDemand?.endDateTime
-                                ?.split("T")[1]
-                                ?.split(":")[1]
+                                ?.slice(0, 5)
                             : "?"}
                         </Text>
                       </View>
@@ -1819,19 +1806,11 @@ export default function Demand({ route }) {
                                   >
                                     {item.startDateTime
                                       .split("T")[1]
-                                      .split(":")[0] +
-                                      ":" +
-                                      item.startDateTime
-                                        .split("T")[1]
-                                        .split(":")[1]}{" "}
+                                      .slice(0, 5)}{" "}
                                     -{" "}
                                     {item.endDateTime
                                       .split("T")[1]
-                                      .split(":")[0] +
-                                      ":" +
-                                      item.endDateTime
-                                        .split("T")[1]
-                                        .split(":")[1]}
+                                      .slice(0, 5)}
                                   </Text>
                                 </View>
                               </View>
@@ -1882,7 +1861,7 @@ export default function Demand({ route }) {
                     padding: 4,
                     marginHorizontal: 20,
                     marginTop: 16,
-                    marginBottom: 8,
+                    marginBottom: 20,
                     borderRadius: 20,
                     alignSelf: "flex-start",
                     alignItems: "flex-start",
@@ -1901,7 +1880,7 @@ export default function Demand({ route }) {
                         padding: 4,
                         marginHorizontal: 20,
                         marginTop: 16,
-                        marginBottom: 8,
+                        marginBottom: 20,
                         borderRadius: 10,
                         alignSelf: "flex-end",
                         alignItems: "flex-end",
@@ -1915,7 +1894,7 @@ export default function Demand({ route }) {
               <ScrollView showsVerticalScrollIndicator={false}>
                 <View
                   style={{
-                    padding: 20,
+                    marginHorizontal: 20,
                     backgroundColor: "#f5f7fd",
                   }}
                 >
@@ -2011,9 +1990,42 @@ export default function Demand({ route }) {
                   </View>
                   <View
                     style={{
+                      marginBottom: 20,
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#F39300",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Appointment Topic
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: "#333",
+                        fontWeight: "500",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {historyInfo?.reason}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
                       backgroundColor: "white",
                       borderRadius: 10,
                       padding: 20,
+                      marginBottom: 20,
                       elevation: 1,
                       borderWidth: 1.5,
                       borderColor: "#e3e3e3",
@@ -2088,21 +2100,8 @@ export default function Demand({ route }) {
                           color: "#333",
                         }}
                       >
-                        {historyInfo?.startDateTime
-                          ?.split("T")[1]
-                          ?.split(":")[0] +
-                          ":" +
-                          historyInfo?.startDateTime
-                            ?.split("T")[1]
-                            ?.split(":")[1]}{" "}
-                        -{" "}
-                        {historyInfo?.endDateTime
-                          ?.split("T")[1]
-                          ?.split(":")[0] +
-                          ":" +
-                          historyInfo?.endDateTime
-                            ?.split("T")[1]
-                            ?.split(":")[1]}
+                        {historyInfo?.startDateTime?.split("T")[1]?.slice(0, 5)}{" "}
+                        - {historyInfo?.endDateTime?.split("T")[1]?.slice(0, 5)}
                       </Text>
                     </View>
                     <View
@@ -2214,7 +2213,7 @@ export default function Demand({ route }) {
                   {historyInfo?.appointmentFeedback !== null ? (
                     <View
                       style={{
-                        marginTop: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
@@ -2308,7 +2307,7 @@ export default function Demand({ route }) {
                   ) : (
                     <View
                       style={{
-                        marginTop: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,

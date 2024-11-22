@@ -466,7 +466,7 @@ const GatherInfo = ({
                   fontWeight: "bold",
                 }}
               >
-                Send
+                Save
               </Text>
             </TouchableOpacity>
           </View>

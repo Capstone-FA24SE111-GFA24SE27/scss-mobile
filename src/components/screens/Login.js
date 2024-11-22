@@ -346,15 +346,25 @@ export default function Login() {
                   Continue by Google
                 </Text>
               </TouchableOpacity>
+              <View
+                style={{
+                  borderBottomWidth: 1,
+                  borderBottomColor: "lightgrey",
+                  marginTop: 30,
+                  alignSelf: "center",
+                  width: "85%"
+                }}
+              />
               <TouchableOpacity
                 style={{ marginTop: 20, alignItems: "center" }}
                 onPress={() => navigation.navigate("ResetPassword")}
               >
                 <Text
                   style={{
-                    color: "gray",
                     fontSize: 18,
-                    fontWeight: "bold",
+                    color: "#F39300",
+                    marginTop: 1,
+                    fontWeight: "600",
                     opacity: 0.8,
                   }}
                 >
