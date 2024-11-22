@@ -188,15 +188,15 @@ export default function Home() {
             borderBottomEndRadius: 40,
           }}
         >
-          <View>
+          <View style={{ marginTop: 8, maxWidth: "70%" }}>
             {profile && (
               <Text
-                style={{ fontSize: 20, fontWeight: "semibold", color: "white" }}
+                style={{ fontSize: 18, fontWeight: "semibold", color: "white" }}
               >
                 Hello, {profile.fullName}
               </Text>
             )}
-            <Text style={{ fontSize: 26, fontWeight: "bold", color: "white" }}>
+            <Text style={{ fontSize: 24, fontWeight: "bold", color: "white" }}>
               Ready to discover
             </Text>
           </View>
@@ -206,7 +206,7 @@ export default function Home() {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => navigation.navigate("Notification")}
-              style={{ position: "relative", marginRight: 20, marginTop: 2 }}
+              style={{ position: "relative", marginRight: 16, marginTop: 2 }}
             >
               <Animated.View style={{ transform: [{ rotate: rotation }] }}>
                 <Ionicons

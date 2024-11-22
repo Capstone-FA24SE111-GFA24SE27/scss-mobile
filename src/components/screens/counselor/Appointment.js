@@ -78,6 +78,28 @@ export default function Appointment({ route }) {
   const [info, setInfo] = useState({});
   const [openReport, setOpenReport] = useState(false);
   const [report, setReport] = useState(null);
+  const [openCreateReport, setOpenCreateReport] = useState(false);
+  const [formValues, setFormValues] = useState({
+    intervention: {
+      type: "",
+      description: "",
+    },
+    consultationGoal: {
+      specificGoal: "",
+      reason: "",
+    },
+    consultationContent: {
+      summaryOfDiscussion: "",
+      mainIssues: "",
+      studentEmotions: "",
+      studentReactions: "",
+    },
+    consultationConclusion: {
+      counselorConclusion: "",
+      followUpNeeded: false,
+      followUpNotes: "",
+    },
+  });
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openAttendance, setOpenAttendance] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -651,11 +673,57 @@ export default function Appointment({ route }) {
     }
   };
 
+  const handleCreateAppointmentReport = async () => {
+    try {
+      const reportRes = await axiosJWT.post(
+        `${BASE_URL}/appointments/report/${selectedAppointment}`,
+        {
+          ...formValues,
+        }
+      );
+      setOpenCreateReport(false);
+      setFormValues({
+        intervention: {
+          type: "",
+          description: "",
+        },
+        consultationGoal: {
+          specificGoal: "",
+          reason: "",
+        },
+        consultationContent: {
+          summaryOfDiscussion: "",
+          mainIssues: "",
+          studentEmotions: "",
+          studentReactions: "",
+        },
+        consultationConclusion: {
+          counselorConclusion: "",
+          followUpNeeded: false,
+          followUpNotes: "",
+        },
+      });
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Appointment Report created",
+      });
+      setInfo((prevInfo) => ({ ...prevInfo, havingReport: true }));
+    } catch (err) {
+      console.log("Can't fetch appointment report", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to create report for this appointment",
+      });
+    }
+  };
+
   useEffect(() => {
-    if (selectedAppointment) {
+    if (selectedAppointment && openReport) {
       fetchAppointmentReport();
     }
-  }, [selectedAppointment]);
+  }, [selectedAppointment, openReport]);
 
   return (
     <>
@@ -2091,23 +2159,44 @@ export default function Appointment({ route }) {
                 >
                   <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
-                {info?.status != "WAITING" && (
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: "white",
-                      padding: 4,
-                      marginHorizontal: 20,
-                      marginTop: 16,
-                      marginBottom: 8,
-                      borderRadius: 10,
-                      alignSelf: "flex-end",
-                      alignItems: "flex-end",
-                    }}
-                    onPress={() => setOpenReport(true)}
-                  >
-                    <Ionicons name="newspaper" size={28} color="#F39300" />
-                  </TouchableOpacity>
-                )}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignSelf: "flex-end",
+                    alignItems: "flex-end",
+                  }}
+                >
+                  {info?.havingReport == false && (
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "white",
+                        padding: 4,
+                        marginTop: 16,
+                        marginBottom: 8,
+                        borderRadius: 20,
+                      }}
+                      onPress={() => setOpenCreateReport(true)}
+                    >
+                      <Ionicons name="add" size={28} color="#F39300" />
+                    </TouchableOpacity>
+                  )}
+                  {info?.status != "WAITING" && (
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "white",
+                        padding: 4,
+                        marginLeft: 8,
+                        marginRight: 20,
+                        marginTop: 16,
+                        marginBottom: 8,
+                        borderRadius: 20,
+                      }}
+                      onPress={() => setOpenReport(true)}
+                    >
+                      <Ionicons name="newspaper" size={28} color="#F39300" />
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
               <ScrollView showsVerticalScrollIndicator={false}>
                 <View
@@ -2207,9 +2296,42 @@ export default function Appointment({ route }) {
                   </View>
                   <View
                     style={{
+                      marginBottom: 20,
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#F39300",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Appointment Topic
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: "#333",
+                        fontWeight: "500",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {info?.reason}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
                       backgroundColor: "white",
                       borderRadius: 10,
                       padding: 20,
+                      marginBottom: 20,
                       elevation: 1,
                       borderWidth: 1.5,
                       borderColor: "#e3e3e3",
@@ -2577,7 +2699,7 @@ export default function Appointment({ route }) {
                   {info?.appointmentFeedback !== null ? (
                     <View
                       style={{
-                        marginTop: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
@@ -2664,7 +2786,7 @@ export default function Appointment({ route }) {
                   ) : (
                     <View
                       style={{
-                        marginTop: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
@@ -2685,40 +2807,6 @@ export default function Appointment({ route }) {
                         }}
                       >
                         There's no feedback yet
-                      </Text>
-                    </View>
-                  )}
-                  {info?.reason !== null && (
-                    <View
-                      style={{
-                        marginBottom: 20,
-                        padding: 16,
-                        backgroundColor: "white",
-                        borderRadius: 12,
-                        elevation: 1,
-                        borderWidth: 1.5,
-                        borderColor: "#e3e3e3",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#F39300",
-                          marginBottom: 4,
-                        }}
-                      >
-                        Canceled Reason
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          color: "#333",
-                          fontWeight: "500",
-                          opacity: 0.7,
-                        }}
-                      >
-                        {info?.reason}
                       </Text>
                     </View>
                   )}
@@ -3285,6 +3373,519 @@ export default function Appointment({ route }) {
                   </Text>
                 </View>
               )}
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openCreateReport}
+          animationType="slide"
+          onRequestClose={() => setOpenCreateReport(false)}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <View
+              style={{
+                width: "100%",
+                height: "98%",
+                backgroundColor: "#f5f7fd",
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingVertical: 12,
+                  paddingHorizontal: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    color: "#333",
+                  }}
+                >
+                  Create Report
+                </Text>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#ededed",
+                    padding: 4,
+                    borderRadius: 20,
+                  }}
+                  onPress={() => setOpenCreateReport(false)}
+                >
+                  <Ionicons name="close" size={28} color="#333" />
+                </TouchableOpacity>
+              </View>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 20 }}
+              >
+                <View style={{ marginVertical: 10 }}>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      marginBottom: 10,
+                      color: "#F39300",
+                    }}
+                  >
+                    Intervention
+                  </Text>
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Type"
+                    value={formValues.intervention.type}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        intervention: {
+                          ...prevFormValues.intervention,
+                          type: text,
+                        },
+                      }))
+                    }
+                  />
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Description"
+                    value={formValues.intervention.description}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        intervention: {
+                          ...prevFormValues.intervention,
+                          description: text,
+                        },
+                      }))
+                    }
+                  />
+                </View>
+                <View style={{ marginVertical: 10 }}>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      marginBottom: 10,
+                      color: "#F39300",
+                    }}
+                  >
+                    Consultation Goal
+                  </Text>
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Specific Goal"
+                    value={formValues.consultationGoal.specificGoal}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationGoal: {
+                          ...prevFormValues.consultationGoal,
+                          specificGoal: text,
+                        },
+                      }))
+                    }
+                  />
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Reason"
+                    value={formValues.consultationGoal.reason}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationGoal: {
+                          ...prevFormValues.consultationGoal,
+                          reason: text,
+                        },
+                      }))
+                    }
+                  />
+                </View>
+                <View style={{ marginVertical: 10 }}>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      marginBottom: 10,
+                      color: "#F39300",
+                    }}
+                  >
+                    Consultation Content
+                  </Text>
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Summary of Discussion"
+                    value={formValues.consultationContent.summaryOfDiscussion}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationContent: {
+                          ...prevFormValues.consultationContent,
+                          summaryOfDiscussion: text,
+                        },
+                      }))
+                    }
+                  />
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Main Issues"
+                    value={formValues.consultationContent.mainIssues}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationContent: {
+                          ...prevFormValues.consultationContent,
+                          mainIssues: text,
+                        },
+                      }))
+                    }
+                  />
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Student Emotions"
+                    value={formValues.consultationContent.studentEmotions}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationContent: {
+                          ...prevFormValues.consultationContent,
+                          studentEmotions: text,
+                        },
+                      }))
+                    }
+                  />
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Student Reactions"
+                    value={formValues.consultationContent.studentReactions}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationContent: {
+                          ...prevFormValues.consultationContent,
+                          studentReactions: text,
+                        },
+                      }))
+                    }
+                  />
+                </View>
+                <View style={{ marginVertical: 10 }}>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      marginBottom: 10,
+                      color: "#F39300",
+                    }}
+                  >
+                    Consultation Conclusion
+                  </Text>
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Counselor Conclusion"
+                    value={
+                      formValues.consultationConclusion.counselorConclusion
+                    }
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationConclusion: {
+                          ...prevFormValues.consultationConclusion,
+                          counselorConclusion: text,
+                        },
+                      }))
+                    }
+                  />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        opacity: 0.8,
+                        paddingVertical: 8,
+                        marginVertical: 4,
+                      }}
+                    >
+                      Follow-up Needed
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationConclusion: {
+                            ...prevFormValues.consultationConclusion,
+                            followUpNeeded: true,
+                          },
+                        }))
+                      }
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          formValues.consultationConclusion.followUpNeeded
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={
+                          formValues.consultationConclusion.followUpNeeded
+                            ? "#F39300"
+                            : "gray"
+                        }
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: formValues.consultationConclusion
+                            .followUpNeeded
+                            ? "#F39300"
+                            : "black",
+                        }}
+                      >
+                        Yes
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationConclusion: {
+                            ...prevFormValues.consultationConclusion,
+                            followUpNeeded: false,
+                          },
+                        }))
+                      }
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          !formValues.consultationConclusion.followUpNeeded
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={
+                          !formValues.consultationConclusion.followUpNeeded
+                            ? "#F39300"
+                            : "gray"
+                        }
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: !formValues.consultationConclusion
+                            .followUpNeeded
+                            ? "#F39300"
+                            : "black",
+                        }}
+                      >
+                        No
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <TextInput
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      marginVertical: 4,
+                      backgroundColor: "#ededed",
+                      borderRadius: 10,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                    }}
+                    placeholder="Follow-up Notes"
+                    value={formValues.consultationConclusion.followUpNotes}
+                    onChangeText={(text) =>
+                      setFormValues((prevFormValues) => ({
+                        ...prevFormValues,
+                        consultationConclusion: {
+                          ...prevFormValues.consultationConclusion,
+                          followUpNotes: text,
+                        },
+                      }))
+                    }
+                  />
+                </View>
+              </ScrollView>
+              <TouchableOpacity
+                disabled={
+                  formValues.intervention.type === "" ||
+                  formValues.intervention.description === "" ||
+                  formValues.consultationGoal.specificGoal === "" ||
+                  formValues.consultationGoal.reason === "" ||
+                  formValues.consultationContent.summaryOfDiscussion === "" ||
+                  formValues.consultationContent.mainIssues === "" ||
+                  formValues.consultationContent.studentEmotions === "" ||
+                  formValues.consultationContent.studentReactions === "" ||
+                  formValues.consultationConclusion.counselorConclusion ===
+                    "" ||
+                  formValues.consultationConclusion.followUpNotes === ""
+                }
+                style={{
+                  backgroundColor:
+                    formValues.intervention.type === "" ||
+                    formValues.intervention.description === "" ||
+                    formValues.consultationGoal.specificGoal === "" ||
+                    formValues.consultationGoal.reason === "" ||
+                    formValues.consultationContent.summaryOfDiscussion === "" ||
+                    formValues.consultationContent.mainIssues === "" ||
+                    formValues.consultationContent.studentEmotions === "" ||
+                    formValues.consultationContent.studentReactions === "" ||
+                    formValues.consultationConclusion.counselorConclusion ===
+                      "" ||
+                    formValues.consultationConclusion.followUpNotes === ""
+                      ? "#e3e3e3"
+                      : "#F39300",
+                  marginHorizontal: 20,
+                  marginVertical: 12,
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => handleCreateAppointmentReport()}
+              >
+                <Text
+                  style={{
+                    color:
+                      formValues.intervention.type === "" ||
+                      formValues.intervention.description === "" ||
+                      formValues.consultationGoal.specificGoal === "" ||
+                      formValues.consultationGoal.reason === "" ||
+                      formValues.consultationContent.summaryOfDiscussion ===
+                        "" ||
+                      formValues.consultationContent.mainIssues === "" ||
+                      formValues.consultationContent.studentEmotions === "" ||
+                      formValues.consultationContent.studentReactions === "" ||
+                      formValues.consultationConclusion.counselorConclusion ===
+                        "" ||
+                      formValues.consultationConclusion.followUpNotes === ""
+                        ? "gray"
+                        : "white",
+                    fontWeight: "bold",
+                    fontSize: 20,
+                  }}
+                >
+                  Send
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>

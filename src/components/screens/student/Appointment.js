@@ -239,16 +239,6 @@ export default function Appointment({ route }) {
     fetchData(resetFilters);
   };
 
-  const handleOpenInfo = (info) => {
-    setInfo(info);
-    setOpenInfo(true);
-  };
-
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
-  };
-
   const handleOpenCancel = (id) => {
     setOpenCancel(true);
     setSelectedAppointment(id);
@@ -841,7 +831,8 @@ export default function Appointment({ route }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => handleOpenInfo(appointment)}
+                    onPress={() => (setInfo(info),
+                      setOpenInfo(true))}
                     style={{ position: "absolute", top: 0, right: -4 }}
                   >
                     <Ionicons
@@ -1018,7 +1009,7 @@ export default function Appointment({ route }) {
           transparent={true}
           visible={openInfo}
           animationType="slide"
-          onRequestClose={handleCloseInfo}
+          onRequestClose={() => setOpenInfo(false)}
         >
           <View
             style={{
@@ -1048,7 +1039,7 @@ export default function Appointment({ route }) {
                   alignSelf: "flex-start",
                   alignItems: "flex-start",
                 }}
-                onPress={handleCloseInfo}
+                onPress={() => (setInfo(""), setOpenInfo(false))}
               >
                 <Ionicons name="chevron-back" size={28} />
               </TouchableOpacity>
@@ -1151,9 +1142,42 @@ export default function Appointment({ route }) {
                   </View>
                   <View
                     style={{
+                      marginBottom: 20,
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#F39300",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Appointment Topic
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: "#333",
+                        fontWeight: "500",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {info?.reason}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
                       backgroundColor: "white",
                       borderRadius: 10,
                       padding: 20,
+                      marginBottom: 20,
                       elevation: 1,
                       borderWidth: 1.5,
                       borderColor: "#e3e3e3",
@@ -1346,7 +1370,7 @@ export default function Appointment({ route }) {
                   {info?.appointmentFeedback !== null ? (
                     <View
                       style={{
-                        marginTop: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
@@ -1437,7 +1461,7 @@ export default function Appointment({ route }) {
                   ) : (
                     <View
                       style={{
-                        marginTop: 20,
+                        marginBottom: 20,
                         borderRadius: 10,
                         backgroundColor: "white",
                         padding: 16,
@@ -1479,209 +1503,6 @@ export default function Appointment({ route }) {
                             </Text>
                           </TouchableOpacity>
                         )}
-                      <Modal
-                        transparent={true}
-                        visible={openFeedback}
-                        animationType="slide"
-                        onRequestClose={handleCloseFeedback}
-                      >
-                        <View
-                          style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor: "rgba(0, 0, 0, 0.5)",
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: width * 0.85,
-                              padding: 20,
-                              backgroundColor: "white",
-                              borderRadius: 10,
-                              elevation: 10,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 22,
-                                fontWeight: "bold",
-                                marginVertical: 12,
-                                textAlign: "center",
-                              }}
-                            >
-                              Write a Review
-                            </Text>
-                            <View style={{ marginVertical: 8 }}>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  color: "#333",
-                                  marginBottom: 8,
-                                }}
-                              >
-                                What do you think?
-                              </Text>
-                              <TextInput
-                                placeholder="Type message here..."
-                                placeholderTextColor="gray"
-                                keyboardType="default"
-                                multiline={true}
-                                numberOfLines={2}
-                                value={value}
-                                onChangeText={(value) => setValue(value)}
-                                style={{
-                                  fontWeight: "600",
-                                  fontSize: 16,
-                                  opacity: 0.8,
-                                  paddingVertical: 8,
-                                  textAlignVertical: "top",
-                                  paddingHorizontal: 12,
-                                  backgroundColor: "#ededed",
-                                  borderColor: "gray",
-                                  borderWidth: 1,
-                                  borderRadius: 10,
-                                }}
-                              />
-                            </View>
-                            <View style={{ marginVertical: 8 }}>
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  fontWeight: "600",
-                                  marginBottom: 8,
-                                }}
-                              >
-                                Give a rating
-                              </Text>
-                              <View
-                                style={{
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                }}
-                              >
-                                {[1, 2, 3, 4, 5].map((star, index) => (
-                                  <TouchableOpacity
-                                    key={index}
-                                    activeOpacity={0.6}
-                                    onPress={() => setRating(star)}
-                                  >
-                                    <Ionicons
-                                      name="star"
-                                      size={24}
-                                      color={
-                                        rating >= star ? "#F39300" : "gray"
-                                      }
-                                      style={{ marginHorizontal: 2 }}
-                                    />
-                                  </TouchableOpacity>
-                                ))}
-                              </View>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: "row",
-                                justifyContent: "flex-end",
-                                alignItems: "flex-end",
-                                marginTop: 8,
-                              }}
-                            >
-                              <TouchableOpacity
-                                style={{
-                                  backgroundColor: "#ededed",
-                                  paddingHorizontal: 12,
-                                  paddingVertical: 6,
-                                  borderRadius: 10,
-                                  marginRight: 10,
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  borderWidth: 1,
-                                  borderColor: "gray",
-                                }}
-                                onPress={handleCloseFeedback}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    color: "#333",
-                                  }}
-                                >
-                                  Cancel
-                                </Text>
-                              </TouchableOpacity>
-                              <TouchableOpacity
-                                disabled={value === "" || rating === 0}
-                                style={{
-                                  backgroundColor:
-                                    value === "" || rating === 0
-                                      ? "#ededed"
-                                      : "#F39300",
-                                  paddingHorizontal: 12,
-                                  paddingVertical: 6,
-                                  borderRadius: 10,
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  borderWidth: 1,
-                                  borderColor:
-                                    value === "" || rating === 0
-                                      ? "gray"
-                                      : "#F39300",
-                                }}
-                                onPress={handleTakeFeedback}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    color:
-                                      value === "" || rating === 0
-                                        ? "gray"
-                                        : "white",
-                                  }}
-                                >
-                                  Save
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                        </View>
-                      </Modal>
-                    </View>
-                  )}
-                  {info?.reason !== null && (
-                    <View
-                      style={{
-                        marginBottom: 20,
-                        padding: 16,
-                        backgroundColor: "white",
-                        borderRadius: 12,
-                        elevation: 1,
-                        borderWidth: 1.5,
-                        borderColor: "#e3e3e3",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#F39300",
-                          marginBottom: 4,
-                        }}
-                      >
-                        Canceled Reason
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          color: "#333",
-                          fontWeight: "500",
-                          opacity: 0.7,
-                        }}
-                      >
-                        {info?.reason}
-                      </Text>
                     </View>
                   )}
                 </View>
@@ -1813,6 +1634,166 @@ export default function Appointment({ route }) {
                     }}
                   >
                     Yes
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openFeedback}
+          animationType="slide"
+          onRequestClose={handleCloseFeedback}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <View
+              style={{
+                width: width * 0.85,
+                padding: 20,
+                backgroundColor: "white",
+                borderRadius: 10,
+                elevation: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginVertical: 12,
+                  textAlign: "center",
+                }}
+              >
+                Write a Review
+              </Text>
+              <View style={{ marginVertical: 8 }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    color: "#333",
+                    marginBottom: 8,
+                  }}
+                >
+                  What do you think?
+                </Text>
+                <TextInput
+                  placeholder="Type message here..."
+                  placeholderTextColor="gray"
+                  keyboardType="default"
+                  multiline={true}
+                  numberOfLines={2}
+                  value={value}
+                  onChangeText={(value) => setValue(value)}
+                  style={{
+                    fontWeight: "600",
+                    fontSize: 16,
+                    opacity: 0.8,
+                    paddingVertical: 8,
+                    textAlignVertical: "top",
+                    paddingHorizontal: 12,
+                    backgroundColor: "#ededed",
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    borderRadius: 10,
+                  }}
+                />
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "600",
+                    marginBottom: 8,
+                  }}
+                >
+                  Give a rating
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  {[1, 2, 3, 4, 5].map((star, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      activeOpacity={0.6}
+                      onPress={() => setRating(star)}
+                    >
+                      <Ionicons
+                        name="star"
+                        size={24}
+                        color={rating >= star ? "#F39300" : "gray"}
+                        style={{ marginHorizontal: 2 }}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-end",
+                  marginTop: 8,
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#ededed",
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 10,
+                    marginRight: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "gray",
+                  }}
+                  onPress={handleCloseFeedback}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={value === "" || rating === 0}
+                  style={{
+                    backgroundColor:
+                      value === "" || rating === 0 ? "#ededed" : "#F39300",
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor:
+                      value === "" || rating === 0 ? "gray" : "#F39300",
+                  }}
+                  onPress={handleTakeFeedback}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: value === "" || rating === 0 ? "gray" : "white",
+                    }}
+                  >
+                    Save
                   </Text>
                 </TouchableOpacity>
               </View>
