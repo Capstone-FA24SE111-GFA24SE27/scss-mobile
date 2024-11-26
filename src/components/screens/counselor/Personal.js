@@ -483,7 +483,7 @@ export default function Personal() {
         >
           <View style={{ marginBottom: 8 }}>
             <Text style={{ fontSize: 20, fontWeight: "700", color: "#333" }}>
-              Week Timetable
+              Weekly Schedule
             </Text>
           </View>
           <ScrollView
@@ -514,8 +514,8 @@ export default function Personal() {
                           style={{
                             backgroundColor: "white",
                             padding: 8,
-                            marginVertical: 4,
-                            marginRight: 6,
+                            marginVertical: 2,
+                            marginRight: 4,
                             borderRadius: 10,
                             borderWidth: 1.5,
                             borderColor: "black",
@@ -528,8 +528,8 @@ export default function Personal() {
                               color: "#333",
                             }}
                           >
-                            {slot.startTime.substring(0, 5)} -{" "}
-                            {slot.endTime.substring(0, 5)}
+                            {slot.startTime.slice(0, 5)} -{" "}
+                            {slot.endTime.slice(0, 5)}
                           </Text>
                         </View>
                       ))

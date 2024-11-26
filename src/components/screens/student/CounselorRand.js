@@ -1131,10 +1131,6 @@ export default function CounselorRand() {
     }
   }, [loading2]);
 
-  const handleOpenConfirm = () => {
-    setOpenConfirm(true);
-  };
-
   const handleCreateRequest = async () => {
     try {
       const response = await axiosJWT.post(
@@ -1148,7 +1144,7 @@ export default function CounselorRand() {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        handleCloseConfirm();
+        setOpenConfirm(false);
         setOpenSuccess(true);
       } else {
         Toast.show({
@@ -1157,13 +1153,6 @@ export default function CounselorRand() {
           text2: "Failed to request",
         });
       }
-      console.log(
-        matcher?.id,
-        selectedSlot.slotCode,
-        selectedDate,
-        online,
-        reason
-      );
     } catch (error) {
       console.log("Something error when booking", error);
       setIsError(true);
@@ -1171,10 +1160,6 @@ export default function CounselorRand() {
         "You already created a request that have the same chosen slot on this day. Please choose a different slot"
       );
     }
-  };
-
-  const handleCloseConfirm = () => {
-    setOpenConfirm(false);
   };
 
   const handleCloseSuccess = () => {
@@ -1313,7 +1298,7 @@ export default function CounselorRand() {
                           color: "white",
                         }}
                       >
-                        {matcher.rating.toFixed(1)}
+                        {matcher.rating}
                       </Text>
                     </View>
                   </View>
@@ -1412,7 +1397,7 @@ export default function CounselorRand() {
                   alignItems: "center",
                   flexDirection: "row",
                 }}
-                onPress={handleOpenConfirm}
+                onPress={() => setOpenConfirm(true)}
               >
                 <Text
                   style={{
@@ -1561,7 +1546,7 @@ export default function CounselorRand() {
               </Text>
               <View>
                 <TextInput
-                  placeholder="Write for your right"
+                  placeholder="Write here"
                   placeholderTextColor="gray"
                   keyboardType="default"
                   multiline={true}
@@ -1615,7 +1600,7 @@ export default function CounselorRand() {
         transparent={true}
         visible={openConfirm}
         animationType="fade"
-        onRequestClose={handleCloseConfirm}
+        onRequestClose={() => setOpenConfirm(false)}
       >
         <View
           style={{
@@ -1647,11 +1632,11 @@ export default function CounselorRand() {
             <Text
               style={{
                 fontSize: 18,
-                marginBottom: 30,
+                marginBottom: 20,
                 textAlign: "center",
               }}
             >
-              Are you sure you want to book with this chosen counselor?
+              Are you sure you want to book?{"\n"}A request will be sent to the chosen counselor
             </Text>
             <View
               style={{
@@ -1671,7 +1656,7 @@ export default function CounselorRand() {
                   borderWidth: 1,
                   borderColor: "gray",
                 }}
-                onPress={handleCloseConfirm}
+                onPress={() => setOpenConfirm(false)}
               >
                 <Text
                   style={{
@@ -1725,8 +1710,7 @@ export default function CounselorRand() {
           <View
             style={{
               width: width * 0.85,
-              paddingVertical: 25,
-              paddingHorizontal: 20,
+              padding: 20,
               backgroundColor: "white",
               borderRadius: 20,
             }}
@@ -1754,7 +1738,7 @@ export default function CounselorRand() {
             <View
               style={{
                 alignItems: "center",
-                marginVertical: 12,
+                marginBottom: 12,
               }}
             >
               <Ionicons name="checkmark-circle" size={80} color="#F39300" />
@@ -1770,12 +1754,12 @@ export default function CounselorRand() {
             </View>
             <Text
               style={{
-                fontSize: 16,
+                fontSize: 18,
                 textAlign: "center",
                 marginBottom: 20,
               }}
             >
-              Your request has been sent successfully! {"\n"}
+              Request has been sent successfully! {"\n"}
               Please wait while the counselor processes your request.
             </Text>
             <TouchableOpacity

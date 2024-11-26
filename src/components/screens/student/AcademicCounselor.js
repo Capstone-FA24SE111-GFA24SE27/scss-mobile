@@ -43,19 +43,21 @@ export default function AcademicCounselor() {
   const scrollViewRef = useRef(null);
   const [counselors, setCounselors] = useState([]);
   const [filters, setFilters] = useState({
-    ratingFrom: 1,
+    ratingFrom: 0,
     ratingTo: 5,
     SortDirection: "",
+    gender: "",
     departmentId: "",
     majorId: "",
     specializationId: "",
   });
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
-  const [selectedFrom, setSelectedFrom] = useState(1);
+  const [selectedFrom, setSelectedFrom] = useState(0);
   const [selectedTo, setSelectedTo] = useState(5);
-  const ratings = [1, 2, 3, 4, 5];
+  const ratings = [0, 1, 2, 3, 4, 5];
   const [sortDirection, setSortDirection] = useState("");
+  const [gender, setGender] = useState("");
   const [expanded, setExpanded] = useState(false);
   const [expanded2, setExpanded2] = useState(false);
   const [expanded3, setExpanded3] = useState(false);
@@ -174,21 +176,24 @@ export default function AcademicCounselor() {
       ratingFrom: selectedFrom,
       ratingTo: selectedTo,
       SortDirection: sortDirection,
+      gender: gender,
       departmentId: selectedDepartment.id,
       majorId: selectedMajor.id,
       specializationId: selectedSpecialization.id,
     };
     setFilters(newFilters);
     fetchData(newFilters);
+    setIsExpanded(false);
   };
 
   const cancelFilters = () => {
     setLoading(true);
     setCurrentPage(1);
     const resetFilters = {
-      ratingFrom: 1,
+      ratingFrom: 0,
       ratingTo: 5,
       SortDirection: "",
+      gender: "",
       departmentId: "",
       majorId: "",
       specializationId: "",
@@ -197,11 +202,13 @@ export default function AcademicCounselor() {
     setSelectedFrom(resetFilters.ratingFrom);
     setSelectedTo(resetFilters.ratingTo);
     setSortDirection(resetFilters.SortDirection);
+    setGender(resetFilters.gender);
     setSelectedDepartment(resetFilters.departmentId);
     setSelectedMajor(resetFilters.majorId);
     setSelectedSpecialization(resetFilters.specializationId);
     setFilters(resetFilters);
     fetchData(resetFilters);
+    setIsExpanded(false);
   };
 
   useEffect(() => {
@@ -524,13 +531,6 @@ export default function AcademicCounselor() {
           text2: "Failed to request",
         });
       }
-      console.log(
-        selectedCounselor?.id,
-        selectedSlot,
-        selectedDate,
-        online,
-        reason
-      );
     } catch (err) {
       console.log("Something error when booking", err);
       setIsError(true);
@@ -1028,6 +1028,94 @@ export default function AcademicCounselor() {
                           style={{
                             color:
                               sortDirection == "DESC" ? "#F39300" : "black",
+                          }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: 4,
+                    marginLeft: 4,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      color: "#333",
+                      minWidth: "30%",
+                    }}
+                  >
+                    Gender:
+                  </Text>
+                  <View style={{ flexDirection: "row" }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginHorizontal: 8,
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => setGender("MALE")}
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name={
+                            gender == "MALE"
+                              ? "radio-button-on"
+                              : "radio-button-off"
+                          }
+                          size={20}
+                          color={gender == "MALE" ? "#F39300" : "gray"}
+                          style={{ marginRight: 4 }}
+                        />
+                        <Ionicons
+                          name="male"
+                          size={20}
+                          style={{
+                            color: gender == "MALE" ? "#F39300" : "black",
+                          }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginHorizontal: 8,
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => setGender("FEMALE")}
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name={
+                            gender == "FEMALE"
+                              ? "radio-button-on"
+                              : "radio-button-off"
+                          }
+                          size={20}
+                          color={gender == "FEMALE" ? "#F39300" : "gray"}
+                          style={{ marginRight: 4 }}
+                        />
+                        <Ionicons
+                          name="female"
+                          size={20}
+                          style={{
+                            color: gender == "FEMALE" ? "#F39300" : "black",
                           }}
                         />
                       </TouchableOpacity>
@@ -2266,7 +2354,7 @@ export default function AcademicCounselor() {
                                 </Text>
                                 <View>
                                   <TextInput
-                                    placeholder="Write for your right"
+                                    placeholder="Write here"
                                     placeholderTextColor="gray"
                                     keyboardType="default"
                                     multiline={true}
@@ -2417,11 +2505,12 @@ export default function AcademicCounselor() {
               <Text
                 style={{
                   fontSize: 18,
-                  marginBottom: 30,
+                  marginBottom: 20,
                   textAlign: "center",
                 }}
               >
-                Are you sure you want to book this slot?
+                Are you sure you want to book?{"\n"}A request will be sent to
+                this counselor
               </Text>
               <View
                 style={{
@@ -2495,8 +2584,7 @@ export default function AcademicCounselor() {
             <View
               style={{
                 width: width * 0.85,
-                paddingVertical: 25,
-                paddingHorizontal: 20,
+                padding: 20,
                 backgroundColor: "white",
                 borderRadius: 20,
               }}
@@ -2515,7 +2603,7 @@ export default function AcademicCounselor() {
               <View
                 style={{
                   alignItems: "center",
-                  marginVertical: 12,
+                  marginBottom: 12,
                 }}
               >
                 <Ionicons name="checkmark-circle" size={80} color="#F39300" />
@@ -2531,12 +2619,12 @@ export default function AcademicCounselor() {
               </View>
               <Text
                 style={{
-                  fontSize: 16,
+                  fontSize: 18,
                   textAlign: "center",
                   marginBottom: 20,
                 }}
               >
-                Your request has been sent successfully! {"\n"}
+                Request has been sent successfully!{"\n"}
                 Please wait while the counselor processes your request.
               </Text>
               <TouchableOpacity

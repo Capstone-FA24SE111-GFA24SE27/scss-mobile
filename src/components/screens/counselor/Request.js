@@ -223,6 +223,7 @@ export default function Request({ route }) {
     };
     setFilters(newFilters);
     fetchData(newFilters);
+    setIsExpanded(false);
   };
 
   const cancelFilters = () => {
@@ -242,6 +243,7 @@ export default function Request({ route }) {
     setStatus(resetFilters.status);
     setFilters(resetFilters);
     fetchData(resetFilters);
+    setIsExpanded(false);
   };
 
   const handleOpenInfo = (info) => {
@@ -970,8 +972,7 @@ export default function Request({ route }) {
                           marginLeft: 8,
                         }}
                       >
-                        {request?.startTime?.slice(0, 5)}{" "}
-                        -{" "}
+                        {request?.startTime?.slice(0, 5)} -{" "}
                         {request?.endTime?.slice(0, 5)}
                       </Text>
                     </View>
@@ -1266,9 +1267,11 @@ export default function Request({ route }) {
                                 </Text>
                               </TouchableOpacity>
                               <TouchableOpacity
+                                disabled={value === ""}
                                 style={{
                                   flex: 1,
-                                  backgroundColor: "#F39300",
+                                  backgroundColor:
+                                    value === "" ? "#e3e3e3" : "#F39300",
                                   padding: 10,
                                   borderRadius: 10,
                                   justifyContent: "center",
@@ -1279,7 +1282,7 @@ export default function Request({ route }) {
                                 <Text
                                   style={{
                                     fontSize: 18,
-                                    color: "white",
+                                    color: value === "" ? "gray" : "white",
                                     fontWeight: "600",
                                   }}
                                 >
@@ -1612,8 +1615,7 @@ export default function Request({ route }) {
                           color: "#333",
                         }}
                       >
-                        {info?.startTime?.slice(0, 5)}{" "}
-                        -{" "}
+                        {info?.startTime?.slice(0, 5)} -{" "}
                         {info?.endTime?.slice(0, 5)}
                       </Text>
                     </View>

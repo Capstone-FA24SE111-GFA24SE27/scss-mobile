@@ -734,7 +734,7 @@ export default function Schedule() {
                         disabled={info.meetingType !== "ONLINE"}
                         onPress={() =>
                           Linking.openURL(
-                            `https://meet.google.com/${info.place}`
+                            `${info.place}`
                           ).catch((err) => {
                             console.log("Can't open this link", err);
                             Toast.show({

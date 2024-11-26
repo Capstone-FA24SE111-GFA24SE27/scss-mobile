@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef } from "react";
 import {
   View,
@@ -29,6 +29,10 @@ export default function GettingStart() {
         useNativeDriver: true,
       }),
     ]).start();
+    const timeout = setTimeout(() => {
+      navigation.navigate("Login");
+    }, 1500);
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
@@ -86,13 +90,14 @@ export default function GettingStart() {
           resizeMode: "stretch",
         }}
       />
-      <TouchableOpacity
+      {/* <TouchableOpacity
         activeOpacity={0.7}
         style={{
           width: "75%",
           backgroundColor: "#F39300",
           paddingVertical: 8,
           borderRadius: 10,
+          marginTop: height*0.05,
           marginBottom: 20,
           borderWidth: 3,
           borderColor: "#F39300",
@@ -109,8 +114,8 @@ export default function GettingStart() {
         >
           LOGIN
         </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
+      </TouchableOpacity> */}
+      {/* <TouchableOpacity
         activeOpacity={0.7}
         style={{
           width: "75%",
@@ -131,7 +136,7 @@ export default function GettingStart() {
         >
           SIGNUP
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={{ position: "absolute", bottom: 0, right: 0, margin: 10 }}>
         <Text style={{ fontSize: 16, color: "gray", fontWeight: "500" }}>
           Ver_1.0.0
