@@ -101,6 +101,7 @@ export default function QA() {
     };
     setFilters(newFilters);
     fetchData(newFilters);
+    setIsExpanded(false);
   };
 
   const cancelFilters = () => {
@@ -115,6 +116,7 @@ export default function QA() {
     setSortDirection(resetFilters.sortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
+    setIsExpanded(false);
   };
 
   useEffect(() => {

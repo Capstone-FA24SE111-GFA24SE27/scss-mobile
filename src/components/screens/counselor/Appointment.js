@@ -264,6 +264,7 @@ export default function Appointment({ route }) {
     };
     setFilters(newFilters);
     fetchData(newFilters);
+    setIsExpanded(false);
   };
 
   const cancelFilters = () => {
@@ -281,6 +282,7 @@ export default function Appointment({ route }) {
     setSortDirection(resetFilters.SortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
+    setIsExpanded(false);
   };
 
   const handleOpenCreate = async () => {
@@ -710,11 +712,11 @@ export default function Appointment({ route }) {
       });
       setInfo((prevInfo) => ({ ...prevInfo, havingReport: true }));
     } catch (err) {
-      console.log("Can't fetch appointment report", err);
+      console.log("Can't create appointment report", err);
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Failed to create report for this appointment",
+        text2: "Can't create appointment report",
       });
     }
   };
@@ -2166,7 +2168,7 @@ export default function Appointment({ route }) {
                     alignItems: "flex-end",
                   }}
                 >
-                  {info?.havingReport == false && (
+                  {info?.havingReport == false && info?.status == "ATTEND" && (
                     <TouchableOpacity
                       style={{
                         backgroundColor: "white",
@@ -2180,7 +2182,7 @@ export default function Appointment({ route }) {
                       <Ionicons name="add" size={28} color="#F39300" />
                     </TouchableOpacity>
                   )}
-                  {info?.status != "WAITING" && (
+                  {info?.status == "ATTEND" && (
                     <TouchableOpacity
                       style={{
                         backgroundColor: "white",
@@ -2663,7 +2665,7 @@ export default function Appointment({ route }) {
                           disabled={info.meetingType !== "ONLINE"}
                           onPress={() =>
                             Linking.openURL(
-                              `https://meet.google.com/${info?.meetUrl}`
+                              `${info?.meetUrl}`
                             ).catch((err) => {
                               console.log("Can't open this link", err);
                               Toast.show({
@@ -2696,6 +2698,40 @@ export default function Appointment({ route }) {
                       </View>
                     </View>
                   </View>
+                  {info?.cancelReason !== null && (
+                    <View
+                      style={{
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
+                        }}
+                      >
+                        Canceled By
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: "#333",
+                          fontWeight: "500",
+                          opacity: 0.7,
+                        }}
+                      >
+                        {info?.cancelReason}
+                      </Text>
+                    </View>
+                  )}
                   {info?.appointmentFeedback !== null ? (
                     <View
                       style={{
@@ -3443,10 +3479,19 @@ export default function Appointment({ route }) {
                   >
                     Intervention
                   </Text>
-                  <TextInput
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Type:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3455,22 +3500,61 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Type"
-                    value={formValues.intervention.type}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        intervention: {
-                          ...prevFormValues.intervention,
-                          type: text,
-                        },
-                      }))
-                    }
-                  />
-                  <TextInput
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.intervention.type}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          intervention: {
+                            ...prevFormValues.intervention,
+                            type: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.intervention.type !== "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            intervention: {
+                              ...prevFormValues.intervention,
+                              type: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Description:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3479,18 +3563,48 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Description"
-                    value={formValues.intervention.description}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        intervention: {
-                          ...prevFormValues.intervention,
-                          description: text,
-                        },
-                      }))
-                    }
-                  />
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.intervention.description}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          intervention: {
+                            ...prevFormValues.intervention,
+                            description: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.intervention.description !== "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            intervention: {
+                              ...prevFormValues.intervention,
+                              description: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
                 <View style={{ marginVertical: 10 }}>
                   <Text
@@ -3503,10 +3617,19 @@ export default function Appointment({ route }) {
                   >
                     Consultation Goal
                   </Text>
-                  <TextInput
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Specific Goal:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3515,22 +3638,61 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Specific Goal"
-                    value={formValues.consultationGoal.specificGoal}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationGoal: {
-                          ...prevFormValues.consultationGoal,
-                          specificGoal: text,
-                        },
-                      }))
-                    }
-                  />
-                  <TextInput
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.consultationGoal.specificGoal}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationGoal: {
+                            ...prevFormValues.consultationGoal,
+                            specificGoal: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.consultationGoal.specificGoal !== "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            consultationGoal: {
+                              ...prevFormValues.consultationGoal,
+                              specificGoal: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Reason:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3539,18 +3701,48 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Reason"
-                    value={formValues.consultationGoal.reason}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationGoal: {
-                          ...prevFormValues.consultationGoal,
-                          reason: text,
-                        },
-                      }))
-                    }
-                  />
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.consultationGoal.reason}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationGoal: {
+                            ...prevFormValues.consultationGoal,
+                            reason: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.consultationGoal.reason !== "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            consultationGoal: {
+                              ...prevFormValues.consultationGoal,
+                              reason: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
                 <View style={{ marginVertical: 10 }}>
                   <Text
@@ -3563,10 +3755,19 @@ export default function Appointment({ route }) {
                   >
                     Consultation Content
                   </Text>
-                  <TextInput
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Summary of Discussion:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3575,22 +3776,62 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Summary of Discussion"
-                    value={formValues.consultationContent.summaryOfDiscussion}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationContent: {
-                          ...prevFormValues.consultationContent,
-                          summaryOfDiscussion: text,
-                        },
-                      }))
-                    }
-                  />
-                  <TextInput
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.consultationContent.summaryOfDiscussion}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationContent: {
+                            ...prevFormValues.consultationContent,
+                            summaryOfDiscussion: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.consultationContent.summaryOfDiscussion !==
+                      "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            consultationContent: {
+                              ...prevFormValues.consultationContent,
+                              summaryOfDiscussion: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Main Issues:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3599,22 +3840,61 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Main Issues"
-                    value={formValues.consultationContent.mainIssues}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationContent: {
-                          ...prevFormValues.consultationContent,
-                          mainIssues: text,
-                        },
-                      }))
-                    }
-                  />
-                  <TextInput
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.consultationContent.mainIssues}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationContent: {
+                            ...prevFormValues.consultationContent,
+                            mainIssues: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.consultationContent.mainIssues !== "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            consultationContent: {
+                              ...prevFormValues.consultationContent,
+                              mainIssues: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Student Emotions:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3623,22 +3903,61 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Student Emotions"
-                    value={formValues.consultationContent.studentEmotions}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationContent: {
-                          ...prevFormValues.consultationContent,
-                          studentEmotions: text,
-                        },
-                      }))
-                    }
-                  />
-                  <TextInput
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.consultationContent.studentEmotions}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationContent: {
+                            ...prevFormValues.consultationContent,
+                            studentEmotions: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.consultationContent.studentEmotions !== "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            consultationContent: {
+                              ...prevFormValues.consultationContent,
+                              studentEmotions: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Student Reactions:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3647,18 +3966,48 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Student Reactions"
-                    value={formValues.consultationContent.studentReactions}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationContent: {
-                          ...prevFormValues.consultationContent,
-                          studentReactions: text,
-                        },
-                      }))
-                    }
-                  />
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={formValues.consultationContent.studentReactions}
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationContent: {
+                            ...prevFormValues.consultationContent,
+                            studentReactions: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.consultationContent.studentReactions !== "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            consultationContent: {
+                              ...prevFormValues.consultationContent,
+                              studentReactions: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
                 <View style={{ marginVertical: 10 }}>
                   <Text
@@ -3671,10 +4020,19 @@ export default function Appointment({ route }) {
                   >
                     Consultation Conclusion
                   </Text>
-                  <TextInput
+                  <Text
                     style={{
-                      fontSize: 18,
-                      opacity: 0.8,
+                      color: "#333",
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Counselor Conclusion:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       marginVertical: 4,
@@ -3683,36 +4041,68 @@ export default function Appointment({ route }) {
                       borderColor: "gray",
                       borderWidth: 1,
                     }}
-                    placeholder="Counselor Conclusion"
-                    value={
-                      formValues.consultationConclusion.counselorConclusion
-                    }
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationConclusion: {
-                          ...prevFormValues.consultationConclusion,
-                          counselorConclusion: text,
-                        },
-                      }))
-                    }
-                  />
+                  >
+                    <TextInput
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        opacity: 0.8,
+                      }}
+                      placeholder="Input here"
+                      value={
+                        formValues.consultationConclusion.counselorConclusion
+                      }
+                      onChangeText={(text) =>
+                        setFormValues((prevFormValues) => ({
+                          ...prevFormValues,
+                          consultationConclusion: {
+                            ...prevFormValues.consultationConclusion,
+                            counselorConclusion: text,
+                          },
+                        }))
+                      }
+                    />
+                    {formValues.consultationConclusion.counselorConclusion !==
+                      "" && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFormValues((prevFormValues) => ({
+                            ...prevFormValues,
+                            consultationConclusion: {
+                              ...prevFormValues.consultationConclusion,
+                              counselorConclusion: "",
+                            },
+                          }))
+                        }
+                      >
+                        <Ionicons
+                          name="close"
+                          size={28}
+                          style={{
+                            color: "#F39300",
+                            opacity: 0.7,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                   <View
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "space-between",
+                      marginVertical: 4,
                     }}
                   >
                     <Text
                       style={{
-                        fontSize: 18,
-                        opacity: 0.8,
-                        paddingVertical: 8,
-                        marginVertical: 4,
+                        color: "#333",
+                        fontWeight: "bold",
+                        fontSize: 16,
+                        marginBottom: 4,
                       }}
                     >
-                      Follow-up Needed
+                      Follow-up Needed:
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
@@ -3797,30 +4187,77 @@ export default function Appointment({ route }) {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                  <TextInput
-                    style={{
-                      fontSize: 18,
-                      opacity: 0.8,
-                      paddingHorizontal: 16,
-                      paddingVertical: 8,
-                      marginVertical: 4,
-                      backgroundColor: "#ededed",
-                      borderRadius: 10,
-                      borderColor: "gray",
-                      borderWidth: 1,
-                    }}
-                    placeholder="Follow-up Notes"
-                    value={formValues.consultationConclusion.followUpNotes}
-                    onChangeText={(text) =>
-                      setFormValues((prevFormValues) => ({
-                        ...prevFormValues,
-                        consultationConclusion: {
-                          ...prevFormValues.consultationConclusion,
-                          followUpNotes: text,
-                        },
-                      }))
-                    }
-                  />
+                  {formValues.consultationConclusion.followUpNeeded ===
+                    true && (
+                    <>
+                      <Text
+                        style={{
+                          color: "#333",
+                          fontWeight: "bold",
+                          fontSize: 16,
+                          marginBottom: 4,
+                        }}
+                      >
+                        Follow-up Notes:
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          paddingHorizontal: 16,
+                          paddingVertical: 8,
+                          marginVertical: 4,
+                          backgroundColor: "#ededed",
+                          borderRadius: 10,
+                          borderColor: "gray",
+                          borderWidth: 1,
+                        }}
+                      >
+                        <TextInput
+                          style={{
+                            flex: 1,
+                            fontSize: 18,
+                            opacity: 0.8,
+                          }}
+                          placeholder="Input here"
+                          value={
+                            formValues.consultationConclusion.followUpNotes
+                          }
+                          onChangeText={(text) =>
+                            setFormValues((prevFormValues) => ({
+                              ...prevFormValues,
+                              consultationConclusion: {
+                                ...prevFormValues.consultationConclusion,
+                                followUpNotes: text,
+                              },
+                            }))
+                          }
+                        />
+                        {formValues.consultationConclusion.followUpNotes !==
+                          "" && (
+                          <TouchableOpacity
+                            onPress={() =>
+                              setFormValues((prevFormValues) => ({
+                                ...prevFormValues,
+                                consultationConclusion: {
+                                  ...prevFormValues.consultationConclusion,
+                                  followUpNotes: "",
+                                },
+                              }))
+                            }
+                          >
+                            <Ionicons
+                              name="close"
+                              size={28}
+                              style={{
+                                color: "#F39300",
+                                opacity: 0.7,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </>
+                  )}
                 </View>
               </ScrollView>
               <TouchableOpacity
@@ -3833,9 +4270,7 @@ export default function Appointment({ route }) {
                   formValues.consultationContent.mainIssues === "" ||
                   formValues.consultationContent.studentEmotions === "" ||
                   formValues.consultationContent.studentReactions === "" ||
-                  formValues.consultationConclusion.counselorConclusion ===
-                    "" ||
-                  formValues.consultationConclusion.followUpNotes === ""
+                  formValues.consultationConclusion.counselorConclusion === ""
                 }
                 style={{
                   backgroundColor:
@@ -3847,9 +4282,7 @@ export default function Appointment({ route }) {
                     formValues.consultationContent.mainIssues === "" ||
                     formValues.consultationContent.studentEmotions === "" ||
                     formValues.consultationContent.studentReactions === "" ||
-                    formValues.consultationConclusion.counselorConclusion ===
-                      "" ||
-                    formValues.consultationConclusion.followUpNotes === ""
+                    formValues.consultationConclusion.counselorConclusion === ""
                       ? "#e3e3e3"
                       : "#F39300",
                   marginHorizontal: 20,
@@ -3875,8 +4308,7 @@ export default function Appointment({ route }) {
                       formValues.consultationContent.studentEmotions === "" ||
                       formValues.consultationContent.studentReactions === "" ||
                       formValues.consultationConclusion.counselorConclusion ===
-                        "" ||
-                      formValues.consultationConclusion.followUpNotes === ""
+                        ""
                         ? "gray"
                         : "white",
                     fontWeight: "bold",

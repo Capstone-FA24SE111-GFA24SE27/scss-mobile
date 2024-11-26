@@ -109,7 +109,7 @@ export default function Login() {
             }}
           >
             <View style={{ flex: 1, alignItems: "flex-start" }}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => navigation.navigate("GettingStart")}
               >
@@ -118,7 +118,7 @@ export default function Login() {
                   size={36}
                   style={{ color: "#333" }}
                 />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <View style={{ flex: 1, alignItems: "center" }} />
             <View style={{ flex: 1 }} />
@@ -141,20 +141,41 @@ export default function Login() {
                 Sign in to continue
               </Text>
             </View>
-            <View style={{ marginTop: height * 0.05 }}>
+            <View style={{ marginTop: height * 0.1 }}>
               <View>
-                {emailError ? (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text
                     style={{
-                      color: "red",
-                      fontSize: 16,
-                      marginLeft: 12,
+                      color: "#333",
+                      fontSize: 20,
                       marginVertical: 2,
+                      fontWeight: "600",
+                      opacity: 0.7,
                     }}
                   >
-                    {emailError}
+                    Email
                   </Text>
-                ) : null}
+                  {emailError ? (
+                    <Text
+                      style={{
+                        color: "red",
+                        fontSize: 16,
+                        marginRight: 0,
+                        marginVertical: 2,
+                      }}
+                    >
+                      {emailError}
+                    </Text>
+                  ) : (
+                    <View style={{ width: 4, height: 4, marginVertical: 2 }} />
+                  )}
+                </View>
                 <View
                   style={{
                     flexDirection: "row",
@@ -183,7 +204,7 @@ export default function Login() {
                     }}
                   />
                   <TextInput
-                    placeholder="Enter Email"
+                    placeholder="Your Email"
                     placeholderTextColor="gray"
                     value={email}
                     onFocus={() => setIsFocused1(true)}
@@ -208,18 +229,39 @@ export default function Login() {
                     </TouchableOpacity>
                   )} */}
                 </View>
-                {passwordError ? (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text
                     style={{
-                      color: "red",
-                      fontSize: 16,
-                      marginLeft: 12,
+                      color: "#333",
+                      fontSize: 20,
                       marginVertical: 2,
+                      fontWeight: "600",
+                      opacity: 0.7,
                     }}
                   >
-                    {passwordError}
+                    Password
                   </Text>
-                ) : null}
+                  {passwordError ? (
+                    <Text
+                      style={{
+                        color: "red",
+                        fontSize: 16,
+                        marginRight: 0,
+                        marginVertical: 2,
+                      }}
+                    >
+                      {passwordError}
+                    </Text>
+                  ) : (
+                    <View style={{ width: 4, height: 4, marginVertical: 2 }} />
+                  )}
+                </View>
                 <View
                   style={{
                     flexDirection: "row",
@@ -248,7 +290,7 @@ export default function Login() {
                     }}
                   />
                   <TextInput
-                    placeholder="Enter Password"
+                    placeholder="Password"
                     placeholderTextColor="gray"
                     value={password}
                     onChangeText={(text) => setPassword(text)}
@@ -289,15 +331,35 @@ export default function Login() {
                 </View>
               </View>
               <TouchableOpacity
+                style={{
+                  alignItems: "center",
+                  alignSelf: "flex-end",
+                  marginVertical: 12,
+                }}
+                onPress={() => navigation.navigate("ResetPassword")}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#F39300",
+                    marginTop: 1,
+                    fontWeight: "600",
+                    opacity: 0.8,
+                  }}
+                >
+                  Forgot Password?
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleLogin()}
                 style={{
-                  width: "75%",
+                  width: "100%",
                   alignItems: "center",
                   alignSelf: "center",
                   backgroundColor: "#F39300",
-                  paddingVertical: 8,
-                  marginVertical: 20,
+                  paddingVertical: 12,
+                  marginVertical: 12,
                   borderRadius: 10,
                   elevation: 3,
                 }}
@@ -315,15 +377,14 @@ export default function Login() {
               <TouchableOpacity
                 onPress={() => handleLogin()}
                 style={{
-                  width: "75%",
+                  width: "100%",
                   flexDirection: "row",
                   alignItems: "center",
                   alignSelf: "center",
                   justifyContent: "center",
                   backgroundColor: "#f9f9f9",
-                  paddingVertical: 8,
-                  borderRadius: 10,
-                  paddingVertical: 8,
+                  paddingVertical: 12,
+                  marginVertical: 12,
                   borderRadius: 10,
                   elevation: 3,
                 }}
@@ -344,31 +405,6 @@ export default function Login() {
                   }}
                 >
                   Continue by Google
-                </Text>
-              </TouchableOpacity>
-              <View
-                style={{
-                  borderBottomWidth: 1,
-                  borderBottomColor: "lightgrey",
-                  marginTop: 30,
-                  alignSelf: "center",
-                  width: "85%"
-                }}
-              />
-              <TouchableOpacity
-                style={{ marginTop: 20, alignItems: "center" }}
-                onPress={() => navigation.navigate("ResetPassword")}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: "#F39300",
-                    marginTop: 1,
-                    fontWeight: "600",
-                    opacity: 0.8,
-                  }}
-                >
-                  Forgot Password?
                 </Text>
               </TouchableOpacity>
               {/* <View style={{ flexDirection: "row", marginVertical: 24 }}>

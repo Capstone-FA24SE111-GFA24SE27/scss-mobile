@@ -123,6 +123,7 @@ export default function Demand({ route }) {
     };
     setFilters(newFilters);
     fetchData(newFilters);
+    setIsExpanded(false);
   };
 
   const cancelFilters = () => {
@@ -138,6 +139,7 @@ export default function Demand({ route }) {
     setSortDirection(resetFilters.sortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
+    setIsExpanded(false);
   };
 
   const handleOpenCreate = async (selectedDemand) => {

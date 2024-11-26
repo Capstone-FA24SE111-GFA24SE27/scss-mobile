@@ -220,6 +220,7 @@ export default function Appointment({ route }) {
     };
     setFilters(newFilters);
     fetchData(newFilters);
+    setIsExpanded(false);
   };
 
   const cancelFilters = () => {
@@ -237,6 +238,7 @@ export default function Appointment({ route }) {
     setSortDirection(resetFilters.SortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
+    setIsExpanded(false);
   };
 
   const handleOpenCancel = (id) => {
@@ -831,8 +833,7 @@ export default function Appointment({ route }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => (setInfo(info),
-                      setOpenInfo(true))}
+                    onPress={() => (setInfo(appointment), setOpenInfo(true))}
                     style={{ position: "absolute", top: 0, right: -4 }}
                   >
                     <Ionicons
@@ -1333,7 +1334,7 @@ export default function Appointment({ route }) {
                         disabled={info.meetingType !== "ONLINE"}
                         onPress={() =>
                           Linking.openURL(
-                            `https://meet.google.com/${info?.meetUrl}`
+                            `${info?.meetUrl}`
                           ).catch((err) => {
                             console.log("Can't open this link", err);
                             Toast.show({
@@ -1367,6 +1368,40 @@ export default function Appointment({ route }) {
                       </TouchableOpacity>
                     </View>
                   </View>
+                  {info?.cancelReason !== null && (
+                    <View
+                      style={{
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
+                        }}
+                      >
+                        Canceled By
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: "#333",
+                          fontWeight: "500",
+                          opacity: 0.7,
+                        }}
+                      >
+                        {info?.cancelReason}
+                      </Text>
+                    </View>
+                  )}
                   {info?.appointmentFeedback !== null ? (
                     <View
                       style={{

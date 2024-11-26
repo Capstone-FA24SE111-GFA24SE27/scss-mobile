@@ -90,6 +90,7 @@ export default function QA() {
     };
     setFilters(newFilters);
     fetchData(newFilters);
+    setIsExpanded(false);
   };
 
   const cancelFilters = () => {
@@ -106,6 +107,7 @@ export default function QA() {
     setSortDirection(resetFilters.sortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
+    setIsExpanded(false);
   };
 
   useEffect(() => {
@@ -884,7 +886,7 @@ export default function QA() {
                       numberOfLines={2}
                       style={{
                         fontWeight: "bold",
-                        fontSize: 20,
+                        fontSize: 18,
                         marginLeft: 4,
                       }}
                     >
@@ -949,7 +951,7 @@ export default function QA() {
                         />
                         <Text
                           style={{
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: "600",
                             marginLeft: 4,
                             color:
@@ -2569,7 +2571,7 @@ export default function QA() {
                   }}
                 >
                   <TextInput
-                    placeholder="Type message"
+                    placeholder="Send a message"
                     value={content}
                     onChangeText={(value) => setContent(value)}
                     style={{ flex: 1, paddingRight: 8, fontSize: 18 }}

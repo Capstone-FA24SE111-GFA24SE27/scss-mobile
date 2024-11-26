@@ -336,7 +336,7 @@ export default function Personal() {
             </TouchableOpacity>
           </View>
         </View>
-        <View
+        {/* <View
           style={{
             marginVertical: 4,
             marginHorizontal: 30,
@@ -375,7 +375,7 @@ export default function Personal() {
             paddingHorizontal: 5,
             marginBottom: 20,
           }}
-        ></ScrollView>
+        ></ScrollView> */}
       </View>
     </>
   );
