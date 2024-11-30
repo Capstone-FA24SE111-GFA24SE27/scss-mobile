@@ -225,8 +225,8 @@ export default function Demand({ route }) {
           <TouchableOpacity
             key={`${selectedDate}-${slot.slotCode}-${index}`}
             onPress={() => (
-              console.log(selectedDate, slot.slotCode),
-              setSelectedSlot(slot.slotCode)
+              console.log(selectedDate, slot),
+              setSelectedSlot(slot)
             )}
             disabled={
               slot.status === "EXPIRED" ||
@@ -241,7 +241,7 @@ export default function Demand({ route }) {
               backgroundColor:
                 slot.myAppointment === true
                   ? "#ededed"
-                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode && slot.status !== "EXPIRED"
                   ? "white"
                   : slot.status === "EXPIRED"
                   ? "#ededed"
@@ -254,7 +254,7 @@ export default function Demand({ route }) {
               borderColor:
                 slot.myAppointment === true
                   ? "transparent"
-                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode && slot.status !== "EXPIRED"
                   ? "#F39300"
                   : slot.status === "EXPIRED"
                   ? "transparent"
@@ -263,7 +263,7 @@ export default function Demand({ route }) {
                   : "transparent",
             }}
           >
-            {selectedSlot === slot.slotCode &&
+            {selectedSlot?.slotCode === slot.slotCode &&
               slot.status !== "EXPIRED" &&
               slot.status !== "UNAVAILABLE" &&
               slot.myAppointment !== true && (
@@ -282,7 +282,7 @@ export default function Demand({ route }) {
                 color:
                   slot.myAppointment === true
                     ? "gray"
-                    : selectedSlot === slot.slotCode &&
+                    : selectedSlot?.slotCode === slot.slotCode &&
                       slot.status !== "EXPIRED"
                     ? "#F39300"
                     : slot.status === "EXPIRED"
@@ -345,7 +345,7 @@ export default function Demand({ route }) {
       const response = await axiosJWT.post(
         `${BASE_URL}/appointments/demand/${selectedDemand.id}/create`,
         {
-          slotCode: selectedSlot,
+          slotCode: selectedSlot?.slotCode,
           date: selectedDate,
           isOnline: online,
           reason: reason,
@@ -1454,7 +1454,7 @@ export default function Demand({ route }) {
                         <View
                           style={{
                             backgroundColor: "#F39300",
-                            borderRadius: 18,
+                            borderRadius: 20,
                             paddingVertical: 6,
                             paddingHorizontal: 12,
                           }}
@@ -2139,7 +2139,7 @@ export default function Demand({ route }) {
                       <View
                         style={{
                           backgroundColor: "#F39300",
-                          borderRadius: 18,
+                          borderRadius: 20,
                           paddingVertical: 6,
                           paddingHorizontal: 12,
                         }}
@@ -2508,7 +2508,7 @@ export default function Demand({ route }) {
                                 fontWeight: "600",
                               }}
                             >
-                              Form of counseling{" "}
+                              Meeting method{" "}
                               <Text style={{ color: "#F39300" }}>*</Text>
                             </Text>
                             <View

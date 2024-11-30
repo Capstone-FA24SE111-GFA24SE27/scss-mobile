@@ -22,6 +22,8 @@ import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
 import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+import AlertModal from "../../layout/AlertModal";
+import ExtendInfoModal from "../../layout/ExtendInfoModal";
 
 export default function Appointment({ route }) {
   const navigation = useNavigation();
@@ -56,10 +58,12 @@ export default function Appointment({ route }) {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
+  const [info, setInfo] = useState({});
+  const [openExtendInfo, setOpenExtendInfo] = useState(false);
+  const [extendInfo, setExtendInfo] = useState(null);
   const [openCancel, setOpenCancel] = useState(false);
   const [openFeedback, setOpenFeedback] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [info, setInfo] = useState({});
   const [rating, setRating] = useState(0);
   const [value, setValue] = useState("");
 
@@ -109,73 +113,6 @@ export default function Appointment({ route }) {
     } else {
       setDateTo(formatDate(currentDate));
     }
-  };
-
-  const customAlert = () => {
-    return (
-      <>
-        {showModal && (
-          <Modal
-            transparent={true}
-            animationType="fade"
-            visible={showModal}
-            onRequestClose={() => setShowModal(false)}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-              }}
-            >
-              <View
-                style={{
-                  width: width * 0.85,
-                  paddingVertical: 25,
-                  paddingHorizontal: 18,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  alignItems: "center",
-                  marginVertical: 12,
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "#ededed",
-                    padding: 4,
-                    borderRadius: 30,
-                    alignSelf: "flex-end",
-                  }}
-                  onPress={() => setShowModal(false)}
-                >
-                  <Ionicons name="close" size={28} color="black" />
-                </TouchableOpacity>
-                <Ionicons name="alert-circle" size={80} color="#F39300" />
-                <Text
-                  style={{
-                    color: "#F39300",
-                    fontSize: 30,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Warning
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    textAlign: "center",
-                    marginVertical: 12,
-                  }}
-                >
-                  {modalMessage}
-                </Text>
-              </View>
-            </View>
-          </Modal>
-        )}
-      </>
-    );
   };
 
   const fetchData = async (filters = {}) => {
@@ -526,7 +463,12 @@ export default function Appointment({ route }) {
                     />
                   )}
                 </View>
-                {customAlert()}
+                <AlertModal
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                  modalMessage={modalMessage}
+                  setModalMessage={setModalMessage}
+                />
               </View>
               <View
                 style={{
@@ -1051,7 +993,10 @@ export default function Appointment({ route }) {
                     backgroundColor: "#f5f7fd",
                   }}
                 >
-                  <View
+                  <TouchableOpacity
+                  onPress={() => (
+                    setOpenExtendInfo(true), setExtendInfo(info?.counselorInfo)
+                  )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -1119,7 +1064,7 @@ export default function Appointment({ route }) {
                           marginBottom: 2,
                         }}
                       >
-                        {info?.counselorInfo?.specialization?.name ||
+                        {info?.counselorInfo?.major?.name ||
                           info?.counselorInfo?.expertise?.name}
                       </Text>
                       <Text
@@ -1140,7 +1085,7 @@ export default function Appointment({ route }) {
                         Phone: {info?.counselorInfo?.profile?.phoneNumber}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       marginBottom: 20,
@@ -1333,9 +1278,7 @@ export default function Appointment({ route }) {
                       <TouchableOpacity
                         disabled={info.meetingType !== "ONLINE"}
                         onPress={() =>
-                          Linking.openURL(
-                            `${info?.meetUrl}`
-                          ).catch((err) => {
+                          Linking.openURL(`${info?.meetUrl}`).catch((err) => {
                             console.log("Can't open this link", err);
                             Toast.show({
                               type: "error",
@@ -1545,6 +1488,12 @@ export default function Appointment({ route }) {
             </View>
           </View>
         </Modal>
+        <ExtendInfoModal
+          openExtendInfo={openExtendInfo}
+          setOpenExtendInfo={setOpenExtendInfo}
+          extendInfo={extendInfo}
+          setExtendInfo={setExtendInfo}
+        />
         <Modal
           transparent={true}
           visible={openCancel}

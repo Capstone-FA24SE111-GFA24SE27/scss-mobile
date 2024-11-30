@@ -29,6 +29,9 @@ import ErrorModal from "../../layout/ErrorModal";
 import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import Markdown from "react-native-markdown-display";
+import AlertModal from "../../layout/AlertModal";
+import ExtendInfoModal from "../../layout/ExtendInfoModal";
 
 export default function NonAcademicCounselor() {
   const navigation = useNavigation();
@@ -40,6 +43,8 @@ export default function NonAcademicCounselor() {
   const [counselors, setCounselors] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState({
+    availableFrom: "",
+    availableTo: "",
     ratingFrom: 0,
     ratingTo: 5,
     SortDirection: "",
@@ -48,6 +53,13 @@ export default function NonAcademicCounselor() {
   });
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
+  const [showFromPicker, setShowFromPicker] = useState(false);
+  const [showToPicker, setShowToPicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [availableFrom, setAvailableFrom] = useState("");
+  const [availableTo, setAvailableTo] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const [selectedFrom, setSelectedFrom] = useState(0);
   const [selectedTo, setSelectedTo] = useState(5);
   const ratings = [0, 1, 2, 3, 4, 5];
@@ -59,8 +71,10 @@ export default function NonAcademicCounselor() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCounselor, setSelectedCounselor] = useState({});
   const [openBooking, setOpenBooking] = useState(false);
+  const [openExtendInfo, setOpenExtendInfo] = useState(false);
+  const [extendInfo, setExtendInfo] = useState(null);
   const [slots, setSlots] = useState({});
-  const [selectedDate, setSelectedDate] = useState(
+  const [selectedDate2, setSelectedDate2] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -125,6 +139,8 @@ export default function NonAcademicCounselor() {
     setLoading(true);
     setCurrentPage(1);
     const newFilters = {
+      availableFrom: availableFrom,
+      availableTo: availableTo,
       ratingFrom: selectedFrom,
       ratingTo: selectedTo,
       SortDirection: sortDirection,
@@ -140,6 +156,8 @@ export default function NonAcademicCounselor() {
     setLoading(true);
     setCurrentPage(1);
     const resetFilters = {
+      availableFrom: "",
+      availableTo: "",
       ratingFrom: 0,
       ratingTo: 5,
       SortDirection: "",
@@ -147,6 +165,8 @@ export default function NonAcademicCounselor() {
       expertiseId: "",
     };
     setKeyword("");
+    setAvailableFrom(resetFilters.availableFrom);
+    setAvailableTo(resetFilters.availableTo);
     setSelectedFrom(resetFilters.ratingFrom);
     setSelectedTo(resetFilters.ratingTo);
     setSortDirection(resetFilters.SortDirection);
@@ -176,11 +196,11 @@ export default function NonAcademicCounselor() {
       );
       const counselorData = counselorRes?.data || [];
       setSelectedCounselor(counselorData);
-      // setSelectedDate(new Date().toISOString().split("T")[0]);
-      setSelectedDate((prev) => {
-        return selectedDate || prev;
+      // setSelectedDate2(new Date().toISOString().split("T")[0]);
+      setSelectedDate2((prev) => {
+        return selectedDate2 || prev;
       });
-      const startOfWeek = new Date(selectedDate);
+      const startOfWeek = new Date(selectedDate2);
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 31);
       startOfWeek.setDate(startOfWeek.getDate() - 31);
@@ -203,6 +223,36 @@ export default function NonAcademicCounselor() {
     return formattedDate;
   };
 
+  const onFromDateChange = (e, selectedDate) => {
+    if (e?.type === "dismissed") {
+      setShowFromPicker(false);
+      return;
+    }
+    const currentDate = selectedDate || new Date();
+    setShowFromPicker(Platform.OS === "ios");
+    if (new Date(currentDate) > new Date(availableTo)) {
+      setModalMessage("The 'From' date cannot be later than the 'To' date.");
+      setShowModal(true);
+    } else {
+      setAvailableFrom(formatDate(currentDate));
+    }
+  };
+
+  const onToDateChange = (e, selectedDate) => {
+    if (e?.type === "dismissed") {
+      setShowToPicker(false);
+      return;
+    }
+    const currentDate = selectedDate || new Date();
+    setShowToPicker(Platform.OS === "ios");
+    if (new Date(currentDate) < new Date(availableFrom)) {
+      setModalMessage("The 'To' date cannot be earlier than the 'From' date.");
+      setShowModal(true);
+    } else {
+      setAvailableTo(formatDate(currentDate));
+    }
+  };
+
   const onDateChange = (e, newDate) => {
     if (e?.type === "dismissed") {
       setShowDatePicker(false);
@@ -211,7 +261,7 @@ export default function NonAcademicCounselor() {
     const currentDate = newDate || new Date();
     setShowDatePicker(Platform.OS === "ios");
     const formattedDate = formatDate(currentDate);
-    setSelectedDate(formattedDate);
+    setSelectedDate2(formattedDate);
   };
 
   const handleCloseBooking = () => {
@@ -256,8 +306,8 @@ export default function NonAcademicCounselor() {
     }
   };
 
-  const renderSlotsForSelectedDate = () => {
-    const daySlots = slots[selectedDate] || [];
+  const renderSlotsForSelectedDate2 = () => {
+    const daySlots = slots[selectedDate2] || [];
     if (!daySlots.length) {
       return (
         <Text
@@ -268,7 +318,7 @@ export default function NonAcademicCounselor() {
             marginTop: 12,
           }}
         >
-          No available slots for {selectedDate}
+          No available slots for {selectedDate2}
         </Text>
       );
     }
@@ -284,10 +334,9 @@ export default function NonAcademicCounselor() {
       >
         {daySlots.map((slot, index) => (
           <TouchableOpacity
-            key={`${selectedDate}-${slot.slotCode}-${index}`}
+            key={`${selectedDate2}-${slot.slotCode}-${index}`}
             onPress={() => (
-              console.log(selectedDate, slot.slotCode),
-              setSelectedSlot(slot.slotCode)
+              console.log(selectedDate2, slot), setSelectedSlot(slot)
             )}
             disabled={
               slot.status === "EXPIRED" ||
@@ -302,7 +351,8 @@ export default function NonAcademicCounselor() {
               backgroundColor:
                 slot.myAppointment === true
                   ? "#F39300"
-                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode &&
+                    slot.status !== "EXPIRED"
                   ? "white"
                   : slot.status === "EXPIRED"
                   ? "#ededed"
@@ -315,7 +365,8 @@ export default function NonAcademicCounselor() {
               borderColor:
                 slot.myAppointment === true
                   ? "white"
-                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode &&
+                    slot.status !== "EXPIRED"
                   ? "#F39300"
                   : slot.status === "EXPIRED"
                   ? "transparent"
@@ -324,7 +375,7 @@ export default function NonAcademicCounselor() {
                   : "transparent",
             }}
           >
-            {selectedSlot === slot.slotCode &&
+            {selectedSlot?.slotCode === slot.slotCode &&
               slot.status !== "EXPIRED" &&
               slot.status !== "UNAVAILABLE" &&
               slot.myAppointment !== true && (
@@ -343,7 +394,7 @@ export default function NonAcademicCounselor() {
                 color:
                   slot.myAppointment === true
                     ? "white"
-                    : selectedSlot === slot.slotCode &&
+                    : selectedSlot?.slotCode === slot.slotCode &&
                       slot.status !== "EXPIRED"
                     ? "#F39300"
                     : slot.status === "EXPIRED"
@@ -362,7 +413,7 @@ export default function NonAcademicCounselor() {
     );
   };
 
-  useEffect(() => {}, [socket, selectedDate]);
+  useEffect(() => {}, [socket, selectedDate2]);
 
   const handleSocketChange = useCallback(
     (day) => {
@@ -389,11 +440,11 @@ export default function NonAcademicCounselor() {
         }
       };
 
-      setSelectedDate(day.dateString);
+      setSelectedDate2(day.dateString);
       setSelectedSlot("");
       console.log(`/user/${day.dateString}/${selectedCounselor?.id}/slot`);
       if (socket) {
-        socket.off(`/user/${selectedDate}/${selectedCounselor?.id}/slot`);
+        socket.off(`/user/${selectedDate2}/${selectedCounselor?.id}/slot`);
         console.log("Begin");
         socket.on(
           `/user/${day.dateString}/${selectedCounselor?.id}/slot`,
@@ -401,7 +452,7 @@ export default function NonAcademicCounselor() {
         );
       }
     },
-    [socket, selectedDate, selectedCounselor, userData]
+    [socket, selectedDate2, selectedCounselor, userData]
   );
 
   const handleCreateRequest = async () => {
@@ -409,8 +460,8 @@ export default function NonAcademicCounselor() {
       const response = await axiosJWT.post(
         `${BASE_URL}/booking-counseling/${selectedCounselor?.id}/appointment-request/create`,
         {
-          slotCode: selectedSlot,
-          date: selectedDate,
+          slotCode: selectedSlot?.slotCode,
+          date: selectedDate2,
           isOnline: online,
           reason: reason,
         }
@@ -418,13 +469,13 @@ export default function NonAcademicCounselor() {
       const data = await response.data;
       if (data && data.status == 200) {
         setOpenConfirm(false);
-        const startOfWeek = new Date(selectedDate);
+        const startOfWeek = new Date(selectedDate2);
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 31);
         startOfWeek.setDate(startOfWeek.getDate() - 31);
         const from = startOfWeek.toISOString().split("T")[0];
         const to = endOfWeek.toISOString().split("T")[0];
-        renderSlotsForSelectedDate();
+        renderSlotsForSelectedDate2();
         fetchSlots(selectedCounselor?.id, from, to);
         fetchData();
         setOpenSuccess(true);
@@ -566,6 +617,107 @@ export default function NonAcademicCounselor() {
             </View>
             <FilterAccordion isExpanded={isExpanded}>
               <View style={{ paddingHorizontal: 10 }}>
+                <View
+                  style={{
+                    paddingVertical: 8,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginLeft: 4,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        marginBottom: 8,
+                      }}
+                    >
+                      Available From:
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        borderRadius: 20,
+                        paddingHorizontal: 12,
+                        alignItems: "center",
+                        backgroundColor: "white",
+                        height: 40,
+                        borderWidth: 1,
+                        borderColor: "gray",
+                      }}
+                    >
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
+                        {availableFrom !== "" ? availableFrom : "xxxx-xx-xx"}
+                      </Text>
+                      <TouchableOpacity onPress={() => setShowFromPicker(true)}>
+                        <Ionicons
+                          name="calendar-outline"
+                          size={20}
+                          color="#F39300"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    {showFromPicker && (
+                      <RNDateTimePicker
+                        value={selectedDate}
+                        mode="date"
+                        display="default"
+                        onChange={onFromDateChange}
+                      />
+                    )}
+                  </View>
+                  <View style={{ flex: 1, paddingLeft: 10 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        marginBottom: 8,
+                      }}
+                    >
+                      Available To:
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        borderRadius: 20,
+                        paddingHorizontal: 12,
+                        alignItems: "center",
+                        backgroundColor: "white",
+                        height: 40,
+                        borderWidth: 1,
+                        borderColor: "gray",
+                      }}
+                    >
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
+                        {availableTo !== "" ? availableTo : "xxxx-xx-xx"}
+                      </Text>
+                      <TouchableOpacity onPress={() => setShowToPicker(true)}>
+                        <Ionicons
+                          name="calendar-outline"
+                          size={20}
+                          color="#F39300"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    {showToPicker && (
+                      <RNDateTimePicker
+                        value={selectedDate}
+                        mode="date"
+                        display="default"
+                        onChange={onToDateChange}
+                      />
+                    )}
+                  </View>
+                  <AlertModal
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    modalMessage={modalMessage}
+                    setModalMessage={setModalMessage}
+                  />
+                </View>
                 <View
                   style={{
                     paddingVertical: 12,
@@ -923,12 +1075,12 @@ export default function NonAcademicCounselor() {
                     search
                     value={
                       selectedExpertise !== ""
-                        ? selectedExpertise.name
+                        ? selectedExpertise?.name
                         : "Select Expertise"
                     }
                     placeholder={
                       selectedExpertise !== ""
-                        ? selectedExpertise.name
+                        ? selectedExpertise?.name
                         : "Select Expertise"
                     }
                     searchPlaceholder="Search Expertise"
@@ -955,7 +1107,7 @@ export default function NonAcademicCounselor() {
                             paddingHorizontal: 16,
                             paddingVertical: 8,
                             backgroundColor:
-                              item.name == selectedExpertise.name
+                              item?.name == selectedExpertise?.name
                                 ? "#F39300"
                                 : "white",
                           }}
@@ -965,14 +1117,14 @@ export default function NonAcademicCounselor() {
                               fontSize: 16,
                               fontWeight: "500",
                               color:
-                                item.name == selectedExpertise.name
+                                item?.name == selectedExpertise?.name
                                   ? "white"
                                   : "black",
                             }}
                           >
-                            {item.name}
+                            {item?.name}
                           </Text>
-                          {selectedExpertise.name === item.name && (
+                          {selectedExpertise?.name === item?.name && (
                             <Ionicons
                               color="white"
                               name="checkmark"
@@ -1126,7 +1278,7 @@ export default function NonAcademicCounselor() {
                         marginVertical: 2,
                       }}
                     >
-                      {item.expertise.name}
+                      {item.expertise?.name}
                     </Text>
                   </View>
                 </View>
@@ -1287,35 +1439,26 @@ export default function NonAcademicCounselor() {
                   >
                     <Ionicons name="chevron-back" size={28} />
                   </TouchableOpacity>
-                  <View
+                  <TouchableOpacity
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      backgroundColor: "white",
-                      paddingHorizontal: 12,
-                      paddingVertical: 4,
-                      borderWidth: 1.5,
-                      borderColor: "#F39300",
+                      backgroundColor: "#ededed",
+                      padding: 4,
+                      padding: 4,
                       borderRadius: 20,
+                      alignSelf: "flex-end",
+                      alignItems: "flex-end",
                     }}
+                    onPress={() => (
+                      setOpenExtendInfo(true), setExtendInfo(selectedCounselor)
+                    )}
                   >
-                    <Ionicons name="star" size={16} color="#F39300" />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        marginLeft: 4,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                      }}
-                    >
-                      {selectedCounselor?.rating}
-                    </Text>
-                  </View>
+                    <Ionicons name="information" size={28} />
+                  </TouchableOpacity>
                 </View>
                 <CalendarProvider
-                  date={selectedDate}
+                  date={selectedDate2}
                   onDateChanged={(date) => (
-                    setSelectedDate(date), setSelectedSlot("")
+                    setSelectedDate2(date), setSelectedSlot("")
                   )}
                   onMonthChange={(newDate) =>
                     handleMonthChange(newDate.dateString)
@@ -1538,8 +1681,8 @@ export default function NonAcademicCounselor() {
                             }}
                           >
                             <Text style={{ fontSize: 16, opacity: 0.8 }}>
-                              {selectedDate !== ""
-                                ? selectedDate
+                              {selectedDate2 !== ""
+                                ? selectedDate2
                                 : "xxxx-xx-xx"}
                             </Text>
                             <TouchableOpacity
@@ -1609,10 +1752,10 @@ export default function NonAcademicCounselor() {
                             Select a slot{" "}
                             <Text style={{ color: "#F39300" }}>*</Text>
                           </Text>
-                          {renderSlotsForSelectedDate()}
+                          {renderSlotsForSelectedDate2()}
                         </View>
-                        {slots[selectedDate]?.length !== 0 &&
-                          slots[selectedDate]?.some(
+                        {slots[selectedDate2]?.length !== 0 &&
+                          slots[selectedDate2]?.some(
                             (item) =>
                               item.status !== "EXPIRED" &&
                               item.status !== "UNAVAILABLE"
@@ -1630,7 +1773,7 @@ export default function NonAcademicCounselor() {
                                     fontWeight: "600",
                                   }}
                                 >
-                                  Form of counseling{" "}
+                                  Meeting method{" "}
                                   <Text style={{ color: "#F39300" }}>*</Text>
                                 </Text>
                                 <View
@@ -1758,7 +1901,7 @@ export default function NonAcademicCounselor() {
                                     marginBottom: 12,
                                   }}
                                 >
-                                  What subject do you want counsel on?{" "}
+                                  What are your concerns?{" "}
                                   <Text style={{ color: "#F39300" }}>*</Text>
                                 </Text>
                                 <View>
@@ -1802,8 +1945,8 @@ export default function NonAcademicCounselor() {
                 <TouchableOpacity
                   style={{
                     backgroundColor:
-                      slots[selectedDate]?.length === 0 ||
-                      slots[selectedDate]?.every(
+                      slots[selectedDate2]?.length === 0 ||
+                      slots[selectedDate2]?.every(
                         (item) => item.status === "EXPIRED"
                       ) ||
                       selectedSlot === "" ||
@@ -1820,8 +1963,8 @@ export default function NonAcademicCounselor() {
                     marginVertical: 16,
                   }}
                   disabled={
-                    slots[selectedDate]?.length === 0 ||
-                    slots[selectedDate]?.every(
+                    slots[selectedDate2]?.length === 0 ||
+                    slots[selectedDate2]?.every(
                       (item) => item.status === "EXPIRED"
                     ) ||
                     selectedSlot === "" ||
@@ -1835,8 +1978,8 @@ export default function NonAcademicCounselor() {
                     style={{
                       fontWeight: "600",
                       color:
-                        slots[selectedDate]?.length === 0 ||
-                        slots[selectedDate]?.every(
+                        slots[selectedDate2]?.length === 0 ||
+                        slots[selectedDate2]?.every(
                           (item) => item.status === "EXPIRED"
                         ) ||
                         selectedSlot === "" ||
@@ -1855,8 +1998,8 @@ export default function NonAcademicCounselor() {
                     size={24}
                     style={{
                       color:
-                        slots[selectedDate]?.length === 0 ||
-                        slots[selectedDate]?.every(
+                        slots[selectedDate2]?.length === 0 ||
+                        slots[selectedDate2]?.every(
                           (item) => item.status === "EXPIRED"
                         ) ||
                         selectedSlot === "" ||
@@ -1871,6 +2014,12 @@ export default function NonAcademicCounselor() {
             )}
           </View>
         </Modal>
+        <ExtendInfoModal
+          openExtendInfo={openExtendInfo}
+          setOpenExtendInfo={setOpenExtendInfo}
+          extendInfo={extendInfo}
+          setExtendInfo={setExtendInfo}
+        />
         <Modal
           transparent={true}
           visible={openConfirm}
@@ -1887,7 +2036,7 @@ export default function NonAcademicCounselor() {
           >
             <View
               style={{
-                width: width * 0.8,
+                width: width * 0.9,
                 padding: 20,
                 backgroundColor: "white",
                 borderRadius: 10,
@@ -1904,15 +2053,156 @@ export default function NonAcademicCounselor() {
               >
                 Booking Confirmation
               </Text>
+              <View
+                style={{
+                  paddingHorizontal: 8,
+                  paddingVertical: 12,
+                  borderWidth: 1.5,
+                  borderColor: "#e3e3e3",
+                  borderRadius: 10,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Ionicons name="calendar" size={20} color="#F39300" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                      }}
+                    >
+                      {selectedDate2}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Ionicons name="time" size={20} color="#F39300" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                      }}
+                    >
+                      {selectedSlot?.startTime?.slice(0, 5)} -{" "}
+                      {selectedSlot?.endTime?.slice(0, 5)}
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 8,
+                  }}
+                >
+                  <MaterialIcons
+                    name="meeting-room"
+                    size={20}
+                    color="#F39300"
+                  />
+                  <View
+                    style={{
+                      backgroundColor: "#F39300",
+                      borderRadius: 20,
+                      paddingVertical: 2,
+                      paddingHorizontal: 12,
+                      marginLeft: 8,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        color: "white",
+                      }}
+                    >
+                      {online ? "ONLINE" : "OFFLINE"}
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: "#F39300",
+                    marginBottom: 8,
+                  }}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    marginBottom: 8,
+                  }}
+                >
+                  <MaterialIcons name="notes" size={20} color="#F39300" />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "400",
+                      marginLeft: 8,
+                      maxWidth: "95%",
+                    }}
+                  >
+                    {reason}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    marginBottom: 8,
+                  }}
+                >
+                  <Ionicons name="person" size={20} color="#F39300" />
+                  <View style={{ marginLeft: 8 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "500",
+                      }}
+                    >
+                      {selectedCounselor?.profile?.fullName}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: "gray",
+                      }}
+                    >
+                      {selectedCounselor?.expertise?.name ||
+                        selectedCounselor?.specialization?.name}
+                    </Text>
+                  </View>
+                </View>
+              </View>
               <Text
                 style={{
                   fontSize: 18,
-                  marginBottom: 20,
-                  textAlign: "center",
+                  marginVertical: 12,
+                  textAlign: "left",
                 }}
               >
                 Are you sure you want to book?{"\n"}A request will be sent to
-                this counselor
+                the chosen counselor
               </Text>
               <View
                 style={{

@@ -25,7 +25,7 @@ export const SocketProvider = ({ children }) => {
 
     const connectSocketIO = (accountId) => {
         // socket.current = io(`http://scss-server.southafricanorth.cloudapp.azure.com:4000`);
-        socket.current = io(`http://scss-server.southafricanorth.cloudapp.azure.com:9092`,{
+        socket.current = io(`http://localhost:9092`,{
             transports: ['websocket']
         });
 
