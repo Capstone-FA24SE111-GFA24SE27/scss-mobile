@@ -15,7 +15,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Calendar, CalendarProvider } from "react-native-calendars";
 import { Dropdown } from "react-native-element-dropdown";
 import ErrorModal from "../../layout/ErrorModal";
@@ -175,12 +175,44 @@ export default function CounselorRand() {
     fetchExpertise();
   }, [selectedDate]);
 
+  const renderReason = () => {
+    return (
+      <View
+        style={{
+          paddingVertical: 12,
+        }}
+      >
+        <TextInput
+          placeholder="Input here"
+          placeholderTextColor="gray"
+          keyboardType="default"
+          multiline={true}
+          numberOfLines={2}
+          value={reason}
+          onChangeText={(value) => setReason(value)}
+          style={{
+            flex: 1,
+            fontWeight: "600",
+            fontSize: 16,
+            opacity: 0.8,
+            paddingVertical: 8,
+            textAlignVertical: "top",
+            paddingHorizontal: 12,
+            backgroundColor: "#ededed",
+            borderColor: "gray",
+            borderWidth: 1,
+            borderRadius: 10,
+          }}
+        />
+      </View>
+    );
+  };
+
   const renderCalendar = () => {
     return (
       <CalendarProvider
         date={selectedDate}
         onDateChanged={(date) => setSelectedDate(date)}
-        style={{ marginTop: 10 }}
       >
         <Calendar
           minDate={new Date().toISOString().split("T")[0]}
@@ -226,7 +258,7 @@ export default function CounselorRand() {
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            marginVertical: 38.5,
+            marginVertical: width * 0.075,
           }}
         >
           <ActivityIndicator size={40} color="#F39300" animating />
@@ -463,7 +495,7 @@ export default function CounselorRand() {
               source={{
                 uri: "https://static.vecteezy.com/system/resources/previews/014/608/856/original/man-avatar-icon-flat-vector.jpg",
               }}
-              style={{ width: width * 0.35, height: width * 0.35 }}
+              style={{ width: width * 0.325, height: width * 0.325 }}
             />
           </TouchableOpacity>
         </View>
@@ -494,7 +526,7 @@ export default function CounselorRand() {
               source={{
                 uri: "https://static.vecteezy.com/system/resources/previews/014/426/967/original/new-woman-avatar-icon-flat-vector.jpg",
               }}
-              style={{ width: width * 0.35, height: width * 0.35 }}
+              style={{ width: width * 0.325, height: width * 0.325 }}
             />
           </TouchableOpacity>
         </View>
@@ -811,43 +843,44 @@ export default function CounselorRand() {
 
   const renderCarousel = () => {
     const items = [
+      { title: "What are your concerns?", content: renderReason() },
       {
-        title: "Select a date",
+        title: "Select date",
         content: renderCalendar(),
       },
       {
         title: "Select a slot",
         content: renderSlotsForSelectedDate(),
       },
-      {
-        title: "Select counselor type",
-        content: renderCounselorType(),
-      },
+      // {
+      //   title: "Select counselor type",
+      //   content: renderCounselorType(),
+      // },
       {
         title: "Select gender",
         content: renderGender(),
       },
-      ...(type === "ACADEMIC"
-        ? [
-            {
-              title: "Select department",
-              content: renderDepartments(),
-            },
-            selectedDepartment !== "" && {
-              title: "Select major",
-              content: renderMajors(),
-            },
-            selectedMajor !== "" && {
-              title: "Select specialization",
-              content: renderSpecializations(),
-            },
-          ].filter(Boolean)
-        : [
-            {
-              title: "Select expertise",
-              content: renderExpertises(),
-            },
-          ]),
+      // ...(type === "ACADEMIC"
+      //   ? [
+      //       {
+      //         title: "Select department",
+      //         content: renderDepartments(),
+      //       },
+      //       selectedDepartment !== "" && {
+      //         title: "Select major",
+      //         content: renderMajors(),
+      //       },
+      //       selectedMajor !== "" && {
+      //         title: "Select specialization",
+      //         content: renderSpecializations(),
+      //       },
+      //     ].filter(Boolean)
+      //   : [
+      //       {
+      //         title: "Select expertise",
+      //         content: renderExpertises(),
+      //       },
+      //     ]),
     ];
 
     const renderItem = (item, index) => {
@@ -855,15 +888,13 @@ export default function CounselorRand() {
         <View key={index} style={{ marginBottom: 12 }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: item.title === "" ? 0 : 18,
               fontWeight: "600",
-              marginBottom: 4,
+              marginBottom: item.title === "" ? 0 : 4,
             }}
           >
             {item.title}{" "}
-            {(item.title == "Select a date" ||
-              item.title == "Select a slot" ||
-              item.title == "Select counselor type") && (
+            {item.title !== "Select gender" && (
               <Text style={{ color: "#F39300" }}>*</Text>
             )}
           </Text>
@@ -879,9 +910,9 @@ export default function CounselorRand() {
 
       let pageItems = [];
       if (currentPage === 0) {
-        pageItems = items.slice(0, 2);
-      } else if (currentPage === 1) {
-        pageItems = items.slice(2);
+        pageItems = items.slice(0, 4);
+        // } else if (currentPage === 1) {
+        //   pageItems = items.slice(3);
       }
 
       return (
@@ -893,15 +924,15 @@ export default function CounselorRand() {
       <View
         style={{
           backgroundColor: "#fff0e0",
-          paddingVertical: 12,
-          paddingHorizontal: 12,
+          padding: 12,
           borderWidth: 2,
-          borderColor: "black",
+          borderColor: "gray",
           borderRadius: 20,
+          // height: height * 0.6,
         }}
       >
-        {renderPage()}
-        <View
+        {!matcher && renderPage()}
+        {/* <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
@@ -939,7 +970,6 @@ export default function CounselorRand() {
               flex: 1,
             }}
           >
-            {/* {[...Array(Math.ceil(items.length / 2)).keys()].map((_, index) => ( */}
             {[...Array(2).keys()].map((_, index) => (
               <View
                 key={index}
@@ -954,7 +984,6 @@ export default function CounselorRand() {
               />
             ))}
           </View>
-          {/* {currentPage < Math.ceil(items.length / 2) - 1 ? ( */}
           {currentPage < 1 ? (
             <TouchableOpacity
               onPress={() => setCurrentPage(currentPage + 1)}
@@ -978,7 +1007,7 @@ export default function CounselorRand() {
               <Ionicons name="chevron-forward" size={30} color="gray" />
             </TouchableOpacity>
           )}
-        </View>
+        </View> */}
         <View
           style={{
             paddingBottom: 12,
@@ -986,70 +1015,115 @@ export default function CounselorRand() {
             justifyContent: "space-between",
           }}
         >
-          <TouchableOpacity
-            onPress={() => (
-              setCurrentPage(0),
-              setSelectedSlot(""),
-              setGender(""),
-              setType("ACADEMIC"),
-              setSelectedDepartment(""),
-              setSelectedMajor(""),
-              setSelectedSpecialization(""),
-              setSelectedExpertise(""),
-              setMatcher(""),
-              setError(null),
-              isOnline(null),
-              setReason("")
-            )}
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              backgroundColor: "white",
-              borderRadius: 10,
-              paddingVertical: 8,
-              marginTop: 12,
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1.5,
-              borderColor: "lightgrey",
-              marginRight: 4,
-            }}
-          >
-            <Text
+          {!matcher ? (
+            <>
+              <TouchableOpacity
+                onPress={() => (
+                  setCurrentPage(0),
+                  setSelectedSlot(""),
+                  setGender(""),
+                  setType("ACADEMIC"),
+                  setSelectedDepartment(""),
+                  setSelectedMajor(""),
+                  setSelectedSpecialization(""),
+                  setSelectedExpertise(""),
+                  setMatcher(""),
+                  setError(null),
+                  isOnline(null),
+                  setReason("")
+                )}
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  paddingVertical: 8,
+                  marginTop: 12,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 1.5,
+                  borderColor: "lightgrey",
+                  marginRight: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    color: "#333",
+                    fontSize: 18,
+                  }}
+                >
+                  Clear
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={selectedSlot == "" || reason == ""}
+                onPress={handleMatch}
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  backgroundColor:
+                    selectedSlot == "" || reason == "" ? "#ededed" : "#F39300",
+                  borderRadius: 10,
+                  paddingVertical: 8,
+                  marginTop: 12,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    color:
+                      selectedSlot == "" || reason == "" ? "gray" : "white",
+                    fontSize: 18,
+                  }}
+                >
+                  Find
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity
+              onPress={() => (
+                setCurrentPage(0),
+                setSelectedSlot(""),
+                setGender(""),
+                setType("ACADEMIC"),
+                setSelectedDepartment(""),
+                setSelectedMajor(""),
+                setSelectedSpecialization(""),
+                setSelectedExpertise(""),
+                setMatcher(""),
+                setError(null),
+                isOnline(null),
+                setReason("")
+              )}
               style={{
-                fontWeight: "500",
-                color: "#333",
-                fontSize: 18,
+                flex: 1,
+                flexDirection: "row",
+                backgroundColor: "white",
+                borderRadius: 10,
+                paddingVertical: 8,
+                marginVertical: 4,
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1.5,
+                borderColor: "lightgrey",
               }}
             >
-              Clear
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            disabled={selectedSlot == ""}
-            onPress={handleMatch}
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              backgroundColor: selectedSlot == "" ? "#ededed" : "#F39300",
-              borderRadius: 10,
-              paddingVertical: 8,
-              marginTop: 12,
-              justifyContent: "center",
-              alignItems: "center",
-              marginLeft: 4,
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "500",
-                color: selectedSlot == "" ? "gray" : "white",
-                fontSize: 18,
-              }}
-            >
-              Find
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  fontWeight: "500",
+                  color: "#333",
+                  fontSize: 18,
+                }}
+              >
+                Find again
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -1060,7 +1134,16 @@ export default function CounselorRand() {
     setError(null);
     setLoading2(true);
     try {
-      if (type === "ACADEMIC") {
+      const typeRes = await axiosJWT.get(
+        `${BASE_URL}/counselors/random/match/reason/meaning/${userData?.id}`,
+        {
+          params: {
+            reason: reason,
+          },
+        }
+      );
+      console.log(typeRes?.data?.message);
+      if (typeRes?.data?.message === "ACADEMIC") {
         const response = await axiosJWT.get(
           `${BASE_URL}/counselors/academic/random/match`,
           {
@@ -1068,15 +1151,19 @@ export default function CounselorRand() {
               slotId: selectedSlot.slotId,
               date: selectedDate,
               gender: gender,
-              departmentId: selectedDepartment.id,
-              majorId: selectedMajor.id,
-              specializationId: selectedSpecialization.id,
+              reason: reason,
+              // departmentId: selectedDepartment.id,
+              // majorId: selectedMajor.id,
+              // specializationId: selectedSpecialization.id,
             },
           }
         );
-        setMatcher(response.data.content);
-      }
-      if (type === "NON-ACADEMIC") {
+        if (response.data && response.data.status == 200) {
+          setMatcher(response.data.content);
+        } else if (response.data && response.data.status == 404) {
+          setError(response.data.message);
+        }
+      } else if (typeRes?.data?.message === "NON_ACADEMIC") {
         const response = await axiosJWT.get(
           `${BASE_URL}/counselors/non-academic/random/match`,
           {
@@ -1084,11 +1171,24 @@ export default function CounselorRand() {
               slotId: selectedSlot.slotId,
               date: selectedDate,
               gender: gender,
-              expertiseId: selectedExpertise.id,
+              reason: reason,
+              // expertiseId: selectedExpertise.id,
             },
           }
         );
-        setMatcher(response.data.content);
+        if (response.data && response.data.status == 200) {
+          setMatcher(response.data.content);
+        } else if (response.data && response.data.status == 404) {
+          setError(response.data.message);
+        }
+      } else if (typeRes?.data?.message === "NOT_DETAIL_ENOUGH") {
+        setError("Need more detailed reason");
+      } else if (
+        typeRes?.data?.message === "ACADEMIC_BUT_OUT_OF_YOUR_ACADEMIC_SCOPE"
+      ) {
+        setError(
+          "Can't find a counselor to solve your problems. Please consider finding another reason."
+        );
       }
     } catch (err) {
       console.log("Can't find counselor", err);
@@ -1136,7 +1236,7 @@ export default function CounselorRand() {
       const response = await axiosJWT.post(
         `${BASE_URL}/booking-counseling/${matcher?.id}/appointment-request/create`,
         {
-          slotCode: selectedSlot.slotCode,
+          slotCode: selectedSlot?.slotCode,
           date: selectedDate,
           isOnline: online,
           reason: reason,
@@ -1182,7 +1282,7 @@ export default function CounselorRand() {
         }}
       />
       <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-        <View style={{ paddingVertical: 6, paddingHorizontal: 12 }}>
+        <View style={{ paddingVertical: 8, paddingHorizontal: 20 }}>
           {renderCarousel()}
         </View>
         {loading2 && (
@@ -1236,198 +1336,152 @@ export default function CounselorRand() {
           </View>
         )}
         {matcher && loading2 == false ? (
-          <>
-            <View
-              key={matcher.id}
-              style={{
-                backgroundColor: "white",
-                borderRadius: 20,
-                paddingHorizontal: 8,
-                paddingVertical: 12,
-                marginVertical: 12,
-                marginHorizontal: 20,
-                elevation: 1,
-                borderWidth: 0.75,
-                borderColor: "#e3e3e3",
-              }}
-            >
-              <View style={{ flexDirection: "row", marginHorizontal: 8 }}>
-                <View>
-                  <Image
-                    source={{ uri: matcher.profile.avatarLink }}
+          <View
+            key={matcher.id}
+            style={{
+              backgroundColor: "white",
+              borderRadius: 20,
+              paddingHorizontal: 8,
+              paddingVertical: 12,
+              marginVertical: 12,
+              marginHorizontal: 20,
+              elevation: 1,
+              borderWidth: 0.75,
+              borderColor: "#e3e3e3",
+            }}
+          >
+            <View style={{ flexDirection: "row", marginHorizontal: 8 }}>
+              <View>
+                <Image
+                  source={{ uri: matcher.profile.avatarLink }}
+                  style={{
+                    width: width * 0.14,
+                    height: width * 0.14,
+                    marginRight: 8,
+                    borderRadius: 40,
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text
                     style={{
-                      width: width * 0.14,
-                      height: width * 0.14,
-                      marginRight: 8,
-                      borderRadius: 40,
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      color: "#333",
                     }}
-                  />
-                </View>
-                <View style={{ flex: 1 }}>
+                  >
+                    {matcher.profile.fullName}
+                  </Text>
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "#F39300",
+                      paddingHorizontal: 12,
+                      paddingVertical: 2,
+                      borderRadius: 20,
                     }}
                   >
+                    <Ionicons name="star" size={18} color="white" />
                     <Text
                       style={{
-                        fontSize: 20,
+                        fontSize: 16,
+                        marginLeft: 6,
                         fontWeight: "bold",
-                        color: "#333",
+                        color: "white",
                       }}
                     >
-                      {matcher.profile.fullName}
+                      {matcher.rating}
                     </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        backgroundColor: "#F39300",
-                        paddingHorizontal: 12,
-                        paddingVertical: 2,
-                        borderRadius: 20,
-                      }}
-                    >
-                      <Ionicons name="star" size={18} color="white" />
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          marginLeft: 6,
-                          fontWeight: "bold",
-                          color: "white",
-                        }}
-                      >
-                        {matcher.rating}
-                      </Text>
-                    </View>
                   </View>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "gray",
+                    marginVertical: 2,
+                  }}
+                >
+                  {matcher?.expertise?.name || matcher?.specialization?.name}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                backgroundColor: "#f0f0f0",
+                borderRadius: 10,
+                paddingVertical: 8,
+                marginTop: 8,
+                marginHorizontal: 8,
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Ionicons name="mail" size={20} color="black" />
                   <Text
                     style={{
-                      fontSize: 18,
-                      color: "gray",
-                      marginVertical: 2,
+                      fontSize: 16,
+                      fontWeight: "600",
+                      marginLeft: 8,
                     }}
                   >
-                    {matcher?.expertise?.name || matcher?.specialization?.name}
+                    Email
                   </Text>
                 </View>
+                <Text style={{ marginTop: 8, color: "#555" }}>
+                  {matcher.email}
+                </Text>
               </View>
               <View
                 style={{
-                  backgroundColor: "#f0f0f0",
-                  borderRadius: 10,
-                  paddingVertical: 8,
-                  marginTop: 8,
-                  marginHorizontal: 8,
-                  flexDirection: "row",
-                  justifyContent: "center",
+                  borderLeftWidth: 0.75,
+                  borderColor: "#ccc",
+                  height: "90%",
+                  marginVertical: 4,
                 }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Ionicons name="mail" size={20} color="black" />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "600",
-                        marginLeft: 8,
-                      }}
-                    >
-                      Email
-                    </Text>
-                  </View>
-                  <Text style={{ marginTop: 8, color: "#555" }}>
-                    {matcher.email}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    borderLeftWidth: 0.75,
-                    borderColor: "#ccc",
-                    height: "90%",
-                    marginVertical: 4,
-                  }}
-                />
-                <View
-                  style={{
-                    flex: 1,
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Ionicons name="call" size={20} color="black" />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "600",
-                        marginLeft: 8,
-                      }}
-                    >
-                      Contact
-                    </Text>
-                  </View>
-                  <Text style={{ marginTop: 8, color: "#555" }}>
-                    {matcher.profile.phoneNumber}
-                  </Text>
-                </View>
-              </View>
-
-              <TouchableOpacity
-                disabled={
-                  selectedSlot === "" || online === null || reason === ""
-                }
+              />
+              <View
                 style={{
-                  backgroundColor:
-                    selectedSlot === "" || online === null || reason === ""
-                      ? "#ededed"
-                      : "#F39300",
-                  borderRadius: 10,
-                  paddingVertical: 8,
-                  marginTop: 12,
-                  marginHorizontal: 8,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "row",
+                  flex: 1,
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
                 }}
-                onPress={() => setOpenConfirm(true)}
               >
-                <Text
-                  style={{
-                    fontWeight: "500",
-                    color:
-                      selectedSlot === "" || online === null || reason === ""
-                        ? "gray"
-                        : "white",
-                    fontSize: 18,
-                    marginRight: 8,
-                  }}
-                >
-                  Book Appointment
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Ionicons name="call" size={20} color="black" />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      marginLeft: 8,
+                    }}
+                  >
+                    Contact
+                  </Text>
+                </View>
+                <Text style={{ marginTop: 8, color: "#555" }}>
+                  {matcher.profile.phoneNumber}
                 </Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={24}
-                  style={{
-                    color:
-                      selectedSlot === "" || online === null || reason === ""
-                        ? "gray"
-                        : "white",
-                  }}
-                />
-              </TouchableOpacity>
+              </View>
             </View>
             <View
               style={{
                 paddingVertical: 12,
-                paddingHorizontal: 20,
+                marginHorizontal: 8,
               }}
             >
               <Text
@@ -1436,7 +1490,7 @@ export default function CounselorRand() {
                   fontWeight: "600",
                 }}
               >
-                Form of counseling <Text style={{ color: "#F39300" }}>*</Text>
+                Meeting method <Text style={{ color: "#F39300" }}>*</Text>
               </Text>
               <View
                 style={{
@@ -1528,48 +1582,48 @@ export default function CounselorRand() {
                 </View>
               </View>
             </View>
-            <View
+            <TouchableOpacity
+              disabled={selectedSlot === "" || online === null || reason === ""}
               style={{
-                paddingVertical: 12,
-                paddingHorizontal: 20,
+                backgroundColor:
+                  selectedSlot === "" || online === null || reason === ""
+                    ? "#ededed"
+                    : "#F39300",
+                borderRadius: 10,
+                paddingVertical: 8,
+                marginTop: 12,
+                marginHorizontal: 8,
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
               }}
+              onPress={() => setOpenConfirm(true)}
             >
               <Text
                 style={{
+                  fontWeight: "500",
+                  color:
+                    selectedSlot === "" || online === null || reason === ""
+                      ? "gray"
+                      : "white",
                   fontSize: 18,
-                  fontWeight: "600",
-                  marginBottom: 12,
+                  marginRight: 8,
                 }}
               >
-                What subject do you want counsel on?{" "}
-                <Text style={{ color: "#F39300" }}>*</Text>
+                Book Appointment
               </Text>
-              <View>
-                <TextInput
-                  placeholder="Write here"
-                  placeholderTextColor="gray"
-                  keyboardType="default"
-                  multiline={true}
-                  numberOfLines={2}
-                  value={reason}
-                  onChangeText={(value) => setReason(value)}
-                  style={{
-                    flex: 1,
-                    fontWeight: "600",
-                    fontSize: 16,
-                    opacity: 0.8,
-                    paddingVertical: 8,
-                    textAlignVertical: "top",
-                    paddingHorizontal: 12,
-                    backgroundColor: "#ededed",
-                    borderColor: "gray",
-                    borderWidth: 1,
-                    borderRadius: 10,
-                  }}
-                />
-              </View>
-            </View>
-          </>
+              <Ionicons
+                name="chevron-forward"
+                size={24}
+                style={{
+                  color:
+                    selectedSlot === "" || online === null || reason === ""
+                      ? "gray"
+                      : "white",
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         ) : (
           <>
             {error && loading2 == false ? (
@@ -1612,7 +1666,7 @@ export default function CounselorRand() {
         >
           <View
             style={{
-              width: width * 0.8,
+              width: width * 0.9,
               padding: 20,
               backgroundColor: "white",
               borderRadius: 10,
@@ -1629,14 +1683,139 @@ export default function CounselorRand() {
             >
               Booking Confirmation
             </Text>
+            <View
+              style={{
+                paddingHorizontal: 8,
+                paddingVertical: 12,
+                borderWidth: 1.5,
+                borderColor: "#e3e3e3",
+                borderRadius: 10,
+              }}
+            >
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 8,
+                }}
+              >
+                <Ionicons name="calendar" size={20} color="#F39300" />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginLeft: 8,
+                  }}
+                >
+                  {selectedDate}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 8,
+                }}
+              >
+                <Ionicons name="time" size={20} color="#F39300" />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginLeft: 8,
+                  }}
+                >
+                  {selectedSlot?.startTime?.slice(0, 5)} -{" "}
+                  {selectedSlot?.endTime?.slice(0, 5)}
+                </Text>
+              </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 8,
+                }}
+              >
+                <MaterialIcons name="meeting-room" size={20} color="#F39300" />
+                <View
+                  style={{
+                    backgroundColor: "#F39300",
+                    borderRadius: 20,
+                    paddingVertical: 2,
+                    paddingHorizontal: 12,
+                    marginLeft: 8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      color: "white",
+                    }}
+                  >
+                    {online ? "ONLINE" : "OFFLINE"}
+                  </Text>
+                </View>
+              </View>
+              <View style={{ height: 1, backgroundColor: "#F39300", marginBottom: 8 }} />
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  marginBottom: 8,
+                }}
+              >
+                <MaterialIcons name="notes" size={20} color="#F39300" />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "400",
+                    marginLeft: 8,
+                    maxWidth: "95%"
+                  }}
+                >
+                  {reason}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  marginBottom: 8,
+                }}
+              >
+                <Ionicons name="person" size={20} color="#F39300" />
+                <View style={{ marginLeft: 8 }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "500",
+                    }}
+                  >
+                    {matcher?.profile?.fullName}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "gray",
+                    }}
+                  >
+                    {matcher?.expertise?.name || matcher?.specialization?.name}
+                  </Text>
+                </View>
+              </View>
+            </View>
             <Text
               style={{
                 fontSize: 18,
-                marginBottom: 20,
-                textAlign: "center",
+                marginVertical: 12,
+                textAlign: "left",
               }}
             >
-              Are you sure you want to book?{"\n"}A request will be sent to the chosen counselor
+              Are you sure you want to book?{"\n"}A request will be sent to the
+              chosen counselor
             </Text>
             <View
               style={{

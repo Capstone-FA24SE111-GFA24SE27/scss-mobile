@@ -171,8 +171,8 @@ export default function Schedule() {
               studentGender: appointment?.studentInfo?.profile?.gender,
               studentCode: appointment?.studentInfo?.studentCode,
               studentPhone: appointment?.studentInfo?.profile?.phoneNumber,
-              studentSpecialization:
-                appointment?.studentInfo?.specialization?.name,
+              studentMajor:
+                appointment?.studentInfo?.major?.name,
               status: appointment?.status,
               feedback: appointment?.appointmentFeedback,
               havingReport: appointment?.havingReport,
@@ -828,7 +828,7 @@ export default function Schedule() {
                           marginBottom: 2,
                         }}
                       >
-                        {info?.studentSpecialization}
+                        {info?.studentMajor}
                       </Text>
                       <Text
                         style={{
@@ -1009,7 +1009,7 @@ export default function Schedule() {
                       <View
                         style={{
                           backgroundColor: "#F39300",
-                          borderRadius: 18,
+                          borderRadius: 20,
                           paddingVertical: 6,
                           paddingHorizontal: 12,
                         }}

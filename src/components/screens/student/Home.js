@@ -151,7 +151,7 @@ export default function Home() {
           counselorName: appointment?.counselorInfo?.profile?.fullName,
           counselorImage: appointment?.counselorInfo?.profile?.avatarLink,
           counselorSpec:
-            appointment?.counselorInfo?.specialization?.name ||
+            appointment?.counselorInfo?.major?.name ||
             appointment?.counselorInfo?.expertise?.name,
           status: appointment.status,
         }));

@@ -19,6 +19,8 @@ import { RequestSkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import { Dropdown } from "react-native-element-dropdown";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+import AlertModal from "../../layout/AlertModal";
+import ExtendInfoModal from "../../layout/ExtendInfoModal";
 
 export default function Request({ route }) {
   const navigation = useNavigation();
@@ -56,6 +58,8 @@ export default function Request({ route }) {
   const [modalMessage, setModalMessage] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
+  const [openExtendInfo, setOpenExtendInfo] = useState(false);
+  const [extendInfo, setExtendInfo] = useState(null);
 
   const scrollViewRef = useRef(null);
   useFocusEffect(
@@ -103,94 +107,6 @@ export default function Request({ route }) {
     } else {
       setDateTo(formatDate(currentDate));
     }
-  };
-
-  const customAlert = () => {
-    return (
-      <>
-        {showModal && (
-          <Modal
-            transparent={true}
-            animationType="fade"
-            visible={showModal}
-            onRequestClose={() => setShowModal(false)}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-              }}
-            >
-              <View
-                style={{
-                  width: width * 0.85,
-                  paddingVertical: 25,
-                  paddingHorizontal: 18,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  alignItems: "center",
-                  marginVertical: 12,
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "#ededed",
-                    padding: 4,
-                    borderRadius: 30,
-                    alignSelf: "flex-end",
-                  }}
-                  onPress={() => setShowModal(false)}
-                >
-                  <Ionicons name="close" size={28} color="black" />
-                </TouchableOpacity>
-                <Ionicons name="alert-circle" size={80} color="#F39300" />
-                <Text
-                  style={{
-                    color: "#F39300",
-                    fontSize: 30,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Warning
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    textAlign: "center",
-                    marginVertical: 12,
-                  }}
-                >
-                  {modalMessage}
-                </Text>
-                {/* <TouchableOpacity
-                  onPress={() => setShowModal(false)}
-                  style={{
-                    backgroundColor: "#F39300",
-                    paddingVertical: 12,
-                    paddingHorizontal: 16,
-                    borderRadius: 30,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: "white",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Close
-                  </Text>
-                </TouchableOpacity> */}
-              </View>
-            </View>
-          </Modal>
-        )}
-      </>
-    );
   };
 
   const fetchData = async (filters = {}) => {
@@ -449,7 +365,12 @@ export default function Request({ route }) {
                     />
                   )}
                 </View>
-                {customAlert()}
+                <AlertModal
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                  modalMessage={modalMessage}
+                  setModalMessage={setModalMessage}
+                />
               </View>
               <View
                 style={{
@@ -890,8 +811,7 @@ export default function Request({ route }) {
                           marginLeft: 8,
                         }}
                       >
-                        {request?.startTime?.slice(0, 5)}{" "}
-                        -{" "}
+                        {request?.startTime?.slice(0, 5)} -{" "}
                         {request?.endTime?.slice(0, 5)}
                       </Text>
                     </View>
@@ -980,7 +900,10 @@ export default function Request({ route }) {
                     borderRadius: 16,
                   }}
                 >
-                  <View
+                  <TouchableOpacity
+                    onPress={() => (
+                      setOpenExtendInfo(true), setExtendInfo(info?.counselor)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -1046,7 +969,7 @@ export default function Request({ route }) {
                           marginBottom: 2,
                         }}
                       >
-                        {info?.counselor?.specialization?.name ||
+                        {info?.counselor?.major?.name ||
                           info?.counselor?.expertise?.name}
                       </Text>
                       <Text
@@ -1067,7 +990,7 @@ export default function Request({ route }) {
                         Phone: {info?.counselor?.profile?.phoneNumber}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       marginBottom: 20,
@@ -1173,8 +1096,7 @@ export default function Request({ route }) {
                           color: "#333",
                         }}
                       >
-                        {info?.startTime?.slice(0, 5)}{" "}
-                        -{" "}
+                        {info?.startTime?.slice(0, 5)} -{" "}
                         {info?.endTime?.slice(0, 5)}
                       </Text>
                     </View>
@@ -1208,7 +1130,7 @@ export default function Request({ route }) {
                       <View
                         style={{
                           backgroundColor: "#F39300",
-                          borderRadius: 18,
+                          borderRadius: 20,
                           paddingVertical: 6,
                           paddingHorizontal: 12,
                         }}
@@ -1277,6 +1199,12 @@ export default function Request({ route }) {
             </View>
           </View>
         </Modal>
+        <ExtendInfoModal
+          openExtendInfo={openExtendInfo}
+          setOpenExtendInfo={setOpenExtendInfo}
+          extendInfo={extendInfo}
+          setExtendInfo={setExtendInfo}
+        />
       </View>
     </>
   );

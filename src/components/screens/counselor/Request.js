@@ -21,6 +21,7 @@ import { RequestSkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import { Dropdown } from "react-native-element-dropdown";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+import AlertModal from "../../layout/AlertModal";
 
 export default function Request({ route }) {
   const navigation = useNavigation();
@@ -111,73 +112,6 @@ export default function Request({ route }) {
     } else {
       setDateTo(formatDate(currentDate));
     }
-  };
-
-  const customAlert = () => {
-    return (
-      <>
-        {showModal && (
-          <Modal
-            transparent={true}
-            animationType="fade"
-            visible={showModal}
-            onRequestClose={() => setShowModal(false)}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-              }}
-            >
-              <View
-                style={{
-                  width: width * 0.85,
-                  paddingVertical: 25,
-                  paddingHorizontal: 20,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  alignItems: "center",
-                  marginVertical: 12,
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "#ededed",
-                    padding: 4,
-                    borderRadius: 30,
-                    alignSelf: "flex-end",
-                  }}
-                  onPress={() => setShowModal(false)}
-                >
-                  <Ionicons name="close" size={28} color="black" />
-                </TouchableOpacity>
-                <Ionicons name="alert-circle" size={80} color="#F39300" />
-                <Text
-                  style={{
-                    color: "#F39300",
-                    fontSize: 30,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Warning
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    textAlign: "center",
-                    marginVertical: 12,
-                  }}
-                >
-                  {modalMessage}
-                </Text>
-              </View>
-            </View>
-          </Modal>
-        )}
-      </>
-    );
   };
 
   const fetchData = async (filters = {}) => {
@@ -531,8 +465,13 @@ export default function Request({ route }) {
                     />
                   )}
                 </View>
-                {customAlert()}
-              </View>
+                <AlertModal
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    modalMessage={modalMessage}
+                    setModalMessage={setModalMessage}
+                  />              
+                </View>
               <View
                 style={{
                   flexDirection: "row",
@@ -1489,7 +1428,7 @@ export default function Request({ route }) {
                           marginBottom: 2,
                         }}
                       >
-                        {info?.student?.specialization?.name}
+                        {info?.student?.major?.name}
                       </Text>
                       <Text
                         style={{
@@ -1649,7 +1588,7 @@ export default function Request({ route }) {
                       <View
                         style={{
                           backgroundColor: "#F39300",
-                          borderRadius: 18,
+                          borderRadius: 20,
                           paddingVertical: 6,
                           paddingHorizontal: 12,
                         }}

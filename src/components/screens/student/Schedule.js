@@ -21,6 +21,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SocketContext } from "../../context/SocketContext";
 import { AuthContext } from "../../context/AuthContext";
 import Toast from "react-native-toast-message";
+import ExtendInfoModal from "../../layout/ExtendInfoModal";
 
 export default function Schedule() {
   const { width, height } = Dimensions.get("screen");
@@ -32,9 +33,11 @@ export default function Schedule() {
     new Date().toISOString().split("T")[0]
   );
   const [openInfo, setOpenInfo] = useState(false);
+  const [info, setInfo] = useState({});
+  const [openExtendInfo, setOpenExtendInfo] = useState(false);
+  const [extendInfo, setExtendInfo] = useState(null);
   const [openFeedback, setOpenFeedback] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [info, setInfo] = useState({});
   const [rating, setRating] = useState(0);
   const [value, setValue] = useState("");
 
@@ -139,10 +142,10 @@ export default function Schedule() {
               counselorEmail: appointment?.counselorInfo?.email,
               counselorGender: appointment?.counselorInfo?.profile?.gender,
               counselorPhone: appointment?.counselorInfo?.profile?.phoneNumber,
-              counselorSpecialization:
-                appointment?.counselorInfo?.specialization?.name,
+              counselorMajor: appointment?.counselorInfo?.major?.name,
               status: appointment?.status,
               feedback: appointment?.appointmentFeedback,
+              extendInfo: appointment?.counselorInfo,
             });
             return acc;
           }, {});
@@ -418,13 +421,15 @@ export default function Schedule() {
                     alignSelf: "flex-start",
                     alignItems: "flex-start",
                   }}
-                  onPress={() => (setInfo(""),
-                    setOpenInfo(false))}
+                  onPress={() => (setInfo(""), setOpenInfo(false))}
                 >
                   <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                  <View
+                  <TouchableOpacity
+                    onPress={() => (
+                      setOpenExtendInfo(true), setExtendInfo(info?.extendInfo)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -491,7 +496,7 @@ export default function Schedule() {
                           marginBottom: 2,
                         }}
                       >
-                        {info?.counselorSpecialization}
+                        {info?.counselorMajor}
                       </Text>
                       <Text
                         style={{
@@ -511,7 +516,7 @@ export default function Schedule() {
                         Phone: {info?.counselorPhone}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       marginHorizontal: 20,
@@ -672,7 +677,7 @@ export default function Schedule() {
                       <View
                         style={{
                           backgroundColor: "#F39300",
-                          borderRadius: 18,
+                          borderRadius: 20,
                           paddingVertical: 6,
                           paddingHorizontal: 12,
                         }}
@@ -733,9 +738,7 @@ export default function Schedule() {
                       <TouchableOpacity
                         disabled={info.meetingType !== "ONLINE"}
                         onPress={() =>
-                          Linking.openURL(
-                            `${info.place}`
-                          ).catch((err) => {
+                          Linking.openURL(`${info.place}`).catch((err) => {
                             console.log("Can't open this link", err);
                             Toast.show({
                               type: "error",
@@ -909,6 +912,12 @@ export default function Schedule() {
               </View>
             </View>
           </Modal>
+          <ExtendInfoModal
+            openExtendInfo={openExtendInfo}
+            setOpenExtendInfo={setOpenExtendInfo}
+            extendInfo={extendInfo}
+            setExtendInfo={setExtendInfo}
+          />
           <Modal
             transparent={true}
             visible={openFeedback}

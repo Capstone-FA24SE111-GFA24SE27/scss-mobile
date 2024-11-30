@@ -150,7 +150,7 @@ export default function Home() {
               : `${appointment?.address}`,
           studentName: appointment?.studentInfo?.profile?.fullName,
           studentImage: appointment?.studentInfo?.profile?.avatarLink,
-          studentSpec: appointment?.studentInfo?.specialization?.name,
+          studentSpec: appointment?.studentInfo?.major?.name,
           status: appointment.status,
         }));
         setAppointments(formattedAppointments);

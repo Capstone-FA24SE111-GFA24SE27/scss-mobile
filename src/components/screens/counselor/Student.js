@@ -35,6 +35,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import Pagination from "../../layout/Pagination";
 import Markdown from "react-native-markdown-display";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+import AlertModal from "../../layout/AlertModal";
 
 export default function Student() {
   const navigation = useNavigation();
@@ -213,7 +214,7 @@ export default function Student() {
 
   const handleSaveTags = () => {
     const behaviorList = tagsList.join(",");
-    fetchData({...filters, behaviorList: behaviorList });
+    fetchData({ ...filters, behaviorList: behaviorList });
     setOpenTags(false);
   };
 
@@ -545,73 +546,6 @@ export default function Student() {
     setSortDirection2(resetFilters.SortDirection);
     setFilters2(resetFilters);
     fetchStudentInfo6(resetFilters);
-  };
-
-  const customAlert = () => {
-    return (
-      <>
-        {showModal && (
-          <Modal
-            transparent={true}
-            animationType="fade"
-            visible={showModal}
-            onRequestClose={() => setShowModal(false)}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-              }}
-            >
-              <View
-                style={{
-                  width: width * 0.85,
-                  paddingVertical: 25,
-                  paddingHorizontal: 18,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  alignItems: "center",
-                  marginVertical: 12,
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "#ededed",
-                    padding: 4,
-                    borderRadius: 30,
-                    alignSelf: "flex-end",
-                  }}
-                  onPress={() => setShowModal(false)}
-                >
-                  <Ionicons name="close" size={28} color="black" />
-                </TouchableOpacity>
-                <Ionicons name="alert-circle" size={80} color="#F39300" />
-                <Text
-                  style={{
-                    color: "#F39300",
-                    fontSize: 30,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Warning
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    textAlign: "center",
-                    marginVertical: 12,
-                  }}
-                >
-                  {modalMessage}
-                </Text>
-              </View>
-            </View>
-          </Modal>
-        )}
-      </>
-    );
   };
 
   const formatDate = (value) => {
@@ -3710,7 +3644,14 @@ export default function Student() {
                                     style={{
                                       paddingVertical: 12,
                                       marginBottom: 8,
-                                      borderBottomWidth: index == info3.filter((subject) => subject.term === term).length - 1 ? 0 : 2,
+                                      borderBottomWidth:
+                                        index ==
+                                        info3.filter(
+                                          (subject) => subject.term === term
+                                        ).length -
+                                          1
+                                          ? 0
+                                          : 2,
                                       borderBottomColor: "lightgrey",
                                     }}
                                   >
@@ -4025,7 +3966,8 @@ export default function Student() {
                                 paddingVertical: 4,
                                 backgroundColor: "#fdfdfd",
                                 borderRadius: 10,
-                                borderBottomWidth: index == info4.length - 1 ? 0 : 2,
+                                borderBottomWidth:
+                                  index == info4.length - 1 ? 0 : 2,
                                 borderBottomColor: "lightgrey",
                               }}
                             >
@@ -4537,7 +4479,12 @@ export default function Student() {
                             />
                           )}
                         </View>
-                        {customAlert()}
+                        <AlertModal
+                          showModal={showModal}
+                          setShowModal={setShowModal}
+                          modalMessage={modalMessage}
+                          setModalMessage={setModalMessage}
+                        />
                       </View>
                       <View
                         style={{
@@ -5177,7 +5124,7 @@ export default function Student() {
                                   <View
                                     style={{
                                       backgroundColor: "#F39300",
-                                      borderRadius: 18,
+                                      borderRadius: 20,
                                       paddingVertical: 6,
                                       paddingHorizontal: 12,
                                     }}

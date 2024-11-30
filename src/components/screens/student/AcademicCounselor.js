@@ -33,6 +33,8 @@ import ErrorModal from "../../layout/ErrorModal";
 import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import AlertModal from "../../layout/AlertModal";
+import ExtendInfoModal from "../../layout/ExtendInfoModal";
 
 export default function AcademicCounselor() {
   const navigation = useNavigation();
@@ -43,6 +45,8 @@ export default function AcademicCounselor() {
   const scrollViewRef = useRef(null);
   const [counselors, setCounselors] = useState([]);
   const [filters, setFilters] = useState({
+    availableFrom: "",
+    availableTo: "",
     ratingFrom: 0,
     ratingTo: 5,
     SortDirection: "",
@@ -53,6 +57,13 @@ export default function AcademicCounselor() {
   });
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
+  const [showFromPicker, setShowFromPicker] = useState(false);
+  const [showToPicker, setShowToPicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [availableFrom, setAvailableFrom] = useState("");
+  const [availableTo, setAvailableTo] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const [selectedFrom, setSelectedFrom] = useState(0);
   const [selectedTo, setSelectedTo] = useState(5);
   const ratings = [0, 1, 2, 3, 4, 5];
@@ -70,8 +81,10 @@ export default function AcademicCounselor() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCounselor, setSelectedCounselor] = useState({});
   const [openBooking, setOpenBooking] = useState(false);
+  const [openExtendInfo, setOpenExtendInfo] = useState(false);
+  const [extendInfo, setExtendInfo] = useState(null);
   const [slots, setSlots] = useState({});
-  const [selectedDate, setSelectedDate] = useState(
+  const [selectedDate2, setSelectedDate2] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -173,6 +186,8 @@ export default function AcademicCounselor() {
     setLoading(true);
     setCurrentPage(1);
     const newFilters = {
+      availableFrom: availableFrom,
+      availableTo: availableTo,
       ratingFrom: selectedFrom,
       ratingTo: selectedTo,
       SortDirection: sortDirection,
@@ -190,6 +205,8 @@ export default function AcademicCounselor() {
     setLoading(true);
     setCurrentPage(1);
     const resetFilters = {
+      availableFrom: "",
+      availableTo: "",
       ratingFrom: 0,
       ratingTo: 5,
       SortDirection: "",
@@ -199,6 +216,8 @@ export default function AcademicCounselor() {
       specializationId: "",
     };
     setKeyword("");
+    setAvailableFrom(resetFilters.availableFrom);
+    setAvailableTo(resetFilters.availableTo);
     setSelectedFrom(resetFilters.ratingFrom);
     setSelectedTo(resetFilters.ratingTo);
     setSortDirection(resetFilters.SortDirection);
@@ -272,11 +291,11 @@ export default function AcademicCounselor() {
       );
       const counselorData = counselorRes?.data || [];
       setSelectedCounselor(counselorData);
-      // setSelectedDate(new Date().toISOString().split("T")[0]);
-      setSelectedDate((prev) => {
-        return selectedDate || prev;
+      // setSelectedDate2(new Date().toISOString().split("T")[0]);
+      setSelectedDate2((prev) => {
+        return selectedDate2 || prev;
       });
-      const startOfWeek = new Date(selectedDate);
+      const startOfWeek = new Date(selectedDate2);
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 31);
       startOfWeek.setDate(startOfWeek.getDate() - 31);
@@ -299,6 +318,36 @@ export default function AcademicCounselor() {
     return formattedDate;
   };
 
+  const onFromDateChange = (e, selectedDate) => {
+    if (e?.type === "dismissed") {
+      setShowFromPicker(false);
+      return;
+    }
+    const currentDate = selectedDate || new Date();
+    setShowFromPicker(Platform.OS === "ios");
+    if (new Date(currentDate) > new Date(availableTo)) {
+      setModalMessage("The 'From' date cannot be later than the 'To' date.");
+      setShowModal(true);
+    } else {
+      setAvailableFrom(formatDate(currentDate));
+    }
+  };
+
+  const onToDateChange = (e, selectedDate) => {
+    if (e?.type === "dismissed") {
+      setShowToPicker(false);
+      return;
+    }
+    const currentDate = selectedDate || new Date();
+    setShowToPicker(Platform.OS === "ios");
+    if (new Date(currentDate) < new Date(availableFrom)) {
+      setModalMessage("The 'To' date cannot be earlier than the 'From' date.");
+      setShowModal(true);
+    } else {
+      setAvailableTo(formatDate(currentDate));
+    }
+  };
+
   const onDateChange = (e, newDate) => {
     if (e?.type === "dismissed") {
       setShowDatePicker(false);
@@ -307,7 +356,7 @@ export default function AcademicCounselor() {
     const currentDate = newDate || new Date();
     setShowDatePicker(Platform.OS === "ios");
     const formattedDate = formatDate(currentDate);
-    setSelectedDate(formattedDate);
+    setSelectedDate2(formattedDate);
   };
 
   const handleCloseBooking = () => {
@@ -352,8 +401,8 @@ export default function AcademicCounselor() {
     }
   };
 
-  const renderSlotsForSelectedDate = () => {
-    const daySlots = slots[selectedDate] || [];
+  const renderSlotsForSelectedDate2 = () => {
+    const daySlots = slots[selectedDate2] || [];
     if (!daySlots.length) {
       return (
         <Text
@@ -364,7 +413,7 @@ export default function AcademicCounselor() {
             marginTop: 12,
           }}
         >
-          No available slots for {selectedDate}
+          No available slots for {selectedDate2}
         </Text>
       );
     }
@@ -380,10 +429,9 @@ export default function AcademicCounselor() {
       >
         {daySlots.map((slot, index) => (
           <TouchableOpacity
-            key={`${selectedDate}-${slot.slotCode}-${index}`}
+            key={`${selectedDate2}-${slot.slotCode}-${index}`}
             onPress={() => (
-              console.log(selectedDate, slot.slotCode),
-              setSelectedSlot(slot.slotCode)
+              console.log(selectedDate2, slot), setSelectedSlot(slot)
             )}
             disabled={
               slot.status === "EXPIRED" ||
@@ -398,7 +446,8 @@ export default function AcademicCounselor() {
               backgroundColor:
                 slot.myAppointment === true
                   ? "#F39300"
-                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode &&
+                    slot.status !== "EXPIRED"
                   ? "white"
                   : slot.status === "EXPIRED"
                   ? "#ededed"
@@ -411,7 +460,8 @@ export default function AcademicCounselor() {
               borderColor:
                 slot.myAppointment === true
                   ? "white"
-                  : selectedSlot === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode &&
+                    slot.status !== "EXPIRED"
                   ? "#F39300"
                   : slot.status === "EXPIRED"
                   ? "transparent"
@@ -420,7 +470,7 @@ export default function AcademicCounselor() {
                   : "transparent",
             }}
           >
-            {selectedSlot === slot.slotCode &&
+            {selectedSlot?.slotCode === slot.slotCode &&
               slot.status !== "EXPIRED" &&
               slot.status !== "UNAVAILABLE" &&
               slot.myAppointment !== true && (
@@ -439,7 +489,7 @@ export default function AcademicCounselor() {
                 color:
                   slot.myAppointment === true
                     ? "white"
-                    : selectedSlot === slot.slotCode &&
+                    : selectedSlot?.slotCode === slot.slotCode &&
                       slot.status !== "EXPIRED"
                     ? "#F39300"
                     : slot.status === "EXPIRED"
@@ -458,7 +508,7 @@ export default function AcademicCounselor() {
     );
   };
 
-  useEffect(() => {}, [socket, selectedDate]);
+  useEffect(() => {}, [socket, selectedDate2]);
 
   const handleSocketChange = useCallback(
     (day) => {
@@ -485,11 +535,11 @@ export default function AcademicCounselor() {
         }
       };
 
-      setSelectedDate(day.dateString);
+      setSelectedDate2(day.dateString);
       setSelectedSlot("");
       console.log(`/user/${day.dateString}/${selectedCounselor?.id}/slot`);
       if (socket) {
-        socket.off(`/user/${selectedDate}/${selectedCounselor?.id}/slot`);
+        socket.off(`/user/${selectedDate2}/${selectedCounselor?.id}/slot`);
         console.log("Begin");
         socket.on(
           `/user/${day.dateString}/${selectedCounselor?.id}/slot`,
@@ -497,7 +547,7 @@ export default function AcademicCounselor() {
         );
       }
     },
-    [socket, selectedDate, selectedCounselor, userData]
+    [socket, selectedDate2, selectedCounselor, userData]
   );
 
   const handleCreateRequest = async () => {
@@ -505,8 +555,8 @@ export default function AcademicCounselor() {
       const response = await axiosJWT.post(
         `${BASE_URL}/booking-counseling/${selectedCounselor?.id}/appointment-request/create`,
         {
-          slotCode: selectedSlot,
-          date: selectedDate,
+          slotCode: selectedSlot?.slotCode,
+          date: selectedDate2,
           isOnline: online,
           reason: reason,
         }
@@ -514,13 +564,13 @@ export default function AcademicCounselor() {
       const data = await response.data;
       if (data && data.status == 200) {
         setOpenConfirm(false);
-        const startOfWeek = new Date(selectedDate);
+        const startOfWeek = new Date(selectedDate2);
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 31);
         startOfWeek.setDate(startOfWeek.getDate() - 31);
         const from = startOfWeek.toISOString().split("T")[0];
         const to = endOfWeek.toISOString().split("T")[0];
-        renderSlotsForSelectedDate();
+        renderSlotsForSelectedDate2();
         fetchSlots(selectedCounselor?.id, from, to);
         fetchData();
         setOpenSuccess(true);
@@ -702,6 +752,107 @@ export default function AcademicCounselor() {
               <View style={{ paddingHorizontal: 10 }}>
                 <View
                   style={{
+                    paddingVertical: 8,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginLeft: 4,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        marginBottom: 8,
+                      }}
+                    >
+                      Available From:
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        borderRadius: 20,
+                        paddingHorizontal: 12,
+                        alignItems: "center",
+                        backgroundColor: "white",
+                        height: 40,
+                        borderWidth: 1,
+                        borderColor: "gray",
+                      }}
+                    >
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
+                        {availableFrom !== "" ? availableFrom : "xxxx-xx-xx"}
+                      </Text>
+                      <TouchableOpacity onPress={() => setShowFromPicker(true)}>
+                        <Ionicons
+                          name="calendar-outline"
+                          size={20}
+                          color="#F39300"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    {showFromPicker && (
+                      <RNDateTimePicker
+                        value={selectedDate}
+                        mode="date"
+                        display="default"
+                        onChange={onFromDateChange}
+                      />
+                    )}
+                  </View>
+                  <View style={{ flex: 1, paddingLeft: 10 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        marginBottom: 8,
+                      }}
+                    >
+                      Available To:
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        borderRadius: 20,
+                        paddingHorizontal: 12,
+                        alignItems: "center",
+                        backgroundColor: "white",
+                        height: 40,
+                        borderWidth: 1,
+                        borderColor: "gray",
+                      }}
+                    >
+                      <Text style={{ fontSize: 16, opacity: 0.8, flex: 1 }}>
+                        {availableTo !== "" ? availableTo : "xxxx-xx-xx"}
+                      </Text>
+                      <TouchableOpacity onPress={() => setShowToPicker(true)}>
+                        <Ionicons
+                          name="calendar-outline"
+                          size={20}
+                          color="#F39300"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    {showToPicker && (
+                      <RNDateTimePicker
+                        value={selectedDate}
+                        mode="date"
+                        display="default"
+                        onChange={onToDateChange}
+                      />
+                    )}
+                  </View>
+                  <AlertModal
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    modalMessage={modalMessage}
+                    setModalMessage={setModalMessage}
+                  />
+                </View>
+                <View
+                  style={{
                     paddingVertical: 12,
                     flexDirection: "row",
                     justifyContent: "space-between",
@@ -827,124 +978,6 @@ export default function AcademicCounselor() {
                     </View>
                   </View>
                 </View>
-                {/* <View
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginVertical: 4,
-                        marginLeft: 4,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          marginRight: 4,
-                        }}
-                      >
-                        Rating:
-                      </Text>
-                      <View
-                        style={{ flexDirection: "row", marginHorizontal: 16 }}
-                      >
-                        <View style={{ flexDirection: "row" }}>
-                          {ratings.map((item, index) => (
-                            <View key={index}>
-                              {item < selectedTo && (
-                                <TouchableOpacity
-                                  onPress={() => {
-                                    if (item < selectedTo)
-                                      setSelectedFrom(item);
-                                  }}
-                                  disabled={item >= selectedTo}
-                                  style={[
-                                    {
-                                      paddingHorizontal: 10,
-                                      paddingVertical: 4,
-                                      borderRadius: 20,
-                                      marginRight: 3,
-                                      backgroundColor: "white",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      elevation: 2,
-                                      opacity: item >= selectedTo ? 0.6 : 1,
-                                    },
-                                    selectedFrom === item && {
-                                      backgroundColor: "#F39300",
-                                    },
-                                  ]}
-                                >
-                                  <Text
-                                    style={{
-                                      color:
-                                        selectedFrom === item
-                                          ? "white"
-                                          : "black",
-                                      fontSize: 14,
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    {item}
-                                  </Text>
-                                </TouchableOpacity>
-                              )}
-                            </View>
-                          ))}
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "600",
-                            marginHorizontal: 8,
-                          }}
-                        >
-                          -
-                        </Text>
-                        <View style={{ flexDirection: "row" }}>
-                          {ratings.map((item, index) => (
-                            <View key={index}>
-                              {item > selectedFrom && (
-                                <TouchableOpacity
-                                  onPress={() => {
-                                    if (item > selectedFrom)
-                                      setSelectedTo(item);
-                                  }}
-                                  disabled={item <= selectedFrom}
-                                  style={[
-                                    {
-                                      paddingHorizontal: 10,
-                                      paddingVertical: 4,
-                                      borderRadius: 20,
-                                      marginLeft: 3,
-                                      backgroundColor: "white",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      elevation: 2,
-                                      opacity: item <= selectedFrom ? 0.6 : 1,
-                                    },
-                                    selectedTo === item && {
-                                      backgroundColor: "#F39300",
-                                    },
-                                  ]}
-                                >
-                                  <Text
-                                    style={{
-                                      color:
-                                        selectedTo === item ? "white" : "black",
-                                      fontSize: 14,
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    {item}
-                                  </Text>
-                                </TouchableOpacity>
-                              )}
-                            </View>
-                          ))}
-                        </View>
-                      </View>
-                    </View> */}
                 <View
                   style={{
                     flex: 1,
@@ -1184,12 +1217,12 @@ export default function AcademicCounselor() {
                     search
                     value={
                       selectedDepartment !== ""
-                        ? selectedDepartment.name
+                        ? selectedDepartment?.name
                         : "Select Department"
                     }
                     placeholder={
                       selectedDepartment !== ""
-                        ? selectedDepartment.name
+                        ? selectedDepartment?.name
                         : "Select Department"
                     }
                     searchPlaceholder="Search Department"
@@ -1216,7 +1249,7 @@ export default function AcademicCounselor() {
                             paddingHorizontal: 16,
                             paddingVertical: 8,
                             backgroundColor:
-                              item.name == selectedDepartment.name
+                              item?.name == selectedDepartment?.name
                                 ? "#F39300"
                                 : "white",
                           }}
@@ -1226,14 +1259,14 @@ export default function AcademicCounselor() {
                               fontSize: 16,
                               fontWeight: "500",
                               color:
-                                item.name == selectedDepartment.name
+                                item?.name == selectedDepartment?.name
                                   ? "white"
                                   : "black",
                             }}
                           >
-                            {item.name}
+                            {item?.name}
                           </Text>
-                          {selectedDepartment.name === item.name && (
+                          {selectedDepartment?.name === item?.name && (
                             <Ionicons
                               color="white"
                               name="checkmark"
@@ -1288,10 +1321,14 @@ export default function AcademicCounselor() {
                     labelField="name"
                     search
                     value={
-                      selectedMajor !== "" ? selectedMajor.name : "Select Major"
+                      selectedMajor !== ""
+                        ? selectedMajor?.name
+                        : "Select Major"
                     }
                     placeholder={
-                      selectedMajor !== "" ? selectedMajor.name : "Select Major"
+                      selectedMajor !== ""
+                        ? selectedMajor?.name
+                        : "Select Major"
                     }
                     searchPlaceholder="Search Major"
                     onFocus={() => setExpanded2(true)}
@@ -1317,7 +1354,7 @@ export default function AcademicCounselor() {
                             paddingHorizontal: 16,
                             paddingVertical: 8,
                             backgroundColor:
-                              item.name == selectedMajor.name
+                              item?.name == selectedMajor?.name
                                 ? "#F39300"
                                 : "white",
                           }}
@@ -1327,14 +1364,14 @@ export default function AcademicCounselor() {
                               fontSize: 16,
                               fontWeight: "500",
                               color:
-                                item.name == selectedMajor.name
+                                item?.name == selectedMajor?.name
                                   ? "white"
                                   : "black",
                             }}
                           >
-                            {item.name}
+                            {item?.name}
                           </Text>
-                          {selectedMajor.name === item.name && (
+                          {selectedMajor?.name === item?.name && (
                             <Ionicons
                               color="white"
                               name="checkmark"
@@ -1365,7 +1402,7 @@ export default function AcademicCounselor() {
                   >
                     Specialization:
                   </Text> */}
-                  <Dropdown
+                  {/* <Dropdown
                     disable={selectedDepartment === "" || selectedMajor === ""}
                     style={{
                       backgroundColor: "white",
@@ -1390,12 +1427,12 @@ export default function AcademicCounselor() {
                     search
                     value={
                       selectedSpecialization !== ""
-                        ? selectedSpecialization.name
+                        ? selectedSpecialization?.name
                         : "Select Specialization"
                     }
                     placeholder={
                       selectedSpecialization !== ""
-                        ? selectedSpecialization.name
+                        ? selectedSpecialization?.name
                         : "Select Specialization"
                     }
                     searchPlaceholder="Search Specialization"
@@ -1422,7 +1459,7 @@ export default function AcademicCounselor() {
                             paddingHorizontal: 16,
                             paddingVertical: 8,
                             backgroundColor:
-                              item.name == selectedSpecialization.name
+                              item?.name == selectedSpecialization?.name
                                 ? "#F39300"
                                 : "white",
                           }}
@@ -1432,14 +1469,14 @@ export default function AcademicCounselor() {
                               fontSize: 16,
                               fontWeight: "500",
                               color:
-                                item.name == selectedSpecialization.name
+                                item?.name == selectedSpecialization?.name
                                   ? "white"
                                   : "black",
                             }}
                           >
-                            {item.name}
+                            {item?.name}
                           </Text>
-                          {selectedSpecialization.name === item.name && (
+                          {selectedSpecialization?.name === item?.name && (
                             <Ionicons
                               color="white"
                               name="checkmark"
@@ -1449,7 +1486,7 @@ export default function AcademicCounselor() {
                         </View>
                       );
                     }}
-                  />
+                  /> */}
                 </View>
                 <View
                   style={{
@@ -1595,7 +1632,7 @@ export default function AcademicCounselor() {
                         marginVertical: 2,
                       }}
                     >
-                      {item.specialization.name}
+                      {item.major?.name}
                     </Text>
                   </View>
                 </View>
@@ -1756,7 +1793,22 @@ export default function AcademicCounselor() {
                   >
                     <Ionicons name="chevron-back" size={28} />
                   </TouchableOpacity>
-                  <View
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ededed",
+                      padding: 4,
+                      padding: 4,
+                      borderRadius: 20,
+                      alignSelf: "flex-end",
+                      alignItems: "flex-end",
+                    }}
+                    onPress={() => (
+                      setOpenExtendInfo(true), setExtendInfo(selectedCounselor)
+                    )}
+                  >
+                    <Ionicons name="information" size={28} />
+                  </TouchableOpacity>
+                  {/* <View
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -1779,12 +1831,12 @@ export default function AcademicCounselor() {
                     >
                       {selectedCounselor?.rating}
                     </Text>
-                  </View>
+                  </View> */}
                 </View>
                 <CalendarProvider
-                  date={selectedDate}
+                  date={selectedDate2}
                   onDateChanged={(date) => (
-                    setSelectedDate(date), setSelectedSlot("")
+                    setSelectedDate2(date), setSelectedSlot("")
                   )}
                   onMonthChange={(newDate) =>
                     handleMonthChange(newDate.dateString)
@@ -2036,7 +2088,7 @@ export default function AcademicCounselor() {
                           </View>
                         </View>
                       </View>
-                      <View
+                      {/* <View
                         style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
@@ -2080,7 +2132,7 @@ export default function AcademicCounselor() {
                             </Text>
                           </View>
                         </View>
-                      </View>
+                      </View> */}
                       <View style={{ marginVertical: 12 }}>
                         <View
                           style={{
@@ -2114,8 +2166,8 @@ export default function AcademicCounselor() {
                             }}
                           >
                             <Text style={{ fontSize: 16, opacity: 0.8 }}>
-                              {selectedDate !== ""
-                                ? selectedDate
+                              {selectedDate2 !== ""
+                                ? selectedDate2
                                 : "xxxx-xx-xx"}
                             </Text>
                             <TouchableOpacity
@@ -2148,7 +2200,7 @@ export default function AcademicCounselor() {
                               <Text
                                 style={{ fontWeight: "600", color: "#F39300" }}
                               >
-                                {selectedDate}
+                                {selectedDate2}
                               </Text>
                             </Text> */}
                         </View>
@@ -2200,10 +2252,10 @@ export default function AcademicCounselor() {
                             Select a slot{" "}
                             <Text style={{ color: "#F39300" }}>*</Text>
                           </Text>
-                          {renderSlotsForSelectedDate()}
+                          {renderSlotsForSelectedDate2()}
                         </View>
-                        {slots[selectedDate]?.length !== 0 &&
-                          slots[selectedDate]?.some(
+                        {slots[selectedDate2]?.length !== 0 &&
+                          slots[selectedDate2]?.some(
                             (item) =>
                               item.status !== "EXPIRED" &&
                               item.status !== "UNAVAILABLE"
@@ -2221,7 +2273,7 @@ export default function AcademicCounselor() {
                                     fontWeight: "600",
                                   }}
                                 >
-                                  Form of counseling{" "}
+                                  Meeting method{" "}
                                   <Text style={{ color: "#F39300" }}>*</Text>
                                 </Text>
                                 <View
@@ -2349,7 +2401,7 @@ export default function AcademicCounselor() {
                                     marginBottom: 12,
                                   }}
                                 >
-                                  What subject do you want counsel on?{" "}
+                                  What are your concerns?{" "}
                                   <Text style={{ color: "#F39300" }}>*</Text>
                                 </Text>
                                 <View>
@@ -2400,8 +2452,8 @@ export default function AcademicCounselor() {
                 <TouchableOpacity
                   style={{
                     backgroundColor:
-                      slots[selectedDate]?.length === 0 ||
-                      slots[selectedDate]?.every(
+                      slots[selectedDate2]?.length === 0 ||
+                      slots[selectedDate2]?.every(
                         (item) => item.status === "EXPIRED"
                       ) ||
                       selectedSlot === "" ||
@@ -2418,8 +2470,8 @@ export default function AcademicCounselor() {
                     marginVertical: 16,
                   }}
                   disabled={
-                    slots[selectedDate]?.length === 0 ||
-                    slots[selectedDate]?.every(
+                    slots[selectedDate2]?.length === 0 ||
+                    slots[selectedDate2]?.every(
                       (item) => item.status === "EXPIRED"
                     ) ||
                     selectedSlot === "" ||
@@ -2433,8 +2485,8 @@ export default function AcademicCounselor() {
                     style={{
                       fontWeight: "600",
                       color:
-                        slots[selectedDate]?.length === 0 ||
-                        slots[selectedDate]?.every(
+                        slots[selectedDate2]?.length === 0 ||
+                        slots[selectedDate2]?.every(
                           (item) => item.status === "EXPIRED"
                         ) ||
                         selectedSlot === "" ||
@@ -2453,8 +2505,8 @@ export default function AcademicCounselor() {
                     size={24}
                     style={{
                       color:
-                        slots[selectedDate]?.length === 0 ||
-                        slots[selectedDate]?.every(
+                        slots[selectedDate2]?.length === 0 ||
+                        slots[selectedDate2]?.every(
                           (item) => item.status === "EXPIRED"
                         ) ||
                         selectedSlot === "" ||
@@ -2469,6 +2521,12 @@ export default function AcademicCounselor() {
             )}
           </View>
         </Modal>
+        <ExtendInfoModal
+          openExtendInfo={openExtendInfo}
+          setOpenExtendInfo={setOpenExtendInfo}
+          extendInfo={extendInfo}
+          setExtendInfo={setExtendInfo}
+        />
         <Modal
           transparent={true}
           visible={openConfirm}
@@ -2485,7 +2543,7 @@ export default function AcademicCounselor() {
           >
             <View
               style={{
-                width: width * 0.8,
+                width: width * 0.9,
                 padding: 20,
                 backgroundColor: "white",
                 borderRadius: 10,
@@ -2502,15 +2560,156 @@ export default function AcademicCounselor() {
               >
                 Booking Confirmation
               </Text>
+              <View
+                style={{
+                  paddingHorizontal: 8,
+                  paddingVertical: 12,
+                  borderWidth: 1.5,
+                  borderColor: "#e3e3e3",
+                  borderRadius: 10,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Ionicons name="calendar" size={20} color="#F39300" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                      }}
+                    >
+                      {selectedDate2}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Ionicons name="time" size={20} color="#F39300" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                      }}
+                    >
+                      {selectedSlot?.startTime?.slice(0, 5)} -{" "}
+                      {selectedSlot?.endTime?.slice(0, 5)}
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 8,
+                  }}
+                >
+                  <MaterialIcons
+                    name="meeting-room"
+                    size={20}
+                    color="#F39300"
+                  />
+                  <View
+                    style={{
+                      backgroundColor: "#F39300",
+                      borderRadius: 20,
+                      paddingVertical: 2,
+                      paddingHorizontal: 12,
+                      marginLeft: 8,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        color: "white",
+                      }}
+                    >
+                      {online ? "ONLINE" : "OFFLINE"}
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: "#F39300",
+                    marginBottom: 8,
+                  }}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    marginBottom: 8,
+                  }}
+                >
+                  <MaterialIcons name="notes" size={20} color="#F39300" />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "400",
+                      marginLeft: 8,
+                      maxWidth: "95%",
+                    }}
+                  >
+                    {reason}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    marginBottom: 8,
+                  }}
+                >
+                  <Ionicons name="person" size={20} color="#F39300" />
+                  <View style={{ marginLeft: 8 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "500",
+                      }}
+                    >
+                      {selectedCounselor?.profile?.fullName}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: "gray",
+                      }}
+                    >
+                      {selectedCounselor?.expertise?.name ||
+                        selectedCounselor?.specialization?.name}
+                    </Text>
+                  </View>
+                </View>
+              </View>
               <Text
                 style={{
                   fontSize: 18,
-                  marginBottom: 20,
-                  textAlign: "center",
+                  marginVertical: 12,
+                  textAlign: "left",
                 }}
               >
                 Are you sure you want to book?{"\n"}A request will be sent to
-                this counselor
+                the chosen counselor
               </Text>
               <View
                 style={{
