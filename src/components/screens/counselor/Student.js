@@ -3278,25 +3278,28 @@ export default function Student() {
                         >
                           <View
                             style={{
+                              backgroundColor: "#F39300",
                               flexDirection: "row",
                               justifyContent: "space-between",
                               alignItems: "center",
                               paddingVertical: 12,
                               paddingHorizontal: 20,
+                              borderTopLeftRadius: 16,
+                              borderTopRightRadius: 16,
                             }}
                           >
                             <Text
                               style={{
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontWeight: "bold",
-                                color: "#333",
+                                color: "white",
                               }}
                             >
                               General Assessment
                             </Text>
                             <TouchableOpacity
                               style={{
-                                backgroundColor: "#ededed",
+                                backgroundColor: "white",
                                 padding: 4,
                                 borderRadius: 20,
                               }}
@@ -3304,7 +3307,7 @@ export default function Student() {
                                 setOpenAssessment(false), setAssessment(null)
                               )}
                             >
-                              <Ionicons name="close" size={28} color="#333" />
+                              <Ionicons name="close" size={24} color="#333" />
                             </TouchableOpacity>
                           </View>
                           {assessment && (

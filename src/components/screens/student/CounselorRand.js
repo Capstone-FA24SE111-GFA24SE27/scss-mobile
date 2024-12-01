@@ -15,11 +15,13 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Calendar, CalendarProvider } from "react-native-calendars";
 import { Dropdown } from "react-native-element-dropdown";
 import ErrorModal from "../../layout/ErrorModal";
 import Toast from "react-native-toast-message";
+import ExtendInfoModal from "../../layout/ExtendInfoModal";
+import ConfirmBookingModal from "../../layout/ConfirmBookingModal";
 
 export default function CounselorRand() {
   const navigation = useNavigation();
@@ -30,6 +32,9 @@ export default function CounselorRand() {
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const [progress, setProgress] = useState(new Animated.Value(0));
+  const dot1Anim = useRef(new Animated.Value(0)).current;
+  const dot2Anim = useRef(new Animated.Value(0)).current;
+  const dot3Anim = useRef(new Animated.Value(0)).current;
   const [slots, setSlots] = useState([]);
   const [expertises, setExpertises] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -53,6 +58,8 @@ export default function CounselorRand() {
   const [reason, setReason] = useState("");
   const [matcher, setMatcher] = useState(null);
   const [error, setError] = useState(null);
+  const [openExtendInfo, setOpenExtendInfo] = useState(false);
+  const [extendInfo, setExtendInfo] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openSucess, setOpenSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -64,17 +71,9 @@ export default function CounselorRand() {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       fetchSlots();
-      fetchExpertise();
+      // fetchExpertise();
     }, [selectedDate])
   );
-
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, "0");
-    const day = d.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
 
   const fetchSlots = async () => {
     try {
@@ -98,63 +97,63 @@ export default function CounselorRand() {
     }
   };
 
-  const fetchDepartment = async () => {
-    try {
-      const departmentsRes = await axiosJWT.get(
-        `${BASE_URL}/academic/departments`
-      );
-      const departmentsData = departmentsRes?.data || [];
-      setDepartments(departmentsData);
-    } catch (err) {
-      console.log("Can't fetch departments");
-    }
-  };
+  // const fetchDepartment = async () => {
+  //   try {
+  //     const departmentsRes = await axiosJWT.get(
+  //       `${BASE_URL}/academic/departments`
+  //     );
+  //     const departmentsData = departmentsRes?.data || [];
+  //     setDepartments(departmentsData);
+  //   } catch (err) {
+  //     console.log("Can't fetch departments");
+  //   }
+  // };
 
-  const fetchMajor = async () => {
-    try {
-      const majorsRes = await axiosJWT.get(
-        `${BASE_URL}/academic/departments/${selectedDepartment?.id}/majors`
-      );
-      const majorsData = majorsRes?.data || [];
-      setMajors(majorsData);
-    } catch (err) {
-      console.log("Can't fetch majors");
-    }
-  };
+  // const fetchMajor = async () => {
+  //   try {
+  //     const majorsRes = await axiosJWT.get(
+  //       `${BASE_URL}/academic/departments/${selectedDepartment?.id}/majors`
+  //     );
+  //     const majorsData = majorsRes?.data || [];
+  //     setMajors(majorsData);
+  //   } catch (err) {
+  //     console.log("Can't fetch majors");
+  //   }
+  // };
 
-  const fetchSpecialization = async () => {
-    try {
-      const specializationsRes = await axiosJWT.get(
-        `${BASE_URL}/academic/majors/${selectedMajor?.id}/specializations`
-      );
-      const specializationsData = specializationsRes?.data || [];
-      setSpecializations(specializationsData);
-    } catch (err) {
-      console.log("Can't fetch specializations");
-    }
-  };
+  // const fetchSpecialization = async () => {
+  //   try {
+  //     const specializationsRes = await axiosJWT.get(
+  //       `${BASE_URL}/academic/majors/${selectedMajor?.id}/specializations`
+  //     );
+  //     const specializationsData = specializationsRes?.data || [];
+  //     setSpecializations(specializationsData);
+  //   } catch (err) {
+  //     console.log("Can't fetch specializations");
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchDepartment();
-    if (selectedDepartment !== "") {
-      fetchMajor();
-      if (selectedMajor !== "") {
-        fetchSpecialization();
-      }
-    }
-  }, [selectedDepartment, selectedMajor, selectedSpecialization]);
+  // useEffect(() => {
+  //   fetchDepartment();
+  //   if (selectedDepartment !== "") {
+  //     fetchMajor();
+  //     if (selectedMajor !== "") {
+  //       fetchSpecialization();
+  //     }
+  //   }
+  // }, [selectedDepartment, selectedMajor, selectedSpecialization]);
 
-  const fetchExpertise = async () => {
-    try {
-      const expertisesRes = await axiosJWT.get(
-        `${BASE_URL}/counselors/expertise`
-      );
-      const expertisesData = expertisesRes?.data.content || [];
-      setExpertises(expertisesData);
-    } catch (error) {
-      console.log("Can't fetch  expertises");
-    }
-  };
+  // const fetchExpertise = async () => {
+  //   try {
+  //     const expertisesRes = await axiosJWT.get(
+  //       `${BASE_URL}/counselors/expertise`
+  //     );
+  //     const expertisesData = expertisesRes?.data.content || [];
+  //     setExpertises(expertisesData);
+  //   } catch (error) {
+  //     console.log("Can't fetch  expertises");
+  //   }
+  // };
 
   useEffect(() => {
     if (socket) {
@@ -172,14 +171,15 @@ export default function CounselorRand() {
 
   useEffect(() => {
     fetchSlots();
-    fetchExpertise();
+    // fetchExpertise();
   }, [selectedDate]);
 
   const renderReason = () => {
     return (
       <View
         style={{
-          paddingVertical: 12,
+          paddingTop: 4,
+          paddingBottom: 12,
         }}
       >
         <TextInput
@@ -269,10 +269,14 @@ export default function CounselorRand() {
       return (
         <Text
           style={{
-            textAlign: "center",
-            fontSize: 18,
             fontWeight: "400",
-            marginTop: 12,
+            fontSize: 18,
+            fontStyle: "italic",
+            fontWeight: "600",
+            textAlign: "center",
+            color: "gray",
+            opacity: 0.7,
+            marginVertical: 8,
           }}
         >
           No available slots for {selectedDate}
@@ -912,7 +916,7 @@ export default function CounselorRand() {
       if (currentPage === 0) {
         pageItems = items.slice(0, 4);
         // } else if (currentPage === 1) {
-        //   pageItems = items.slice(3);
+        //   pageItems = items.slice(2);
       }
 
       return (
@@ -1010,7 +1014,6 @@ export default function CounselorRand() {
         </View> */}
         <View
           style={{
-            paddingBottom: 12,
             flexDirection: "row",
             justifyContent: "space-between",
           }}
@@ -1027,7 +1030,7 @@ export default function CounselorRand() {
                   setSelectedMajor(""),
                   setSelectedSpecialization(""),
                   setSelectedExpertise(""),
-                  setMatcher(""),
+                  setMatcher(null),
                   setError(null),
                   isOnline(null),
                   setReason("")
@@ -1086,27 +1089,13 @@ export default function CounselorRand() {
             </>
           ) : (
             <TouchableOpacity
-              onPress={() => (
-                setCurrentPage(0),
-                setSelectedSlot(""),
-                setGender(""),
-                setType("ACADEMIC"),
-                setSelectedDepartment(""),
-                setSelectedMajor(""),
-                setSelectedSpecialization(""),
-                setSelectedExpertise(""),
-                setMatcher(""),
-                setError(null),
-                isOnline(null),
-                setReason("")
-              )}
+              onPress={() => setMatcher(null)}
               style={{
                 flex: 1,
                 flexDirection: "row",
                 backgroundColor: "white",
                 borderRadius: 10,
                 paddingVertical: 8,
-                marginVertical: 4,
                 justifyContent: "center",
                 alignItems: "center",
                 borderWidth: 1.5,
@@ -1118,10 +1107,12 @@ export default function CounselorRand() {
                   fontWeight: "500",
                   color: "#333",
                   fontSize: 18,
+                  marginRight: 8,
                 }}
               >
                 Find again
               </Text>
+              <Ionicons name="refresh" size={20} color="#333" />
             </TouchableOpacity>
           )}
         </View>
@@ -1160,6 +1151,12 @@ export default function CounselorRand() {
         );
         if (response.data && response.data.status == 200) {
           setMatcher(response.data.content);
+          Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: "A counselor has been found",
+            onPress: () => Toast.hide(),
+          });
         } else if (response.data && response.data.status == 404) {
           setError(response.data.message);
         }
@@ -1178,11 +1175,23 @@ export default function CounselorRand() {
         );
         if (response.data && response.data.status == 200) {
           setMatcher(response.data.content);
+          Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: "A counselor has been found",
+            onPress: () => Toast.hide(),
+          });
         } else if (response.data && response.data.status == 404) {
           setError(response.data.message);
         }
       } else if (typeRes?.data?.message === "NOT_DETAIL_ENOUGH") {
-        setError("Need more detailed reason");
+        setError("Need more detail reason");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Need more detail reason",
+          onPress: () => Toast.hide(),
+        });
       } else if (
         typeRes?.data?.message === "ACADEMIC_BUT_OUT_OF_YOUR_ACADEMIC_SCOPE"
       ) {
@@ -1191,45 +1200,85 @@ export default function CounselorRand() {
         );
       }
     } catch (err) {
-      console.log("Can't find counselor", err);
-      setError("No Counselor found");
+      console.log("Can't find counselor suitable with your request", err);
+      setError("Can't find counselor suitable with your request");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't find counselor suitable with your request",
+        onPress: () => Toast.hide(),
+      });
     }
   };
 
   useEffect(() => {
     if (loading2) {
-      Animated.sequence([
-        Animated.timing(progress, {
-          toValue: 0,
-          duration: 0,
-          useNativeDriver: false,
-        }),
-        Animated.timing(progress, {
-          toValue: 25,
-          duration: 500,
-          useNativeDriver: false,
-        }),
-        Animated.timing(progress, {
-          toValue: 50,
-          duration: 500,
-          useNativeDriver: false,
-        }),
-        Animated.timing(progress, {
-          toValue: 75,
-          duration: 500,
-          useNativeDriver: false,
-        }),
-        Animated.timing(progress, {
-          toValue: 100,
-          duration: 500,
-          useNativeDriver: false,
-        }),
-      ]).start();
+      const bounceAnimation = (dot, delay) => {
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(dot, {
+              toValue: -16,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+            Animated.timing(dot, {
+              toValue: 0,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+          ]),
+          { iterations: -1, delay }
+        ).start();
+      };
+
+      bounceAnimation(dot1Anim, 0);
+      setTimeout(() => bounceAnimation(dot2Anim, 0), 250);
+      setTimeout(() => bounceAnimation(dot3Anim, 0), 500);
       setTimeout(() => {
         setLoading2(false);
-      }, 2000);
+      }, 1000);
+      setTimeout(() => {
+        dot1Anim.stopAnimation(() => dot1Anim.setValue(0));
+        dot2Anim.stopAnimation(() => dot2Anim.setValue(0));
+        dot3Anim.stopAnimation(() => dot3Anim.setValue(0));
+      }, 1000);
     }
   }, [loading2]);
+
+  // useEffect(() => {
+  //   if (loading2) {
+  //     Animated.sequence([
+  //       Animated.timing(progress, {
+  //         toValue: 0,
+  //         duration: 0,
+  //         useNativeDriver: false,
+  //       }),
+  //       Animated.timing(progress, {
+  //         toValue: 25,
+  //         duration: 75,
+  //         useNativeDriver: false,
+  //       }),
+  //       Animated.timing(progress, {
+  //         toValue: 50,
+  //         duration: 75,
+  //         useNativeDriver: false,
+  //       }),
+  //       Animated.timing(progress, {
+  //         toValue: 75,
+  //         duration: 75,
+  //         useNativeDriver: false,
+  //       }),
+  //       Animated.timing(progress, {
+  //         toValue: 100,
+  //         duration: 75,
+  //         useNativeDriver: false,
+  //       }),
+  //     ]).start();
+  //     setTimeout(() => {
+  //       setLoading2(false);
+  //     }, 500);
+  //   }
+  // }, [loading2]);
 
   const handleCreateRequest = async () => {
     try {
@@ -1285,58 +1334,10 @@ export default function CounselorRand() {
         <View style={{ paddingVertical: 8, paddingHorizontal: 20 }}>
           {renderCarousel()}
         </View>
-        {loading2 && (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Animated.View
-              style={{
-                width: 90,
-                height: 90,
-                borderRadius: 50,
-                borderWidth: 10,
-                borderColor: progress.interpolate({
-                  inputRange: [0, 25, 50, 75, 100],
-                  outputRange: [
-                    "#888888",
-                    "#aaaaaa",
-                    "#cccccc",
-                    "#eeeeee",
-                    "#F39300",
-                  ],
-                }),
-                justifyContent: "center",
-                alignItems: "center",
-                transform: [
-                  {
-                    rotate: progress.interpolate({
-                      inputRange: [0, 25, 50, 75, 100],
-                      outputRange: [
-                        "0deg",
-                        "90deg",
-                        "180deg",
-                        "270deg",
-                        "360deg",
-                      ],
-                    }),
-                  },
-                ],
-              }}
-            >
-              <Ionicons name="hourglass" size={40} color="#F39300" />
-            </Animated.View>
-          </View>
-        )}
         {matcher && loading2 == false ? (
-          <View
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => (setOpenExtendInfo(true), setExtendInfo(matcher))}
             key={matcher.id}
             style={{
               backgroundColor: "white",
@@ -1583,6 +1584,7 @@ export default function CounselorRand() {
               </View>
             </View>
             <TouchableOpacity
+              activeOpacity={0.7}
               disabled={selectedSlot === "" || online === null || reason === ""}
               style={{
                 backgroundColor:
@@ -1623,16 +1625,20 @@ export default function CounselorRand() {
                 }}
               />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         ) : (
           <>
             {error && loading2 == false ? (
               <Text
                 style={{
-                  textAlign: "center",
-                  fontSize: 20,
+                  fontWeight: "400",
+                  fontSize: 18,
+                  fontStyle: "italic",
                   fontWeight: "600",
-                  marginTop: 12,
+                  textAlign: "center",
+                  color: "gray",
+                  opacity: 0.7,
+                  marginVertical: 20,
                 }}
               >
                 {error}
@@ -1650,228 +1656,116 @@ export default function CounselorRand() {
           </>
         )}
       </ScrollView>
-      <Modal
-        transparent={true}
-        visible={openConfirm}
-        animationType="fade"
-        onRequestClose={() => setOpenConfirm(false)}
-      >
+      {loading2 && (
+        // <View
+        //   style={{
+        //     position: "absolute",
+        //     top: 0,
+        //     left: 0,
+        //     right: 0,
+        //     bottom: 0,
+        //     justifyContent: "center",
+        //     alignItems: "center",
+        //   }}
+        // >
+        //   <Animated.View
+        //     style={{
+        //       width: 90,
+        //       height: 90,
+        //       borderRadius: 50,
+        //       borderWidth: 10,
+        //       borderColor: progress.interpolate({
+        //         inputRange: [0, 25, 50, 75, 100],
+        //         outputRange: [
+        //           "#888888",
+        //           "#aaaaaa",
+        //           "#cccccc",
+        //           "#eeeeee",
+        //           "#F39300",
+        //         ],
+        //       }),
+        //       justifyContent: "center",
+        //       alignItems: "center",
+        //       transform: [
+        //         {
+        //           rotate: progress.interpolate({
+        //             inputRange: [0, 25, 50, 75, 100],
+        //             outputRange: [
+        //               "0deg",
+        //               "90deg",
+        //               "180deg",
+        //               "270deg",
+        //               "360deg",
+        //             ],
+        //           }),
+        //         },
+        //       ],
+        //     }}
+        //   >
+        //     <Ionicons name="hourglass" size={40} color="#F39300" />
+        //   </Animated.View>
+        // </View>
         <View
           style={{
-            flex: 1,
+            flexDirection: "row",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            // width: 56,
           }}
         >
-          <View
+          <Animated.View
             style={{
-              width: width * 0.9,
-              padding: 20,
-              backgroundColor: "white",
-              borderRadius: 10,
-              elevation: 10,
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              backgroundColor: "#034ea2",
+              transform: [{ translateY: dot1Anim }],
+              marginHorizontal: 4,
             }}
-          >
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: "bold",
-                marginBottom: 10,
-                textAlign: "center",
-              }}
-            >
-              Booking Confirmation
-            </Text>
-            <View
-              style={{
-                paddingHorizontal: 8,
-                paddingVertical: 12,
-                borderWidth: 1.5,
-                borderColor: "#e3e3e3",
-                borderRadius: 10,
-              }}
-            >
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 8,
-                }}
-              >
-                <Ionicons name="calendar" size={20} color="#F39300" />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "600",
-                    marginLeft: 8,
-                  }}
-                >
-                  {selectedDate}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 8,
-                }}
-              >
-                <Ionicons name="time" size={20} color="#F39300" />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "600",
-                    marginLeft: 8,
-                  }}
-                >
-                  {selectedSlot?.startTime?.slice(0, 5)} -{" "}
-                  {selectedSlot?.endTime?.slice(0, 5)}
-                </Text>
-              </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 8,
-                }}
-              >
-                <MaterialIcons name="meeting-room" size={20} color="#F39300" />
-                <View
-                  style={{
-                    backgroundColor: "#F39300",
-                    borderRadius: 20,
-                    paddingVertical: 2,
-                    paddingHorizontal: 12,
-                    marginLeft: 8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "600",
-                      color: "white",
-                    }}
-                  >
-                    {online ? "ONLINE" : "OFFLINE"}
-                  </Text>
-                </View>
-              </View>
-              <View style={{ height: 1, backgroundColor: "#F39300", marginBottom: 8 }} />
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "flex-start",
-                  marginBottom: 8,
-                }}
-              >
-                <MaterialIcons name="notes" size={20} color="#F39300" />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "400",
-                    marginLeft: 8,
-                    maxWidth: "95%"
-                  }}
-                >
-                  {reason}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "flex-start",
-                  marginBottom: 8,
-                }}
-              >
-                <Ionicons name="person" size={20} color="#F39300" />
-                <View style={{ marginLeft: 8 }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "500",
-                    }}
-                  >
-                    {matcher?.profile?.fullName}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: "gray",
-                    }}
-                  >
-                    {matcher?.expertise?.name || matcher?.specialization?.name}
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <Text
-              style={{
-                fontSize: 18,
-                marginVertical: 12,
-                textAlign: "left",
-              }}
-            >
-              Are you sure you want to book?{"\n"}A request will be sent to the
-              chosen counselor
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: "#ededed",
-                  padding: 10,
-                  borderRadius: 10,
-                  marginRight: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: "gray",
-                }}
-                onPress={() => setOpenConfirm(false)}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: "#333",
-                    fontWeight: "600",
-                  }}
-                >
-                  No
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: "#F39300",
-                  padding: 10,
-                  borderRadius: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={handleCreateRequest}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: "white",
-                    fontWeight: "600",
-                  }}
-                >
-                  Yes
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          />
+          <Animated.View
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              backgroundColor: "#f37021",
+              transform: [{ translateY: dot2Anim }],
+              marginHorizontal: 4,
+            }}
+          />
+          <Animated.View
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              backgroundColor: "#51b848",
+              transform: [{ translateY: dot3Anim }],
+              marginHorizontal: 4,
+            }}
+          />
         </View>
-      </Modal>
+      )}
+      <ExtendInfoModal
+        openExtendInfo={openExtendInfo}
+        setOpenExtendInfo={setOpenExtendInfo}
+        extendInfo={extendInfo}
+        setExtendInfo={setExtendInfo}
+      />
+      <ConfirmBookingModal
+        openConfirm={openConfirm}
+        setOpenConfirm={setOpenConfirm}
+        selectedDate={selectedDate}
+        selectedSlot={selectedSlot}
+        online={online}
+        reason={reason}
+        selectedCounselor={matcher}
+        onPress={handleCreateRequest}
+      />
       <Modal
         transparent={true}
         visible={openSucess}
@@ -1906,7 +1800,7 @@ export default function CounselorRand() {
                   setGender(""),
                   setSelectedSpecialization(""),
                   setSelectedExpertise(""),
-                  setMatcher(""),
+                  setMatcher(null),
                   isOnline(null),
                   setReason(""),
                   handleCloseSuccess();
@@ -1956,7 +1850,7 @@ export default function CounselorRand() {
                 setGender("");
                 setSelectedSpecialization("");
                 setSelectedExpertise("");
-                setMatcher("");
+                setMatcher(null);
                 isOnline(null);
                 setReason("");
                 navigation.navigate("Request", { prevScreen: "Quick Booking" });
