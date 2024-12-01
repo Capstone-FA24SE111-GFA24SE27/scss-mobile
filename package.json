@@ -26,6 +26,7 @@
     "react-native": "0.74.5",
     "react-native-calendars": "^1.1306.0",
     "react-native-element-dropdown": "^2.12.1",
+    "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-markdown-display": "^7.0.2",
     "react-native-pager-view": "^6.4.1",

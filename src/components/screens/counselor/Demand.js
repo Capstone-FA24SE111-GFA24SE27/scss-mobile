@@ -201,10 +201,14 @@ export default function Demand({ route }) {
       return (
         <Text
           style={{
-            textAlign: "center",
-            fontSize: 18,
             fontWeight: "400",
-            marginTop: 12,
+            fontSize: 18,
+            fontStyle: "italic",
+            fontWeight: "600",
+            textAlign: "center",
+            color: "gray",
+            opacity: 0.7,
+            marginVertical: 8,
           }}
         >
           No available slots for {selectedDate}
