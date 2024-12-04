@@ -14,6 +14,7 @@ export const FilterToggle = ({ isExpanded, toggleExpanded }) => {
 
   return (
     <TouchableOpacity
+      activeOpacity={0.7}
       onPress={toggleExpanded}
       style={{
         backgroundColor: isExpanded ? "#F39300" : "#e3e3e3",

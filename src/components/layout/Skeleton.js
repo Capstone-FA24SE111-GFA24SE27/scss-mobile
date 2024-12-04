@@ -541,11 +541,11 @@ const QASkeleton = () => {
         <LinearGradient
           colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
           style={{
-            height: 24,
+            height: 96,
             borderRadius: 4,
             marginTop: 8,
             marginLeft: 4,
-            width: "80%",
+            width: "95%",
           }}
         />
       </View>
@@ -554,6 +554,7 @@ const QASkeleton = () => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
+          paddingHorizontal: 4,
         }}
       >
         <View
@@ -562,13 +563,12 @@ const QASkeleton = () => {
             alignItems: "center",
             justifyContent: "center",
             paddingVertical: 4,
-            paddingHorizontal: 8,
           }}
         >
           <LinearGradient
             colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
             style={{
-              width: 24,
+              width: 108,
               height: 24,
               borderRadius: 20,
             }}
@@ -576,9 +576,9 @@ const QASkeleton = () => {
           <LinearGradient
             colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
             style={{
-              width: 60,
-              height: 20,
-              borderRadius: 4,
+              width: 108,
+              height: 24,
+              borderRadius: 20,
               marginLeft: 4,
             }}
           />
