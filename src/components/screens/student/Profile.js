@@ -276,7 +276,7 @@ export default function Profile({ route }) {
                       </Text>
                     </View>
                     <View style={{ width: "50%" }}>
-                      <Text
+                      {/* <Text
                         style={{
                           fontSize: 16,
                           fontWeight: "bold",
@@ -293,7 +293,7 @@ export default function Profile({ route }) {
                         }}
                       >
                         {profile.specialization?.name}
-                      </Text>
+                      </Text> */}
                     </View>
                   </View>
                   <View

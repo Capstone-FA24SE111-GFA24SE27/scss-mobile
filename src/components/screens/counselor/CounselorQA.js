@@ -19,8 +19,10 @@ import { ChatContext } from "../../context/ChatContext";
 import Pagination from "../../layout/Pagination";
 import Toast from "react-native-toast-message";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+import * as ImagePicker from "expo-image-picker";
+import RenderHTML from "react-native-render-html";
 
-export default function QA() {
+export default function CounselorQA() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
   const { userData } = useContext(AuthContext);
@@ -60,16 +62,17 @@ export default function QA() {
   // const [openChat, setOpenChat] = useState(false);
   const [info, setInfo] = useState({});
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
+  const [openPreview, setOpenPreview] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openCloseConfirm, setOpenCloseConfirm] = useState(false);
-  const [openSucess, setOpenSuccess] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
-      fetchData(filters, { page: currentPage });
+      fetchData(filters, { query: debouncedKeyword, page: currentPage });
     }, [debouncedKeyword, filters, currentPage])
   );
 
@@ -147,7 +150,7 @@ export default function QA() {
           text2: "This question has been rejected",
           onPress: () => {
             Toast.hide();
-          }
+          },
         });
         setContent("");
         setInfo("");
@@ -162,7 +165,7 @@ export default function QA() {
         text2: "Can't reject this question",
         onPress: () => {
           Toast.hide();
-        }
+        },
       });
     }
   };
@@ -184,7 +187,7 @@ export default function QA() {
           text2: "This question has been flagged",
           onPress: () => {
             Toast.hide();
-          }
+          },
         });
         setContent("");
         setInfo("");
@@ -201,12 +204,71 @@ export default function QA() {
     }
   };
 
+  const selectImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      alert("You've refused to allow this app to access your photos!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
+      allowsEditing: false,
+      quality: 0.75,
+    });
+
+    if (!result.canceled) {
+      const selectedImage = result.assets[0];
+      setImage({
+        uri: selectedImage.uri,
+        base64: selectedImage.base64,
+      });
+    }
+  };
+
+  const renderPreviewContent = () => {
+    return (
+      <RenderHTML
+        source={{
+          html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
+            image
+              ? `<img src="data:image/jpeg;base64,${
+                  image.base64
+                }" style="max-width: ${width * 0.85}px; height: auto;">`
+              : ""
+          }</div>`,
+        }}
+        contentWidth={width * 0.9}
+      />
+    );
+  };
+
+  const renderContent = (source) => {
+    return (
+      <RenderHTML
+        source={{
+          html: source,
+        }}
+        contentWidth={width * 0.9}
+      />
+    );
+  };
+
   const handleAnswerQuestion = async (questionId) => {
     try {
+      const imageHTML = image
+        ? `<img src="data:image/jpeg;base64,${
+            image.base64
+          }" style="max-width: ${width * 0.85}px; height: auto;">`
+        : "";
+      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
       const response = await axiosJWT.post(
         `${BASE_URL}/question-cards/answer/${questionId}`,
         {
-          content: content,
+          content: finalContent,
         }
       );
       const data = await response.data;
@@ -214,10 +276,20 @@ export default function QA() {
         setOpenAnswer(false);
         setOpenConfirm(false);
         setContent("");
-        setOpenSuccess(true);
+        setImage(null);
+        setOpenPreview(false);
+        setSelectedQuestion(null);
         fetchData(filters, { page: currentPage });
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Your answer for this question has been submitted",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       }
-    } catch (error) {
+    } catch (err) {
       console.log("Can't answer this question", err);
       Toast.show({
         type: "error",
@@ -225,42 +297,51 @@ export default function QA() {
         text2: "Can't answer this question",
         onPress: () => {
           Toast.hide();
-        }
+        },
       });
     }
   };
 
   const handleEditAnswer = async (questionId) => {
     try {
+      const imageHTML = image
+        ? `<img src="data:image/jpeg;base64,${
+            image.base64
+          }" style="max-width: ${width * 0.85}px; height: auto;">`
+        : "";
+      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      console.log(finalContent);
       const response = await axiosJWT.put(
         `${BASE_URL}/question-cards/answer/edit/${questionId}`,
         {
-          content: content,
+          content: finalContent,
         }
       );
       const data = await response.data;
       if (data && data.status == 200) {
         setOpenEditAnswer(false);
         setContent("");
+        setImage(null);
+        setOpenPreview(false);
         Toast.show({
           type: "success",
           text1: "Success",
           text2: "Your answer has been updated",
           onPress: () => {
             Toast.hide();
-          }
+          },
         });
         fetchData(filters, { page: currentPage });
       }
     } catch (err) {
-      console.log("Can't edit question", err);
+      console.log("Can't edit this question's answer", err);
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Can't edit question",
+        text2: "Can't edit this question's answer",
         onPress: () => {
           Toast.hide();
-        }
+        },
       });
     }
   };
@@ -280,7 +361,7 @@ export default function QA() {
         text2: "Your question has been closed",
         onPress: () => {
           Toast.hide();
-        }
+        },
       });
       fetchData(filters);
     } catch (err) {
@@ -291,7 +372,7 @@ export default function QA() {
         text2: "Can't close question",
         onPress: () => {
           Toast.hide();
-        }
+        },
       });
     }
   };
@@ -316,7 +397,7 @@ export default function QA() {
         text2: "Can't send message to this chat",
         onPress: () => {
           Toast.hide();
-        }
+        },
       });
     }
   };
@@ -335,25 +416,9 @@ export default function QA() {
         text2: "Can't read message in this chat",
         onPress: () => {
           Toast.hide();
-        }
+        },
       });
     }
-  };
-
-  const handleCloseSuccess = () => {
-    setOpenSuccess(false);
-    setContent("");
-    setSelectedQuestion(null);
-  };
-
-  const handleOpenInfo = (info) => {
-    setInfo(info);
-    setOpenInfo(true);
-  };
-
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
   };
 
   return (
@@ -365,8 +430,7 @@ export default function QA() {
           style={{
             display: "flex",
             flexDirection: "row",
-            // paddingTop: height * 0.095,
-            paddingTop: height * 0.04,
+            paddingTop: height * 0.095,
             paddingBottom: height * 0.01,
             justifyContent: "flex-start",
           }}
@@ -890,7 +954,7 @@ export default function QA() {
                         marginLeft: 4,
                       }}
                     >
-                      {question.content}
+                      {question.title}
                     </Text>
                   </View>
                   <View
@@ -1018,7 +1082,7 @@ export default function QA() {
                         )}
                       <TouchableOpacity
                         hitSlop={10}
-                        onPress={() => handleOpenInfo(question)}
+                        onPress={() => (setInfo(question), setOpenInfo(true))}
                         style={{
                           alignItems: "center",
                           justifyContent: "center",
@@ -1064,11 +1128,34 @@ export default function QA() {
                         {question.closed == false && (
                           <TouchableOpacity
                             style={{ marginLeft: 8 }}
-                            onPress={() => (
-                              setOpenEditAnswer(true),
-                              setSelectedQuestion(question),
-                              setContent(question.answer)
-                            )}
+                            onPress={() => {
+                              setOpenEditAnswer(true);
+                              setSelectedQuestion(question);
+                              setContent(
+                                question.answer
+                                  .split(
+                                    '<p style="font-size: 16px; font-weight: 400;">'
+                                  )[1]
+                                  ?.split("</p>")[0] || ""
+                              );
+                              const imgTag = question.answer.includes(
+                                '<img src="'
+                              )
+                                ? question.answer
+                                    .split('<img src="')[1]
+                                    ?.split('"')[0]
+                                : null;
+
+                              if (imgTag) {
+                                setImage({
+                                  uri: imgTag,
+                                  base64: imgTag.split(",")[1] || null,
+                                });
+                              } else {
+                                setImage(null);
+                              }
+                              setOpenPreview(true);
+                            }}
                           >
                             <MaterialIcons
                               name="edit-note"
@@ -1081,23 +1168,19 @@ export default function QA() {
                       <View
                         style={{
                           alignSelf: "flex-start",
-                          backgroundColor: "#ededed",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
-                          borderRadius: 10,
-                          borderWidth: 0.5,
-                          borderColor: "lightgrey",
                         }}
                       >
-                        <Text
+                        {/* <Text
                           style={{
+                          fontWeight: "400",
                             fontSize: 16,
                             color: "#333",
                           }}
                           numberOfLines={2}
                         >
                           {question.answer}
-                        </Text>
+                        </Text> */}
+                        {renderContent(question.answer)}
                       </View>
                       <View
                         style={{
@@ -1462,84 +1545,225 @@ export default function QA() {
           <View
             style={{
               flex: 1,
-              justifyContent: "center",
+              justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
             }}
           >
             <View
               style={{
-                width: width * 0.9,
-                padding: 20,
-                backgroundColor: "white",
-                borderRadius: 10,
-                elevation: 10,
+                width: "100%",
+                height: "98%",
+                backgroundColor: "#f5f7fd",
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
               }}
             >
               <View
                 style={{
+                  backgroundColor: "#F39300",
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  marginBottom: 12,
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
                 }}
               >
                 <Text
-                  style={{ fontSize: 22, fontWeight: "bold", color: "#333" }}
+                  style={{ fontSize: 24, fontWeight: "bold", color: "white" }}
                 >
-                  Submit Answer
+                  Answer Question
                 </Text>
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   style={{
-                    backgroundColor: "#ededed",
+                    backgroundColor: "white",
                     padding: 4,
                     borderRadius: 20,
                   }}
-                  onPress={() => setOpenAnswer(false)}
+                  onPress={() => (setOpenAnswer(false), setImage(null))}
                 >
-                  <Ionicons name="close" size={28} color="#333" />
+                  <Ionicons name="close" size={24} color="#333" />
                 </TouchableOpacity>
               </View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: "#333",
-                  marginBottom: 8,
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingHorizontal: 20,
+                  paddingTop: 12,
+                  paddingBottom: 20,
+                  backgroundColor: "#f5f7fd",
+                  borderRadius: 16,
                 }}
               >
-                Your answer:
-              </Text>
-              <TextInput
-                placeholder="Type your answer here"
-                placeholderTextColor="gray"
-                keyboardType="default"
-                multiline={true}
-                numberOfLines={3}
-                value={content}
-                onChangeText={setContent}
-                style={{
-                  fontWeight: "600",
-                  fontSize: 16,
-                  opacity: 0.8,
-                  paddingVertical: 8,
-                  textAlignVertical: "top",
-                  paddingHorizontal: 12,
-                  backgroundColor: "#ededed",
-                  borderColor: "gray",
-                  borderWidth: 1,
-                  borderRadius: 10,
-                }}
-              />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
+                  >
+                    Your Answer <Text style={{ color: "#F39300" }}>*</Text>
+                  </Text>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginRight: 8,
+                        backgroundColor: openPreview ? "#F39300" : "#e3e3e3",
+                        borderRadius: 10,
+                      }}
+                      onPress={() => setOpenPreview(!openPreview)}
+                    >
+                      <MaterialIcons
+                        name="preview"
+                        size={28}
+                        color={openPreview ? "white" : "black"}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "#e3e3e3",
+                        borderRadius: 10,
+                      }}
+                      onPress={selectImage}
+                    >
+                      <Ionicons name="image" size={28} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <TextInput
+                  placeholder="Type your answer here"
+                  placeholderTextColor="gray"
+                  keyboardType="default"
+                  multiline={true}
+                  numberOfLines={3}
+                  value={content}
+                  onChangeText={setContent}
+                  style={{
+                    borderColor: "#ccc",
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    padding: 12,
+                    height: 100,
+                    backgroundColor: "#fff",
+                    fontSize: 16,
+                    marginTop: 8,
+                    marginBottom: 12,
+                    textAlignVertical: "top",
+                  }}
+                />
+                {image && (
+                  <View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Imported Image URI
+                      </Text>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          borderWidth: 1.5,
+                          borderColor: "red",
+                        }}
+                        onPress={() => setImage(null)}
+                      >
+                        <Ionicons name="trash" size={20} color="red" />
+                      </TouchableOpacity>
+                    </View>
+                    <Text>{image?.uri}</Text>
+                  </View>
+                )}
+                {openPreview && (
+                  <>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      Preview
+                    </Text>
+                    <View
+                      style={{
+                        backgroundColor: "white",
+                        padding: 8,
+                        marginTop: 8,
+                        marginBottom: 12,
+                        borderRadius: 10,
+                        borderWidth: 1.5,
+                        borderColor: "#ccc",
+                      }}
+                    >
+                      {content !== "" || image ? (
+                        <>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "400",
+                              color: "gray",
+                            }}
+                          >
+                            Your answer look like this:
+                          </Text>
+                          {renderPreviewContent()}
+                        </>
+                      ) : (
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            fontSize: 18,
+                            fontStyle: "italic",
+                            fontWeight: "600",
+                            textAlign: "center",
+                            color: "gray",
+                            opacity: 0.7,
+                          }}
+                        >
+                          Nothing to preview yet
+                        </Text>
+                      )}
+                    </View>
+                  </>
+                )}
+              </ScrollView>
               <TouchableOpacity
                 disabled={content === ""}
                 style={{
                   backgroundColor: content === "" ? "#ededed" : "#F39300",
-                  marginTop: 12,
-                  paddingVertical: 8,
+                  marginHorizontal: 20,
+                  marginVertical: 12,
                   paddingHorizontal: 12,
+                  paddingVertical: 8,
                   borderRadius: 10,
                   alignItems: "center",
+                  justifyContent: "center",
                 }}
                 onPress={() => setOpenConfirm(true)}
               >
@@ -1550,7 +1774,7 @@ export default function QA() {
                     fontSize: 20,
                   }}
                 >
-                  Send
+                  Submit Answer
                 </Text>
               </TouchableOpacity>
             </View>
@@ -1565,58 +1789,209 @@ export default function QA() {
           <View
             style={{
               flex: 1,
-              justifyContent: "center",
+              justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
             }}
           >
             <View
               style={{
-                width: width * 0.9,
-                padding: 20,
-                backgroundColor: "white",
-                borderRadius: 10,
-                elevation: 10,
+                width: "100%",
+                height: "98%",
+                backgroundColor: "#f5f7fd",
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
               }}
             >
-              <Text
+              <View
                 style={{
-                  fontSize: 22,
-                  fontWeight: "bold",
-                  marginBottom: 10,
+                  backgroundColor: "#F39300",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
                 }}
               >
-                Edit Answer
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  marginBottom: 8,
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    color: "white",
+                  }}
+                >
+                  Edit Answer
+                </Text>
+              </View>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingHorizontal: 20,
+                  paddingTop: 12,
+                  paddingBottom: 20,
+                  backgroundColor: "#f5f7fd",
+                  borderRadius: 16,
                 }}
               >
-                Your answer
-              </Text>
-              <TextInput
-                placeholder="Type your answer here"
-                value={content}
-                onChangeText={setContent}
-                style={{
-                  borderColor: "#ccc",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  padding: 12,
-                  height: 100,
-                  backgroundColor: "#fff",
-                  fontSize: 16,
-                  marginVertical: 12,
-                  textAlignVertical: "top",
-                }}
-                multiline
-              />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
+                  >
+                    Your answer
+                  </Text>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginRight: 8,
+                        backgroundColor: openPreview ? "#F39300" : "#e3e3e3",
+                        borderRadius: 10,
+                      }}
+                      onPress={() => setOpenPreview(!openPreview)}
+                    >
+                      <MaterialIcons
+                        name="preview"
+                        size={28}
+                        color={openPreview ? "white" : "black"}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "#e3e3e3",
+                        borderRadius: 10,
+                      }}
+                      onPress={selectImage}
+                    >
+                      <Ionicons name="image" size={28} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <TextInput
+                  placeholder="Write your question content here"
+                  value={content}
+                  onChangeText={setContent}
+                  style={{
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    padding: 12,
+                    height: 100,
+                    backgroundColor: "#ededed",
+                    fontSize: 16,
+                    marginVertical: 12,
+                    textAlignVertical: "top",
+                  }}
+                  multiline
+                />
+                {image && (
+                  <View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#333",
+                        }}
+                      >
+                        Imported Image URI
+                      </Text>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          borderWidth: 1.5,
+                          borderColor: "red",
+                        }}
+                        onPress={() => setImage(null)}
+                      >
+                        <Ionicons name="trash" size={20} color="red" />
+                      </TouchableOpacity>
+                    </View>
+                    <Text>{image?.uri}</Text>
+                  </View>
+                )}
+                {openPreview && (
+                  <>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      Preview
+                    </Text>
+                    <View
+                      style={{
+                        backgroundColor: "white",
+                        padding: 8,
+                        marginTop: 8,
+                        marginBottom: 12,
+                        borderRadius: 10,
+                        borderWidth: 1.5,
+                        borderColor: "#ccc",
+                      }}
+                    >
+                      {content !== "" || image ? (
+                        <>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "400",
+                              color: "gray",
+                            }}
+                          >
+                            Your question look like this:
+                          </Text>
+                          {renderPreviewContent()}
+                        </>
+                      ) : (
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            fontSize: 18,
+                            fontStyle: "italic",
+                            fontWeight: "600",
+                            textAlign: "center",
+                            color: "gray",
+                            opacity: 0.7,
+                          }}
+                        >
+                          Nothing to preview yet
+                        </Text>
+                      )}
+                    </View>
+                  </>
+                )}
+              </ScrollView>
               <View
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  marginHorizontal: 20,
+                  marginVertical: 12,
                 }}
               >
                 <TouchableOpacity
@@ -1631,7 +2006,12 @@ export default function QA() {
                     borderWidth: 1,
                     borderColor: "gray",
                   }}
-                  onPress={() => (setOpenEditAnswer(false), setContent(""))}
+                  onPress={() => (
+                    setOpenEditAnswer(false),
+                    setContent(""),
+                    setImage(null),
+                    setOpenPreview(false)
+                  )}
                 >
                   <Text
                     style={{
@@ -1640,14 +2020,15 @@ export default function QA() {
                       fontWeight: "600",
                     }}
                   >
-                    No
+                    Cancel
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{
                     flex: 1,
-                    backgroundColor: "#F39300",
-                    padding: 10,
+                    backgroundColor: content === "" ? "#ededed" : "#F39300",
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
                     borderRadius: 10,
                     justifyContent: "center",
                     alignItems: "center",
@@ -1657,11 +2038,11 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: "white",
+                      color: content === "" ? "gray" : "white",
                       fontWeight: "600",
                     }}
                   >
-                    Yes
+                    Edit
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1766,80 +2147,6 @@ export default function QA() {
           </View>
         </Modal>
         <Modal
-          transparent={true}
-          visible={openSucess}
-          animationType="fade"
-          onRequestClose={handleCloseSuccess}
-        >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            <View
-              style={{
-                width: width * 0.9,
-                paddingVertical: 25,
-                paddingHorizontal: 20,
-                backgroundColor: "white",
-                borderRadius: 20,
-              }}
-            >
-              <View
-                style={{
-                  alignItems: "center",
-                  marginVertical: 12,
-                }}
-              >
-                <Ionicons name="checkmark-circle" size={80} color="#F39300" />
-                <Text
-                  style={{
-                    color: "#F39300",
-                    fontSize: 30,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Success!
-                </Text>
-              </View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  textAlign: "center",
-                  marginBottom: 20,
-                }}
-              >
-                Your answer has been sent successfully!
-              </Text>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#F39300",
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderRadius: 30,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={handleCloseSuccess}
-                activeOpacity={0.8}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: "white",
-                    fontWeight: "600",
-                  }}
-                >
-                  Done
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-        <Modal
           animationType="slide"
           transparent={true}
           visible={openInfo}
@@ -1869,12 +2176,6 @@ export default function QA() {
                   alignItems: "center",
                 }}
               >
-                <View style={{ flex: 1 }} />
-                <View style={{ flex: 2, alignItems: "center" }}>
-                  <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-                    Quesion Info
-                  </Text>
-                </View>
                 <View style={{ flex: 1 }}>
                   <TouchableOpacity
                     style={{
@@ -1884,14 +2185,16 @@ export default function QA() {
                       marginTop: 16,
                       marginBottom: 8,
                       borderRadius: 20,
-                      alignSelf: "flex-end",
-                      alignItems: "flex-end",
+                      alignSelf: "flex-start",
+                      alignItems: "flex-start",
                     }}
-                    onPress={handleCloseInfo}
+                    onPress={() => (setInfo(""), setOpenInfo(false))}
                   >
-                    <Ionicons name="close" size={28} />
+                    <Ionicons name="chevron-back" size={28} />
                   </TouchableOpacity>
                 </View>
+                <View style={{ flex: 2, alignItems: "center" }} />
+                <View style={{ flex: 1 }} />
               </View>
               <ScrollView
                 ref={scrollViewRef}
@@ -1904,6 +2207,38 @@ export default function QA() {
                     borderRadius: 16,
                   }}
                 >
+                                    <View
+                    style={{
+                      marginBottom: 20,
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#F39300",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Title
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: "#333",
+                        fontWeight: "500",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {info?.title}
+                    </Text>
+                  </View>
                   <View
                     style={{
                       marginBottom: 20,
@@ -1925,7 +2260,7 @@ export default function QA() {
                     >
                       Question
                     </Text>
-                    <Text
+                    {/* <Text
                       style={{
                         fontSize: 20,
                         color: "#333",
@@ -1934,7 +2269,8 @@ export default function QA() {
                       }}
                     >
                       {info?.content}
-                    </Text>
+                    </Text> */}
+                    {renderContent(info?.content)}
                   </View>
                   <View
                     style={{
@@ -2066,16 +2402,17 @@ export default function QA() {
                         Your Answer
                       </Text>
                       {info?.answer !== null ? (
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            color: "#333",
-                            fontWeight: "500",
-                            opacity: 0.7,
-                          }}
-                        >
-                          {info?.answer}
-                        </Text>
+                        // <Text
+                        //   style={{
+                        //     fontSize: 20,
+                        //     color: "#333",
+                        //     fontWeight: "500",
+                        //     opacity: 0.7,
+                        //   }}
+                        // >
+                        //   {info?.answer}
+                        // </Text>
+                        renderContent(info?.answer)
                       ) : (
                         <Text
                           style={{
@@ -2374,7 +2711,9 @@ export default function QA() {
                   }}
                 >
                   <TouchableOpacity
-                    onPress={() => handleOpenInfo(selectedQuestion)}
+                    onPress={() => (
+                      setInfo(selectedQuestion), setOpenInfo(true)
+                    )}
                     style={{
                       backgroundColor: "#ededed",
                       flexDirection: "row",

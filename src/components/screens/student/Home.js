@@ -17,6 +17,7 @@ import { NotificationContext } from "../../context/NotificationContext";
 import { HomeSkeleton } from "../../layout/Skeleton";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { LinearGradient } from "expo-linear-gradient";
+import RenderHTML from "react-native-render-html";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -160,6 +161,17 @@ export default function Home() {
     } catch (err) {
       console.log("Can't fetch upcoming appointments", err);
     }
+  };
+
+  const renderContent = (source) => {
+    return (
+      <RenderHTML
+        source={{
+          html: source,
+        }}
+        contentWidth={width * 0.9}
+      />
+    );
   };
 
   const fetchQuestion = async () => {
@@ -864,16 +876,16 @@ export default function Home() {
                               <TouchableOpacity
                                 disabled={appointment.meetingType !== "ONLINE"}
                                 onPress={() =>
-                                  Linking.openURL(
-                                    `${appointment.place}`
-                                  ).catch((err) => {
-                                    console.log("Can't open this link", err);
-                                    Toast.show({
-                                      type: "error",
-                                      text1: "Error",
-                                      text2: "Can't open this link",
-                                    });
-                                  })
+                                  Linking.openURL(`${appointment.place}`).catch(
+                                    (err) => {
+                                      console.log("Can't open this link", err);
+                                      Toast.show({
+                                        type: "error",
+                                        text1: "Error",
+                                        text2: "Can't open this link",
+                                      });
+                                    }
+                                  )
                                 }
                               >
                                 <Text
@@ -943,7 +955,7 @@ export default function Home() {
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                   Answered Questions
                 </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("QA")}>
+                <TouchableOpacity onPress={() => navigation.navigate("My Q&A")}>
                   <Text
                     style={{
                       fontSize: 16,
@@ -987,7 +999,7 @@ export default function Home() {
                     <View
                       key={question.id}
                       style={{
-                        width: width * 0.85,
+                        width: width * 0.9,
                         backgroundColor: "white",
                         borderRadius: 20,
                         marginVertical: 12,
@@ -1046,7 +1058,7 @@ export default function Home() {
                             </Text>
                           </View>
                         </View>
-                        <Text
+                        {/* <Text
                           style={{
                             fontSize: 18,
                             fontWeight: "600",
@@ -1054,7 +1066,8 @@ export default function Home() {
                           }}
                         >
                           {question.content}
-                        </Text>
+                        </Text> */}
+                        {renderContent(question.content)}
                       </View>
                       <View
                         style={{
@@ -1118,7 +1131,7 @@ export default function Home() {
                           borderColor: "lightgrey",
                         }}
                       >
-                        <Text
+                        {/* <Text
                           style={{
                             fontSize: 16,
                             color: "#333",
@@ -1126,7 +1139,8 @@ export default function Home() {
                           numberOfLines={2}
                         >
                           {question.answer}
-                        </Text>
+                        </Text> */}
+                        {renderContent(question.answer)}
                       </View>
                     </View>
                   ))}

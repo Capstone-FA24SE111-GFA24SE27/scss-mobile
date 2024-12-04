@@ -208,7 +208,7 @@ export default function Profile({ route }) {
                         {profile.status}
                       </Text>
                     </View>
-                    {profile.specialization != null && (
+                    {profile.department != null && (
                       <View style={{ width: "50%" }}>
                         <Text
                           style={{
@@ -254,7 +254,7 @@ export default function Profile({ route }) {
                       </View>
                     )}
                   </View>
-                  {profile.specialization != null && (
+                  {profile.department != null && (
                     <View
                       style={{
                         flex: 1,
@@ -286,7 +286,7 @@ export default function Profile({ route }) {
                       </View>
 
                       <View style={{ width: "50%" }}>
-                        <Text
+                        {/* <Text
                           style={{
                             fontSize: 16,
                             fontWeight: "bold",
@@ -303,7 +303,7 @@ export default function Profile({ route }) {
                           }}
                         >
                           {profile.specialization?.name}
-                        </Text>
+                        </Text> */}
                       </View>
                     </View>
                   )}

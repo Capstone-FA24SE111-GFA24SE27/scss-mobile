@@ -32,9 +32,7 @@ import Request from "../screens/student/Request";
 import RequestCounselor from "../screens/counselor/Request";
 import Appointment from "../screens/student/Appointment";
 import AppointmentCounselor from "../screens/counselor/Appointment";
-import QA from "../screens/student/QA";
-import Owner from "../screens/counselor/Owner";
-// import QANavigation from "./QANavigation";
+import QANavigation from "./QANavigation";
 import Student from "../screens/counselor/Student";
 import Demand from "../screens/counselor/Demand";
 
@@ -87,7 +85,7 @@ export default function Navigation() {
       label: "QA",
       active: "chatbubbles",
       inActive: "chatbubbles-outline",
-      component: QA,
+      component: QANavigation,
     },
     {
       route: "Personal",
@@ -125,8 +123,7 @@ export default function Navigation() {
       label: "QA",
       active: "chatbubbles",
       inActive: "chatbubbles-outline",
-      component: Owner,
-      // component: QANavigation,
+      component: QANavigation,
     },
     {
       route: "Personal",
