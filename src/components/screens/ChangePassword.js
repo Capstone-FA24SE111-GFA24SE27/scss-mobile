@@ -130,7 +130,7 @@ export default function ChangePassword() {
         <View
           style={{
             flexDirection: "row",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.035,
             paddingBottom: 10,
           }}
@@ -149,7 +149,7 @@ export default function ChangePassword() {
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ paddingHorizontal: 30, marginTop: 30 }}
+          style={{ paddingHorizontal: 20, marginTop: 30 }}
         >
           <View style={{ marginBottom: 20 }}>
             <View
@@ -402,7 +402,7 @@ export default function ChangePassword() {
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingVertical: 16,
           }}
         >

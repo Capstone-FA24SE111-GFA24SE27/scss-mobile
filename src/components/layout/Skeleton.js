@@ -7,7 +7,7 @@ const HomeSkeleton = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      style={{ marginHorizontal: 30, marginBottom: 8 }}
+      style={{ marginHorizontal: 20, marginBottom: 8 }}
     >
       <LinearGradient
         colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}

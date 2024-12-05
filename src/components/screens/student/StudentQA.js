@@ -23,6 +23,7 @@ import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import ExtendInfoModal from "../../layout/ExtendInfoModal";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 
 export default function StudentQA() {
   const navigation = useNavigation();
@@ -1324,11 +1325,27 @@ export default function StudentQA() {
                       style={{
                         fontWeight: "bold",
                         fontSize: 18,
-                        marginLeft: 4,
                       }}
                     >
                       {question.title}
                     </Text>
+                    <View style={{ marginTop: 8 }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          textAlign: "left",
+                          color: "gray",
+                          opacity: 0.7,
+                        }}
+                      >
+                        Created at{" "}
+                        {formatDistanceToNow(new Date(question.createdDate), {
+                          addSuffix: true,
+                        })}
+                      </Text>
+                    </View>
                   </View>
                   <View
                     style={{
@@ -1845,7 +1862,7 @@ export default function StudentQA() {
                   multiline
                 />
                 {image && (
-                  <View>
+                  <View style={{ marginBottom: 12 }}>
                     <View
                       style={{
                         flexDirection: "row",
@@ -2714,7 +2731,7 @@ export default function StudentQA() {
                   multiline
                 />
                 {image && (
-                  <View>
+                  <View style={{ marginBottom: 12 }}>
                     <View
                       style={{
                         flexDirection: "row",
@@ -3483,7 +3500,6 @@ export default function StudentQA() {
                         fontSize: 20,
                         color: "#333",
                         fontWeight: "500",
-                        opacity: 0.7,
                       }}
                     >
                       {info?.title}
@@ -3541,7 +3557,7 @@ export default function StudentQA() {
                         marginBottom: 4,
                       }}
                     >
-                      Taken by
+                      Counselor in charge
                     </Text>
                     {info?.counselor !== null ? (
                       <TouchableOpacity
@@ -3666,7 +3682,7 @@ export default function StudentQA() {
                           marginBottom: 4,
                         }}
                       >
-                        Answer
+                        Counselor's Answer
                       </Text>
                       {info?.answer !== null ? (
                         // <Text

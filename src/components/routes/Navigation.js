@@ -28,6 +28,7 @@ import PersonalCounselor from "../screens/counselor/Personal";
 import Profile from "../screens/student/Profile";
 import ProfileCounselor from "../screens/counselor/Profile";
 import ViewProfile from "../screens/student/ViewProfile";
+import ViewProfileCounselor from "../screens/counselor/ViewProfile";
 import Request from "../screens/student/Request";
 import RequestCounselor from "../screens/counselor/Request";
 import Appointment from "../screens/student/Appointment";
@@ -315,6 +316,11 @@ export default function Navigation() {
             options={tabOptions}
           />
           <Tab.Screen
+            name="ViewProfile"
+            component={ViewProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
             name="ChangePassword"
             component={ChangePassword}
             options={tabOptions}
@@ -358,6 +364,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Profile"
             component={ProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="ViewProfile"
+            component={ViewProfileCounselor}
             options={tabOptions}
           />
           <Tab.Screen

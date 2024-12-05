@@ -50,8 +50,6 @@ export default function QuestionBoard() {
   const [openExtendInfo, setOpenExtendInfo] = useState(false);
   const [extendInfo, setExtendInfo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
   const scrollViewRef = useRef(null);
 
   useFocusEffect(
@@ -954,7 +952,7 @@ export default function QuestionBoard() {
                         marginBottom: 4,
                       }}
                     >
-                      Answered by
+                      Created by
                     </Text>
                     {info?.counselor !== null ? (
                       <TouchableOpacity
@@ -1059,54 +1057,52 @@ export default function QuestionBoard() {
                       </Text>
                     )}
                   </View>
-                  {(info.status == "PENDING" || info.status == "VERIFIED") && (
-                    <View
+                  <View
+                    style={{
+                      marginBottom: 20,
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <Text
                       style={{
-                        marginBottom: 20,
-                        padding: 16,
-                        backgroundColor: "white",
-                        borderRadius: 12,
-                        elevation: 1,
-                        borderWidth: 1.5,
-                        borderColor: "#e3e3e3",
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#F39300",
+                        marginBottom: 4,
                       }}
                     >
+                      Creator's Answer
+                    </Text>
+                    {info?.answer !== null ? (
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: "#333",
+                          fontWeight: "500",
+                          opacity: 0.7,
+                        }}
+                      >
+                        {info?.answer}
+                      </Text>
+                    ) : (
                       <Text
                         style={{
                           fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#F39300",
-                          marginBottom: 4,
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          color: "gray",
+                          opacity: 0.7,
                         }}
                       >
-                        Answer
+                        There's no answer yet
                       </Text>
-                      {info?.answer !== null ? (
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            color: "#333",
-                            fontWeight: "500",
-                            opacity: 0.7,
-                          }}
-                        >
-                          {info?.answer}
-                        </Text>
-                      ) : (
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontStyle: "italic",
-                            fontWeight: "600",
-                            color: "gray",
-                            opacity: 0.7,
-                          }}
-                        >
-                          There's no answer yet
-                        </Text>
-                      )}
-                    </View>
-                  )}
+                    )}
+                  </View>
                 </View>
               </ScrollView>
             </View>

@@ -180,7 +180,7 @@ export default function Home() {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.04,
             paddingBottom: height * 0.02,
             backgroundColor: "#F39300",
@@ -273,8 +273,8 @@ export default function Home() {
           style={{
             flexDirection: "row",
             borderRadius: 30,
-            marginHorizontal: 25,
-            paddingHorizontal: 15,
+            marginHorizontal: 20,
+            paddingHorizontal: 16,
             marginVertical: 16,
             alignItems: "center",
             backgroundColor: "#ededed",
@@ -302,7 +302,7 @@ export default function Home() {
           <ScrollView
             ref={scrollViewRef}
             showsVerticalScrollIndicator={false}
-            style={{ marginHorizontal: 30 }}
+            style={{ marginHorizontal: 20 }}
           >
             <View>
               <View

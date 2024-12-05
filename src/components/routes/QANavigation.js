@@ -1,9 +1,9 @@
-import { View, Text, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import React, { useContext } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import QuestionBoard from "../screens/student/QuestionBoard";
 import StudentQA from "../screens/student/StudentQA";
-import QA from "../screens/counselor/QA";
+import QuestionBoardCounselor from "../screens/counselor/QA";
 import CounselorQA from "../screens/counselor/CounselorQA";
 import { AuthContext } from "../context/AuthContext";
 const Tab = createMaterialTopTabNavigator();
@@ -64,7 +64,7 @@ export default function QANavigation() {
           screenOptions={screenOptions}
         >
           <Tab.Screen name="My Q&A" component={CounselorQA} />
-          <Tab.Screen name="FAQ" component={QA} />
+          <Tab.Screen name="FAQ" component={QuestionBoardCounselor} />
         </Tab.Navigator>
       ) : null}
     </>

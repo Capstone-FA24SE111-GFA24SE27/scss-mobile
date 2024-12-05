@@ -21,6 +21,7 @@ import Toast from "react-native-toast-message";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 
 export default function CounselorQA() {
   const navigation = useNavigation();
@@ -255,6 +256,12 @@ export default function CounselorQA() {
         contentWidth={width * 0.9}
       />
     );
+  };
+
+  const error = console.error;
+  console.error = (...args) => {
+    if (/defaultProps/.test(args[0])) return;
+    error(...args);
   };
 
   const handleAnswerQuestion = async (questionId) => {
@@ -956,6 +963,23 @@ export default function CounselorQA() {
                     >
                       {question.title}
                     </Text>
+                    <View style={{ marginTop: 8 }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          textAlign: "left",
+                          color: "gray",
+                          opacity: 0.7,
+                        }}
+                      >
+                        Asked{" "}
+                        {formatDistanceToNow(new Date(question.createdDate), {
+                          addSuffix: true,
+                        })}
+                      </Text>
+                    </View>
                   </View>
                   <View
                     style={{
@@ -1033,6 +1057,52 @@ export default function CounselorQA() {
                           {question.status}
                         </Text>
                       </View>
+                      <View
+                        style={{
+                          backgroundColor:
+                            question.difficultyLevel === "Easy"
+                              ? "green"
+                              : question.difficultyLevel
+                              ? "#F39300"
+                              : "red",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexDirection: "row",
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                          marginLeft: 8,
+                          borderRadius: 20,
+                          borderWidth: 1.5,
+                          borderColor: "transparent",
+                        }}
+                      >
+                        {Array.from({
+                          length:
+                            question.difficultyLevel === "Easy"
+                              ? 1
+                              : question.difficultyLevel === "Medium"
+                              ? 2
+                              : 3,
+                        }).map((_, index) => (
+                          <Ionicons
+                            key={index}
+                            name="star"
+                            size={14}
+                            color="white"
+                            style={{ marginHorizontal: 1 }}
+                          />
+                        ))}
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            color: "white",
+                            marginLeft: 4,
+                          }}
+                        >
+                          {question.difficultyLevel}
+                        </Text>
+                      </View>
                       {question.closed == true && (
                         <View
                           style={{
@@ -1061,15 +1131,18 @@ export default function CounselorQA() {
                               setOpenAnswer(true), setSelectedQuestion(question)
                             )}
                             style={{
-                              backgroundColor: "#F39300",
+                              marginRight: 4,
+                              paddingHorizontal: 8,
+                              paddingVertical: 4,
+                              backgroundColor: "white",
                               borderRadius: 10,
-                              paddingHorizontal: 12,
-                              paddingVertical: 6,
-                              marginRight: 8,
-                              justifyContent: "center",
+                              borderWidth: 1.5,
+                              borderColor: "#F39300",
+                              flexDirection: "row",
+                              alignItems: "center",
                             }}
                           >
-                            <Text
+                            {/* <Text
                               style={{
                                 fontWeight: "500",
                                 color: "white",
@@ -1077,7 +1150,12 @@ export default function CounselorQA() {
                               }}
                             >
                               Answer
-                            </Text>
+                            </Text> */}
+                            <MaterialIcons
+                              name="question-answer"
+                              size={20}
+                              color="#F39300"
+                            />
                           </TouchableOpacity>
                         )}
                       <TouchableOpacity
@@ -1664,7 +1742,7 @@ export default function CounselorQA() {
                   }}
                 />
                 {image && (
-                  <View>
+                  <View style={{ marginBottom: 12 }}>
                     <View
                       style={{
                         flexDirection: "row",
@@ -1897,7 +1975,7 @@ export default function CounselorQA() {
                   multiline
                 />
                 {image && (
-                  <View>
+                  <View style={{ marginBottom: 12 }}>
                     <View
                       style={{
                         flexDirection: "row",
@@ -2207,7 +2285,7 @@ export default function CounselorQA() {
                     borderRadius: 16,
                   }}
                 >
-                                    <View
+                  <View
                     style={{
                       marginBottom: 20,
                       padding: 16,
@@ -2233,7 +2311,6 @@ export default function CounselorQA() {
                         fontSize: 20,
                         color: "#333",
                         fontWeight: "500",
-                        opacity: 0.7,
                       }}
                     >
                       {info?.title}
@@ -2297,7 +2374,7 @@ export default function CounselorQA() {
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
-                        marginVertical: 12,
+                        marginTop: 12,
                       }}
                     >
                       <View style={{ width: "40%" }}>
@@ -2356,7 +2433,7 @@ export default function CounselorQA() {
                             marginBottom: 2,
                           }}
                         >
-                          {info?.student?.specialization?.name ||
+                          {info?.student?.major?.name ||
                             info?.student?.expertise?.name}
                         </Text>
                         <Text
