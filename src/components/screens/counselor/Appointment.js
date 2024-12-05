@@ -673,7 +673,7 @@ export default function Appointment({ route }) {
           style={{
             display: "flex",
             flexDirection: "row",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.035,
             paddingVertical: 10,
           }}
@@ -695,7 +695,7 @@ export default function Appointment({ route }) {
         </View>
         <View
           style={{
-            marginHorizontal: 30,
+            marginHorizontal: 20,
           }}
         >
           <View
@@ -1099,7 +1099,7 @@ export default function Appointment({ route }) {
         </View>
         <ScrollView
           ref={scrollViewRef}
-          style={{ marginHorizontal: 30, marginVertical: 12 }}
+          style={{ marginHorizontal: 20, marginVertical: 12 }}
           showsVerticalScrollIndicator={false}
         >
           {loading ? (

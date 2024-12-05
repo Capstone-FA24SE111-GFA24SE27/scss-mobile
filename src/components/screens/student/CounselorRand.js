@@ -1195,21 +1195,21 @@ export default function CounselorRand() {
           }
         }
       } else if (typeRes?.data?.message?.includes("INAPPROPRIATE_SENTENCE")) {
-        setError("Contain meaningless, violate or inappropriate words");
+        setError(`Contain meaningless, violate or inappropriate words. Please rewrite your purpose`);
         Toast.show({
           type: "error",
           text1: "Error",
-          text2: "Contain meaningless, violate or inappropriate words",
+          text2: `Contain meaningless, violate or inappropriate words. Please rewrite your purpose`,
           onPress: () => Toast.hide(),
         });
       }
     } catch (err) {
-      console.log("Can't find counselor suitable with your request", err);
-      setError("Can't find counselor suitable with your request");
+      console.log("Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose", err);
+      setError("Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose");
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Can't find counselor suitable with your request",
+        text2: "Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose",
         onPress: () => Toast.hide(),
       });
     }
@@ -1642,7 +1642,7 @@ export default function CounselorRand() {
                   textAlign: "center",
                   color: "gray",
                   opacity: 0.7,
-                  marginVertical: 20,
+                  margin: 20,
                 }}
               >
                 {error}

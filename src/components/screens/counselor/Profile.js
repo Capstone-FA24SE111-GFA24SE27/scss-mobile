@@ -86,7 +86,7 @@ export default function Profile({ route }) {
         <View
           style={{
             flexDirection: "row",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.035,
             paddingBottom: 10,
           }}
@@ -112,7 +112,7 @@ export default function Profile({ route }) {
               borderRadius: 20,
               elevation: 5,
               marginBottom: 12,
-              marginHorizontal: 30,
+              marginHorizontal: 20,
               paddingVertical: 8,
             }}
           >
@@ -175,6 +175,23 @@ export default function Profile({ route }) {
                 >
                   {userData?.email}
                 </Text>
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    backgroundColor: "#F39300",
+                    borderRadius: 20,
+                    padding: 8,
+                  }}
+                  onPress={() => navigation.navigate("ViewProfile")}
+                >
+                  <Ionicons
+                    name="expand"
+                    size={20}
+                    style={{ color: "white" }}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
             <View style={{ paddingHorizontal: 20, paddingVertical: 15 }}>

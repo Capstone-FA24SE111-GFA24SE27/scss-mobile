@@ -26,7 +26,7 @@ import { AuthContext } from "../../context/AuthContext";
 export default function QA() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  const { userData, profile } = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const socket = useContext(SocketContext);
@@ -59,7 +59,6 @@ export default function QA() {
   const [image, setImage] = useState(null);
   const [openPreview, setOpenPreview] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
   const scrollViewRef = useRef(null);
 
   useFocusEffect(
@@ -67,7 +66,7 @@ export default function QA() {
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
-      fetchData(filters, { page: currentPage });
+      fetchData(filters, {query: debouncedKeyword, page: currentPage });
       fetchCategory();
     }, [debouncedKeyword, filters, currentPage])
   );
@@ -1106,7 +1105,7 @@ export default function QA() {
                   multiline
                 />
                 {image && (
-                  <View>
+                  <View style={{ marginBottom: 12 }}>
                     <View
                       style={{
                         flexDirection: "row",
@@ -1516,7 +1515,7 @@ export default function QA() {
                     borderRadius: 16,
                   }}
                 >
-                                    <View
+                  <View
                     style={{
                       marginBottom: 20,
                       padding: 16,
@@ -1542,7 +1541,6 @@ export default function QA() {
                         fontSize: 20,
                         color: "#333",
                         fontWeight: "500",
-                        opacity: 0.7,
                       }}
                     >
                       {info?.title}
@@ -1600,7 +1598,7 @@ export default function QA() {
                         marginBottom: 4,
                       }}
                     >
-                      Answered by
+                      Created by
                     </Text>
                     {info?.counselor !== null ? (
                       <TouchableOpacity
@@ -1611,7 +1609,7 @@ export default function QA() {
                         style={{
                           flexDirection: "row",
                           alignItems: "center",
-                          marginVertical: 12,
+                          marginTop: 12,
                         }}
                       >
                         <View style={{ width: "40%" }}>
@@ -1705,54 +1703,52 @@ export default function QA() {
                       </Text>
                     )}
                   </View>
-                  {(info.status == "PENDING" || info.status == "VERIFIED") && (
-                    <View
+                  <View
+                    style={{
+                      marginBottom: 20,
+                      padding: 16,
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      elevation: 1,
+                      borderWidth: 1.5,
+                      borderColor: "#e3e3e3",
+                    }}
+                  >
+                    <Text
                       style={{
-                        marginBottom: 20,
-                        padding: 16,
-                        backgroundColor: "white",
-                        borderRadius: 12,
-                        elevation: 1,
-                        borderWidth: 1.5,
-                        borderColor: "#e3e3e3",
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "#F39300",
+                        marginBottom: 4,
                       }}
                     >
+                      Answer
+                    </Text>
+                    {info?.answer !== null ? (
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: "#333",
+                          fontWeight: "500",
+                          opacity: 0.7,
+                        }}
+                      >
+                        {info?.answer}
+                      </Text>
+                    ) : (
                       <Text
                         style={{
                           fontSize: 18,
-                          fontWeight: "bold",
-                          color: "#F39300",
-                          marginBottom: 4,
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          color: "gray",
+                          opacity: 0.7,
                         }}
                       >
-                        Answer
+                        There's no answer yet
                       </Text>
-                      {info?.answer !== null ? (
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            color: "#333",
-                            fontWeight: "500",
-                            opacity: 0.7,
-                          }}
-                        >
-                          {info?.answer}
-                        </Text>
-                      ) : (
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontStyle: "italic",
-                            fontWeight: "600",
-                            color: "gray",
-                            opacity: 0.7,
-                          }}
-                        >
-                          There's no answer yet
-                        </Text>
-                      )}
-                    </View>
-                  )}
+                    )}
+                  </View>
                 </View>
               </ScrollView>
             </View>

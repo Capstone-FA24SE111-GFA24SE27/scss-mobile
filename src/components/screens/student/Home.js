@@ -174,6 +174,12 @@ export default function Home() {
     );
   };
 
+  const error = console.error;
+  console.error = (...args) => {
+    if (/defaultProps/.test(args[0])) return;
+    error(...args);
+  };
+
   const fetchQuestion = async () => {
     let allQuestions = [];
     let currentPage = 1;
@@ -212,7 +218,7 @@ export default function Home() {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.04,
             paddingBottom: height * 0.02,
             backgroundColor: "#F39300",
@@ -306,8 +312,8 @@ export default function Home() {
           style={{
             flexDirection: "row",
             borderRadius: 30,
-            marginHorizontal: 25,
-            paddingHorizontal: 15,
+            marginHorizontal: 20,
+            paddingHorizontal: 16,
             marginVertical: 16,
             alignItems: "center",
             backgroundColor: "#ededed",
@@ -335,7 +341,7 @@ export default function Home() {
           <ScrollView
             ref={scrollViewRef}
             showsVerticalScrollIndicator={false}
-            style={{ marginHorizontal: 30 }}
+            style={{ marginHorizontal: 20 }}
           >
             {/* <TouchableOpacity
               activeOpacity={0.5}
@@ -1019,20 +1025,10 @@ export default function Home() {
                         <View
                           style={{
                             flexDirection: "row",
-                            justifyContent: "space-between",
                             alignItems: "center",
                             marginBottom: 4,
                           }}
                         >
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: "gray",
-                              fontWeight: "500",
-                            }}
-                          >
-                            Your question
-                          </Text>
                           <View
                             style={{
                               backgroundColor: "#F39300",
@@ -1057,6 +1053,17 @@ export default function Home() {
                               {question.questionType}
                             </Text>
                           </View>
+                        </View>
+                        <View style={{ marginBottom: 4 }}>
+                          <Text
+                            numberOfLines={2}
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 18,
+                            }}
+                          >
+                            {question.title}
+                          </Text>
                         </View>
                         {/* <Text
                           style={{
@@ -1121,14 +1128,8 @@ export default function Home() {
                       <View
                         style={{
                           alignSelf: "flex-start",
-                          backgroundColor: "#ededed",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
                           marginHorizontal: 20,
-                          marginBottom: 16,
-                          borderRadius: 10,
-                          borderWidth: 0.5,
-                          borderColor: "lightgrey",
+                          marginBottom: 4,
                         }}
                       >
                         {/* <Text

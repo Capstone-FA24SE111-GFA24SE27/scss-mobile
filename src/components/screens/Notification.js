@@ -362,7 +362,7 @@ export default function Notification() {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
           paddingTop: height * 0.035,
           paddingBottom: 10,
         }}
@@ -387,7 +387,7 @@ export default function Notification() {
           <MaterialIcons name="done-all" size={36} color="#F39300" />
         </TouchableOpacity>
       </View>
-      <View style={{ paddingHorizontal: 30, paddingBottom: 80 }}>
+      <View style={{ paddingHorizontal: 20, paddingBottom: 80 }}>
         {notifications.length === 0 && (
           <View
             style={{
