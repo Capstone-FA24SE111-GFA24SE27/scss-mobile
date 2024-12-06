@@ -1413,7 +1413,7 @@ export default function CounselorRand() {
                     marginVertical: 2,
                   }}
                 >
-                  {matcher?.expertise?.name || matcher?.specialization?.name}
+                  {matcher?.expertise?.name || matcher?.major?.name}
                 </Text>
               </View>
             </View>

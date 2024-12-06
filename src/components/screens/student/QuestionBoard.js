@@ -40,6 +40,7 @@ export default function QuestionBoard() {
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
   const [status, setStatus] = useState("");
   const statusList = [{ name: "UNVERIFIED" }, { name: "VERIFIED" }];
+  const [type, setType] = useState("");
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
   const [sortDirection, setSortDirection] = useState("");
@@ -88,12 +89,23 @@ export default function QuestionBoard() {
       const categoriesRes = await axiosJWT.get(
         `${BASE_URL}/contribution-question-cards/categories`
       );
-      const categoriesData = categoriesRes?.data?.content || [];
-      setCategories(categoriesData);
+      // const categoriesData = categoriesRes?.data?.content || [];
+      // setCategories(categoriesData);
+      const allCategories = categoriesRes?.data?.content || [];
+      const filteredCategories =
+        type === ""
+          ? allCategories
+          : allCategories.filter((cat) => cat.type === type);
+      setCategories(filteredCategories.map((cat) => ({ name: cat.name })));
+      setCategory("");
     } catch (err) {
       console.log("Can't fetch categories", err);
     }
   };
+
+  useEffect(() => {
+    fetchCategory();
+  }, [type]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -285,6 +297,90 @@ export default function QuestionBoard() {
                     minWidth: "20%",
                   }}
                 >
+                  Status:
+                </Text>
+                <Dropdown
+                  style={{
+                    backgroundColor: "white",
+                    borderColor: expanded ? "#F39300" : "black",
+                    flex: 1,
+                    height: 30,
+                    borderWidth: 1,
+                    borderColor: "grey",
+                    borderRadius: 10,
+                    paddingHorizontal: 12,
+                    marginLeft: 16,
+                  }}
+                  placeholderStyle={{ fontSize: 14 }}
+                  selectedTextStyle={{
+                    fontSize: 14,
+                    color: status ? "black" : "white",
+                  }}
+                  maxHeight={250}
+                  data={statusList}
+                  labelField="name"
+                  value={status}
+                  placeholder={status != "" ? status : "Select Status"}
+                  onFocus={() => setExpanded(true)}
+                  onBlur={() => setExpanded(false)}
+                  onChange={(item) => {
+                    setStatus(item.name);
+                    setExpanded(false);
+                  }}
+                  renderRightIcon={() => (
+                    <Ionicons
+                      color={expanded ? "#F39300" : "black"}
+                      name={expanded ? "caret-up" : "caret-down"}
+                      size={20}
+                    />
+                  )}
+                  renderItem={(item) => {
+                    return (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          paddingHorizontal: 16,
+                          paddingVertical: 8,
+                          backgroundColor:
+                            item.name == status ? "#F39300" : "white",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "500",
+                            color: item.name == status ? "white" : "black",
+                          }}
+                        >
+                          {item.name}
+                        </Text>
+                        {status == item.name && (
+                          <Ionicons color="white" name="checkmark" size={20} />
+                        )}
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 4,
+                  marginLeft: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: "#333",
+                    minWidth: "20%",
+                  }}
+                >
                   Sort:
                 </Text>
                 <View style={{ flexDirection: "row" }}>
@@ -373,72 +469,77 @@ export default function QuestionBoard() {
                     minWidth: "20%",
                   }}
                 >
-                  Status:
+                  Type:
                 </Text>
-                <Dropdown
-                  style={{
-                    backgroundColor: "white",
-                    borderColor: expanded ? "#F39300" : "black",
-                    flex: 1,
-                    height: 30,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 10,
-                    paddingHorizontal: 12,
-                    marginLeft: 16,
-                  }}
-                  placeholderStyle={{ fontSize: 14 }}
-                  selectedTextStyle={{
-                    fontSize: 14,
-                    color: status ? "black" : "white",
-                  }}
-                  maxHeight={250}
-                  data={statusList}
-                  labelField="name"
-                  value={status}
-                  placeholder={status != "" ? status : "Select Status"}
-                  onFocus={() => setExpanded(true)}
-                  onBlur={() => setExpanded(false)}
-                  onChange={(item) => {
-                    setStatus(item.name);
-                    setExpanded(false);
-                  }}
-                  renderRightIcon={() => (
-                    <Ionicons
-                      color={expanded ? "#F39300" : "black"}
-                      name={expanded ? "caret-up" : "caret-down"}
-                      size={20}
-                    />
-                  )}
-                  renderItem={(item) => {
-                    return (
-                      <View
+                <View style={{ flexDirection: "row" }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 16,
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => setType("ACADEMIC")}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          type == "ACADEMIC"
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={type == "ACADEMIC" ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text
                         style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingVertical: 8,
-                          backgroundColor:
-                            item.name == status ? "#F39300" : "white",
+                          color: type == "ACADEMIC" ? "#F39300" : "black",
+                          fontSize: 15,
                         }}
                       >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "500",
-                            color: item.name == status ? "white" : "black",
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                        {status == item.name && (
-                          <Ionicons color="white" name="checkmark" size={20} />
-                        )}
-                      </View>
-                    );
-                  }}
-                />
+                        Academic
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => setType("NON_ACADEMIC")}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          type == "NON_ACADEMIC"
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={type == "NON_ACADEMIC" ? "#F39300" : "gray"}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text
+                        style={{
+                          color: type == "NON_ACADEMIC" ? "#F39300" : "black",
+                          fontSize: 15,
+                        }}
+                      >
+                        Non-Academic
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
               <View
                 style={{
@@ -454,21 +555,11 @@ export default function QuestionBoard() {
                     fontSize: 16,
                     fontWeight: "bold",
                     color: "#333",
-                    minWidth: "30%",
+                    minWidth: "20%",
                   }}
                 >
                   Category:
                 </Text>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 4,
-                  marginLeft: 4,
-                }}
-              >
                 <Dropdown
                   style={{
                     backgroundColor: "white",
@@ -479,6 +570,7 @@ export default function QuestionBoard() {
                     borderColor: "grey",
                     borderRadius: 10,
                     paddingHorizontal: 12,
+                    marginLeft: 16,
                   }}
                   placeholderStyle={{ fontSize: 14 }}
                   selectedTextStyle={{
