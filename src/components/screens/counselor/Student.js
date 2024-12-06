@@ -215,6 +215,7 @@ export default function Student() {
   const handleSaveTags = () => {
     const behaviorList = tagsList.join(",");
     fetchData({ ...filters, behaviorList: behaviorList });
+    setLoading(true);
     setOpenTags(false);
   };
 
