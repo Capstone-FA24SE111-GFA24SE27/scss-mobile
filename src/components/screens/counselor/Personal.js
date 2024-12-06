@@ -6,6 +6,7 @@ import {
   Image,
   Animated,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -16,6 +17,7 @@ import { SocketContext } from "../../context/SocketContext";
 
 export default function Personal() {
   const navigation = useNavigation();
+  const { width, height } = Dimensions.get("screen");
   const { profile, userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const [requestCount, setRequestCount] = useState(0);
@@ -169,8 +171,8 @@ export default function Personal() {
           style={{
             display: "flex",
             flexDirection: "row",
-            paddingHorizontal: 30,
-            marginTop: 25,
+            paddingHorizontal: 20,
+            marginTop: height * 0.025,
             paddingVertical: 10,
           }}
         >
@@ -183,7 +185,7 @@ export default function Personal() {
             backgroundColor: "white",
             borderRadius: 10,
             elevation: 3,
-            marginHorizontal: 30,
+            marginHorizontal: 20,
             paddingHorizontal: 12,
             paddingVertical: 8,
             justifyContent: "center",
@@ -234,7 +236,7 @@ export default function Personal() {
         <View
           style={{
             marginVertical: 16,
-            marginHorizontal: 30,
+            marginHorizontal: 20,
             justifyContent: "space-between",
             flexDirection: "row",
           }}
@@ -391,7 +393,7 @@ export default function Personal() {
         <View
           style={{
             marginBottom: 16,
-            marginHorizontal: 30,
+            marginHorizontal: 20,
             flexDirection: "row",
           }}
         >
@@ -476,7 +478,7 @@ export default function Personal() {
             flex: 1,
             padding: 12,
             marginBottom: 16,
-            marginHorizontal: 30,
+            marginHorizontal: 20,
             borderRadius: 10,
             elevation: 3,
           }}

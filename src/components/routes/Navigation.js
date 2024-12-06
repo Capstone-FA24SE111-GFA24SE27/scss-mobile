@@ -28,13 +28,12 @@ import PersonalCounselor from "../screens/counselor/Personal";
 import Profile from "../screens/student/Profile";
 import ProfileCounselor from "../screens/counselor/Profile";
 import ViewProfile from "../screens/student/ViewProfile";
+import ViewProfileCounselor from "../screens/counselor/ViewProfile";
 import Request from "../screens/student/Request";
 import RequestCounselor from "../screens/counselor/Request";
 import Appointment from "../screens/student/Appointment";
 import AppointmentCounselor from "../screens/counselor/Appointment";
-import QA from "../screens/student/QA";
-import Owner from "../screens/counselor/Owner";
-// import QANavigation from "./QANavigation";
+import QANavigation from "./QANavigation";
 import Student from "../screens/counselor/Student";
 import Demand from "../screens/counselor/Demand";
 
@@ -87,7 +86,7 @@ export default function Navigation() {
       label: "QA",
       active: "chatbubbles",
       inActive: "chatbubbles-outline",
-      component: QA,
+      component: QANavigation,
     },
     {
       route: "Personal",
@@ -125,8 +124,7 @@ export default function Navigation() {
       label: "QA",
       active: "chatbubbles",
       inActive: "chatbubbles-outline",
-      component: Owner,
-      // component: QANavigation,
+      component: QANavigation,
     },
     {
       route: "Personal",
@@ -318,6 +316,11 @@ export default function Navigation() {
             options={tabOptions}
           />
           <Tab.Screen
+            name="ViewProfile"
+            component={ViewProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
             name="ChangePassword"
             component={ChangePassword}
             options={tabOptions}
@@ -361,6 +364,11 @@ export default function Navigation() {
           <Tab.Screen
             name="Profile"
             component={ProfileCounselor}
+            options={tabOptions}
+          />
+          <Tab.Screen
+            name="ViewProfile"
+            component={ViewProfileCounselor}
             options={tabOptions}
           />
           <Tab.Screen

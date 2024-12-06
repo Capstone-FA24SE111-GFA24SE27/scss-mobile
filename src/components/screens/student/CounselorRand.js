@@ -26,7 +26,7 @@ import ConfirmBookingModal from "../../layout/ConfirmBookingModal";
 export default function CounselorRand() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  const { userData } = useContext(AuthContext);
+  const { userData, profile } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const scrollViewRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -71,6 +71,8 @@ export default function CounselorRand() {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       fetchSlots();
+      setSelectedDepartment(profile?.department);
+      setSelectedMajor(profile?.major);
       // fetchExpertise();
     }, [selectedDate])
   );
@@ -97,29 +99,29 @@ export default function CounselorRand() {
     }
   };
 
-  // const fetchDepartment = async () => {
-  //   try {
-  //     const departmentsRes = await axiosJWT.get(
-  //       `${BASE_URL}/academic/departments`
-  //     );
-  //     const departmentsData = departmentsRes?.data || [];
-  //     setDepartments(departmentsData);
-  //   } catch (err) {
-  //     console.log("Can't fetch departments");
-  //   }
-  // };
+  const fetchDepartment = async () => {
+    try {
+      const departmentsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/departments`
+      );
+      const departmentsData = departmentsRes?.data || [];
+      setDepartments(departmentsData);
+    } catch (err) {
+      console.log("Can't fetch departments");
+    }
+  };
 
-  // const fetchMajor = async () => {
-  //   try {
-  //     const majorsRes = await axiosJWT.get(
-  //       `${BASE_URL}/academic/departments/${selectedDepartment?.id}/majors`
-  //     );
-  //     const majorsData = majorsRes?.data || [];
-  //     setMajors(majorsData);
-  //   } catch (err) {
-  //     console.log("Can't fetch majors");
-  //   }
-  // };
+  const fetchMajor = async () => {
+    try {
+      const majorsRes = await axiosJWT.get(
+        `${BASE_URL}/academic/departments/${selectedDepartment?.id}/majors`
+      );
+      const majorsData = majorsRes?.data || [];
+      setMajors(majorsData);
+    } catch (err) {
+      console.log("Can't fetch majors");
+    }
+  };
 
   // const fetchSpecialization = async () => {
   //   try {
@@ -133,15 +135,15 @@ export default function CounselorRand() {
   //   }
   // };
 
-  // useEffect(() => {
-  //   fetchDepartment();
-  //   if (selectedDepartment !== "") {
-  //     fetchMajor();
-  //     if (selectedMajor !== "") {
-  //       fetchSpecialization();
-  //     }
-  //   }
-  // }, [selectedDepartment, selectedMajor, selectedSpecialization]);
+  useEffect(() => {
+    fetchDepartment();
+    if (selectedDepartment !== "") {
+      fetchMajor();
+      // if (selectedMajor !== "") {
+      //   fetchSpecialization();
+      // }
+    }
+  }, [selectedDepartment, selectedMajor, selectedSpecialization]);
 
   // const fetchExpertise = async () => {
   //   try {
@@ -383,7 +385,7 @@ export default function CounselorRand() {
         <View
           style={{
             flexDirection: "row",
-            width: "47.5%",
+            width: "50%",
             alignItems: "center",
           }}
         >
@@ -548,7 +550,7 @@ export default function CounselorRand() {
           borderWidth: 2,
           borderRadius: 10,
           marginVertical: 8,
-          paddingHorizontal: 16,
+          paddingHorizontal: 12,
         }}
         placeholderStyle={{ fontSize: 14 }}
         selectedTextStyle={{
@@ -627,7 +629,7 @@ export default function CounselorRand() {
           borderWidth: 2,
           borderRadius: 10,
           marginVertical: 8,
-          paddingHorizontal: 16,
+          paddingHorizontal: 12,
         }}
         placeholderStyle={{ fontSize: 14 }}
         selectedTextStyle={{
@@ -856,35 +858,35 @@ export default function CounselorRand() {
         title: "Select a slot",
         content: renderSlotsForSelectedDate(),
       },
-      // {
-      //   title: "Select counselor type",
-      //   content: renderCounselorType(),
-      // },
+      {
+        title: "Select counselor type",
+        content: renderCounselorType(),
+      },
       {
         title: "Select gender",
         content: renderGender(),
       },
-      // ...(type === "ACADEMIC"
-      //   ? [
-      //       {
-      //         title: "Select department",
-      //         content: renderDepartments(),
-      //       },
-      //       selectedDepartment !== "" && {
-      //         title: "Select major",
-      //         content: renderMajors(),
-      //       },
-      //       selectedMajor !== "" && {
-      //         title: "Select specialization",
-      //         content: renderSpecializations(),
-      //       },
-      //     ].filter(Boolean)
-      //   : [
-      //       {
-      //         title: "Select expertise",
-      //         content: renderExpertises(),
-      //       },
-      //     ]),
+      ...(type === "ACADEMIC"
+        ? [
+            {
+              title: "Select department",
+              content: renderDepartments(),
+            },
+            selectedDepartment !== "" && {
+              title: "Select major",
+              content: renderMajors(),
+            },
+            // selectedMajor !== "" && {
+            //   title: "Select specialization",
+            //   content: renderSpecializations(),
+            // },
+          ].filter(Boolean)
+        : [
+            // {
+            //   title: "Select expertise",
+            //   content: renderExpertises(),
+            // },
+          ]),
     ];
 
     const renderItem = (item, index) => {
@@ -898,7 +900,9 @@ export default function CounselorRand() {
             }}
           >
             {item.title}{" "}
-            {item.title !== "Select gender" && (
+            {(item.title !== "Select gender" ||
+              item.title !== "Select department" ||
+              item.title !== "Select major") && (
               <Text style={{ color: "#F39300" }}>*</Text>
             )}
           </Text>
@@ -914,9 +918,9 @@ export default function CounselorRand() {
 
       let pageItems = [];
       if (currentPage === 0) {
-        pageItems = items.slice(0, 4);
-        // } else if (currentPage === 1) {
-        //   pageItems = items.slice(2);
+        pageItems = items.slice(0, 3);
+      } else if (currentPage === 1) {
+        pageItems = items.slice(3);
       }
 
       return (
@@ -936,82 +940,86 @@ export default function CounselorRand() {
         }}
       >
         {!matcher && renderPage()}
-        {/* <View
+        <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          {currentPage > 0 ? (
-            <TouchableOpacity
-              onPress={() => setCurrentPage(currentPage - 1)}
-              style={{
-                backgroundColor: "#F39300",
-                padding: 4,
-                borderRadius: 20,
-              }}
-            >
-              <Ionicons name="chevron-back" size={30} color="white" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              disabled
-              style={{
-                backgroundColor: "#e3e3e3",
-                padding: 4,
-                borderRadius: 20,
-              }}
-            >
-              <Ionicons name="chevron-back" size={30} color="gray" />
-            </TouchableOpacity>
-          )}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              flex: 1,
-            }}
-          >
-            {[...Array(2).keys()].map((_, index) => (
+          {!matcher && (
+            <>
+              {currentPage > 0 ? (
+                <TouchableOpacity
+                  onPress={() => setCurrentPage(currentPage - 1)}
+                  style={{
+                    backgroundColor: "#F39300",
+                    padding: 4,
+                    borderRadius: 20,
+                  }}
+                >
+                  <Ionicons name="chevron-back" size={28} color="white" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  disabled
+                  style={{
+                    backgroundColor: "#e3e3e3",
+                    padding: 4,
+                    borderRadius: 20,
+                  }}
+                >
+                  <Ionicons name="chevron-back" size={28} color="gray" />
+                </TouchableOpacity>
+              )}
               <View
-                key={index}
                 style={{
-                  height: currentPage === index ? 16 : 12,
-                  width: currentPage === index ? 16 : 12,
-                  borderRadius: 20,
-                  backgroundColor: "#F39300",
-                  marginHorizontal: 4,
-                  opacity: currentPage === index ? 1 : 0.3,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flex: 1,
                 }}
-              />
-            ))}
-          </View>
-          {currentPage < 1 ? (
-            <TouchableOpacity
-              onPress={() => setCurrentPage(currentPage + 1)}
-              style={{
-                backgroundColor: "#F39300",
-                padding: 4,
-                borderRadius: 20,
-              }}
-            >
-              <Ionicons name="chevron-forward" size={30} color="white" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              disabled
-              style={{
-                backgroundColor: "#e3e3e3",
-                padding: 4,
-                borderRadius: 20,
-              }}
-            >
-              <Ionicons name="chevron-forward" size={30} color="gray" />
-            </TouchableOpacity>
+              >
+                {[...Array(2).keys()].map((_, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      height: currentPage === index ? 16 : 12,
+                      width: currentPage === index ? 16 : 12,
+                      borderRadius: 20,
+                      backgroundColor: "#F39300",
+                      marginHorizontal: 6,
+                      opacity: currentPage === index ? 1 : 0.3,
+                    }}
+                  />
+                ))}
+              </View>
+              {currentPage < 1 ? (
+                <TouchableOpacity
+                  onPress={() => setCurrentPage(currentPage + 1)}
+                  style={{
+                    backgroundColor: "#F39300",
+                    padding: 4,
+                    borderRadius: 20,
+                  }}
+                >
+                  <Ionicons name="chevron-forward" size={28} color="white" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  disabled
+                  style={{
+                    backgroundColor: "#e3e3e3",
+                    padding: 4,
+                    borderRadius: 20,
+                  }}
+                >
+                  <Ionicons name="chevron-forward" size={28} color="gray" />
+                </TouchableOpacity>
+              )}
+            </>
           )}
-        </View> */}
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -1134,78 +1142,74 @@ export default function CounselorRand() {
         }
       );
       console.log(typeRes?.data?.message);
-      if (typeRes?.data?.message === "ACADEMIC") {
-        const response = await axiosJWT.get(
-          `${BASE_URL}/counselors/academic/random/match`,
-          {
-            params: {
-              slotId: selectedSlot.slotId,
-              date: selectedDate,
-              gender: gender,
-              reason: reason,
-              // departmentId: selectedDepartment.id,
-              // majorId: selectedMajor.id,
-              // specializationId: selectedSpecialization.id,
-            },
+      if (typeRes?.data?.message === "OK") {
+        if (type === "ACADEMIC") {
+          const response = await axiosJWT.get(
+            `${BASE_URL}/counselors/academic/random/match/${userData?.id}`,
+            {
+              params: {
+                slotId: selectedSlot.slotId,
+                date: selectedDate,
+                gender: gender,
+                reason: reason,
+                departmentId: selectedDepartment.id,
+                majorId: selectedMajor.id,
+                // specializationId: selectedSpecialization.id,
+              },
+            }
+          );
+          if (response.data && response.data.status == 200) {
+            setMatcher(response.data.content);
+            Toast.show({
+              type: "success",
+              text1: "Success",
+              text2: "A counselor has been found",
+              onPress: () => Toast.hide(),
+            });
+          } else if (response.data && response.data.status == 404) {
+            setError(response.data.message);
           }
-        );
-        if (response.data && response.data.status == 200) {
-          setMatcher(response.data.content);
-          Toast.show({
-            type: "success",
-            text1: "Success",
-            text2: "A counselor has been found",
-            onPress: () => Toast.hide(),
-          });
-        } else if (response.data && response.data.status == 404) {
-          setError(response.data.message);
-        }
-      } else if (typeRes?.data?.message === "NON_ACADEMIC") {
-        const response = await axiosJWT.get(
-          `${BASE_URL}/counselors/non-academic/random/match`,
-          {
-            params: {
-              slotId: selectedSlot.slotId,
-              date: selectedDate,
-              gender: gender,
-              reason: reason,
-              // expertiseId: selectedExpertise.id,
-            },
+        } else if (type === "NON-ACADEMIC") {
+          const response = await axiosJWT.get(
+            `${BASE_URL}/counselors/non-academic/random/match`,
+            {
+              params: {
+                slotId: selectedSlot.slotId,
+                date: selectedDate,
+                gender: gender,
+                reason: reason,
+                // expertiseId: selectedExpertise.id,
+              },
+            }
+          );
+          if (response.data && response.data.status == 200) {
+            setMatcher(response.data.content);
+            Toast.show({
+              type: "success",
+              text1: "Success",
+              text2: "A counselor has been found",
+              onPress: () => Toast.hide(),
+            });
+          } else if (response.data && response.data.status == 404) {
+            setError(response.data.message);
           }
-        );
-        if (response.data && response.data.status == 200) {
-          setMatcher(response.data.content);
-          Toast.show({
-            type: "success",
-            text1: "Success",
-            text2: "A counselor has been found",
-            onPress: () => Toast.hide(),
-          });
-        } else if (response.data && response.data.status == 404) {
-          setError(response.data.message);
         }
-      } else if (typeRes?.data?.message === "NOT_DETAIL_ENOUGH") {
-        setError("Need more detail reason");
+      } else if (typeRes?.data?.message?.includes("INAPPROPRIATE_SENTENCE")) {
+        setError(`Contain meaningless, violate or inappropriate words. Please rewrite your purpose`);
         Toast.show({
           type: "error",
           text1: "Error",
-          text2: "Need more detail reason",
+          text2: `Contain meaningless, violate or inappropriate words. Please rewrite your purpose`,
           onPress: () => Toast.hide(),
         });
-      } else if (
-        typeRes?.data?.message === "ACADEMIC_BUT_OUT_OF_YOUR_ACADEMIC_SCOPE"
-      ) {
-        setError(
-          "Can't find a counselor to solve your problems. Please consider finding another reason."
-        );
       }
     } catch (err) {
-      console.log("Can't find counselor suitable with your request", err);
-      setError("Can't find counselor suitable with your request");
+      console.log("Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose", err);
+      setError("Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose");
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Can't find counselor suitable with your request",
+        text2: "Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose",
         onPress: () => Toast.hide(),
       });
     }
@@ -1638,7 +1642,7 @@ export default function CounselorRand() {
                   textAlign: "center",
                   color: "gray",
                   opacity: 0.7,
-                  marginVertical: 20,
+                  margin: 20,
                 }}
               >
                 {error}

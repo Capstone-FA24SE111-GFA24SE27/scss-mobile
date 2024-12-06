@@ -86,7 +86,7 @@ export default function Profile({ route }) {
         <View
           style={{
             flexDirection: "row",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.035,
             paddingBottom: 10,
           }}
@@ -112,7 +112,7 @@ export default function Profile({ route }) {
               borderRadius: 20,
               elevation: 5,
               marginBottom: 12,
-              marginHorizontal: 30,
+              marginHorizontal: 20,
               paddingVertical: 8,
             }}
           >
@@ -276,7 +276,7 @@ export default function Profile({ route }) {
                       </Text>
                     </View>
                     <View style={{ width: "50%" }}>
-                      <Text
+                      {/* <Text
                         style={{
                           fontSize: 16,
                           fontWeight: "bold",
@@ -293,7 +293,7 @@ export default function Profile({ route }) {
                         }}
                       >
                         {profile.specialization?.name}
-                      </Text>
+                      </Text> */}
                     </View>
                   </View>
                   <View

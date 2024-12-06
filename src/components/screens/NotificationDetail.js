@@ -25,7 +25,7 @@ export default function NotificationDetail({ route }) {
         style={{
           display: "flex",
           flexDirection: "row",
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
           paddingTop: height * 0.035,
           paddingVertical: 10,
         }}
@@ -39,7 +39,7 @@ export default function NotificationDetail({ route }) {
         </View>
         <View style={{ flex: 2, alignItems: "center" }}>
           <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-            {/* No. {notificationData?.notificationId}  */}
+            Notifcation No.{notificationData?.notificationId}
           </Text>
         </View>
         <View style={{ flex: 1 }} />

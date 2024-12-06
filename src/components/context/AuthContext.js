@@ -50,24 +50,24 @@ export const AuthProvider = ({ children }) => {
   const fetchProfile = async () => {
     try {
       const profileRes = await axiosJWT.get(`${BASE_URL}/profile`);
-      const profileData = profileRes?.data?.content?.profile || null;
+      const profileData = profileRes?.data?.content?.body?.content?.profile || null;
       if (userData.role == "STUDENT") {
-        profileData["studentCode"] = profileRes?.data?.content?.studentCode;
-        // profileData["specialization"] = profileRes?.data?.content?.specialization;
-        profileData["department"] = profileRes?.data?.content?.department;
-        profileData["major"] = profileRes?.data?.content?.major;
+        profileData["studentCode"] = profileRes?.data?.content?.body?.content?.studentCode;
+        // profileData["specialization"] = profileRes?.data?.content?.body?.content?.specialization;
+        profileData["department"] = profileRes?.data?.content?.body?.content?.department;
+        profileData["major"] = profileRes?.data?.content?.body?.content?.major;
       }
       if (userData.role == "ACADEMIC_COUNSELOR") {
-        profileData["status"] = profileRes?.data?.content?.status;
-        // profileData["specialization"] = profileRes?.data?.content?.specialization;
-        profileData["academicDegree"] = profileRes?.data?.content?.academicDegree;
-        profileData["department"] = profileRes?.data?.content?.department;
-        profileData["major"] = profileRes?.data?.content?.major;
+        profileData["status"] = profileRes?.data?.content?.body?.content?.status;
+        // profileData["specialization"] = profileRes?.data?.content?.body?.content?.specialization;
+        profileData["academicDegree"] = profileRes?.data?.content?.body?.content?.academicDegree;
+        profileData["department"] = profileRes?.data?.content?.body?.content?.department;
+        profileData["major"] = profileRes?.data?.content?.body?.content?.major;
       }
       if (userData.role == "NON_ACADEMIC_COUNSELOR") {
-        profileData["status"] = profileRes?.data?.content?.status;
-        profileData["expertise"] = profileRes?.data?.content?.expertise;
-        profileData["industryExperience"] = profileRes?.data?.content?.industryExperience;
+        profileData["status"] = profileRes?.data?.content?.body?.content?.status;
+        profileData["expertise"] = profileRes?.data?.content?.body?.content?.expertise;
+        profileData["industryExperience"] = profileRes?.data?.content?.body?.content?.industryExperience;
       }
       setProfile(profileData);
     } catch (err) {

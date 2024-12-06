@@ -29,10 +29,10 @@ export default function ViewProfile() {
   );
 
   useEffect(() => {
-    fetchStudentDoc();
+    fetchData();
   }, []);
 
-  const fetchStudentDoc = async () => {
+  const fetchData = async () => {
     try {
       const docRes = await axiosJWT.get(`${BASE_URL}/students/document/info`);
       const docData = docRes?.data?.content?.counselingProfile;
@@ -83,8 +83,7 @@ export default function ViewProfile() {
         Toast.show({
           type: "success",
           text1: "Success",
-          text2:
-            "Updated information successfully!",
+          text2: "Updated information successfully!",
         });
       }
     } catch (err) {
@@ -142,7 +141,7 @@ export default function ViewProfile() {
         <View
           style={{
             flexDirection: "row",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.035,
             paddingBottom: 10,
           }}
@@ -165,7 +164,7 @@ export default function ViewProfile() {
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ paddingHorizontal: 30 }}
+          style={{ paddingHorizontal: 20 }}
           ref={scrollViewRef}
         >
           <View
@@ -329,7 +328,7 @@ export default function ViewProfile() {
         />
         <View
           style={{
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingVertical: 16,
             backgroundColor: "#f5f7fd",
           }}

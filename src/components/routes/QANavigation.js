@@ -1,12 +1,16 @@
-import { View, Text, Dimensions } from "react-native";
-import React from "react";
+import { Dimensions } from "react-native";
+import React, { useContext } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import QA from "../screens/counselor/QA";
-import Owner from "../screens/counselor/Owner";
+import QuestionBoard from "../screens/student/QuestionBoard";
+import StudentQA from "../screens/student/StudentQA";
+import QuestionBoardCounselor from "../screens/counselor/QA";
+import CounselorQA from "../screens/counselor/CounselorQA";
+import { AuthContext } from "../context/AuthContext";
 const Tab = createMaterialTopTabNavigator();
 
 export default function QANavigation() {
   const { width, height } = Dimensions.get("screen");
+  const { userData } = useContext(AuthContext);
   const screenOptions = () => ({
     tabBarStyle: {
       position: "absolute",
@@ -44,12 +48,25 @@ export default function QANavigation() {
   });
 
   return (
-    <Tab.Navigator
-      initialRouteName="Question List"
-      screenOptions={screenOptions}
-    >
-      <Tab.Screen name="Question List" component={QA} />
-      <Tab.Screen name="Taken Questions" component={Owner} />
-    </Tab.Navigator>
+    <>
+      {userData.role === "STUDENT" ? (
+        <Tab.Navigator
+          initialRouteName="FAQ"
+          screenOptions={screenOptions}
+        >
+          <Tab.Screen name="FAQ" component={QuestionBoard} />
+          <Tab.Screen name="My Q&A" component={StudentQA} />
+        </Tab.Navigator>
+      ) : userData.role === "ACADEMIC_COUNSELOR" ||
+        userData.role === "NON_ACADEMIC_COUNSELOR" ? (
+        <Tab.Navigator
+          initialRouteName="My Q&A"
+          screenOptions={screenOptions}
+        >
+          <Tab.Screen name="My Q&A" component={CounselorQA} />
+          <Tab.Screen name="FAQ" component={QuestionBoardCounselor} />
+        </Tab.Navigator>
+      ) : null}
+    </>
   );
 }

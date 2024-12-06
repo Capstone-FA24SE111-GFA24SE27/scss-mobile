@@ -13,7 +13,9 @@ import {
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Dropdown } from "react-native-element-dropdown";
+import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
+import { ChatContext } from "../../context/ChatContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import Toast from "react-native-toast-message";
@@ -21,12 +23,10 @@ import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import ExtendInfoModal from "../../layout/ExtendInfoModal";
-import { AuthContext } from "../../context/AuthContext";
 
-export default function QA() {
+export default function QuestionBoard() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
-  const { userData } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const socket = useContext(SocketContext);
@@ -45,20 +45,11 @@ export default function QA() {
   const [sortDirection, setSortDirection] = useState("");
   const [expanded, setExpanded] = useState(false);
   const [expanded2, setExpanded2] = useState(false);
-  const [expanded3, setExpanded3] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
   const [openExtendInfo, setOpenExtendInfo] = useState(false);
   const [extendInfo, setExtendInfo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [openCreate, setOpenCreate] = useState(false);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [content2, setContent2] = useState("");
-  const [image, setImage] = useState(null);
-  const [openPreview, setOpenPreview] = useState(false);
-  const [openConfirm, setOpenConfirm] = useState(false);
   const scrollViewRef = useRef(null);
 
   useFocusEffect(
@@ -66,7 +57,7 @@ export default function QA() {
       if (scrollViewRef.current) {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
-      fetchData(filters, {query: debouncedKeyword, page: currentPage });
+      fetchData(filters, { page: currentPage });
       fetchCategory();
     }, [debouncedKeyword, filters, currentPage])
   );
@@ -151,48 +142,6 @@ export default function QA() {
     setTimeout(() => setLoading(false), 1500);
   }, [currentPage]);
 
-  const selectImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permissionResult.granted) {
-      alert("You've refused to allow this app to access your photos!");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      base64: true,
-      allowsEditing: false,
-      quality: 0.75,
-    });
-
-    if (!result.canceled) {
-      const selectedImage = result.assets[0];
-      setImage({
-        uri: selectedImage.uri,
-        base64: selectedImage.base64,
-      });
-    }
-  };
-
-  const renderPreviewContent = () => {
-    return (
-      <RenderHTML
-        source={{
-          html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
-            image
-              ? `<img src="data:image/jpeg;base64,${
-                  image.base64
-                }" style="max-width: ${width * 0.85}px; height: auto;">`
-              : ""
-          }</div>`,
-        }}
-        contentWidth={width * 0.9}
-      />
-    );
-  };
-
   const renderContent = (source) => {
     return (
       <RenderHTML
@@ -208,57 +157,6 @@ export default function QA() {
   console.error = (...args) => {
     if (/defaultProps/.test(args[0])) return;
     error(...args);
-  };
-
-  const handleCreateQuestion = async () => {
-    try {
-      const imageHTML = image
-        ? `<img src="data:image/jpeg;base64,${
-            image.base64
-          }" style="max-width: ${width * 0.85}px; height: auto;">`
-        : "";
-      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
-      const response = await axiosJWT.post(
-        `${BASE_URL}/contribution-question-cards`,
-        {
-          title: title,
-          question: finalContent,
-          answer: content2,
-          categoryId: selectedCategory?.id,
-          counselorId: userData?.id,
-        }
-      );
-      const data = await response.data;
-      if (data && data.status == 200) {
-        setOpenCreate(false);
-        setOpenConfirm(false);
-        setTitle("");
-        setContent("");
-        setContent2("");
-        setCategory("");
-        setImage(null);
-        setOpenPreview(false);
-        fetchData(filters, { page: currentPage });
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: "New question has been created",
-          onPress: () => {
-            Toast.hide();
-          },
-        });
-      }
-    } catch (err) {
-      console.log("Can't create question", err);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Can't create question",
-        onPress: () => {
-          Toast.hide();
-        },
-      });
-    }
   };
 
   return (
@@ -362,21 +260,6 @@ export default function QA() {
                 flexDirection: "row",
               }}
             >
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={{
-                  backgroundColor: "#F39300",
-                  borderRadius: 40,
-                  padding: 8,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "row",
-                  marginRight: 8,
-                }}
-                onPress={() => setOpenCreate(true)}
-              >
-                <Ionicons name="add" size={26} style={{ color: "white" }} />
-              </TouchableOpacity>
               <FilterToggle
                 isExpanded={isExpanded}
                 toggleExpanded={() => setIsExpanded((prev) => !prev)}
@@ -802,7 +685,7 @@ export default function QA() {
                       marginLeft: 4,
                     }}
                   >
-                    {question.title}
+                    {question.question}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -960,503 +843,6 @@ export default function QA() {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={openCreate}
-          onRequestClose={() => setOpenCreate(false)}
-        >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "flex-end",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
-            }}
-          >
-            <View
-              style={{
-                width: "100%",
-                height: "98%",
-                backgroundColor: "#f5f7fd",
-                borderTopLeftRadius: 16,
-                borderTopRightRadius: 16,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: "#F39300",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingVertical: 16,
-                  paddingHorizontal: 20,
-                  borderTopLeftRadius: 16,
-                  borderTopRightRadius: 16,
-                }}
-              >
-                <Text
-                  style={{ fontSize: 24, fontWeight: "bold", color: "white" }}
-                >
-                  Create Question
-                </Text>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={{
-                    backgroundColor: "white",
-                    padding: 4,
-                    borderRadius: 20,
-                  }}
-                  onPress={() => (setOpenCreate(false), setImage(null))}
-                >
-                  <Ionicons name="close" size={24} color="#333" />
-                </TouchableOpacity>
-              </View>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingHorizontal: 20,
-                  paddingTop: 12,
-                  paddingBottom: 20,
-                  backgroundColor: "#f5f7fd",
-                  borderRadius: 16,
-                }}
-              >
-                <Text
-                  style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
-                >
-                  Title <Text style={{ color: "#F39300" }}>*</Text>
-                </Text>
-                <TextInput
-                  placeholder="Write your title here"
-                  value={title}
-                  onChangeText={(value) => setTitle(value)}
-                  style={{
-                    borderColor: "#ccc",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    padding: 12,
-                    height: 60,
-                    backgroundColor: "#fff",
-                    fontSize: 16,
-                    marginTop: 8,
-                    marginBottom: 12,
-                    textAlignVertical: "top",
-                  }}
-                  multiline
-                />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
-                  >
-                    Your question <Text style={{ color: "#F39300" }}>*</Text>
-                  </Text>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      style={{
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        marginRight: 8,
-                        backgroundColor: openPreview ? "#F39300" : "#e3e3e3",
-                        borderRadius: 10,
-                      }}
-                      onPress={() => setOpenPreview(!openPreview)}
-                    >
-                      <MaterialIcons
-                        name="preview"
-                        size={28}
-                        color={openPreview ? "white" : "black"}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      style={{
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        backgroundColor: "#e3e3e3",
-                        borderRadius: 10,
-                      }}
-                      onPress={selectImage}
-                    >
-                      <Ionicons name="image" size={28} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <TextInput
-                  placeholder="Write your question content here"
-                  value={content}
-                  onChangeText={(value) => setContent(value)}
-                  style={{
-                    borderColor: "#ccc",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    padding: 12,
-                    height: 100,
-                    backgroundColor: "#fff",
-                    fontSize: 16,
-                    marginTop: 8,
-                    marginBottom: 12,
-                    textAlignVertical: "top",
-                  }}
-                  multiline
-                />
-                {image && (
-                  <View style={{ marginBottom: 12 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        Imported Image URI
-                      </Text>
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        style={{
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          borderWidth: 1.5,
-                          borderColor: "red",
-                        }}
-                        onPress={() => setImage(null)}
-                      >
-                        <Ionicons name="trash" size={20} color="red" />
-                      </TouchableOpacity>
-                    </View>
-                    <Text>{image?.uri}</Text>
-                  </View>
-                )}
-                {openPreview && (
-                  <>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        color: "#333",
-                      }}
-                    >
-                      Preview
-                    </Text>
-                    <View
-                      style={{
-                        backgroundColor: "white",
-                        padding: 8,
-                        marginTop: 8,
-                        marginBottom: 12,
-                        borderRadius: 10,
-                        borderWidth: 1.5,
-                        borderColor: "#ccc",
-                      }}
-                    >
-                      {content !== "" || image ? (
-                        <>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              fontWeight: "400",
-                              color: "gray",
-                            }}
-                          >
-                            Your question look like this:
-                          </Text>
-                          {renderPreviewContent()}
-                        </>
-                      ) : (
-                        <Text
-                          style={{
-                            fontWeight: "400",
-                            fontSize: 18,
-                            fontStyle: "italic",
-                            fontWeight: "600",
-                            textAlign: "center",
-                            color: "gray",
-                            opacity: 0.7,
-                          }}
-                        >
-                          Nothing to preview yet
-                        </Text>
-                      )}
-                    </View>
-                  </>
-                )}
-                <Text
-                  style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
-                >
-                  Category <Text style={{ color: "#F39300" }}>*</Text>
-                </Text>
-                <Dropdown
-                  style={{
-                    backgroundColor: "white",
-                    borderColor: expanded3 ? "#F39300" : "black",
-                    height: 40,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 10,
-                    paddingHorizontal: 12,
-                    marginTop: 8,
-                    marginBottom: 12,
-                  }}
-                  placeholderStyle={{ fontSize: 14 }}
-                  selectedTextStyle={{
-                    fontSize: 14,
-                    color: selectedCategory ? "black" : "white",
-                  }}
-                  maxHeight={150}
-                  data={[{ name: "Clear" }, ...categories]}
-                  labelField="name"
-                  search
-                  value={
-                    selectedCategory !== ""
-                      ? selectedCategory.name
-                      : "Select Category"
-                  }
-                  placeholder={
-                    selectedCategory !== ""
-                      ? selectedCategory.name
-                      : "Select Category"
-                  }
-                  searchPlaceholder="Search Category"
-                  onFocus={() => setExpanded3(true)}
-                  onBlur={() => setExpanded3(false)}
-                  onChange={(item) => {
-                    if (item.name === "Clear") {
-                      setSelectedCategory("");
-                    } else {
-                      setSelectedCategory(item);
-                    }
-                    setExpanded3(false);
-                  }}
-                  renderRightIcon={() => (
-                    <Ionicons
-                      color={expanded3 ? "#F39300" : "black"}
-                      name={expanded3 ? "caret-up" : "caret-down"}
-                      size={20}
-                    />
-                  )}
-                  renderItem={(item) => {
-                    return (
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingVertical: 8,
-                          backgroundColor:
-                            item.name == selectedCategory.name
-                              ? "#F39300"
-                              : "white",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "500",
-                            color:
-                              item.name == selectedCategory.name
-                                ? "white"
-                                : item.name == "Clear"
-                                ? "red"
-                                : "black",
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                        {item.name === selectedCategory.name &&
-                          item.name !== "Clear" && (
-                            <Ionicons
-                              color="white"
-                              name="checkmark"
-                              size={20}
-                            />
-                          )}
-                      </View>
-                    );
-                  }}
-                />
-                <Text
-                  style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
-                >
-                  Your answer <Text style={{ color: "#F39300" }}>*</Text>
-                </Text>
-                <TextInput
-                  placeholder="Write your answer here"
-                  value={content2}
-                  onChangeText={(value) => setContent2(value)}
-                  style={{
-                    borderColor: "#ccc",
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    padding: 12,
-                    height: 100,
-                    backgroundColor: "#fff",
-                    fontSize: 16,
-                    marginTop: 8,
-                    marginBottom: 12,
-                    textAlignVertical: "top",
-                  }}
-                  multiline
-                />
-              </ScrollView>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                disabled={
-                  title === "" ||
-                  content === "" ||
-                  content2 === "" ||
-                  selectedCategory === ""
-                }
-                style={{
-                  backgroundColor:
-                    title === "" ||
-                    content === "" ||
-                    content2 === "" ||
-                    selectedCategory === ""
-                      ? "#ededed"
-                      : "#F39300",
-                  marginHorizontal: 20,
-                  marginVertical: 12,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 10,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                onPress={() => setOpenConfirm(true)}
-              >
-                <Text
-                  style={{
-                    color:
-                      title === "" ||
-                      content === "" ||
-                      content2 === "" ||
-                      selectedCategory === ""
-                        ? "gray"
-                        : "white",
-                    fontWeight: "bold",
-                    fontSize: 20,
-                  }}
-                >
-                  Create Question
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-        <Modal
-          transparent={true}
-          visible={openConfirm}
-          animationType="fade"
-          onRequestClose={() => setOpenConfirm(false)}
-        >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            <View
-              style={{
-                width: width * 0.8,
-                padding: 20,
-                backgroundColor: "white",
-                borderRadius: 10,
-                elevation: 10,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: "bold",
-                  marginBottom: 10,
-                  textAlign: "center",
-                }}
-              >
-                Create Question Confirmation
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  marginBottom: 30,
-                  textAlign: "center",
-                }}
-              >
-                Are you sure you want to create this question?
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#ededed",
-                    padding: 10,
-                    borderRadius: 10,
-                    marginRight: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 1,
-                    borderColor: "gray",
-                  }}
-                  onPress={() => setOpenConfirm(false)}
-                >
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: "#333",
-                      fontWeight: "600",
-                    }}
-                  >
-                    No
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#F39300",
-                    padding: 10,
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                  onPress={handleCreateQuestion}
-                >
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: "white",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Yes
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-        <Modal
-          animationType="slide"
-          transparent={true}
           visible={openInfo}
           onRequestClose={() => setOpenInfo(false)}
         >
@@ -1534,40 +920,9 @@ export default function QA() {
                         marginBottom: 4,
                       }}
                     >
-                      Title
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: "#333",
-                        fontWeight: "500",
-                      }}
-                    >
-                      {info?.title}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      marginBottom: 20,
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                        marginBottom: 4,
-                      }}
-                    >
                       Question
                     </Text>
-                    {/* <Text
+                    <Text
                       style={{
                         fontSize: 20,
                         color: "#333",
@@ -1576,8 +931,7 @@ export default function QA() {
                       }}
                     >
                       {info?.question}
-                    </Text> */}
-                    {renderContent(info?.question)}
+                    </Text>
                   </View>
                   <View
                     style={{
@@ -1609,7 +963,7 @@ export default function QA() {
                         style={{
                           flexDirection: "row",
                           alignItems: "center",
-                          marginTop: 12,
+                          marginVertical: 12,
                         }}
                       >
                         <View style={{ width: "40%" }}>
@@ -1722,7 +1076,7 @@ export default function QA() {
                         marginBottom: 4,
                       }}
                     >
-                      Answer
+                      Creator's Answer
                     </Text>
                     {info?.answer !== null ? (
                       <Text

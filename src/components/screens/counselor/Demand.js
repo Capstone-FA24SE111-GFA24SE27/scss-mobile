@@ -229,8 +229,7 @@ export default function Demand({ route }) {
           <TouchableOpacity
             key={`${selectedDate}-${slot.slotCode}-${index}`}
             onPress={() => (
-              console.log(selectedDate, slot),
-              setSelectedSlot(slot)
+              console.log(selectedDate, slot), setSelectedSlot(slot)
             )}
             disabled={
               slot.status === "EXPIRED" ||
@@ -245,7 +244,8 @@ export default function Demand({ route }) {
               backgroundColor:
                 slot.myAppointment === true
                   ? "#ededed"
-                  : selectedSlot?.slotCode === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode &&
+                    slot.status !== "EXPIRED"
                   ? "white"
                   : slot.status === "EXPIRED"
                   ? "#ededed"
@@ -258,7 +258,8 @@ export default function Demand({ route }) {
               borderColor:
                 slot.myAppointment === true
                   ? "transparent"
-                  : selectedSlot?.slotCode === slot.slotCode && slot.status !== "EXPIRED"
+                  : selectedSlot?.slotCode === slot.slotCode &&
+                    slot.status !== "EXPIRED"
                   ? "#F39300"
                   : slot.status === "EXPIRED"
                   ? "transparent"
@@ -447,7 +448,7 @@ export default function Demand({ route }) {
           style={{
             display: "flex",
             flexDirection: "row",
-            paddingHorizontal: 30,
+            paddingHorizontal: 20,
             paddingTop: height * 0.035,
             paddingVertical: 10,
           }}
@@ -469,7 +470,7 @@ export default function Demand({ route }) {
         </View>
         <View
           style={{
-            marginHorizontal: 30,
+            marginHorizontal: 20,
           }}
         >
           <View
@@ -758,7 +759,7 @@ export default function Demand({ route }) {
         </View>
         <ScrollView
           ref={scrollViewRef}
-          style={{ marginHorizontal: 30, marginVertical: 12 }}
+          style={{ marginHorizontal: 20, marginVertical: 12 }}
           showsVerticalScrollIndicator={false}
         >
           {loading ? (
@@ -1814,9 +1815,7 @@ export default function Demand({ route }) {
                                       .split("T")[1]
                                       .slice(0, 5)}{" "}
                                     -{" "}
-                                    {item.endDateTime
-                                      .split("T")[1]
-                                      .slice(0, 5)}
+                                    {item.endDateTime.split("T")[1].slice(0, 5)}
                                   </Text>
                                 </View>
                               </View>
