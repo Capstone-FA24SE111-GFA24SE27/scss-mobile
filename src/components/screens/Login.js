@@ -14,11 +14,6 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 import Toast from "react-native-toast-message";
 import Loading from "../layout/Loading";
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-
-GoogleSignin.configure({
-  webClientId: '300198556722-f57e7s90fkaau34le2fau2ervjm4ohfr.apps.googleusercontent.com',
-});
 
 export default function Login() {
   const navigation = useNavigation();
@@ -129,10 +124,6 @@ export default function Login() {
         <Loading loading={loading} />
       ) : (
         <>
-          {/* <Button
-            title="Google Sign-In"
-            onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}
-          /> */}
           <View
             style={{
               display: "flex",
@@ -221,8 +212,8 @@ export default function Login() {
                     borderColor: isFocused1
                       ? "#F39300"
                       : emailError
-                        ? "red"
-                        : "gray",
+                      ? "red"
+                      : "gray",
                     alignContent: "center",
                   }}
                 >
@@ -307,8 +298,8 @@ export default function Login() {
                     borderColor: isFocused2
                       ? "#F39300"
                       : passwordError
-                        ? "red"
-                        : "gray",
+                      ? "red"
+                      : "gray",
                     alignContent: "center",
                   }}
                 >

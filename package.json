@@ -1,19 +1,17 @@
 {
   "name": "scss-mobile",
   "version": "1.0.0",
+  "main": "expo/AppEntry.js",
   "scripts": {
-    "start": "expo start --dev-client",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
     "web": "expo start --web"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-community/push-notification-ios": "^1.11.0",
-    "@react-native-firebase/app": "^21.6.1",
-    "@react-native-firebase/auth": "^21.6.1",
-    "@react-native-google-signin/google-signin": "^13.1.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/material-top-tabs": "^6.6.14",
     "@react-navigation/native": "^6.1.18",

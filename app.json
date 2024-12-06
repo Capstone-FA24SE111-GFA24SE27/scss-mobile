@@ -15,25 +15,12 @@
       "supportsTablet": true
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "android.permission.INTERNET",
-        "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.anonymous.scssmobile"
+      "permissions": ["INTERNET"]
     },
-    "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ]
-    ],
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
