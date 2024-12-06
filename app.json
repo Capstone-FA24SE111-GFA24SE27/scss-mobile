@@ -25,10 +25,13 @@
       "favicon": "./src/assets/favicon.png"
     },
     "projectId": "4d87a268-75a2-4c86-9068-3c5a158afec6",
-    "extra": {
-      "eas": {
-        "projectId": "681ac53e-f65f-4015-9716-fdce5aa77e9a"
-      }
-    }
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
   }
 }
