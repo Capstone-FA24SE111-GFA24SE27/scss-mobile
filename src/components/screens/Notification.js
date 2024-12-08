@@ -140,12 +140,6 @@ export default function Notification() {
   // Đánh dấu một thông báo là đã đọc
   const markAsRead = async (notificationId, item) => {
     try {
-      console.log(
-        "Marking as read - Notification ID: ",
-        notificationId,
-        "Item:",
-        item
-      );
       const response = await axiosJWT.put(
         `${BASE_URL}/notification/read/${notificationId}`,
         {}
@@ -249,7 +243,7 @@ export default function Notification() {
             >
               {item.message}
             </Text>
-            <View>
+            <View style={{ marginTop: 4 }}>
               <Text
                 style={{
                   fontSize: 16,

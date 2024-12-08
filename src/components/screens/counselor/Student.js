@@ -18,7 +18,6 @@ import {
   Modal,
   ActivityIndicator,
   SectionList,
-  Switch,
 } from "react-native";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import {
@@ -342,6 +341,7 @@ export default function Student() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchData();
   }, [debouncedKeyword, debouncedPromptForBehavior]);
 
@@ -439,8 +439,8 @@ export default function Student() {
       fetchStudentInfo2();
       fetchCoursesSemester();
       setInfo4(null);
-      setInfo5(null);
-      fetchStudentInfo5();
+      setInfo3(null);
+      fetchStudentInfo3();
     }
   }, [selectedSemester4]);
 
@@ -448,12 +448,12 @@ export default function Student() {
     setInfo3Loading(true);
     try {
       const infoRes3 = await axiosJWT.get(
-        `${BASE_URL}/students/study/${selectedStudent}`
+        `${BASE_URL}/students/mark-report/${selectedStudent}/semester/${selectedSemester4}`
       );
       const infoData3 = infoRes3?.data?.content;
       setInfo3(infoData3);
     } catch (err) {
-      console.log("Can't fetch student academic transcript");
+      console.log("Can't fetch student mark report");
     } finally {
       setInfo3Loading(false);
     }
@@ -486,13 +486,13 @@ export default function Student() {
   const fetchStudentInfo5 = async () => {
     setInfo5Loading(true);
     try {
-      const infoRes5 = await axiosJWT.get(
-        `${BASE_URL}/students/mark-report/${selectedStudent}/semester/${selectedSemester4}`
+      const infoRes3 = await axiosJWT.get(
+        `${BASE_URL}/students/study/${selectedStudent}`
       );
-      const infoData5 = infoRes5?.data?.content;
-      setInfo5(infoData5);
+      const infoData3 = infoRes3?.data?.content;
+      setInfo5(infoData3);
     } catch (err) {
-      console.log("Can't fetch student mark report");
+      console.log("Can't fetch student academic transcript");
     } finally {
       setInfo5Loading(false);
     }
@@ -519,7 +519,7 @@ export default function Student() {
   useEffect(() => {
     if (selectedStudent !== null) {
       fetchStudentInfo();
-      fetchStudentInfo3();
+      fetchStudentInfo5();
       fetchStudentInfo6(filters2);
     }
   }, [selectedStudent]);
@@ -2489,7 +2489,7 @@ export default function Student() {
                   setInfo(null),
                   setInfo2(null),
                   setSelectedSemester4(null),
-                  setInfo3(null),
+                  setInfo5(null),
                   setCourses(null),
                   setSelectedCourse(null),
                   setInfo4(null),
@@ -2574,7 +2574,9 @@ export default function Student() {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => setActiveTab(4)}
+                    onPress={() => (
+                      setActiveTab(4), setSelectedSemester4(semesters[0].name)
+                    )}
                     style={{
                       paddingVertical: 8,
                       marginRight: 20,
@@ -2590,7 +2592,7 @@ export default function Student() {
                         color: activeTab === 4 ? "#F39300" : "#333",
                       }}
                     >
-                      Academic Transcript
+                      Attendance Report
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -2612,13 +2614,11 @@ export default function Student() {
                         color: activeTab === 5 ? "#F39300" : "#333",
                       }}
                     >
-                      Attendance Report
+                      Mark Report
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => (
-                      setActiveTab(6), setSelectedSemester4(semesters[0].name)
-                    )}
+                    onPress={() => setActiveTab(6)}
                     style={{
                       paddingVertical: 8,
                       marginRight: 20,
@@ -2634,7 +2634,7 @@ export default function Student() {
                         color: activeTab === 6 ? "#F39300" : "#333",
                       }}
                     >
-                      Mark Report
+                      Academic Transcript
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -3521,273 +3521,7 @@ export default function Student() {
                 ) : activeTab === 3 ? (
                   <></>
                 ) : null}
-                {activeTab === 4 ? (
-                  info3Loading ? (
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginVertical: 38.5,
-                      }}
-                    >
-                      <ActivityIndicator size={40} color="#F39300" animating />
-                    </View>
-                  ) : info3 ? (
-                    <>
-                      <View
-                        style={{
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          padding: 12,
-                          marginBottom: 20,
-                          elevation: 1,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color: "#F39300",
-                            marginBottom: 8,
-                          }}
-                        >
-                          Analysis Summary
-                        </Text>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              fontWeight: "600",
-                              color: "#333",
-                            }}
-                          >
-                            Passed:{" "}
-                            <Text
-                              style={{ color: "green", fontWeight: "bold" }}
-                            >
-                              {
-                                info3.filter(
-                                  (subject) => subject.status === "PASSED"
-                                ).length
-                              }
-                            </Text>
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              fontWeight: "600",
-                              color: "#333",
-                            }}
-                          >
-                            Failed:{" "}
-                            <Text style={{ color: "red", fontWeight: "bold" }}>
-                              {
-                                info3.filter(
-                                  (subject) => subject.status === "NOT_PASSED"
-                                ).length
-                              }
-                            </Text>
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              fontWeight: "600",
-                              color: "#333",
-                            }}
-                          >
-                            GPA:{" "}
-                            <Text
-                              style={{ color: "#F39300", fontWeight: "bold" }}
-                            >
-                              {info3
-                                .filter((subject) => subject.grade !== null)
-                                .reduce(
-                                  (acc, subject, _, array) =>
-                                    acc +
-                                    parseFloat(subject.grade) / array.length,
-                                  0
-                                )
-                                .toFixed(2)}
-                            </Text>
-                          </Text>
-                        </View>
-                      </View>
-                      <ScrollView showsVerticalScrollIndicator={false}>
-                        {[...new Set(info3.map((item) => item.term))].map(
-                          (term) => (
-                            <View
-                              key={term}
-                              style={{
-                                backgroundColor: "white",
-                                borderRadius: 10,
-                                padding: 12,
-                                marginBottom: 20,
-                                elevation: 1,
-                              }}
-                            >
-                              <Text
-                                style={{
-                                  fontWeight: "bold",
-                                  fontSize: 20,
-                                  marginBottom: 4,
-                                  color: "#F39300",
-                                }}
-                              >
-                                Term {term}
-                              </Text>
-                              {info3
-                                .filter((subject) => subject.term === term)
-                                .map((subject, index) => (
-                                  <View
-                                    key={index}
-                                    style={{
-                                      paddingVertical: 12,
-                                      marginBottom: 8,
-                                      borderBottomWidth:
-                                        index ==
-                                        info3.filter(
-                                          (subject) => subject.term === term
-                                        ).length -
-                                          1
-                                          ? 0
-                                          : 2,
-                                      borderBottomColor: "lightgrey",
-                                    }}
-                                  >
-                                    <Text
-                                      style={{
-                                        fontSize: 18,
-                                        fontWeight: "600",
-                                        marginBottom: 4,
-                                      }}
-                                    >
-                                      {subject.subjectCode} -{" "}
-                                      {subject.subjectName}
-                                    </Text>
-                                    <Text
-                                      style={{
-                                        fontSize: 16,
-                                        color: "#333",
-                                        fontWeight: "500",
-                                      }}
-                                    >
-                                      Semester:{" "}
-                                      {subject.semester !== "N/A" ? (
-                                        <Text
-                                          style={{
-                                            fontWeight: "600",
-                                            color: "#F39300",
-                                          }}
-                                        >
-                                          {subject.semester}
-                                        </Text>
-                                      ) : (
-                                        <Text
-                                          style={{
-                                            fontWeight: "600",
-                                            color: "gray",
-                                          }}
-                                        >
-                                          --
-                                        </Text>
-                                      )}
-                                    </Text>
-                                    <View
-                                      style={{
-                                        flexDirection: "row",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        marginTop: 8,
-                                      }}
-                                    >
-                                      <Text
-                                        style={{
-                                          fontSize: 16,
-                                          fontWeight: "500",
-                                          color: "#333",
-                                        }}
-                                      >
-                                        Grade:{" "}
-                                        {subject.grade !== null ? (
-                                          <Text
-                                            style={{
-                                              fontWeight: "600",
-                                              color:
-                                                subject.grade === null
-                                                  ? "gray"
-                                                  : subject.grade < 5
-                                                  ? "red"
-                                                  : subject.grade >= 5 &&
-                                                    subject.grade <= 8
-                                                  ? "#F39300"
-                                                  : subject.grade > 8
-                                                  ? "green"
-                                                  : "#333",
-                                            }}
-                                          >
-                                            {subject.grade}
-                                          </Text>
-                                        ) : (
-                                          <Text
-                                            style={{
-                                              fontWeight: "600",
-                                              color: "gray",
-                                            }}
-                                          >
-                                            --
-                                          </Text>
-                                        )}
-                                      </Text>
-                                      <Text
-                                        style={{
-                                          fontWeight: "bold",
-                                          paddingVertical: 4,
-                                          paddingHorizontal: 12,
-                                          borderRadius: 20,
-                                          backgroundColor:
-                                            subject.status === "PASSED"
-                                              ? "green"
-                                              : subject.status === "NOT_PASSED"
-                                              ? "red"
-                                              : subject.status === "STUDYING"
-                                              ? "#F39300"
-                                              : "gray",
-                                          color: "#fff",
-                                        }}
-                                      >
-                                        {subject.status}
-                                      </Text>
-                                    </View>
-                                  </View>
-                                ))}
-                            </View>
-                          )
-                        )}
-                      </ScrollView>
-                    </>
-                  ) : (
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontStyle: "italic",
-                        fontWeight: "600",
-                        textAlign: "center",
-                        color: "gray",
-                        opacity: 0.7,
-                      }}
-                    >
-                      Can't find student academic transcript data
-                    </Text>
-                  )
-                ) : activeTab === 4 ? (
-                  <></>
-                ) : null}
-                {activeTab === 5 && selectedSemester4 ? (
+                {activeTab === 4 && selectedSemester4 ? (
                   <>
                     <View style={{ flexDirection: "row", maxHeight: "32.5%" }}>
                       <View
@@ -4128,12 +3862,12 @@ export default function Student() {
                       </ScrollView>
                     </View>
                   </>
-                ) : activeTab === 5 ? (
+                ) : activeTab === 4 ? (
                   <Text
                     style={{ fontStyle: "italic", color: "gray", opacity: 0.7 }}
                   ></Text>
                 ) : null}
-                {activeTab === 6 && selectedSemester4 ? (
+                {activeTab === 5 && selectedSemester4 ? (
                   <>
                     <View
                       style={{
@@ -4176,7 +3910,7 @@ export default function Student() {
                             <Text
                               style={{ color: "#F39300", fontWeight: "bold" }}
                             >
-                              {info5
+                              {info3
                                 ?.filter((subject) => subject.grade !== null)
                                 ?.reduce(
                                   (acc, subject, _, array) =>
@@ -4227,7 +3961,7 @@ export default function Student() {
                         ))}
                       </ScrollView>
                     </View>
-                    {info5Loading ? (
+                    {info3Loading ? (
                       <View
                         style={{
                           justifyContent: "center",
@@ -4241,9 +3975,9 @@ export default function Student() {
                           animating
                         />
                       </View>
-                    ) : info5 && info5.length > 0 ? (
+                    ) : info3 && info3.length > 0 ? (
                       <ScrollView showsVerticalScrollIndicator={false}>
-                        {info5?.map((item, index) => (
+                        {info3?.map((item, index) => (
                           <View
                             key={index}
                             style={{
@@ -4359,10 +4093,276 @@ export default function Student() {
                       </Text>
                     )}
                   </>
-                ) : activeTab === 6 ? (
+                ) : activeTab === 5 ? (
                   <Text
                     style={{ fontStyle: "italic", color: "gray", opacity: 0.7 }}
                   ></Text>
+                ) : null}
+                {activeTab === 6 ? (
+                  info5Loading ? (
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginVertical: 38.5,
+                      }}
+                    >
+                      <ActivityIndicator size={40} color="#F39300" animating />
+                    </View>
+                  ) : info5 ? (
+                    <>
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          padding: 12,
+                          marginBottom: 20,
+                          elevation: 1,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "#F39300",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Analysis Summary
+                        </Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "600",
+                              color: "#333",
+                            }}
+                          >
+                            Passed:{" "}
+                            <Text
+                              style={{ color: "green", fontWeight: "bold" }}
+                            >
+                              {
+                                info5.filter(
+                                  (subject) => subject.status === "PASSED"
+                                ).length
+                              }
+                            </Text>
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "600",
+                              color: "#333",
+                            }}
+                          >
+                            Failed:{" "}
+                            <Text style={{ color: "red", fontWeight: "bold" }}>
+                              {
+                                info5.filter(
+                                  (subject) => subject.status === "NOT_PASSED"
+                                ).length
+                              }
+                            </Text>
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "600",
+                              color: "#333",
+                            }}
+                          >
+                            GPA:{" "}
+                            <Text
+                              style={{ color: "#F39300", fontWeight: "bold" }}
+                            >
+                              {info5
+                                .filter((subject) => subject.grade !== null)
+                                .reduce(
+                                  (acc, subject, _, array) =>
+                                    acc +
+                                    parseFloat(subject.grade) / array.length,
+                                  0
+                                )
+                                .toFixed(2)}
+                            </Text>
+                          </Text>
+                        </View>
+                      </View>
+                      <ScrollView showsVerticalScrollIndicator={false}>
+                        {[...new Set(info5.map((item) => item.term))].map(
+                          (term) => (
+                            <View
+                              key={term}
+                              style={{
+                                backgroundColor: "white",
+                                borderRadius: 10,
+                                padding: 12,
+                                marginBottom: 20,
+                                elevation: 1,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontWeight: "bold",
+                                  fontSize: 20,
+                                  marginBottom: 4,
+                                  color: "#F39300",
+                                }}
+                              >
+                                Term {term}
+                              </Text>
+                              {info5
+                                .filter((subject) => subject.term === term)
+                                .map((subject, index) => (
+                                  <View
+                                    key={index}
+                                    style={{
+                                      paddingVertical: 12,
+                                      marginBottom: 8,
+                                      borderBottomWidth:
+                                        index ==
+                                        info5.filter(
+                                          (subject) => subject.term === term
+                                        ).length -
+                                          1
+                                          ? 0
+                                          : 2,
+                                      borderBottomColor: "lightgrey",
+                                    }}
+                                  >
+                                    <Text
+                                      style={{
+                                        fontSize: 18,
+                                        fontWeight: "600",
+                                        marginBottom: 4,
+                                      }}
+                                    >
+                                      {subject.subjectCode} -{" "}
+                                      {subject.subjectName}
+                                    </Text>
+                                    <Text
+                                      style={{
+                                        fontSize: 16,
+                                        color: "#333",
+                                        fontWeight: "500",
+                                      }}
+                                    >
+                                      Semester:{" "}
+                                      {subject.semester !== "N/A" ? (
+                                        <Text
+                                          style={{
+                                            fontWeight: "600",
+                                            color: "#F39300",
+                                          }}
+                                        >
+                                          {subject.semester}
+                                        </Text>
+                                      ) : (
+                                        <Text
+                                          style={{
+                                            fontWeight: "600",
+                                            color: "gray",
+                                          }}
+                                        >
+                                          --
+                                        </Text>
+                                      )}
+                                    </Text>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        marginTop: 8,
+                                      }}
+                                    >
+                                      <Text
+                                        style={{
+                                          fontSize: 16,
+                                          fontWeight: "500",
+                                          color: "#333",
+                                        }}
+                                      >
+                                        Grade:{" "}
+                                        {subject.grade !== null ? (
+                                          <Text
+                                            style={{
+                                              fontWeight: "600",
+                                              color:
+                                                subject.grade === null
+                                                  ? "gray"
+                                                  : subject.grade < 5
+                                                  ? "red"
+                                                  : subject.grade >= 5 &&
+                                                    subject.grade <= 8
+                                                  ? "#F39300"
+                                                  : subject.grade > 8
+                                                  ? "green"
+                                                  : "#333",
+                                            }}
+                                          >
+                                            {subject.grade}
+                                          </Text>
+                                        ) : (
+                                          <Text
+                                            style={{
+                                              fontWeight: "600",
+                                              color: "gray",
+                                            }}
+                                          >
+                                            --
+                                          </Text>
+                                        )}
+                                      </Text>
+                                      <Text
+                                        style={{
+                                          fontWeight: "bold",
+                                          paddingVertical: 4,
+                                          paddingHorizontal: 12,
+                                          borderRadius: 20,
+                                          backgroundColor:
+                                            subject.status === "PASSED"
+                                              ? "green"
+                                              : subject.status === "NOT_PASSED"
+                                              ? "red"
+                                              : subject.status === "STUDYING"
+                                              ? "#F39300"
+                                              : "gray",
+                                          color: "#fff",
+                                        }}
+                                      >
+                                        {subject.status}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                ))}
+                            </View>
+                          )
+                        )}
+                      </ScrollView>
+                    </>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontStyle: "italic",
+                        fontWeight: "600",
+                        textAlign: "center",
+                        color: "gray",
+                        opacity: 0.7,
+                      }}
+                    >
+                      Can't find student academic transcript data
+                    </Text>
+                  )
+                ) : activeTab === 6 ? (
+                  <></>
                 ) : null}
                 {activeTab === 7 && info6 ? (
                   <>

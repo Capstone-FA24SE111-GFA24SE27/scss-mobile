@@ -23,7 +23,8 @@ import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import ExtendInfoModal from "../../layout/ExtendInfoModal";
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { storage } from "../../../config/FirebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function StudentQA() {
   const navigation = useNavigation();
@@ -187,6 +188,7 @@ export default function StudentQA() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchData();
   }, [debouncedKeyword]);
 
@@ -281,28 +283,72 @@ export default function StudentQA() {
     }
   }, [counselorType, department, major, specialization, expertise]);
 
+  // const selectImage = async () => {
+  //   const permissionResult =
+  //     await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  //   if (!permissionResult.granted) {
+  //     alert("You've refused to allow this app to access your photos!");
+  //     return;
+  //   }
+
+  //   const result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     base64: true,
+  //     allowsEditing: false,
+  //     quality: 0.75,
+  //   });
+
+  //   if (!result.canceled) {
+  //     const selectedImage = result.assets[0];
+  //     setImage({
+  //       uri: selectedImage.uri,
+  //       base64: selectedImage.base64,
+  //     });
+  //   }
+  // };
+
+  // const renderPreviewContent = () => {
+  //   return (
+  //     <RenderHTML
+  //       source={{
+  //         html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
+  //           image
+  //             ? `<img src="data:image/jpeg;base64,${
+  //                 image.base64
+  //               }" style="max-width: ${width * 0.85}px; height: auto;">`
+  //             : ""
+  //         }</div>`,
+  //       }}
+  //       contentWidth={width * 0.9}
+  //     />
+  //   );
+  // };
+
   const selectImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (!permissionResult.granted) {
       alert("You've refused to allow this app to access your photos!");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      base64: true,
-      allowsEditing: false,
+      allowsEditing: true,
       quality: 0.75,
     });
-
     if (!result.canceled) {
       const selectedImage = result.assets[0];
-      setImage({
-        uri: selectedImage.uri,
-        base64: selectedImage.base64,
-      });
+      const imageUri = selectedImage.uri;
+      const imageRef = ref(
+        storage,
+        `images/${Date.now()}_${selectedImage.fileName}`
+      );
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+      await uploadBytes(imageRef, blob);
+      const downloadURL = await getDownloadURL(imageRef);
+      setImage({ uri: downloadURL });
     }
   };
 
@@ -312,9 +358,9 @@ export default function StudentQA() {
         source={{
           html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
             image
-              ? `<img src="data:image/jpeg;base64,${
-                  image.base64
-                }" style="max-width: ${width * 0.85}px; height: auto;">`
+              ? `<img src="${image.uri}" style="max-width: ${
+                  width * 0.85
+                }px; height: auto;">`
               : ""
           }</div>`,
         }}
@@ -342,10 +388,15 @@ export default function StudentQA() {
 
   const handleCreateQuestion = async () => {
     try {
+      // const imageHTML = image
+      //   ? `<img src="data:image/jpeg;base64,${
+      //       image.base64
+      //     }" style="max-width: ${width * 0.85}px; height: auto;">`
+      //   : "";
       const imageHTML = image
-        ? `<img src="data:image/jpeg;base64,${
-            image.base64
-          }" style="max-width: ${width * 0.85}px; height: auto;">`
+        ? `<img src="${image.uri}" style="max-width: ${
+            width * 0.85
+          }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
       const response = await axiosJWT.post(`${BASE_URL}/question-cards`, {
@@ -398,10 +449,15 @@ export default function StudentQA() {
 
   const handleEditQuestion = async (questionId) => {
     try {
+      // const imageHTML = image
+      //   ? `<img src="data:image/jpeg;base64,${
+      //       image.base64
+      //     }" style="max-width: ${width * 0.85}px; height: auto;">`
+      //   : "";
       const imageHTML = image
-        ? `<img src="data:image/jpeg;base64,${
-            image.base64
-          }" style="max-width: ${width * 0.85}px; height: auto;">`
+        ? `<img src="${image.uri}" style="max-width: ${
+            width * 0.85
+          }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
       const response = await axiosJWT.put(
@@ -604,7 +660,7 @@ export default function StudentQA() {
               alignItems: "center",
               backgroundColor: "#ededed",
               alignContent: "center",
-              height: 50,
+              height: 40,
             }}
           >
             <Ionicons
@@ -1241,7 +1297,7 @@ export default function StudentQA() {
                                 if (imgTag) {
                                   setImage({
                                     uri: imgTag,
-                                    base64: imgTag.split(",")[1] || null,
+                                    // base64: imgTag.split(",")[1] || null,
                                   });
                                 } else {
                                   setImage(null);
@@ -1341,9 +1397,9 @@ export default function StudentQA() {
                         }}
                       >
                         Created at{" "}
-                        {formatDistanceToNow(new Date(question.createdDate), {
-                          addSuffix: true,
-                        })}
+                        {question.createdDate.split("T")[0] +
+                          " " +
+                          question.createdDate.split("T")[1].slice(0, 8)}
                       </Text>
                     </View>
                   </View>
@@ -1532,7 +1588,6 @@ export default function StudentQA() {
                           alignSelf: "flex-end",
                           flexDirection: "row",
                           alignItems: "center",
-                          marginTop: 16,
                         }}
                       >
                         {question.status == "VERIFIED" &&
@@ -1544,9 +1599,10 @@ export default function StudentQA() {
                                 setSelectedQuestion(question)
                               )}
                               style={{
-                                marginRight: 8,
                                 paddingHorizontal: 8,
                                 paddingVertical: 4,
+                                marginTop: 16,
+                                marginRight: 8,
                                 backgroundColor: "white",
                                 borderRadius: 10,
                                 flexDirection: "row",
@@ -1572,7 +1628,6 @@ export default function StudentQA() {
                               </Text>
                             </TouchableOpacity>
                           )}
-
                         {question.chatSession !== null && (
                           <TouchableOpacity
                             onPress={() => {
@@ -1585,6 +1640,7 @@ export default function StudentQA() {
                             style={{
                               paddingHorizontal: 8,
                               paddingVertical: 4,
+                              marginTop: 16,
                               backgroundColor: "#F39300",
                               borderRadius: 10,
                               flexDirection: "row",
@@ -1607,8 +1663,8 @@ export default function StudentQA() {
                           </TouchableOpacity>
                         )}
                         {question.chatSession === null &&
-                          (question.closed === false ||
-                            question.status === "VERIFIED") && (
+                          question.closed === false &&
+                          question.status === "VERIFIED" && (
                             <TouchableOpacity
                               onPress={() => {
                                 setOpenCreateChatSessionConfirm(true);
@@ -1877,9 +1933,9 @@ export default function StudentQA() {
                           color: "#333",
                         }}
                       >
-                        Imported Image URI
+                        Uploaded Image
                       </Text>
-                      <TouchableOpacity
+                      {/* <TouchableOpacity
                         activeOpacity={0.7}
                         style={{
                           paddingHorizontal: 8,
@@ -1892,9 +1948,48 @@ export default function StudentQA() {
                         onPress={() => setImage(null)}
                       >
                         <Ionicons name="trash" size={20} color="red" />
+                      </TouchableOpacity> */}
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginVertical: 8,
+                        borderWidth: 1,
+                        borderColor: "#f39300",
+                        backgroundColor: "white",
+                        borderRadius: 20,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#f39300",
+                          fontSize: 14,
+                          fontWeight: "bold",
+                          flex: 1,
+                          marginHorizontal: 8,
+                        }}
+                      >
+                        {image?.uri
+                          ? `${
+                              image.uri.split("_")[1]?.split("?")[0] ||
+                              "No URI available"
+                            }`
+                          : "No image selected"}
+                      </Text>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => setImage(null)}
+                        style={{
+                          padding: 4,
+                        }}
+                      >
+                        <Ionicons name="trash" size={20} color="red" />
                       </TouchableOpacity>
                     </View>
-                    <Text>{image?.uri}</Text>
                   </View>
                 )}
                 {openPreview && (
@@ -2746,9 +2841,9 @@ export default function StudentQA() {
                           color: "#333",
                         }}
                       >
-                        Imported Image URI
+                        Uploaded Image
                       </Text>
-                      <TouchableOpacity
+                      {/* <TouchableOpacity
                         activeOpacity={0.7}
                         style={{
                           paddingHorizontal: 8,
@@ -2761,9 +2856,48 @@ export default function StudentQA() {
                         onPress={() => setImage(null)}
                       >
                         <Ionicons name="trash" size={20} color="red" />
+                      </TouchableOpacity> */}
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginVertical: 8,
+                        borderWidth: 1,
+                        borderColor: "#f39300",
+                        backgroundColor: "white",
+                        borderRadius: 20,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#f39300",
+                          fontSize: 14,
+                          fontWeight: "bold",
+                          flex: 1,
+                          marginHorizontal: 8,
+                        }}
+                      >
+                        {image?.uri
+                          ? `${
+                              image.uri.split("_")[1]?.split("?")[0] ||
+                              "No URI available"
+                            }`
+                          : "No image selected"}
+                      </Text>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => setImage(null)}
+                        style={{
+                          padding: 4,
+                        }}
+                      >
+                        <Ionicons name="trash" size={20} color="red" />
                       </TouchableOpacity>
                     </View>
-                    <Text>{image?.uri}</Text>
                   </View>
                 )}
                 {openPreview && (
@@ -3775,7 +3909,7 @@ export default function StudentQA() {
                           if (imgTag) {
                             setImage({
                               uri: imgTag,
-                              base64: imgTag.split(",")[1] || null,
+                              // base64: imgTag.split(",")[1] || null,
                             });
                           } else {
                             setImage(null);

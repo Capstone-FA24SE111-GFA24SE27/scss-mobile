@@ -1,10 +1,12 @@
 import { Dimensions } from "react-native";
 import React, { useContext } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import QuestionBoard from "../screens/student/QuestionBoard";
 import StudentQA from "../screens/student/StudentQA";
-import QuestionBoardCounselor from "../screens/counselor/QA";
+import StudentPublicQA from "../screens/student/PublicQA";
+import StudentQuestionBoard from "../screens/student/QuestionBoard";
 import CounselorQA from "../screens/counselor/CounselorQA";
+import CounselorPublicQA from "../screens/counselor/PublicQA";
+import CounselorQuestionBoard from "../screens/counselor/QA";
 import { AuthContext } from "../context/AuthContext";
 const Tab = createMaterialTopTabNavigator();
 
@@ -33,7 +35,8 @@ export default function QANavigation() {
       zIndex: -1,
       borderRadius: 20,
       left: "1%",
-      width: "48%",
+      // width: "48%",
+      width: "31.5%",
       bottom: "7.5%",
       height: "85%",
     },
@@ -51,11 +54,12 @@ export default function QANavigation() {
     <>
       {userData.role === "STUDENT" ? (
         <Tab.Navigator
-          initialRouteName="FAQ"
+          initialRouteName="My Q&A"
           screenOptions={screenOptions}
         >
-          <Tab.Screen name="FAQ" component={QuestionBoard} />
           <Tab.Screen name="My Q&A" component={StudentQA} />
+          <Tab.Screen name="Public Q&A" component={StudentPublicQA} />
+          <Tab.Screen name="FAQ" component={StudentQuestionBoard} />
         </Tab.Navigator>
       ) : userData.role === "ACADEMIC_COUNSELOR" ||
         userData.role === "NON_ACADEMIC_COUNSELOR" ? (
@@ -64,7 +68,8 @@ export default function QANavigation() {
           screenOptions={screenOptions}
         >
           <Tab.Screen name="My Q&A" component={CounselorQA} />
-          <Tab.Screen name="FAQ" component={QuestionBoardCounselor} />
+          <Tab.Screen name="Public Q&A" component={CounselorPublicQA} />
+          <Tab.Screen name="FAQ" component={CounselorQuestionBoard} />
         </Tab.Navigator>
       ) : null}
     </>

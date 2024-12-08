@@ -179,6 +179,7 @@ export default function NonAcademicCounselor() {
 
   useEffect(() => {
     // if (debouncedKeyword) {
+    setLoading(true);
     fetchData();
     // }
   }, [debouncedKeyword]);
@@ -531,7 +532,7 @@ export default function NonAcademicCounselor() {
               alignItems: "center",
               backgroundColor: "#ededed",
               alignContent: "center",
-              height: 50,
+              height: 40,
             }}
           >
             <Ionicons
