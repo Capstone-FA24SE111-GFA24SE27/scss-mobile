@@ -961,7 +961,11 @@ export default function Home() {
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                   Answered Questions
                 </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("My Q&A")}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("QA", { screen: "My Q&A" })
+                  }
+                >
                   <Text
                     style={{
                       fontSize: 16,
@@ -1011,7 +1015,7 @@ export default function Home() {
                         marginVertical: 12,
                         marginRight: 12,
                         borderColor: "lightgrey",
-                        borderWidth: 1,
+                        borderWidth: 1.5,
                       }}
                     >
                       <View
@@ -1019,20 +1023,38 @@ export default function Home() {
                           backgroundColor: "#fff0e0",
                           paddingHorizontal: 16,
                           paddingVertical: 16,
-                          borderRadius: 20,
+                          borderTopLeftRadius: 20,
+                          borderTopRightRadius: 20,
                         }}
                       >
                         <View
                           style={{
                             flexDirection: "row",
+                            justifyContent: "space-between",
                             alignItems: "center",
-                            marginBottom: 4,
+                            marginBottom: 8,
                           }}
                         >
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontStyle: "italic",
+                                fontWeight: "600",
+                                textAlign: "left",
+                                color: "gray",
+                                opacity: 0.7,
+                              }}
+                            >
+                              {question.createdDate.split("T")[0] +
+                                " " +
+                                question.createdDate.split("T")[1].slice(0, 8)}
+                            </Text>
+                          </View>
                           <View
                             style={{
                               backgroundColor: "#F39300",
-                              alignSelf: "flex-start",
+                              alignSelf: "flex-end",
                               alignItems: "center",
                               justifyContent: "center",
                               flexDirection: "row",
@@ -1065,15 +1087,6 @@ export default function Home() {
                             {question.title}
                           </Text>
                         </View>
-                        {/* <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "600",
-                            color: "#333",
-                          }}
-                        >
-                          {question.content}
-                        </Text> */}
                         {renderContent(question.content)}
                       </View>
                       <View
@@ -1148,196 +1161,6 @@ export default function Home() {
                 </ScrollView>
               )}
             </View>
-            {/* <View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Recommend Events for you
-              </Text>
-              <TouchableOpacity>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: "600",
-                    opacity: 0.6,
-                    marginRight: 4,
-                  }}
-                >
-                  View all
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {workshops.map((course, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={{
-                    width: width * 0.75,
-                    // height: height * 0.3,
-                    height: "auto",
-                    backgroundColor: "white",
-                    borderRadius: 20,
-                    marginVertical: 15,
-                    marginRight: 12,
-                    overflow: "hidden",
-                    position: "relative",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Image
-                    source={{ uri: course.imageUri }}
-                    style={{
-                      resizeMode: "cover",
-                      width: width * 0.75,
-                      height: height * 0.15,
-                    }}
-                  />
-                  <View style={{ padding: 8 }}>
-                    <Text
-                      style={{
-                        color: "#333",
-                        fontSize: 22,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {course.title}
-                    </Text>
-                    <Text
-                      style={{
-                        color: "gray",
-                        fontSize: 18,
-                        fontWeight: "600",
-                        opacity: 0.7,
-                        marginTop: 4,
-                      }}
-                    >
-                      {course.coursesCount}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-          <View>
-            <View>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Recommend Counselors
-              </Text>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {counselors.map((counselor) => (
-                <TouchableOpacity
-                  key={counselor.id}
-                  style={{
-                    width: Dimensions.get("screen").width * 0.5,
-                    height: "auto",
-                    backgroundColor: "white",
-                    borderRadius: 20,
-                    marginVertical: 15,
-                    marginRight: 12,
-                    overflow: "hidden",
-                    borderWidth: 2,
-                    borderColor: "#e3e3e3",
-                  }}
-                  // onPress={() => alert(`${counselor.name} clicked`)}
-                  onPress={() =>
-                    navigation.navigate("CounselorProfile", { counselor })
-                  } // Pass the counselor object
-                >
-                  <Image
-                    source={counselor.image}
-                    style={{
-                      width: "100%",
-                      height: 120,
-                      resizeMode: "contain",
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: "absolute",
-                      top: 12,
-                      right: -12,
-                      backgroundColor: "#F39300",
-                      paddingRight: 14,
-                      paddingLeft: 4,
-                      paddingVertical: 4,
-                      borderRadius: 10,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "white",
-                        fontSize: 14,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {counselor.experience} Years
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      paddingHorizontal: 15,
-                      paddingVertical: 10,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "#333",
-                        fontSize: 22,
-                        fontWeight: "bold",
-                        marginBottom: 4,
-                      }}
-                    >
-                      {counselor.name}
-                    </Text>
-                    <Text
-                      style={{
-                        color: "gray",
-                        fontSize: 16,
-                        fontWeight: "600",
-                      }}
-                    >
-                      {counselor.skills}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity
-                style={{
-                  width: 80,
-                  height: 200,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  marginVertical: 15,
-                  marginRight: 12,
-                  overflow: "hidden",
-                  position: "relative",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  justifyContent: "center",
-                  borderWidth: 2,
-                  borderColor: "#e3e3e3",
-                }}
-                onPress={() => navigation.navigate("PT")}
-              >
-                <Ionicons
-                  name="arrow-forward-circle"
-                  size={34}
-                  style={{ color: "#F39300" }}
-                />
-                <Text
-                  style={{ fontSize: 12, fontWeight: "600", marginTop: 10 }}
-                >
-                  View more
-                </Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View> */}
           </ScrollView>
         )}
       </View>

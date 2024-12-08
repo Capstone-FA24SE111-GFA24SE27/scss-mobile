@@ -233,6 +233,7 @@ export default function AcademicCounselor() {
 
   useEffect(() => {
     // if (debouncedKeyword) {
+    setLoading(true);
     fetchData();
     // }
   }, [debouncedKeyword]);
@@ -627,7 +628,7 @@ export default function AcademicCounselor() {
               alignItems: "center",
               backgroundColor: "#ededed",
               alignContent: "center",
-              height: 50,
+              height: 40,
             }}
           >
             <Ionicons

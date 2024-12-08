@@ -22,6 +22,8 @@ import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { storage } from "../../../config/FirebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function CounselorQA() {
   const navigation = useNavigation();
@@ -115,9 +117,8 @@ export default function CounselorQA() {
   };
 
   useEffect(() => {
-    // if (debouncedKeyword) {
+    setLoading(true);
     fetchData();
-    // }
   }, [debouncedKeyword]);
 
   useEffect(() => {
@@ -136,11 +137,6 @@ export default function CounselorQA() {
     try {
       const response = await axiosJWT.post(
         `${BASE_URL}/question-cards/review/${questionId}/${value}?reviewReason=${content}`
-        // {
-        //   params: {
-        //     reviewReason: content
-        //   }
-        // }
       );
       const data = await response.data;
       if (data && data.status == 200) {
@@ -208,25 +204,27 @@ export default function CounselorQA() {
   const selectImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (!permissionResult.granted) {
       alert("You've refused to allow this app to access your photos!");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      base64: true,
-      allowsEditing: false,
+      allowsEditing: true,
       quality: 0.75,
     });
-
     if (!result.canceled) {
       const selectedImage = result.assets[0];
-      setImage({
-        uri: selectedImage.uri,
-        base64: selectedImage.base64,
-      });
+      const imageUri = selectedImage.uri;
+      const imageRef = ref(
+        storage,
+        `images/${Date.now()}_${selectedImage.fileName}`
+      );
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+      await uploadBytes(imageRef, blob);
+      const downloadURL = await getDownloadURL(imageRef);
+      setImage({ uri: downloadURL });
     }
   };
 
@@ -236,9 +234,9 @@ export default function CounselorQA() {
         source={{
           html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
             image
-              ? `<img src="data:image/jpeg;base64,${
-                  image.base64
-                }" style="max-width: ${width * 0.85}px; height: auto;">`
+              ? `<img src="${image.uri}" style="max-width: ${
+                  width * 0.85
+                }px; height: auto;">`
               : ""
           }</div>`,
         }}
@@ -267,9 +265,9 @@ export default function CounselorQA() {
   const handleAnswerQuestion = async (questionId) => {
     try {
       const imageHTML = image
-        ? `<img src="data:image/jpeg;base64,${
-            image.base64
-          }" style="max-width: ${width * 0.85}px; height: auto;">`
+        ? `<img src="${image.uri}" style="max-width: ${
+            width * 0.85
+          }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
       const response = await axiosJWT.post(
@@ -312,9 +310,9 @@ export default function CounselorQA() {
   const handleEditAnswer = async (questionId) => {
     try {
       const imageHTML = image
-        ? `<img src="data:image/jpeg;base64,${
-            image.base64
-          }" style="max-width: ${width * 0.85}px; height: auto;">`
+        ? `<img src="${image.uri}" style="max-width: ${
+            width * 0.85
+          }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
       console.log(finalContent);
@@ -452,7 +450,7 @@ export default function CounselorQA() {
               alignItems: "center",
               backgroundColor: "#ededed",
               alignContent: "center",
-              height: 50,
+              height: 40,
             }}
           >
             <Ionicons
@@ -974,10 +972,8 @@ export default function CounselorQA() {
                           opacity: 0.7,
                         }}
                       >
-                        Asked{" "}
-                        {formatDistanceToNow(new Date(question.createdDate), {
-                          addSuffix: true,
-                        })}
+                        Asked at{" "}
+                        {question.createdDate.split("T")[0] + " " + question.createdDate.split("T")[1].slice(0, 8)}
                       </Text>
                     </View>
                   </View>
@@ -1062,7 +1058,7 @@ export default function CounselorQA() {
                           backgroundColor:
                             question.difficultyLevel === "Easy"
                               ? "green"
-                              : question.difficultyLevel
+                              : question.difficultyLevel === "Medium"
                               ? "#F39300"
                               : "red",
                           alignItems: "center",
@@ -1193,7 +1189,7 @@ export default function CounselorQA() {
                       >
                         <Text
                           style={{
-                            fontSize: 18,
+                            fontSize: 16,
                             color: "gray",
                             fontWeight: "500",
                           }}
@@ -1226,8 +1222,7 @@ export default function CounselorQA() {
 
                               if (imgTag) {
                                 setImage({
-                                  uri: imgTag,
-                                  base64: imgTag.split(",")[1] || null,
+                                  uri: imgTag
                                 });
                               } else {
                                 setImage(null);
@@ -1757,24 +1752,49 @@ export default function CounselorQA() {
                           color: "#333",
                         }}
                       >
-                        Imported Image URI
+                        Uploaded Image
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginVertical: 8,
+                        borderWidth: 1,
+                        borderColor: "#f39300",
+                        backgroundColor: "white",
+                        borderRadius: 20,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#f39300",
+                          fontSize: 14,
+                          fontWeight: "bold",
+                          flex: 1,
+                          marginHorizontal: 8,
+                        }}
+                      >
+                        {image?.uri
+                          ? `${
+                              image.uri.split("_")[1]?.split("?")[0] ||
+                              "No URI available"
+                            }`
+                          : "No image selected"}
                       </Text>
                       <TouchableOpacity
                         activeOpacity={0.7}
-                        style={{
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          borderWidth: 1.5,
-                          borderColor: "red",
-                        }}
                         onPress={() => setImage(null)}
+                        style={{
+                          padding: 4,
+                        }}
                       >
                         <Ionicons name="trash" size={20} color="red" />
                       </TouchableOpacity>
                     </View>
-                    <Text>{image?.uri}</Text>
                   </View>
                 )}
                 {openPreview && (
@@ -1990,24 +2010,49 @@ export default function CounselorQA() {
                           color: "#333",
                         }}
                       >
-                        Imported Image URI
+                        Uploaded Image
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginVertical: 8,
+                        borderWidth: 1,
+                        borderColor: "#f39300",
+                        backgroundColor: "white",
+                        borderRadius: 20,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#f39300",
+                          fontSize: 14,
+                          fontWeight: "bold",
+                          flex: 1,
+                          marginHorizontal: 8,
+                        }}
+                      >
+                        {image?.uri
+                          ? `${
+                              image.uri.split("_")[1]?.split("?")[0] ||
+                              "No URI available"
+                            }`
+                          : "No image selected"}
                       </Text>
                       <TouchableOpacity
                         activeOpacity={0.7}
-                        style={{
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          borderWidth: 1.5,
-                          borderColor: "red",
-                        }}
                         onPress={() => setImage(null)}
+                        style={{
+                          padding: 4,
+                        }}
                       >
                         <Ionicons name="trash" size={20} color="red" />
                       </TouchableOpacity>
                     </View>
-                    <Text>{image?.uri}</Text>
                   </View>
                 )}
                 {openPreview && (

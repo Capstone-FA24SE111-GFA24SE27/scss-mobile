@@ -13,9 +13,7 @@ import {
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Dropdown } from "react-native-element-dropdown";
-import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
-import { ChatContext } from "../../context/ChatContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import Toast from "react-native-toast-message";
@@ -23,29 +21,24 @@ import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import ExtendInfoModal from "../../layout/ExtendInfoModal";
+import { AuthContext } from "../../context/AuthContext";
 
-export default function QuestionBoard() {
+export default function PublicQA() {
   const navigation = useNavigation();
   const { width, height } = Dimensions.get("screen");
+  const { userData } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const socket = useContext(SocketContext);
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState({
-    // status: "",
-    categoryId: "",
+    type: null,
     sortDirection: "",
   });
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
-  // const [status, setStatus] = useState("");
-  const statusList = [{ name: "UNVERIFIED" }, { name: "VERIFIED" }];
-  const [type, setType] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
+  const [type, setType] = useState(null);
   const [sortDirection, setSortDirection] = useState("");
-  const [expanded, setExpanded] = useState(false);
-  const [expanded2, setExpanded2] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
   const [openExtendInfo, setOpenExtendInfo] = useState(false);
@@ -59,17 +52,16 @@ export default function QuestionBoard() {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       fetchData(filters, { page: currentPage });
-      fetchCategory();
     }, [debouncedKeyword, filters, currentPage])
   );
 
   const fetchData = async (filters = {}) => {
     try {
       const questionsRes = await axiosJWT.get(
-        `${BASE_URL}/contribution-question-cards/search`,
+        `${BASE_URL}/question-cards/filter`,
         {
           params: {
-            query: debouncedKeyword,
+            keyword: debouncedKeyword,
             ...filters,
             page: currentPage,
           },
@@ -84,31 +76,6 @@ export default function QuestionBoard() {
     }
   };
 
-  const fetchCategory = async () => {
-    try {
-      const categoriesRes = await axiosJWT.get(
-        `${BASE_URL}/contribution-question-cards/categories`
-      );
-      // const categoriesData = categoriesRes?.data?.content || [];
-      // setCategories(categoriesData);
-      const allCategories = categoriesRes?.data?.content || [];
-      const filteredCategories =
-        type === ""
-          ? allCategories
-          : allCategories.filter((cat) => cat.type === type);
-      setCategories(
-        filteredCategories.map((cat) => ({ id: cat.id, name: cat.name }))
-      );
-    } catch (err) {
-      console.log("Can't fetch categories", err);
-    }
-  };
-
-  useEffect(() => {
-    setCategory("");
-    fetchCategory();
-  }, [type]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedKeyword(keyword);
@@ -120,8 +87,7 @@ export default function QuestionBoard() {
     setLoading(true);
     setCurrentPage(1);
     const newFilters = {
-      // status: status,
-      categoryId: category?.id,
+      type: type,
       sortDirection: sortDirection,
     };
     setFilters(newFilters);
@@ -133,14 +99,11 @@ export default function QuestionBoard() {
     setLoading(true);
     setCurrentPage(1);
     const resetFilters = {
-      // status: "",
-      categoryId: "",
+      type: null,
       sortDirection: "",
     };
     setKeyword("");
-    // setStatus(resetFilters.status);
-    setType("");
-    setCategory(resetFilters.categoryId);
+    setType(resetFilters.type);
     setSortDirection(resetFilters.sortDirection);
     setFilters(resetFilters);
     fetchData(resetFilters);
@@ -208,7 +171,7 @@ export default function QuestionBoard() {
               style={{ marginRight: 10, color: "#F39300", opacity: 0.7 }}
             />
             <TextInput
-              placeholder="Search Question"
+              placeholder="Search Question List"
               placeholderTextColor="#F39300"
               value={keyword}
               onChangeText={(value) => setKeyword(value)}
@@ -284,90 +247,6 @@ export default function QuestionBoard() {
           </View>
           <FilterAccordion isExpanded={isExpanded}>
             <View style={{ paddingHorizontal: 10 }}>
-              {/* <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 4,
-                  marginLeft: 4,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: "#333",
-                    minWidth: "20%",
-                  }}
-                >
-                  Status:
-                </Text>
-                <Dropdown
-                  style={{
-                    backgroundColor: "white",
-                    borderColor: expanded ? "#F39300" : "black",
-                    flex: 1,
-                    height: 30,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 10,
-                    paddingHorizontal: 12,
-                    marginLeft: 16,
-                  }}
-                  placeholderStyle={{ fontSize: 14 }}
-                  selectedTextStyle={{
-                    fontSize: 14,
-                    color: status ? "black" : "white",
-                  }}
-                  maxHeight={250}
-                  data={statusList}
-                  labelField="name"
-                  value={status}
-                  placeholder={status != "" ? status : "Select Status"}
-                  onFocus={() => setExpanded(true)}
-                  onBlur={() => setExpanded(false)}
-                  onChange={(item) => {
-                    setStatus(item.name);
-                    setExpanded(false);
-                  }}
-                  renderRightIcon={() => (
-                    <Ionicons
-                      color={expanded ? "#F39300" : "black"}
-                      name={expanded ? "caret-up" : "caret-down"}
-                      size={20}
-                    />
-                  )}
-                  renderItem={(item) => {
-                    return (
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingVertical: 8,
-                          backgroundColor:
-                            item.name == status ? "#F39300" : "white",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "500",
-                            color: item.name == status ? "white" : "black",
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                        {status == item.name && (
-                          <Ionicons color="white" name="checkmark" size={20} />
-                        )}
-                      </View>
-                    );
-                  }}
-                />
-              </View> */}
               <View
                 style={{
                   flex: 1,
@@ -547,96 +426,6 @@ export default function QuestionBoard() {
               </View>
               <View
                 style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 4,
-                  marginLeft: 4,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: "#333",
-                    minWidth: "20%",
-                  }}
-                >
-                  Category:
-                </Text>
-                <Dropdown
-                  style={{
-                    backgroundColor: "white",
-                    borderColor: expanded2 ? "#F39300" : "black",
-                    flex: 1,
-                    height: 30,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 10,
-                    paddingHorizontal: 12,
-                    marginLeft: 16,
-                  }}
-                  placeholderStyle={{ fontSize: 14 }}
-                  selectedTextStyle={{
-                    fontSize: 14,
-                    color: category ? "black" : "white",
-                  }}
-                  inputSearchStyle={{ height: 40, fontSize: 16 }}
-                  maxHeight={250}
-                  data={categories}
-                  labelField="name"
-                  search
-                  value={category !== "" ? category?.name : "Select Category"}
-                  placeholder={
-                    category !== "" ? category?.name : "Select Category"
-                  }
-                  searchPlaceholder="Search Category"
-                  onFocus={() => setExpanded2(true)}
-                  onBlur={() => setExpanded2(false)}
-                  onChange={(item) => {
-                    setCategory(item);
-                    setExpanded2(false);
-                  }}
-                  renderRightIcon={() => (
-                    <Ionicons
-                      color={expanded2 ? "#F39300" : "black"}
-                      name={expanded2 ? "caret-up" : "caret-down"}
-                      size={20}
-                    />
-                  )}
-                  renderItem={(item) => {
-                    return (
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingVertical: 8,
-                          backgroundColor:
-                            item.name == category?.name ? "#F39300" : "white",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "500",
-                            color:
-                              item.name == category?.name ? "white" : "black",
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                        {item.name == category?.name && (
-                          <Ionicons color="white" name="checkmark" size={20} />
-                        )}
-                      </View>
-                    );
-                  }}
-                />
-              </View>
-              <View
-                style={{
                   margin: 8,
                   flex: 1,
                   justifyContent: "flex-end",
@@ -703,136 +492,112 @@ export default function QuestionBoard() {
             </>
           ) : (
             questions?.data?.map((question) => (
-              <View
-                key={question.id}
-                style={{
-                  padding: 16,
-                  marginVertical: 8,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  elevation: 1,
-                  position: "relative",
-                  borderWidth: 1.5,
-                  borderColor: "#e3e3e3",
-                }}
-              >
-                <View style={{ marginBottom: 16 }}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                    }}
-                  >
+              <View key={question.id}>
+                <View
+                  style={{
+                    paddingVertical: 16,
+                    paddingHorizontal: 12,
+                    backgroundColor: "white",
+                    marginVertical: 8,
+                    borderRadius: 20,
+                    borderWidth: 1.5,
+                    borderColor: "#e3e3e3",
+                  }}
+                >
+                  <View style={{ marginBottom: 16 }}>
                     <View
                       style={{
                         flexDirection: "row",
-                        alignSelf: "flex-start",
-                        alignItems: "center",
-                        marginBottom: 8,
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        backgroundColor: "#ededed",
-                        borderRadius: 10,
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
                       }}
                     >
-                      <Image
-                        source={{
-                          uri: question.counselor.profile.avatarLink,
-                        }}
-                        style={{ width: 30, height: 30 }}
-                      />
-                      <Text
+                      <View
                         style={{
-                          fontWeight: "600",
-                          fontSize: 16,
-                          color: "#333",
-                          marginLeft: 4,
+                          flexDirection: "row",
+                          alignSelf: "flex-start",
+                          alignItems: "center",
+                          marginBottom: 8,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          backgroundColor: "#ededed",
+                          borderRadius: 10,
                         }}
                       >
-                        {question.counselor.profile.fullName.length > 20
-                          ? question.counselor.profile.fullName.substring(
-                              0,
-                              20
-                            ) + "..."
-                          : question.counselor.profile.fullName}
+                        <Image
+                          source={{
+                            uri: question.counselor.profile.avatarLink,
+                          }}
+                          style={{ width: 30, height: 30 }}
+                        />
+                        <Text
+                          style={{
+                            fontWeight: "600",
+                            fontSize: 16,
+                            color: "#333",
+                            marginLeft: 8,
+                          }}
+                        >
+                          {question.counselor.profile.fullName.length > 20
+                            ? question.counselor.profile.fullName.substring(
+                                0,
+                                20
+                              ) + "..."
+                            : question.counselor.profile.fullName}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text
+                      numberOfLines={2}
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        marginLeft: 4,
+                      }}
+                    >
+                      {question.title}
+                    </Text>
+                    <View style={{ marginTop: 8 }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontStyle: "italic",
+                          fontWeight: "600",
+                          textAlign: "left",
+                          color: "gray",
+                          opacity: 0.7,
+                        }}
+                      >
+                        Created at{" "}
+                        {question.createdDate.split("T")[0] +
+                          " " +
+                          question.createdDate.split("T")[1].slice(0, 8)}
                       </Text>
                     </View>
                   </View>
-                  <Text
-                    numberOfLines={2}
+                  <View
                     style={{
-                      fontWeight: "bold",
-                      fontSize: 18,
-                      marginLeft: 4,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                     }}
                   >
-                    {question.title}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View
-                      style={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexDirection: "row",
-                        paddingVertical: 4,
-                        paddingHorizontal: 8,
-                        borderRadius: 20,
-                        borderWidth: 1.5,
-                        borderColor:
-                          question.status === "VERIFIED"
-                            ? "green"
-                            : question.status === "UNVERIFIED"
-                            ? "#F39300"
-                            : question.status === "REJECTED"
-                            ? "red"
-                            : question.status === "FLAGGED"
-                            ? "gray"
-                            : "#e3e3e3",
-                      }}
+                      style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      <Ionicons
-                        name={
-                          question.status === "VERIFIED"
-                            ? "checkmark-circle"
-                            : question.status === "UNVERIFIED"
-                            ? "time-outline"
-                            : question.status === "REJECTED"
-                            ? "close-circle"
-                            : question.status === "FLAGGED"
-                            ? "flag-outline"
-                            : "help"
-                        }
-                        color={
-                          question.status === "VERIFIED"
-                            ? "green"
-                            : question.status === "UNVERIFIED"
-                            ? "#F39300"
-                            : question.status === "REJECTED"
-                            ? "red"
-                            : question.status === "FLAGGED"
-                            ? "gray"
-                            : "#e3e3e3"
-                        }
-                        size={20}
-                      />
-                      <Text
+                      <View
                         style={{
-                          fontSize: 14,
-                          fontWeight: "600",
-                          marginLeft: 4,
-                          color:
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexDirection: "row",
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                          borderRadius: 20,
+                          borderWidth: 1.5,
+                          borderColor:
                             question.status === "VERIFIED"
                               ? "green"
-                              : question.status === "UNVERIFIED"
+                              : question.status === "PENDING"
                               ? "#F39300"
                               : question.status === "REJECTED"
                               ? "red"
@@ -841,97 +606,242 @@ export default function QuestionBoard() {
                               : "#e3e3e3",
                         }}
                       >
-                        {question.status}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        backgroundColor: "#F39300",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexDirection: "row",
-                        paddingVertical: 4,
-                        paddingHorizontal: 8,
-                        marginLeft: 8,
-                        borderRadius: 20,
-                        borderWidth: 1.5,
-                        borderColor: "transparent",
-                      }}
-                    >
-                      <Text
+                        <Ionicons
+                          name={
+                            question.status === "VERIFIED"
+                              ? "checkmark-circle"
+                              : question.status === "PENDING"
+                              ? "time-outline"
+                              : question.status === "REJECTED"
+                              ? "close-circle"
+                              : question.status === "FLAGGED"
+                              ? "flag-outline"
+                              : "help"
+                          }
+                          color={
+                            question.status === "VERIFIED"
+                              ? "green"
+                              : question.status === "PENDING"
+                              ? "#F39300"
+                              : question.status === "REJECTED"
+                              ? "red"
+                              : question.status === "FLAGGED"
+                              ? "gray"
+                              : "#e3e3e3"
+                          }
+                          size={20}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            marginLeft: 4,
+                            color:
+                              question.status === "VERIFIED"
+                                ? "green"
+                                : question.status === "PENDING"
+                                ? "#F39300"
+                                : question.status === "REJECTED"
+                                ? "red"
+                                : question.status === "FLAGGED"
+                                ? "gray"
+                                : "#e3e3e3",
+                          }}
+                        >
+                          {question.status}
+                        </Text>
+                      </View>
+                      <View
                         style={{
-                          fontSize: 14,
-                          fontWeight: "600",
-                          color: "white",
+                          backgroundColor: "#F39300",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexDirection: "row",
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                          marginLeft: 8,
+                          borderRadius: 20,
+                          borderWidth: 1.5,
+                          borderColor: "transparent",
                         }}
                       >
-                        {question.category.name}
-                      </Text>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            color: "white",
+                          }}
+                        >
+                          {question.questionType}
+                        </Text>
+                      </View>
+                      {question.closed == true && (
+                        <View
+                          style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexDirection: "row",
+                            paddingVertical: 4,
+                            paddingHorizontal: 8,
+                            marginLeft: 8,
+                            borderRadius: 20,
+                            borderWidth: 1.5,
+                            borderColor: "gray",
+                          }}
+                        >
+                          <Ionicons name="lock-closed" color="gray" size={20} />
+                        </View>
+                      )}
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      {question.answer === null &&
+                        question.status === "PENDING" && (
+                          <TouchableOpacity
+                            onPress={() => (
+                              setOpenAnswer(true), setSelectedQuestion(question)
+                            )}
+                            style={{
+                              marginRight: 4,
+                              paddingHorizontal: 8,
+                              paddingVertical: 4,
+                              backgroundColor: "white",
+                              borderRadius: 10,
+                              borderWidth: 1.5,
+                              borderColor: "#F39300",
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            {/* <Text
+                              style={{
+                                fontWeight: "500",
+                                color: "white",
+                                fontSize: 16,
+                              }}
+                            >
+                              Answer
+                            </Text> */}
+                            <MaterialIcons
+                              name="question-answer"
+                              size={20}
+                              color="#F39300"
+                            />
+                          </TouchableOpacity>
+                        )}
+                      <TouchableOpacity
+                        hitSlop={10}
+                        onPress={() => (setInfo(question), setOpenInfo(true))}
+                        style={{
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name="ellipsis-vertical"
+                          size={24}
+                          color="#F39300"
+                        />
+                      </TouchableOpacity>
                     </View>
                   </View>
-                  <TouchableOpacity
-                    hitSlop={10}
-                    onPress={() => (setInfo(question), setOpenInfo(true))}
-                    style={{
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Ionicons
-                      name="ellipsis-vertical"
-                      size={24}
-                      color="#F39300"
-                    />
-                  </TouchableOpacity>
-                </View>
-                {question.answer !== null && (
-                  <>
-                    <View
-                      style={{
-                        borderTopWidth: 1,
-                        borderColor: "lightgrey",
-                        marginVertical: 12,
-                      }}
-                    />
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignSelf: "flex-start",
-                        alignItems: "center",
-                        marginBottom: 8,
-                      }}
-                    >
-                      <Text
+                  {question.answer !== null && (
+                    <>
+                      <View
                         style={{
-                          fontSize: 16,
-                          color: "gray",
-                          fontWeight: "500",
+                          borderTopWidth: 1,
+                          borderColor: "lightgrey",
+                          marginVertical: 12,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignSelf: "flex-start",
+                          alignItems: "center",
+                          marginBottom: 8,
                         }}
                       >
-                        Answered by{" "}
-                        <Text style={{ fontWeight: "bold", color: "#333" }}>
-                          {question.counselor.profile.fullName}
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "gray",
+                            fontWeight: "500",
+                          }}
+                        >
+                          Answered by{" "}
+                          <Text style={{ fontWeight: "bold", color: "#333" }}>
+                            {question.counselor.profile.fullName}
+                          </Text>
                         </Text>
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        alignSelf: "flex-start",
-                      }}
-                    >
-                      <Text
+                      </View>
+                      <View
                         style={{
-                          fontWeight: "400",
-                          fontSize: 16,
-                          color: "#333",
+                          alignSelf: "flex-start",
                         }}
-                        numberOfLines={2}
                       >
-                        {question.answer}
-                      </Text>
-                    </View>
-                  </>
-                )}
+                        {renderContent(question.answer)}
+                      </View>
+                    </>
+                  )}
+                  {question.reviewReason !== null && (
+                    <>
+                      <View
+                        style={{
+                          borderTopWidth: 1,
+                          borderColor: "lightgrey",
+                          marginVertical: 12,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignSelf: "flex-start",
+                          alignItems: "center",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "gray",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {question.status == "REJECTED"
+                            ? "Rejected"
+                            : "Flagged"}{" "}
+                          by{" "}
+                          <Text style={{ fontWeight: "bold", color: "#333" }}>
+                            You
+                          </Text>
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          alignSelf: "flex-start",
+                          backgroundColor: "#ededed",
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          borderRadius: 10,
+                          borderWidth: 0.5,
+                          borderColor: "lightgrey",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "#333",
+                          }}
+                          numberOfLines={2}
+                        >
+                          {question.reviewReason}
+                        </Text>
+                      </View>
+                    </>
+                  )}
+                </View>
               </View>
             ))
           )}
@@ -1055,19 +965,9 @@ export default function QuestionBoard() {
                         marginBottom: 4,
                       }}
                     >
-                      Question
+                      Your Question
                     </Text>
-                    {/* <Text
-                      style={{
-                        fontSize: 20,
-                        color: "#333",
-                        fontWeight: "500",
-                        opacity: 0.7,
-                      }}
-                    >
-                      {info?.question}
-                    </Text> */}
-                    {renderContent(info?.question)}
+                    {renderContent(info?.content)}
                   </View>
                   <View
                     style={{
@@ -1088,7 +988,7 @@ export default function QuestionBoard() {
                         marginBottom: 4,
                       }}
                     >
-                      Created by
+                      Counselor in charge
                     </Text>
                     {info?.counselor !== null ? (
                       <TouchableOpacity
@@ -1102,84 +1002,84 @@ export default function QuestionBoard() {
                           marginVertical: 12,
                         }}
                       >
-                        <View style={{ width: "40%" }}>
-                          <View style={{ position: "relative" }}>
-                            <Image
-                              source={{
-                                uri: info?.counselor?.profile?.avatarLink,
-                              }}
-                              style={{
-                                width: width * 0.28,
-                                height: width * 0.28,
-                                borderRadius: 100,
-                                marginBottom: 12,
-                                borderColor: "#F39300",
-                                borderWidth: 2,
-                              }}
+                      <View style={{ width: "40%" }}>
+                        <View style={{ position: "relative" }}>
+                          <Image
+                            source={{
+                              uri: info?.counselor?.profile?.avatarLink,
+                            }}
+                            style={{
+                              width: width * 0.28,
+                              height: width * 0.28,
+                              borderRadius: 100,
+                              marginBottom: 12,
+                              borderColor: "#F39300",
+                              borderWidth: 2,
+                            }}
+                          />
+                          <View
+                            style={{
+                              padding: 5,
+                              backgroundColor: "#F39300",
+                              borderRadius: 30,
+                              position: "absolute",
+                              right: 20,
+                              bottom: 12,
+                            }}
+                          >
+                            <Ionicons
+                              name={
+                                info?.counselor?.profile?.gender == "MALE"
+                                  ? "male"
+                                  : "female"
+                              }
+                              size={24}
+                              style={{ color: "white" }}
                             />
-                            <View
-                              style={{
-                                padding: 5,
-                                backgroundColor: "#F39300",
-                                borderRadius: 30,
-                                position: "absolute",
-                                right: 20,
-                                bottom: 12,
-                              }}
-                            >
-                              <Ionicons
-                                name={
-                                  info?.counselor?.profile?.gender == "MALE"
-                                    ? "male"
-                                    : "female"
-                                }
-                                size={24}
-                                style={{ color: "white" }}
-                              />
-                            </View>
                           </View>
                         </View>
-                        <View style={{ width: "60%" }}>
-                          <Text
-                            style={{
-                              fontSize: 24,
-                              fontWeight: "bold",
-                              color: "#333",
-                              marginBottom: 4,
-                            }}
-                          >
-                            {info?.counselor?.profile?.fullName}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              fontWeight: "500",
-                              color: "#333",
-                              marginBottom: 2,
-                            }}
-                          >
-                            {info?.counselor?.major?.name ||
-                              info?.counselor?.expertise?.name}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: "grey",
-                              marginBottom: 2,
-                            }}
-                          >
-                            Email: {info?.counselor?.email}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: "grey",
-                            }}
-                          >
-                            Phone: {info?.counselor?.profile?.phoneNumber}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+                      </View>
+                      <View style={{ width: "60%" }}>
+                        <Text
+                          style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            color: "#333",
+                            marginBottom: 4,
+                          }}
+                        >
+                          {info?.counselor?.profile?.fullName}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: "500",
+                            color: "#333",
+                            marginBottom: 2,
+                          }}
+                        >
+                          {info?.counselor?.major?.name ||
+                            info?.counselor?.expertise?.name}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "grey",
+                            marginBottom: 2,
+                          }}
+                        >
+                          Email: {info?.counselor?.email}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "grey",
+                          }}
+                        >
+                          Phone: {info?.counselor?.profile?.phoneNumber}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
                     ) : (
                       <Text
                         style={{
@@ -1193,52 +1093,81 @@ export default function QuestionBoard() {
                       </Text>
                     )}
                   </View>
-                  <View
-                    style={{
-                      marginBottom: 20,
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <Text
+                  {(info.status == "PENDING" || info.status == "VERIFIED") && (
+                    <View
                       style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                        marginBottom: 4,
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
                       }}
                     >
-                      Creator's Answer
-                    </Text>
-                    {info?.answer !== null ? (
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          color: "#333",
-                          fontWeight: "500",
-                          opacity: 0.7,
-                        }}
-                      >
-                        {info?.answer}
-                      </Text>
-                    ) : (
                       <Text
                         style={{
                           fontSize: 18,
-                          fontStyle: "italic",
-                          fontWeight: "600",
-                          color: "gray",
-                          opacity: 0.7,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
                         }}
                       >
-                        There's no answer yet
+                        Counselor's Answer
                       </Text>
-                    )}
-                  </View>
+                      {info?.answer !== null ? (
+                        renderContent(info?.answer)
+                      ) : (
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontStyle: "italic",
+                            fontWeight: "600",
+                            color: "gray",
+                            opacity: 0.7,
+                          }}
+                        >
+                          You have not answered yet
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                  {(info.status == "REJECTED" || info.status == "FLAGGED") && (
+                    <View
+                      style={{
+                        marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          color: "#F39300",
+                          marginBottom: 4,
+                        }}
+                      >
+                        Your Reason
+                      </Text>
+                      {info?.reviewReason !== null && (
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            color: "#333",
+                            fontWeight: "500",
+                            opacity: 0.7,
+                          }}
+                        >
+                          {info?.reviewReason}
+                        </Text>
+                      )}
+                    </View>
+                  )}
                 </View>
               </ScrollView>
             </View>

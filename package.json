@@ -23,6 +23,7 @@
     "expo-linear-gradient": "~13.0.2",
     "expo-notifications": "~0.28.17",
     "expo-status-bar": "~1.12.1",
+    "firebase": "^11.0.2",
     "react": "18.2.0",
     "react-native": "0.74.5",
     "react-native-calendars": "^1.1306.0",
