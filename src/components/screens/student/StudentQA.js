@@ -486,7 +486,7 @@ export default function StudentQA() {
         });
         fetchData(filters, { page: currentPage });
         if (openInfo) {
-          setInfo({ ...info, content: finalContent });
+          setInfo({ ...info, title: title, content: finalContent });
         }
       }
     } catch (err) {
@@ -1601,7 +1601,6 @@ export default function StudentQA() {
                               style={{
                                 paddingHorizontal: 8,
                                 paddingVertical: 4,
-                                marginTop: 16,
                                 marginRight: 8,
                                 backgroundColor: "white",
                                 borderRadius: 10,
@@ -1640,7 +1639,6 @@ export default function StudentQA() {
                             style={{
                               paddingHorizontal: 8,
                               paddingVertical: 4,
-                              marginTop: 16,
                               backgroundColor: "#F39300",
                               borderRadius: 10,
                               flexDirection: "row",
@@ -2743,7 +2741,7 @@ export default function StudentQA() {
                 <Text
                   style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                 >
-                  Title
+                  Title <Text style={{ color: "#F39300" }}>*</Text>
                 </Text>
                 <TextInput
                   placeholder="Write your title here"
@@ -2773,7 +2771,7 @@ export default function StudentQA() {
                   <Text
                     style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                   >
-                    Your question
+                    Your question <Text style={{ color: "#F39300" }}>*</Text>
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity

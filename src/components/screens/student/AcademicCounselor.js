@@ -122,7 +122,6 @@ export default function AcademicCounselor() {
       );
       const counselorData = counselorRes?.data?.content || [];
       setCounselors(counselorData);
-      setLoading(false);
     } catch (err) {
       console.log("Can't fetch academic counselors");
     } finally {

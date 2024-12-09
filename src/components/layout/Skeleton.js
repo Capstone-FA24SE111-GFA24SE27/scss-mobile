@@ -1,32 +1,60 @@
-import { View, Dimensions, ScrollView } from "react-native";
-import React from "react";
+import { View, Dimensions, ScrollView, Animated } from "react-native";
+import React, { useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 const { width, height } = Dimensions.get("window");
 
+export const SkeletonAnimated = () => {
+  const opacity = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          useNativeDriver: true,
+          duration: 350,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          useNativeDriver: true,
+          duration: 500,
+        }),
+      ])
+    ).start();
+  }, [opacity]);
+
+  return opacity;
+};
+
 const HomeSkeleton = () => {
+  const opacity = SkeletonAnimated();
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       style={{ marginHorizontal: 20, marginBottom: 8 }}
     >
-      <LinearGradient
-        colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-        style={{
-          width: width * 0.85,
-          height: width * 0.35,
-          borderRadius: 10,
-          marginVertical: 16,
-        }}
-      />
-      <View style={{ marginBottom: 12 }}>
+      <Animated.View style={{ opacity: opacity }}>
         <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+          colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
           style={{
             width: width * 0.85,
-            height: width * 0.075,
-            borderRadius: 4,
+            height: width * 0.35,
+            borderRadius: 10,
+            marginVertical: 16,
           }}
         />
+      </Animated.View>
+      <View style={{ marginBottom: 12 }}>
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: width * 0.85,
+              height: width * 0.075,
+              borderRadius: 4,
+            }}
+          />
+        </Animated.View>
       </View>
       <ScrollView
         horizontal
@@ -34,27 +62,30 @@ const HomeSkeleton = () => {
         style={{ marginBottom: 16 }}
       >
         {[...Array(3)].map((_, index) => (
-          <LinearGradient
-            key={index}
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.6,
-              height: width * 0.35,
-              borderRadius: 10,
-              marginRight: 12,
-            }}
-          />
+          <Animated.View key={index} style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.6,
+                height: width * 0.35,
+                borderRadius: 10,
+                marginRight: 12,
+              }}
+            />
+          </Animated.View>
         ))}
       </ScrollView>
       <View style={{ marginBottom: 12 }}>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: width * 0.85,
-            height: width * 0.075,
-            borderRadius: 4,
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: width * 0.85,
+              height: width * 0.075,
+              borderRadius: 4,
+            }}
+          />
+        </Animated.View>
       </View>
       <ScrollView
         horizontal
@@ -62,16 +93,17 @@ const HomeSkeleton = () => {
         style={{ marginBottom: 16 }}
       >
         {[...Array(4)].map((_, index) => (
-          <LinearGradient
-            key={index}
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.25,
-              height: width * 0.125,
-              borderRadius: 10,
-              marginRight: 8,
-            }}
-          />
+          <Animated.View key={index} style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.25,
+                height: width * 0.125,
+                borderRadius: 10,
+                marginRight: 8,
+              }}
+            />
+          </Animated.View>
         ))}
       </ScrollView>
       <ScrollView
@@ -80,40 +112,44 @@ const HomeSkeleton = () => {
         style={{ marginBottom: 16 }}
       >
         {[...Array(3)].map((_, index) => (
-          <LinearGradient
-            key={index}
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.6,
-              height: width * 0.35,
-              borderRadius: 10,
-              marginRight: 12,
-            }}
-          />
+          <Animated.View key={index} style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.6,
+                height: width * 0.35,
+                borderRadius: 10,
+                marginRight: 12,
+              }}
+            />
+          </Animated.View>
         ))}
       </ScrollView>
       <View style={{ marginBottom: 12 }}>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: width * 0.85,
-            height: width * 0.075,
-            borderRadius: 4,
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: width * 0.85,
+              height: width * 0.075,
+              borderRadius: 4,
+            }}
+          />
+        </Animated.View>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {[...Array(3)].map((_, index) => (
-          <LinearGradient
-            key={index}
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.6,
-              height: width * 0.35,
-              borderRadius: 10,
-              marginRight: 12,
-            }}
-          />
+          <Animated.View key={index} style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.6,
+                height: width * 0.35,
+                borderRadius: 10,
+                marginRight: 12,
+              }}
+            />
+          </Animated.View>
         ))}
       </ScrollView>
     </ScrollView>
@@ -121,6 +157,7 @@ const HomeSkeleton = () => {
 };
 
 const CounselorSkeleton = () => {
+  const opacity = SkeletonAnimated();
   return (
     <View
       style={{
@@ -135,15 +172,17 @@ const CounselorSkeleton = () => {
       }}
     >
       <View style={{ flexDirection: "row", marginHorizontal: 8 }}>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: width * 0.14,
-            height: width * 0.14,
-            marginRight: 8,
-            borderRadius: 40,
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: width * 0.14,
+              height: width * 0.14,
+              marginRight: 8,
+              borderRadius: 40,
+            }}
+          />
+        </Animated.View>
         <View style={{ flex: 1 }}>
           <View
             style={{
@@ -151,34 +190,40 @@ const CounselorSkeleton = () => {
               justifyContent: "space-between",
             }}
           >
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: width * 0.4,
-                height: width * 0.05,
-                borderRadius: 4,
-              }}
-            />
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: width * 0.14,
-                height: width * 0.05,
-                paddingHorizontal: 12,
-                paddingVertical: 2,
-                borderRadius: 20,
-              }}
-            />
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.4,
+                  height: width * 0.05,
+                  borderRadius: 4,
+                }}
+              />
+            </Animated.View>
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.14,
+                  height: width * 0.05,
+                  paddingHorizontal: 12,
+                  paddingVertical: 2,
+                  borderRadius: 20,
+                }}
+              />
+            </Animated.View>
           </View>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.5,
-              height: 18,
-              borderRadius: 4,
-              marginVertical: 6,
-            }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.5,
+                height: 18,
+                borderRadius: 4,
+                marginVertical: 6,
+              }}
+            />
+          </Animated.View>
         </View>
       </View>
       <View
@@ -200,25 +245,28 @@ const CounselorSkeleton = () => {
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.3,
+                  height: 20,
+                  borderRadius: 4,
+                }}
+              />
+            </Animated.View>
+          </View>
+          <Animated.View style={{ opacity: opacity }}>
             <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
               style={{
                 width: width * 0.3,
-                height: 20,
+                height: 16,
                 borderRadius: 4,
-                marginLeft: 8,
+                marginTop: 8,
               }}
             />
-          </View>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.3,
-              height: 16,
-              borderRadius: 4,
-              marginTop: 8,
-            }}
-          />
+          </Animated.View>
         </View>
         <View
           style={{
@@ -236,60 +284,65 @@ const CounselorSkeleton = () => {
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.3,
+                  height: 20,
+                  borderRadius: 4,
+                }}
+              />
+            </Animated.View>
+          </View>
+          <Animated.View style={{ opacity: opacity }}>
             <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
               style={{
                 width: width * 0.3,
-                height: 20,
+                height: 16,
                 borderRadius: 4,
-                marginLeft: 8,
+                marginTop: 8,
               }}
             />
-          </View>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.3,
-              height: 16,
-              borderRadius: 4,
-              marginTop: 8,
-            }}
-          />
+          </Animated.View>
         </View>
       </View>
-      <LinearGradient
-        colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-        style={{
-          backgroundColor: "#F39300",
-          borderRadius: 10,
-          height: 30,
-          paddingVertical: 8,
-          marginTop: 12,
-          marginHorizontal: 8,
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "row",
-        }}
-      />
+      <Animated.View style={{ opacity: opacity }}>
+        <LinearGradient
+          colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+          style={{
+            borderRadius: 10,
+            height: 30,
+            paddingVertical: 8,
+            marginTop: 12,
+            marginHorizontal: 8,
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        />
+      </Animated.View>
     </View>
   );
 };
 
 const StudentSkeleton = () => {
+  const opacity = SkeletonAnimated();
   return (
     <View
       style={{
         flex: 1,
         flexDirection: "row",
         alignItems: "flex-start",
-        backgroundColor: "#e0e0e0",
+        backgroundColor: "#e3e3e3",
         borderRadius: 20,
         marginVertical: 8,
       }}
     >
       <View
         style={{
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#ededed",
           padding: 12,
           marginLeft: 4,
           marginRight: 2,
@@ -299,16 +352,18 @@ const StudentSkeleton = () => {
           borderBottomLeftRadius: 18,
         }}
       >
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: 70,
-            height: 70,
-            borderRadius: 40,
-            borderColor: "#e0e0e0",
-            borderWidth: 2,
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: 70,
+              height: 70,
+              borderRadius: 40,
+              borderColor: "#e3e3e3",
+              borderWidth: 2,
+            }}
+          />
+        </Animated.View>
       </View>
       <View
         style={{
@@ -323,10 +378,12 @@ const StudentSkeleton = () => {
         }}
       >
         <View style={{ flexDirection: "row", marginBottom: 8 }}>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: width * 0.5, height: 24, borderRadius: 4 }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{ width: width * 0.5, height: 24, borderRadius: 4 }}
+            />
+          </Animated.View>
         </View>
         <View
           style={{
@@ -341,23 +398,27 @@ const StudentSkeleton = () => {
               width: "50%",
             }}
           >
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: 16,
-                height: 18,
-                borderRadius: 4,
-              }}
-            />
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: width * 0.15,
-                height: 18,
-                borderRadius: 4,
-                marginLeft: 4,
-              }}
-            />
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: 16,
+                  height: 18,
+                  borderRadius: 4,
+                }}
+              />
+            </Animated.View>
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.15,
+                  height: 18,
+                  borderRadius: 4,
+                  marginLeft: 4,
+                }}
+              />
+            </Animated.View>
           </View>
           <View
             style={{
@@ -365,23 +426,27 @@ const StudentSkeleton = () => {
               width: "50%",
             }}
           >
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: 16,
-                height: 18,
-                borderRadius: 4,
-              }}
-            />
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: width * 0.15,
-                height: 18,
-                borderRadius: 4,
-                marginLeft: 4,
-              }}
-            />
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: 16,
+                  height: 18,
+                  borderRadius: 4,
+                }}
+              />
+            </Animated.View>
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.15,
+                  height: 18,
+                  borderRadius: 4,
+                  marginLeft: 4,
+                }}
+              />
+            </Animated.View>
           </View>
         </View>
         <View
@@ -396,48 +461,55 @@ const StudentSkeleton = () => {
               width: "50%",
             }}
           >
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: 16,
-                height: 18,
-                borderRadius: 4,
-              }}
-            />
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: width * 0.15,
-                height: 18,
-                borderRadius: 4,
-                marginLeft: 4,
-              }}
-            />
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: 16,
+                  height: 18,
+                  borderRadius: 4,
+                }}
+              />
+            </Animated.View>
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.15,
+                  height: 18,
+                  borderRadius: 4,
+                  marginLeft: 4,
+                }}
+              />
+            </Animated.View>
           </View>
-
           <View
             style={{
               flexDirection: "row",
               width: "50%",
             }}
           >
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: 16,
-                height: 18,
-                borderRadius: 4,
-              }}
-            />
-            <LinearGradient
-              colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-              style={{
-                width: width * 0.15,
-                height: 18,
-                borderRadius: 4,
-                marginLeft: 4,
-              }}
-            />
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: 16,
+                  height: 18,
+                  borderRadius: 4,
+                }}
+              />
+            </Animated.View>
+            <Animated.View style={{ opacity: opacity }}>
+              <LinearGradient
+                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                style={{
+                  width: width * 0.15,
+                  height: 18,
+                  borderRadius: 4,
+                  marginLeft: 4,
+                }}
+              />
+            </Animated.View>
           </View>
         </View>
       </View>
@@ -446,6 +518,7 @@ const StudentSkeleton = () => {
 };
 
 const ScheduleSkeleton = () => {
+  const opacity = SkeletonAnimated();
   return (
     <View
       style={{
@@ -456,47 +529,55 @@ const ScheduleSkeleton = () => {
         elevation: 1,
         position: "relative",
         borderWidth: 1.5,
-        borderColor: "#e0e0e0",
+        borderColor: "#e3e3e3",
       }}
     >
       <View style={{ flexDirection: "row", marginBottom: 16 }}>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: width * 0.14,
-            height: width * 0.14,
-            borderRadius: 40,
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: width * 0.14,
+              height: width * 0.14,
+              borderRadius: 40,
+            }}
+          />
+        </Animated.View>
         <View style={{ marginLeft: 12 }}>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.1,
-              height: 20,
-              borderRadius: 4,
-              marginBottom: 8,
-            }}
-          />
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.2,
-              height: 20,
-              borderRadius: 20,
-              marginTop: 4,
-            }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.1,
+                height: 20,
+                borderRadius: 4,
+                marginBottom: 8,
+              }}
+            />
+          </Animated.View>
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.2,
+                height: 20,
+                borderRadius: 20,
+                marginTop: 4,
+              }}
+            />
+          </Animated.View>
         </View>
         <View style={{ position: "absolute", bottom: 0, right: 0 }}>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.1,
-              height: width * 0.05,
-              borderRadius: 12,
-            }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.1,
+                height: width * 0.05,
+                borderRadius: 12,
+              }}
+            />
+          </Animated.View>
         </View>
       </View>
     </View>
@@ -504,6 +585,7 @@ const ScheduleSkeleton = () => {
 };
 
 const QASkeleton = () => {
+  const opacity = SkeletonAnimated();
   return (
     <View
       style={{
@@ -517,37 +599,43 @@ const QASkeleton = () => {
       }}
     >
       <View style={{ marginBottom: 16 }}>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            height: 24,
-            marginLeft: 4,
-            width: "50%",
-            marginBottom: 8,
-            paddingHorizontal: 8,
-            paddingVertical: 4,
-            borderRadius: 10,
-          }}
-        />
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            height: 24,
-            borderRadius: 4,
-            marginLeft: 4,
-            width: "80%",
-          }}
-        />
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            height: 96,
-            borderRadius: 4,
-            marginTop: 8,
-            marginLeft: 4,
-            width: "95%",
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              height: 24,
+              marginLeft: 4,
+              width: "50%",
+              marginBottom: 8,
+              paddingHorizontal: 8,
+              paddingVertical: 4,
+              borderRadius: 10,
+            }}
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              height: 24,
+              borderRadius: 4,
+              marginLeft: 4,
+              width: "80%",
+            }}
+          />
+        </Animated.View>
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              height: 96,
+              borderRadius: 4,
+              marginTop: 8,
+              marginLeft: 4,
+              width: "95%",
+            }}
+          />
+        </Animated.View>
       </View>
       <View
         style={{
@@ -565,38 +653,45 @@ const QASkeleton = () => {
             paddingVertical: 4,
           }}
         >
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: 108,
-              height: 24,
-              borderRadius: 20,
-            }}
-          />
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: 108,
-              height: 24,
-              borderRadius: 20,
-              marginLeft: 4,
-            }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: 108,
+                height: 24,
+                borderRadius: 20,
+              }}
+            />
+          </Animated.View>
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: 108,
+                height: 24,
+                borderRadius: 20,
+                marginLeft: 4,
+              }}
+            />
+          </Animated.View>
         </View>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: 20,
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: 24,
+              height: 24,
+              borderRadius: 20,
+            }}
+          />
+        </Animated.View>
       </View>
     </View>
   );
 };
 
 const RequestSkeleton = () => {
+  const opacity = SkeletonAnimated();
   return (
     <View
       style={{
@@ -607,43 +702,51 @@ const RequestSkeleton = () => {
         elevation: 1,
         position: "relative",
         borderWidth: 1.5,
-        borderColor: "#e0e0e0",
+        borderColor: "#e3e3e3",
       }}
     >
       <View style={{ flexDirection: "row", marginBottom: 16 }}>
-        <LinearGradient
-          colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-          style={{
-            width: width * 0.14,
-            height: width * 0.14,
-            borderRadius: 40,
-          }}
-        />
+        <Animated.View style={{ opacity: opacity }}>
+          <LinearGradient
+            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+            style={{
+              width: width * 0.14,
+              height: width * 0.14,
+              borderRadius: 40,
+            }}
+          />
+        </Animated.View>
         <View style={{ marginLeft: 12 }}>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.5,
-              height: 20,
-              borderRadius: 4,
-              marginBottom: 8,
-            }}
-          />
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{
-              width: width * 0.2,
-              height: 20,
-              borderRadius: 20,
-              marginTop: 4,
-            }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.5,
+                height: 20,
+                borderRadius: 4,
+                marginBottom: 8,
+              }}
+            />
+          </Animated.View>
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.2,
+                height: 20,
+                borderRadius: 20,
+                marginTop: 4,
+              }}
+            />
+          </Animated.View>
         </View>
         <View style={{ position: "absolute", top: 0, right: -4 }}>
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: 24, height: 24, borderRadius: 12 }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{ width: 24, height: 24, borderRadius: 12 }}
+            />
+          </Animated.View>
         </View>
       </View>
       <View>
@@ -654,16 +757,19 @@ const RequestSkeleton = () => {
             marginBottom: 8,
           }}
         >
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
-          />
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: width * 0.4, height: 20, borderRadius: 4 }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
+            />
+          </Animated.View>
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{ width: width * 0.4, height: 20, borderRadius: 4 }}
+            />
+          </Animated.View>
         </View>
-
         <View
           style={{
             flexDirection: "row",
@@ -671,10 +777,12 @@ const RequestSkeleton = () => {
             marginBottom: 8,
           }}
         >
-          <LinearGradient
-            colors={["#e0e0e0", "#f5f5f5", "#e0e0e0"]}
-            style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
-          />
+          <Animated.View style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{ width: width * 0.3, height: 20, borderRadius: 4 }}
+            />
+          </Animated.View>
         </View>
       </View>
     </View>

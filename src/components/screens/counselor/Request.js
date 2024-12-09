@@ -466,12 +466,12 @@ export default function Request({ route }) {
                   )}
                 </View>
                 <AlertModal
-                    showModal={showModal}
-                    setShowModal={setShowModal}
-                    modalMessage={modalMessage}
-                    setModalMessage={setModalMessage}
-                  />              
-                </View>
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                  modalMessage={modalMessage}
+                  setModalMessage={setModalMessage}
+                />
+              </View>
               <View
                 style={{
                   flexDirection: "row",
@@ -953,20 +953,22 @@ export default function Request({ route }) {
                         onPress={() => handleOpenConfirmDeny(request.id)}
                         activeOpacity={0.6}
                         style={{
-                          backgroundColor: "#ededed",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          marginRight: 8,
+                          backgroundColor: "#e3e3e3",
                           borderRadius: 10,
-                          justifyContent: "center",
+                          flexDirection: "row",
                           alignItems: "center",
-                          marginRight: 4,
+                          borderWidth: 1.5,
+                          borderColor: "#e3e3e3",
                         }}
                       >
                         <Text
                           style={{
-                            fontSize: 18,
+                            fontWeight: "500",
                             color: "#333",
-                            fontWeight: "600",
+                            fontSize: 16,
                           }}
                         >
                           Deny
@@ -978,19 +980,21 @@ export default function Request({ route }) {
                         }
                         activeOpacity={0.6}
                         style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
                           backgroundColor: "#F39300",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
                           borderRadius: 10,
-                          justifyContent: "center",
+                          flexDirection: "row",
                           alignItems: "center",
+                          borderWidth: 1.5,
+                          borderColor: "#F39300",
                         }}
                       >
                         <Text
                           style={{
-                            fontSize: 18,
+                            fontWeight: "500",
                             color: "white",
-                            fontWeight: "600",
+                            fontSize: 16,
                           }}
                         >
                           Approve

@@ -171,8 +171,7 @@ export default function Schedule() {
               studentGender: appointment?.studentInfo?.profile?.gender,
               studentCode: appointment?.studentInfo?.studentCode,
               studentPhone: appointment?.studentInfo?.profile?.phoneNumber,
-              studentMajor:
-                appointment?.studentInfo?.major?.name,
+              studentMajor: appointment?.studentInfo?.major?.name,
               status: appointment?.status,
               feedback: appointment?.appointmentFeedback,
               havingReport: appointment?.havingReport,
@@ -1248,9 +1247,7 @@ export default function Schedule() {
                         <TouchableOpacity
                           disabled={info.meetingType !== "ONLINE"}
                           onPress={() =>
-                            Linking.openURL(
-                              `${info.place}`
-                            ).catch((err) => {
+                            Linking.openURL(`${info.place}`).catch((err) => {
                               console.log("Can't open this link", err);
                               Toast.show({
                                 type: "error",
@@ -1442,25 +1439,28 @@ export default function Schedule() {
               >
                 <View
                   style={{
+                    backgroundColor: "#F39300",
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
                     paddingVertical: 12,
                     paddingHorizontal: 20,
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
                   }}
                 >
                   <Text
                     style={{
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: "bold",
-                      color: "#333",
+                      color: "white",
                     }}
                   >
                     Appointment Report
                   </Text>
                   <TouchableOpacity
                     style={{
-                      backgroundColor: "#ededed",
+                      backgroundColor: "white",
                       padding: 4,
                       borderRadius: 20,
                     }}
@@ -1468,7 +1468,7 @@ export default function Schedule() {
                       setOpenReport(false), setSelectedAppointment(null)
                     )}
                   >
-                    <Ionicons name="close" size={28} color="#333" />
+                    <Ionicons name="close" size={24} color="#333" />
                   </TouchableOpacity>
                 </View>
                 {report ? (
@@ -1757,16 +1757,19 @@ export default function Schedule() {
               >
                 <View
                   style={{
+                    backgroundColor: "#F39300",
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
                     paddingVertical: 12,
                     paddingHorizontal: 20,
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
                   }}
                 >
                   <Text
                     style={{
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: "bold",
                       color: "#333",
                     }}
@@ -1781,7 +1784,7 @@ export default function Schedule() {
                     }}
                     onPress={() => setOpenCreateReport(false)}
                   >
-                    <Ionicons name="close" size={28} color="#333" />
+                    <Ionicons name="close" size={24} color="#333" />
                   </TouchableOpacity>
                 </View>
                 <ScrollView
@@ -2652,153 +2655,4 @@ export default function Schedule() {
       </View>
     </>
   );
-}
-
-{
-  /* <Agenda
-            items={items}
-            selected={selectedDate}
-            onDayPress={(day) => setSelectedDate(day.dateString)}
-            renderItem={(item) => {
-              return (
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "white",
-                    borderRadius: 12,
-                    padding: 16,
-                    marginRight: 16,
-                    marginTop: 12,
-                    borderWidth: 1,
-                    borderColor: "#F39300",
-                    elevation: 2,
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: "400",
-                        color: "#333",
-                      }}
-                    >
-                      {item.time}
-                    </Text>
-                    <View
-                      style={{
-                        backgroundColor: "#F39300",
-                        borderRadius: 20,
-                        paddingVertical: 6,
-                        paddingHorizontal: 12,
-                        marginLeft: 12,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: "bold",
-                          color: "white",
-                        }}
-                      >
-                        {item.meetingType}
-                      </Text>
-                    </View>
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      marginTop: 8,
-                      color: "#333",
-                      fontWeight: "500",
-                    }}
-                  >
-                    {item.place}
-                  </Text>
-                  <View
-                    style={{
-                      justifyContent: "flex-end",
-                      flexDirection: "row",
-                      flex: 1,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        color: "#333",
-                        verticalAlign: "middle",
-                        opacity: 0.7,
-                        marginRight: 20,
-                      }}
-                    >
-                      {item.studentName}
-                    </Text>
-                    <Image
-                      source={{ uri: item.studentImage }}
-                      style={{
-                        width: width * 0.08,
-                        height: height * 0.048,      
-                        borderRadius: 40,
-                      }}
-                    />
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-            renderEmptyData={() => {
-              return (
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: 20,
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 24, fontWeight: "600", opacity: 0.6 }}
-                  >
-                    No Schedule
-                  </Text>
-                </View>
-              );
-            }}
-            rowHasChanged={(r1, r2) => {
-              return r1.name !== r2.name;
-            }}
-            pastScrollRange={2}
-            futureScrollRange={4}
-            theme={{
-              calendarBackground: "white",
-              agendaDayTextColor: "black",
-              agendaDayNumColor: "black",
-              agendaTodayColor: "#F39300",
-              agendaKnobColor: "#e3e3e3",
-              monthTextColor: "#F39300",
-              dotColor: "#F39300",
-              selectedDayBackgroundColor: "#F39300",
-              selectedDayTextColor: "white",
-              todayTextColor: "#F39300",
-            }}
-            renderArrow={(direction) => {
-              return direction === "left" ? (
-                <Ionicons
-                  name="caret-back-circle-outline"
-                  size={30}
-                  color="#F39300"
-                />
-              ) : (
-                <Ionicons
-                  name="caret-forward-circle-outline"
-                  size={30}
-                  color="#F39300"
-                />
-              );
-            }}
-          /> */
 }

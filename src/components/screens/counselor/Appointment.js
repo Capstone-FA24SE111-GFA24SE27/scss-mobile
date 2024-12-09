@@ -493,7 +493,7 @@ export default function Appointment({ route }) {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        fetchData();
+        fetchData(filters, { page: currentPage });
         setOpenCancel(false);
         setSelectedAppointment(null);
         setValue("");
@@ -1268,7 +1268,8 @@ export default function Appointment({ route }) {
                       </Text>
                     </Text>
                   </View>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                </View>
+                <View style={{ flexDirection: "row", alignSelf: "flex-end", alignItems: "center" }}>
                     {appointment.status === "WAITING" && (
                       <View
                         style={{
@@ -1280,22 +1281,21 @@ export default function Appointment({ route }) {
                           onPress={() => handleOpenCancel(appointment.id)}
                           activeOpacity={0.6}
                           style={{
-                            backgroundColor: "#ededed",
                             paddingHorizontal: 8,
-                            paddingVertical: 2,
-                            marginRight: 4,
+                            paddingVertical: 4,
+                            backgroundColor: "#e3e3e3",
                             borderRadius: 10,
-                            justifyContent: "center",
+                            flexDirection: "row",
                             alignItems: "center",
                             borderWidth: 1.5,
-                            borderColor: "#ededed",
+                            borderColor: "#e3e3e3",
                           }}
                         >
                           <Text
                             style={{
-                              fontSize: 16,
+                              fontWeight: "500",
                               color: "#333",
-                              fontWeight: "600",
+                              fontSize: 16,
                             }}
                           >
                             Cancel
@@ -1316,7 +1316,8 @@ export default function Appointment({ route }) {
                           }}
                           style={{
                             paddingHorizontal: 8,
-                            paddingVertical: 2,
+                            paddingVertical: 4,
+                            marginLeft: 8,
                             backgroundColor: "#F39300",
                             borderRadius: 10,
                             flexDirection: "row",
@@ -1344,7 +1345,6 @@ export default function Appointment({ route }) {
                         </TouchableOpacity>
                       )}
                   </View>
-                </View>
               </View>
             ))
           )}
@@ -3067,25 +3067,28 @@ export default function Appointment({ route }) {
             >
               <View
                 style={{
+                  backgroundColor: "#F39300",
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
                   paddingVertical: 12,
                   paddingHorizontal: 20,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
                 }}
               >
                 <Text
                   style={{
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: "bold",
-                    color: "#333",
+                    color: "white",
                   }}
                 >
                   Appointment Report
                 </Text>
                 <TouchableOpacity
                   style={{
-                    backgroundColor: "#ededed",
+                    backgroundColor: "white",
                     padding: 4,
                     borderRadius: 20,
                   }}
@@ -3093,7 +3096,7 @@ export default function Appointment({ route }) {
                     setOpenReport(false), setSelectedAppointment(null)
                   )}
                 >
-                  <Ionicons name="close" size={28} color="#333" />
+                  <Ionicons name="close" size={24} color="#333" />
                 </TouchableOpacity>
               </View>
               {report ? (
@@ -3378,31 +3381,34 @@ export default function Appointment({ route }) {
             >
               <View
                 style={{
+                  backgroundColor: "#F39300",
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
                   paddingVertical: 12,
                   paddingHorizontal: 20,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
                 }}
               >
                 <Text
                   style={{
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: "bold",
-                    color: "#333",
+                    color: "white",
                   }}
                 >
                   Create Report
                 </Text>
                 <TouchableOpacity
                   style={{
-                    backgroundColor: "#ededed",
+                    backgroundColor: "white",
                     padding: 4,
                     borderRadius: 20,
                   }}
                   onPress={() => setOpenCreateReport(false)}
                 >
-                  <Ionicons name="close" size={28} color="#333" />
+                  <Ionicons name="close" size={24} color="#333" />
                 </TouchableOpacity>
               </View>
               <ScrollView

@@ -111,7 +111,6 @@ export default function NonAcademicCounselor() {
       );
       const counselorData = counselorRes?.data?.content || [];
       setCounselors(counselorData);
-      setLoading(false);
     } catch (err) {
       console.log("Can't fetch non-academic counselors");
     } finally {

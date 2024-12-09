@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     AsyncStorage.clear();
+    setProfile(null);
     setIsLogin(false);
   };
 

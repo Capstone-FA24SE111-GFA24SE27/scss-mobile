@@ -1687,7 +1687,7 @@ export default function Demand({ route }) {
                         >
                           Appointments Created
                         </Text>
-                        {selectedDemand?.appointments.map((item, index) => (
+                        {selectedDemand?.appointments?.map((item, index) => (
                           <TouchableOpacity
                             activeOpacity={0.7}
                             onPress={() => (
@@ -1732,7 +1732,7 @@ export default function Demand({ route }) {
                                     marginTop: 2,
                                   }}
                                 >
-                                  {item.counselorInfo.specialization.name}
+                                  {item.counselorInfo.major.name}
                                 </Text>
                               </View>
                               <Image

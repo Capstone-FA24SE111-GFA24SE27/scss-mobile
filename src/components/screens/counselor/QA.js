@@ -326,7 +326,12 @@ export default function QA() {
         });
         fetchData(filters, { page: currentPage });
         if (openInfo) {
-          setInfo({ ...info, title: title, question: finalContent, answer: content2 });
+          setInfo({
+            ...info,
+            title: title,
+            question: finalContent,
+            answer: content2,
+          });
         }
       }
     } catch (err) {
@@ -963,7 +968,10 @@ export default function QA() {
                   elevation: 1,
                   position: "relative",
                   borderWidth: 1.5,
-                  borderColor: question?.counselor?.id == userData?.id ? "#F39300" : "#e3e3e3",
+                  borderColor:
+                    question?.counselor?.id == userData?.id
+                      ? "#F39300"
+                      : "#e3e3e3",
                 }}
               >
                 <View style={{ marginBottom: 16 }}>
@@ -2007,7 +2015,7 @@ export default function QA() {
                 <Text
                   style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                 >
-                  Title
+                  Title <Text style={{ color: "#F39300" }}>*</Text>
                 </Text>
                 <TextInput
                   placeholder="Write your title here"
@@ -2037,7 +2045,7 @@ export default function QA() {
                   <Text
                     style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                   >
-                    Your question
+                    Your question <Text style={{ color: "#F39300" }}>*</Text>
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity
@@ -2462,11 +2470,21 @@ export default function QA() {
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  disabled={title === "" || content === ""}
+                  disabled={
+                    title === "" ||
+                    content === "" ||
+                    content2 === "" ||
+                    selectedCategory === ""
+                  }
                   style={{
                     flex: 1,
                     backgroundColor:
-                      title === "" || content === "" ? "#ededed" : "#F39300",
+                      title === "" ||
+                      content === "" ||
+                      content2 === "" ||
+                      selectedCategory === ""
+                        ? "#ededed"
+                        : "#F39300",
                     paddingHorizontal: 12,
                     paddingVertical: 6,
                     borderRadius: 10,
@@ -2478,7 +2496,13 @@ export default function QA() {
                   <Text
                     style={{
                       fontSize: 18,
-                      color: title === "" || content === "" ? "gray" : "white",
+                      color:
+                        title === "" ||
+                        content === "" ||
+                        content2 === "" ||
+                        selectedCategory === ""
+                          ? "gray"
+                          : "white",
                       fontWeight: "600",
                     }}
                   >

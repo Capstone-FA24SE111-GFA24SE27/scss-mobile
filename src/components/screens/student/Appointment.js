@@ -193,7 +193,7 @@ export default function Appointment({ route }) {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        fetchData();
+        fetchData(filters, { page: currentPage });
         setOpenCancel(false);
         setSelectedAppointment(null);
         setValue("");
@@ -868,74 +868,40 @@ export default function Appointment({ route }) {
                       </Text>
                     </Text>
                   </View>
-                  {appointment.status === "WAITING" && (
-                    <View
+                </View>
+                {appointment.status === "WAITING" && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => handleOpenCancel(appointment.id)}
+                      activeOpacity={0.6}
                       style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "#e3e3e3",
+                        borderRadius: 10,
                         flexDirection: "row",
-                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
                       }}
                     >
-                      <TouchableOpacity
-                        onPress={() => handleOpenCancel(appointment.id)}
-                        activeOpacity={0.6}
-                        style={{
-                          backgroundColor: "#ededed",
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          borderRadius: 10,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "#333",
-                            fontWeight: "600",
-                          }}
-                        >
-                          Cancel
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-                {/* <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  {appointment.meetingType === "ONLINE" ? (
-                    <>
-                      <Ionicons name="videocam" size={20} color="#F39300" />
                       <Text
                         style={{
-                          fontWeight: "bold",
-                          fontSize: 16,
-                          marginLeft: 8,
+                          fontWeight: "500",
                           color: "#333",
+                          fontSize: 16,
                         }}
                       >
-                        {appointment.meetUrl}
+                        Cancel
                       </Text>
-                    </>
-                  ) : (
-                    <>
-                      <MaterialIcons name="place" size={20} color="#F39300" />
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 16,
-                          marginLeft: 8,
-                          color: "#333",
-                        }}
-                      >
-                        {appointment.address}
-                      </Text>
-                    </>
-                  )}
-                </View> */}
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             ))
           )}
@@ -994,9 +960,10 @@ export default function Appointment({ route }) {
                   }}
                 >
                   <TouchableOpacity
-                  onPress={() => (
-                    setOpenExtendInfo(true), setExtendInfo(info?.counselorInfo)
-                  )}
+                    onPress={() => (
+                      setOpenExtendInfo(true),
+                      setExtendInfo(info?.counselorInfo)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,

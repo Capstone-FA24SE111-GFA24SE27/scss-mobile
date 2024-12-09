@@ -1943,7 +1943,7 @@ export default function CounselorQA() {
                   <Text
                     style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                   >
-                    Your answer
+                    Your answer <Text style={{ color: "#F39300" }}>*</Text>
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity
