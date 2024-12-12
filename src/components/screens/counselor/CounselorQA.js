@@ -21,9 +21,9 @@ import Toast from "react-native-toast-message";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { storage } from "../../../config/FirebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import StudentInfoModal from "../../layout/StudentInfoModal";
 
 export default function CounselorQA() {
   const navigation = useNavigation();
@@ -62,8 +62,9 @@ export default function CounselorQA() {
   const [openAnswer, setOpenAnswer] = useState(false);
   const [openEditAnswer, setOpenEditAnswer] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
-  // const [openChat, setOpenChat] = useState(false);
   const [info, setInfo] = useState({});
+  const [openStudentInfo, setOpenStudentInfo] = useState(false);
+  const [selectedStudentInfo, setSelectedStudentInfo] = useState(null);
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [openPreview, setOpenPreview] = useState(false);
@@ -555,9 +556,9 @@ export default function CounselorQA() {
                   Student Code:
                 </Text>
                 <TextInput
+                  placeholder="Input Student Code"
                   value={studentCode}
                   onChangeText={(value) => setStudentCode(value)}
-                  placeholder="Input Student Code"
                   style={{
                     backgroundColor: "white",
                     borderColor: "black",
@@ -569,7 +570,6 @@ export default function CounselorQA() {
                     paddingHorizontal: 12,
                     marginLeft: 16,
                   }}
-                  placeholderTextColor="gray"
                 />
               </View>
               <View
@@ -836,7 +836,12 @@ export default function CounselorQA() {
                         alignItems: "flex-start",
                       }}
                     >
-                      <View
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => (
+                          setOpenStudentInfo(true),
+                          setSelectedStudentInfo(question.student.id)
+                        )}
                         style={{
                           flexDirection: "row",
                           alignSelf: "flex-start",
@@ -869,7 +874,7 @@ export default function CounselorQA() {
                               ) + "..."
                             : question.student.profile.fullName}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                       {question.status === "PENDING" && (
                         <View
                           style={{ flexDirection: "row", alignItems: "center" }}
@@ -973,7 +978,9 @@ export default function CounselorQA() {
                         }}
                       >
                         Asked at{" "}
-                        {question.createdDate.split("T")[0] + " " + question.createdDate.split("T")[1].slice(0, 8)}
+                        {question.createdDate.split("T")[0] +
+                          " " +
+                          question.createdDate.split("T")[1].slice(0, 8)}
                       </Text>
                     </View>
                   </View>
@@ -1155,7 +1162,6 @@ export default function CounselorQA() {
                           </TouchableOpacity>
                         )}
                       <TouchableOpacity
-                        hitSlop={10}
                         onPress={() => (setInfo(question), setOpenInfo(true))}
                         style={{
                           alignItems: "center",
@@ -1222,7 +1228,7 @@ export default function CounselorQA() {
 
                               if (imgTag) {
                                 setImage({
-                                  uri: imgTag
+                                  uri: imgTag,
                                 });
                               } else {
                                 setImage(null);
@@ -1260,7 +1266,7 @@ export default function CounselorQA() {
                           alignSelf: "flex-end",
                           flexDirection: "row",
                           alignItems: "center",
-                          marginTop: 16,
+                          marginTop: 12,
                         }}
                       >
                         {question.closed == false && (
@@ -1462,24 +1468,19 @@ export default function CounselorQA() {
               </Text>
               <TextInput
                 placeholder="Type your reason here"
-                placeholderTextColor="gray"
-                keyboardType="default"
-                multiline={true}
-                numberOfLines={3}
                 value={content}
                 onChangeText={setContent}
                 style={{
-                  fontWeight: "600",
-                  fontSize: 16,
-                  opacity: 0.8,
-                  paddingVertical: 8,
-                  textAlignVertical: "top",
-                  paddingHorizontal: 12,
-                  backgroundColor: "#ededed",
-                  borderColor: "gray",
+                  borderColor: "#ccc",
                   borderWidth: 1,
                   borderRadius: 10,
+                  padding: 12,
+                  backgroundColor: "#fff",
+                  fontSize: 16,
+                  textAlignVertical: "top",
                 }}
+                multiline
+                numberOfLines={3}
               />
               <TouchableOpacity
                 disabled={content === ""}
@@ -1565,24 +1566,19 @@ export default function CounselorQA() {
               </Text>
               <TextInput
                 placeholder="Type your reason here"
-                placeholderTextColor="gray"
-                keyboardType="default"
-                multiline={true}
-                numberOfLines={3}
                 value={content}
                 onChangeText={setContent}
                 style={{
-                  fontWeight: "600",
-                  fontSize: 16,
-                  opacity: 0.8,
-                  paddingVertical: 8,
-                  textAlignVertical: "top",
-                  paddingHorizontal: 12,
-                  backgroundColor: "#ededed",
-                  borderColor: "gray",
+                  borderColor: "#ccc",
                   borderWidth: 1,
                   borderRadius: 10,
+                  padding: 12,
+                  backgroundColor: "#fff",
+                  fontSize: 16,
+                  textAlignVertical: "top",
                 }}
+                multiline
+                numberOfLines={3}
               />
               <TouchableOpacity
                 disabled={content === ""}
@@ -1717,24 +1713,19 @@ export default function CounselorQA() {
                 </View>
                 <TextInput
                   placeholder="Type your answer here"
-                  placeholderTextColor="gray"
-                  keyboardType="default"
-                  multiline={true}
-                  numberOfLines={3}
                   value={content}
                   onChangeText={setContent}
                   style={{
                     borderColor: "#ccc",
                     borderWidth: 1,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     padding: 12,
-                    height: 100,
                     backgroundColor: "#fff",
                     fontSize: 16,
-                    marginTop: 8,
-                    marginBottom: 12,
                     textAlignVertical: "top",
                   }}
+                  multiline
+                  numberOfLines={3}
                 />
                 {image && (
                   <View style={{ marginBottom: 12 }}>
@@ -1984,7 +1975,7 @@ export default function CounselorQA() {
                   style={{
                     borderColor: "gray",
                     borderWidth: 1,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     padding: 12,
                     height: 100,
                     backgroundColor: "#ededed",
@@ -2327,7 +2318,6 @@ export default function CounselorQA() {
                   style={{
                     padding: 20,
                     backgroundColor: "#f5f7fd",
-                    borderRadius: 16,
                   }}
                 >
                   <View
@@ -2415,7 +2405,12 @@ export default function CounselorQA() {
                     >
                       Questioned by
                     </Text>
-                    <View
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => (
+                        setOpenStudentInfo(true),
+                        setSelectedStudentInfo(info?.student?.id)
+                      )}
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
@@ -2499,7 +2494,7 @@ export default function CounselorQA() {
                           Phone: {info?.student?.profile?.phoneNumber}
                         </Text>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                   {(info.status == "PENDING" || info.status == "VERIFIED") && (
                     <View
@@ -2694,6 +2689,12 @@ export default function CounselorQA() {
             </View>
           </View>
         </Modal>
+        <StudentInfoModal
+          openStudentInfo={openStudentInfo}
+          setOpenStudentInfo={setOpenStudentInfo}
+          selectedStudentInfo={selectedStudentInfo}
+          setSelectedStudentInfo={setSelectedStudentInfo}
+        />
         <Modal
           transparent={true}
           visible={openCloseConfirm}

@@ -12,13 +12,10 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
-import { Dropdown } from "react-native-element-dropdown";
 import { SocketContext } from "../../context/SocketContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
-import Toast from "react-native-toast-message";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
-import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import ExtendInfoModal from "../../layout/ExtendInfoModal";
 import { AuthContext } from "../../context/AuthContext";
@@ -512,7 +509,12 @@ export default function PublicQA() {
                         alignItems: "flex-start",
                       }}
                     >
-                      <View
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => (
+                          setOpenExtendInfo(true),
+                          setExtendInfo(question.counselor)
+                        )}
                         style={{
                           flexDirection: "row",
                           alignSelf: "flex-start",
@@ -545,7 +547,7 @@ export default function PublicQA() {
                               ) + "..."
                             : question.counselor.profile.fullName}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                     <Text
                       numberOfLines={2}
@@ -731,7 +733,6 @@ export default function PublicQA() {
                           </TouchableOpacity>
                         )}
                       <TouchableOpacity
-                        hitSlop={10}
                         onPress={() => (setInfo(question), setOpenInfo(true))}
                         style={{
                           alignItems: "center",
@@ -992,6 +993,7 @@ export default function PublicQA() {
                     </Text>
                     {info?.counselor !== null ? (
                       <TouchableOpacity
+                        activeOpacity={0.7}
                         onPress={() => (
                           setOpenExtendInfo(true),
                           setExtendInfo(info?.counselor)

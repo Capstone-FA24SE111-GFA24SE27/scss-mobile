@@ -136,7 +136,10 @@ export default function ChangePassword() {
           }}
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate("Profile")}
+            >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
           </View>
@@ -191,7 +194,6 @@ export default function ChangePassword() {
             >
               <TextInput
                 placeholder="Enter Current Password"
-                placeholderTextColor="gray"
                 value={currentPassword}
                 onChangeText={setCurrentPassword}
                 onFocus={() => setIsFocused1(true)}
@@ -204,7 +206,10 @@ export default function ChangePassword() {
                 }}
               />
               {currentPassword !== "" && (
-                <TouchableOpacity onPress={() => setCurrentPassword("")}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setCurrentPassword("")}
+                >
                   <Ionicons
                     name="close"
                     size={28}
@@ -217,6 +222,7 @@ export default function ChangePassword() {
                 </TouchableOpacity>
               )}
               <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() =>
                   setIsCurrentPasswordVisible(!isCurrentPasswordVisible)
                 }
@@ -263,7 +269,6 @@ export default function ChangePassword() {
             >
               <TextInput
                 placeholder="Enter New Password"
-                placeholderTextColor="gray"
                 value={newPassword}
                 onChangeText={setNewPassword}
                 onFocus={() => setIsFocused2(true)}
@@ -276,7 +281,10 @@ export default function ChangePassword() {
                 }}
               />
               {newPassword !== "" && (
-                <TouchableOpacity onPress={() => setNewPassword("")}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setNewPassword("")}
+                >
                   <Ionicons
                     name="close"
                     size={28}
@@ -289,6 +297,7 @@ export default function ChangePassword() {
                 </TouchableOpacity>
               )}
               <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
                 style={{
                   paddingHorizontal: 4,
@@ -333,7 +342,6 @@ export default function ChangePassword() {
             >
               <TextInput
                 placeholder="Enter Confirm Password"
-                placeholderTextColor="gray"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 onFocus={() => setIsFocused3(true)}
@@ -347,7 +355,10 @@ export default function ChangePassword() {
                 }}
               />
               {confirmPassword !== "" && (
-                <TouchableOpacity onPress={() => setConfirmPassword("")}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setConfirmPassword("")}
+                >
                   <Ionicons
                     name="close"
                     size={28}
@@ -360,6 +371,7 @@ export default function ChangePassword() {
                 </TouchableOpacity>
               )}
               <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() =>
                   setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
                 }
@@ -407,6 +419,7 @@ export default function ChangePassword() {
           }}
         >
           <TouchableOpacity
+            activeOpacity={0.7}
             onPress={() => setOpenConfirm(true)}
             style={{
               paddingHorizontal: 16,
@@ -481,6 +494,7 @@ export default function ChangePassword() {
               }}
             >
               <TouchableOpacity
+                activeOpacity={0.7}
                 style={{
                   flex: 1,
                   backgroundColor: "#ededed",
@@ -505,6 +519,7 @@ export default function ChangePassword() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                activeOpacity={0.7}
                 style={{
                   flex: 1,
                   backgroundColor: "#F39300",
@@ -586,6 +601,8 @@ export default function ChangePassword() {
               new password
             </Text>
             <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => logout()}
               style={{
                 backgroundColor: "#F39300",
                 paddingVertical: 12,
@@ -594,8 +611,6 @@ export default function ChangePassword() {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => logout()}
-              activeOpacity={0.8}
             >
               <Text
                 style={{
@@ -679,7 +694,6 @@ export default function ChangePassword() {
               />
               <TextInput
                 placeholder="Enter Email"
-                placeholderTextColor="gray"
                 value={email}
                 onFocus={() => setIsFocused4(true)}
                 onBlur={() => setIsFocused4(false)}
@@ -691,7 +705,10 @@ export default function ChangePassword() {
                 }}
               />
               {email !== "" && (
-                <TouchableOpacity onPress={() => setEmail("")}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => setEmail("")}
+                >
                   <Ionicons
                     name="close"
                     size={28}
@@ -723,6 +740,8 @@ export default function ChangePassword() {
               }}
             >
               <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => (setOpenForgot(false), setIsFocused4(false))}
                 style={{
                   backgroundColor: "#ededed",
                   paddingHorizontal: 12,
@@ -734,7 +753,6 @@ export default function ChangePassword() {
                   borderWidth: 1,
                   borderColor: "gray",
                 }}
-                onPress={() => (setOpenForgot(false), setIsFocused4(false))}
               >
                 <Text
                   style={{
@@ -824,6 +842,8 @@ export default function ChangePassword() {
               }}
             >
               <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => setOpenConfirm2(false)}
                 style={{
                   flex: 1,
                   backgroundColor: "#ededed",
@@ -835,7 +855,6 @@ export default function ChangePassword() {
                   borderWidth: 1,
                   borderColor: "gray",
                 }}
-                onPress={() => setOpenConfirm2(false)}
               >
                 <Text
                   style={{
@@ -848,6 +867,8 @@ export default function ChangePassword() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleForgotPassword}
                 style={{
                   flex: 1,
                   backgroundColor: "#F39300",
@@ -856,7 +877,6 @@ export default function ChangePassword() {
                   justifyContent: "center",
                   alignItems: "center",
                 }}
-                onPress={handleForgotPassword}
               >
                 <Text
                   style={{
@@ -927,6 +947,8 @@ export default function ChangePassword() {
               Please check it to start changing your password
             </Text>
             <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => logout()}
               style={{
                 backgroundColor: "#F39300",
                 paddingVertical: 12,
@@ -935,8 +957,6 @@ export default function ChangePassword() {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => logout()}
-              activeOpacity={0.8}
             >
               <Text
                 style={{

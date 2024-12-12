@@ -197,6 +197,14 @@ export default function Appointment({ route }) {
         setOpenCancel(false);
         setSelectedAppointment(null);
         setValue("");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Appointment canceled.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       } else {
         Toast.show({
           type: "error",
@@ -224,11 +232,6 @@ export default function Appointment({ route }) {
     setValue("");
   };
 
-  const handleOpenFeedback = async (id) => {
-    setOpenFeedback(true);
-    setSelectedAppointment(id);
-  };
-
   const handleTakeFeedback = async () => {
     try {
       const response = await axiosJWT.post(
@@ -246,6 +249,14 @@ export default function Appointment({ route }) {
             rating: rating,
             comment: value,
             createdAt: new Date().toISOString().split("T")[0],
+          },
+        });
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Your feedback has been submitted.",
+          onPress: () => {
+            Toast.hide();
           },
         });
         handleCloseFeedback();
@@ -296,7 +307,6 @@ export default function Appointment({ route }) {
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
-              hitSlop={30}
               onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
@@ -960,6 +970,7 @@ export default function Appointment({ route }) {
                   }}
                 >
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     onPress={() => (
                       setOpenExtendInfo(true),
                       setExtendInfo(info?.counselorInfo)
@@ -1433,7 +1444,10 @@ export default function Appointment({ route }) {
                         info.status !== "ABSENT" &&
                         info.status !== "CANCELED" && (
                           <TouchableOpacity
-                            onPress={() => handleOpenFeedback(info.id)}
+                            onPress={() => (
+                              setOpenFeedback(true),
+                              setSelectedAppointment(info?.id)
+                            )}
                             activeOpacity={0.6}
                           >
                             <Text
@@ -1517,8 +1531,6 @@ export default function Appointment({ route }) {
               <View>
                 <TextInput
                   placeholder="Input here"
-                  placeholderTextColor="gray"
-                  keyboardType="default"
                   value={value}
                   onChangeText={(value) => setValue(value)}
                   style={{
@@ -1638,23 +1650,19 @@ export default function Appointment({ route }) {
                 <TextInput
                   placeholder="Type message here..."
                   placeholderTextColor="gray"
-                  keyboardType="default"
-                  multiline={true}
-                  numberOfLines={2}
                   value={value}
                   onChangeText={(value) => setValue(value)}
                   style={{
-                    fontWeight: "600",
-                    fontSize: 16,
-                    opacity: 0.8,
-                    paddingVertical: 8,
-                    textAlignVertical: "top",
-                    paddingHorizontal: 12,
-                    backgroundColor: "#ededed",
-                    borderColor: "gray",
+                    borderColor: "#ccc",
                     borderWidth: 1,
                     borderRadius: 10,
+                    padding: 12,
+                    backgroundColor: "#fff",
+                    fontSize: 16,
+                    textAlignVertical: "top",
                   }}
+                  multiline
+                  numberOfLines={2}
                 />
               </View>
               <View style={{ marginVertical: 8 }}>

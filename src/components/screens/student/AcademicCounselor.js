@@ -2411,26 +2411,22 @@ export default function AcademicCounselor() {
                                 </Text>
                                 <View>
                                   <TextInput
-                                    placeholder="Write here"
-                                    placeholderTextColor="gray"
-                                    keyboardType="default"
-                                    multiline={true}
-                                    numberOfLines={2}
+                                    placeholder="Input your reason here"
                                     value={reason}
                                     onChangeText={(value) => setReason(value)}
                                     style={{
-                                      flex: 1,
-                                      fontWeight: "600",
-                                      fontSize: 16,
-                                      opacity: 0.8,
-                                      paddingVertical: 8,
-                                      textAlignVertical: "top",
-                                      paddingHorizontal: 12,
-                                      backgroundColor: "#ededed",
-                                      borderColor: "gray",
+                                      borderColor: "#ccc",
                                       borderWidth: 1,
                                       borderRadius: 10,
+                                      padding: 12,
+                                      height: 100,
+                                      backgroundColor: "#fff",
+                                      fontSize: 16,
+                                      marginTop: 8,
+                                      marginBottom: 12,
+                                      textAlignVertical: "top",
                                     }}
+                                    multiline
                                   />
                                 </View>
                               </View>

@@ -1,10 +1,9 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
   Image,
-  TouchableOpacity,
   Animated,
   Dimensions,
 } from "react-native";

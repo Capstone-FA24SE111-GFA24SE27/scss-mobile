@@ -10,7 +10,6 @@ import { AuthContext } from "./AuthContext";
 import { SocketContext } from "./SocketContext";
 import Toast from "react-native-toast-message";
 import { navigationRef } from "./NavigationContext";
-export const ChatContext = createContext();
 
 // export const navigationRef = createNavigationContainerRef();
 // export function navigate = (name) => {
@@ -19,6 +18,7 @@ export const ChatContext = createContext();
 //   }
 // };
 
+export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);

@@ -10,7 +10,7 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Dropdown } from "react-native-element-dropdown";
 import { AuthContext } from "../../context/AuthContext";
@@ -18,9 +18,7 @@ import { SocketContext } from "../../context/SocketContext";
 import { ChatContext } from "../../context/ChatContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
-import Toast from "react-native-toast-message";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
-import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import ExtendInfoModal from "../../layout/ExtendInfoModal";
 
@@ -724,7 +722,12 @@ export default function QuestionBoard() {
                       alignItems: "flex-start",
                     }}
                   >
-                    <View
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => (
+                        setOpenExtendInfo(true),
+                        setExtendInfo(question.counselor)
+                      )}
                       style={{
                         flexDirection: "row",
                         alignSelf: "flex-start",
@@ -757,7 +760,7 @@ export default function QuestionBoard() {
                             ) + "..."
                           : question.counselor.profile.fullName}
                       </Text>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                   <Text
                     numberOfLines={2}
@@ -870,7 +873,6 @@ export default function QuestionBoard() {
                     </View>
                   </View>
                   <TouchableOpacity
-                    hitSlop={10}
                     onPress={() => (setInfo(question), setOpenInfo(true))}
                     style={{
                       alignItems: "center",
@@ -1092,6 +1094,7 @@ export default function QuestionBoard() {
                     </Text>
                     {info?.counselor !== null ? (
                       <TouchableOpacity
+                        activeOpacity={0.7}
                         onPress={() => (
                           setOpenExtendInfo(true),
                           setExtendInfo(info?.counselor)

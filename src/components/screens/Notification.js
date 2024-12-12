@@ -361,10 +361,7 @@ export default function Notification() {
           paddingBottom: 10,
         }}
       >
-        <TouchableOpacity
-          hitSlop={30}
-          onPress={() => navigation.navigate("Home")}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
           <Ionicons name="return-up-back" size={36} />
         </TouchableOpacity>
         <Text
@@ -377,7 +374,7 @@ export default function Notification() {
         >
           Notifications
         </Text>
-        <TouchableOpacity hitSlop={30} onPress={markAllAsRead}>
+        <TouchableOpacity onPress={markAllAsRead}>
           <MaterialIcons name="done-all" size={36} color="#F39300" />
         </TouchableOpacity>
       </View>

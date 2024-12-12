@@ -112,9 +112,8 @@ const GatherInfo = ({
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
-                  padding: 12,
+                  paddingVertical: 12,
                   marginBottom: 16,
-                  elevation: 3,
                 }}
               >
                 {renderAttribute("Introduction", "introduction")}
@@ -123,9 +122,8 @@ const GatherInfo = ({
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
-                  padding: 12,
+                  paddingVertical: 12,
                   marginBottom: 16,
-                  elevation: 3,
                 }}
               >
                 <Text
@@ -158,9 +156,8 @@ const GatherInfo = ({
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
-                  padding: 12,
+                  paddingVertical: 12,
                   marginBottom: 16,
-                  elevation: 3,
                 }}
               >
                 <Text
@@ -192,9 +189,8 @@ const GatherInfo = ({
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
-                  padding: 12,
+                  paddingVertical: 12,
                   marginBottom: 16,
-                  elevation: 3,
                 }}
               >
                 <Text
@@ -224,9 +220,8 @@ const GatherInfo = ({
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
-                  padding: 12,
+                  paddingVertical: 12,
                   marginBottom: 16,
-                  elevation: 3,
                 }}
               >
                 <Text
@@ -259,9 +254,8 @@ const GatherInfo = ({
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
-                  padding: 12,
+                  paddingVertical: 12,
                   marginBottom: 16,
-                  elevation: 3,
                 }}
               >
                 <Text
@@ -290,9 +284,8 @@ const GatherInfo = ({
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 10,
-                  padding: 12,
+                  paddingVertical: 12,
                   marginBottom: 16,
-                  elevation: 3,
                 }}
               >
                 <Text

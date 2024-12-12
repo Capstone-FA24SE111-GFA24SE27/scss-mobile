@@ -334,7 +334,7 @@ export default function StudentQA() {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsEditing: false,
       quality: 0.75,
     });
     if (!result.canceled) {
@@ -1227,7 +1227,12 @@ export default function StudentQA() {
                         justifyContent: "space-between",
                       }}
                     >
-                      <View
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => (
+                          setOpenExtendInfo(true),
+                          setExtendInfo(question.counselor)
+                        )}
                         style={{
                           flexDirection: "row",
                           alignSelf: "flex-start",
@@ -1260,7 +1265,7 @@ export default function StudentQA() {
                               ) + "..."
                             : question.counselor.profile.fullName}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                       <View
                         style={{
                           flexDirection: "row",
@@ -1522,7 +1527,6 @@ export default function StudentQA() {
                       )}
                     </View>
                     <TouchableOpacity
-                      hitSlop={10}
                       onPress={() => (setInfo(question), setOpenInfo(true))}
                       style={{
                         alignItems: "center",
@@ -1588,6 +1592,7 @@ export default function StudentQA() {
                           alignSelf: "flex-end",
                           flexDirection: "row",
                           alignItems: "center",
+                          marginTop: 12
                         }}
                       >
                         {question.status == "VERIFIED" &&
@@ -1842,7 +1847,7 @@ export default function StudentQA() {
                   style={{
                     borderColor: "#ccc",
                     borderWidth: 1,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     padding: 12,
                     height: 60,
                     backgroundColor: "#fff",
@@ -1904,7 +1909,7 @@ export default function StudentQA() {
                   style={{
                     borderColor: "#ccc",
                     borderWidth: 1,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     padding: 12,
                     height: 100,
                     backgroundColor: "#fff",
@@ -2750,7 +2755,7 @@ export default function StudentQA() {
                   style={{
                     borderColor: "#ccc",
                     borderWidth: 1,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     padding: 12,
                     height: 60,
                     backgroundColor: "#fff",
@@ -2812,7 +2817,7 @@ export default function StudentQA() {
                   style={{
                     borderColor: "#ccc",
                     borderWidth: 1,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     padding: 12,
                     height: 100,
                     backgroundColor: "#fff",
@@ -3388,7 +3393,7 @@ export default function StudentQA() {
                       marginVertical: 12,
                       padding: 16,
                       backgroundColor: "#ededed",
-                      borderRadius: 8,
+                      borderRadius: 10,
                       borderWidth: 2,
                       borderColor: "lightgrey",
                     }}
@@ -3693,6 +3698,7 @@ export default function StudentQA() {
                     </Text>
                     {info?.counselor !== null ? (
                       <TouchableOpacity
+                        activeOpacity={0.7}
                         onPress={() => (
                           setOpenExtendInfo(true),
                           setExtendInfo(info?.counselor)
@@ -3923,6 +3929,8 @@ export default function StudentQA() {
                           paddingVertical: 4,
                           backgroundColor: "#F39300",
                           borderRadius: 10,
+                          borderWidth: 1.5,
+                          borderColor: "#F39300",
                           flexDirection: "row",
                           justifyContent: "center",
                           alignItems: "center",

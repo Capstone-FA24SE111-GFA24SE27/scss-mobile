@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 const { width, height } = Dimensions.get("window");
 
 export const SkeletonAnimated = () => {
-  const opacity = useRef(new Animated.Value(0.3)).current;
+  const opacity = useRef(new Animated.Value(0.25)).current;
 
   useEffect(() => {
     Animated.loop(
@@ -12,12 +12,12 @@ export const SkeletonAnimated = () => {
         Animated.timing(opacity, {
           toValue: 1,
           useNativeDriver: true,
-          duration: 350,
+          duration: 300,
         }),
         Animated.timing(opacity, {
-          toValue: 0.3,
+          toValue: 0.25,
           useNativeDriver: true,
-          duration: 500,
+          duration: 300,
         }),
       ])
     ).start();
@@ -28,6 +28,7 @@ export const SkeletonAnimated = () => {
 
 const HomeSkeleton = () => {
   const opacity = SkeletonAnimated();
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -158,6 +159,7 @@ const HomeSkeleton = () => {
 
 const CounselorSkeleton = () => {
   const opacity = SkeletonAnimated();
+
   return (
     <View
       style={{
@@ -329,6 +331,7 @@ const CounselorSkeleton = () => {
 
 const StudentSkeleton = () => {
   const opacity = SkeletonAnimated();
+
   return (
     <View
       style={{
@@ -519,6 +522,7 @@ const StudentSkeleton = () => {
 
 const ScheduleSkeleton = () => {
   const opacity = SkeletonAnimated();
+
   return (
     <View
       style={{
@@ -586,6 +590,7 @@ const ScheduleSkeleton = () => {
 
 const QASkeleton = () => {
   const opacity = SkeletonAnimated();
+
   return (
     <View
       style={{
@@ -692,6 +697,7 @@ const QASkeleton = () => {
 
 const RequestSkeleton = () => {
   const opacity = SkeletonAnimated();
+  
   return (
     <View
       style={{

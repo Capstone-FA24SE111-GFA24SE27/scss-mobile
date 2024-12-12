@@ -426,488 +426,497 @@ export default function Schedule() {
                   <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                  <TouchableOpacity
-                    onPress={() => (
-                      setOpenExtendInfo(true), setExtendInfo(info?.extendInfo)
-                    )}
+                  <View
                     style={{
-                      flexDirection: "row",
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 10,
-                      marginHorizontal: 20,
-                      marginBottom: 20,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
+                      padding: 20,
+                      backgroundColor: "#f5f7fd",
                     }}
                   >
-                    <View style={{ width: "40%" }}>
-                      <View style={{ position: "relative" }}>
-                        <Image
-                          source={{ uri: info?.counselorImage }}
-                          style={{
-                            width: width * 0.28,
-                            height: width * 0.28,
-                            borderRadius: 100,
-                            marginBottom: 12,
-                            borderColor: "#F39300",
-                            borderWidth: 2,
-                          }}
-                        />
-                        <View
-                          style={{
-                            padding: 5,
-                            backgroundColor: "#F39300",
-                            borderRadius: 30,
-                            position: "absolute",
-                            right: 20,
-                            bottom: 12,
-                          }}
-                        >
-                          <Ionicons
-                            name={
-                              info?.counselorGender == "MALE"
-                                ? "male"
-                                : "female"
-                            }
-                            size={24}
-                            style={{ color: "white" }}
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => (
+                        setOpenExtendInfo(true), setExtendInfo(info?.extendInfo)
+                      )}
+                      style={{
+                        flexDirection: "row",
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        marginBottom: 20,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
+                      }}
+                    >
+                      <View style={{ width: "40%" }}>
+                        <View style={{ position: "relative" }}>
+                          <Image
+                            source={{ uri: info?.counselorImage }}
+                            style={{
+                              width: width * 0.28,
+                              height: width * 0.28,
+                              borderRadius: 100,
+                              marginBottom: 12,
+                              borderColor: "#F39300",
+                              borderWidth: 2,
+                            }}
                           />
+                          <View
+                            style={{
+                              padding: 5,
+                              backgroundColor: "#F39300",
+                              borderRadius: 30,
+                              position: "absolute",
+                              right: 20,
+                              bottom: 12,
+                            }}
+                          >
+                            <Ionicons
+                              name={
+                                info?.counselorGender == "MALE"
+                                  ? "male"
+                                  : "female"
+                              }
+                              size={24}
+                              style={{ color: "white" }}
+                            />
+                          </View>
                         </View>
                       </View>
-                    </View>
-                    <View style={{ width: "60%" }}>
+                      <View style={{ width: "60%" }}>
+                        <Text
+                          style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            color: "#333",
+                            marginBottom: 4,
+                          }}
+                        >
+                          {info?.counselorName}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: "500",
+                            color: "#333",
+                            marginBottom: 2,
+                          }}
+                        >
+                          {info?.counselorMajor}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "grey",
+                            marginBottom: 2,
+                          }}
+                        >
+                          Email: {info?.counselorEmail}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "grey",
+                          }}
+                        >
+                          Phone: {info?.counselorPhone}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        marginBottom: 20,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
+                      }}
+                    >
                       <Text
                         style={{
-                          fontSize: 24,
+                          fontSize: 18,
                           fontWeight: "bold",
-                          color: "#333",
+                          color: "#F39300",
                           marginBottom: 4,
                         }}
                       >
-                        {info?.counselorName}
+                        Appointment Topic
                       </Text>
                       <Text
                         style={{
                           fontSize: 20,
-                          fontWeight: "500",
                           color: "#333",
-                          marginBottom: 2,
+                          fontWeight: "500",
+                          opacity: 0.7,
                         }}
                       >
-                        {info?.counselorMajor}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: "grey",
-                          marginBottom: 2,
-                        }}
-                      >
-                        Email: {info?.counselorEmail}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: "grey",
-                        }}
-                      >
-                        Phone: {info?.counselorPhone}
+                        {info?.reason}
                       </Text>
                     </View>
-                  </TouchableOpacity>
-                  <View
-                    style={{
-                      marginHorizontal: 20,
-                      marginBottom: 20,
-                      padding: 16,
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#F39300",
-                        marginBottom: 4,
-                      }}
-                    >
-                      Appointment Topic
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: "#333",
-                        fontWeight: "500",
-                        opacity: 0.7,
-                      }}
-                    >
-                      {info?.reason}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      marginHorizontal: 20,
-                      marginBottom: 20,
-                      borderRadius: 10,
-                      backgroundColor: "white",
-                      paddingVertical: 12,
-                      paddingHorizontal: 20,
-                      elevation: 1,
-                      borderWidth: 1.5,
-                      borderColor: "#e3e3e3",
-                    }}
-                  >
                     <View
                       style={{
                         flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginVertical: 12,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <Ionicons name="calendar" size={24} color="#F39300" />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "gray",
-                            fontWeight: "500",
-                            marginLeft: 10,
-                          }}
-                        >
-                          Date
-                        </Text>
-                      </View>
-                      <View>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "#333",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {info.date}
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        borderTopWidth: 1,
-                        borderColor: "lightgrey",
-                        marginVertical: 4,
-                      }}
-                    />
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginVertical: 12,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <Ionicons name="time" size={24} color="#F39300" />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "gray",
-                            fontWeight: "500",
-                            marginLeft: 10,
-                          }}
-                        >
-                          Time
-                        </Text>
-                      </View>
-                      <View>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "#333",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {info.startTime} - {info.endTime}
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        borderTopWidth: 1,
-                        borderColor: "lightgrey",
-                        marginVertical: 4,
-                      }}
-                    />
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginVertical: 12,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <MaterialIcons
-                          name="meeting-room"
-                          size={24}
-                          color="#F39300"
-                        />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "gray",
-                            fontWeight: "500",
-                            marginLeft: 10,
-                          }}
-                        >
-                          Format
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          backgroundColor: "#F39300",
-                          borderRadius: 20,
-                          paddingVertical: 6,
-                          paddingHorizontal: 12,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "bold",
-                            color: "white",
-                          }}
-                        >
-                          {info.meetingType}
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        borderTopWidth: 1,
-                        borderColor: "lightgrey",
-                        marginVertical: 4,
-                      }}
-                    />
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        marginVertical: 12,
-                      }}
-                    >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        {info.meetingType === "ONLINE" && (
-                          <Ionicons name="videocam" size={24} color="#F39300" />
-                        )}
-                        {info.meetingType === "OFFLINE" && (
-                          <MaterialIcons
-                            name="place"
-                            size={24}
-                            color="#F39300"
-                          />
-                        )}
-
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "gray",
-                            fontWeight: "500",
-                            marginLeft: 10,
-                          }}
-                        >
-                          {info.meetingType === "ONLINE"
-                            ? "Meet URL"
-                            : "Address"}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        disabled={info.meetingType !== "ONLINE"}
-                        onPress={() =>
-                          Linking.openURL(`${info.place}`).catch((err) => {
-                            console.log("Can't open this link", err);
-                            Toast.show({
-                              type: "error",
-                              text1: "Error",
-                              text2: "Can't open this link",
-                            });
-                          })
-                        }
-                        style={{ maxWidth: "45%" }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color:
-                              info.meetingType === "ONLINE"
-                                ? "#F39300"
-                                : "#333",
-                            textDecorationLine:
-                              info.meetingType === "ONLINE"
-                                ? "underline"
-                                : "none",
-                          }}
-                        >
-                          {info.place}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                  {info?.feedback !== null ? (
-                    <View
-                      style={{
-                        marginHorizontal: 20,
-                        marginBottom: 20,
-                        borderRadius: 10,
-                        backgroundColor: "white",
                         padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        marginBottom: 20,
                         elevation: 1,
                         borderWidth: 1.5,
-                        borderColor: "lightgrey",
+                        borderColor: "#e3e3e3",
                       }}
                     >
-                      <View style={{ marginBottom: 8 }}>
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: "#333",
-                            fontWeight: "500",
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color: "#F39300",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            You
-                          </Text>{" "}
-                          had leave a review
-                        </Text>
-                      </View>
                       <View
                         style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          marginBottom: 12,
+                          marginVertical: 12,
                         }}
                       >
                         <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <Ionicons name="calendar" size={24} color="#F39300" />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "gray",
+                              fontWeight: "500",
+                              marginLeft: 10,
+                            }}
+                          >
+                            Date
+                          </Text>
+                        </View>
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "#333",
+                              fontWeight: "500",
+                            }}
+                          >
+                            {info.date}
+                          </Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          borderTopWidth: 1,
+                          borderColor: "lightgrey",
+                          marginVertical: 4,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginVertical: 12,
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <Ionicons name="time" size={24} color="#F39300" />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "gray",
+                              fontWeight: "500",
+                              marginLeft: 10,
+                            }}
+                          >
+                            Time
+                          </Text>
+                        </View>
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "#333",
+                              fontWeight: "500",
+                            }}
+                          >
+                            {info.startTime} - {info.endTime}
+                          </Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          borderTopWidth: 1,
+                          borderColor: "lightgrey",
+                          marginVertical: 4,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginVertical: 12,
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <MaterialIcons
+                            name="meeting-room"
+                            size={24}
+                            color="#F39300"
+                          />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "gray",
+                              fontWeight: "500",
+                              marginLeft: 10,
+                            }}
+                          >
+                            Format
+                          </Text>
+                        </View>
+                        <View
                           style={{
-                            flexDirection: "row",
-                            alignItems: "center",
                             backgroundColor: "#F39300",
+                            borderRadius: 20,
+                            paddingVertical: 6,
                             paddingHorizontal: 12,
-                            paddingVertical: 4,
-                            borderRadius: 16,
                           }}
                         >
-                          <Ionicons name="star" size={16} color="white" />
                           <Text
                             style={{
                               fontSize: 16,
-                              marginLeft: 6,
                               fontWeight: "bold",
                               color: "white",
                             }}
                           >
-                            {info?.feedback?.rating.toFixed(1)}
+                            {info.meetingType}
+                          </Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          borderTopWidth: 1,
+                          borderColor: "lightgrey",
+                          marginVertical: 4,
+                        }}
+                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          marginVertical: 12,
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          {info.meetingType === "ONLINE" && (
+                            <Ionicons
+                              name="videocam"
+                              size={24}
+                              color="#F39300"
+                            />
+                          )}
+                          {info.meetingType === "OFFLINE" && (
+                            <MaterialIcons
+                              name="place"
+                              size={24}
+                              color="#F39300"
+                            />
+                          )}
+
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "gray",
+                              fontWeight: "500",
+                              marginLeft: 10,
+                            }}
+                          >
+                            {info.meetingType === "ONLINE"
+                              ? "Meet URL"
+                              : "Address"}
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          disabled={info.meetingType !== "ONLINE"}
+                          onPress={() =>
+                            Linking.openURL(`${info.place}`).catch((err) => {
+                              console.log("Can't open this link", err);
+                              Toast.show({
+                                type: "error",
+                                text1: "Error",
+                                text2: "Can't open this link",
+                              });
+                            })
+                          }
+                          style={{ maxWidth: "45%" }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              color:
+                                info.meetingType === "ONLINE"
+                                  ? "#F39300"
+                                  : "#333",
+                              textDecorationLine:
+                                info.meetingType === "ONLINE"
+                                  ? "underline"
+                                  : "none",
+                            }}
+                          >
+                            {info.place}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    {info?.feedback !== null ? (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          padding: 16,
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          marginBottom: 20,
+                          elevation: 1,
+                          borderWidth: 1.5,
+                          borderColor: "#e3e3e3",
+                        }}
+                      >
+                        <View style={{ marginBottom: 8 }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "#333",
+                              fontWeight: "500",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                color: "#F39300",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              You
+                            </Text>{" "}
+                            had leave a review
                           </Text>
                         </View>
                         <View
                           style={{
-                            paddingHorizontal: 12,
-                            paddingVertical: 4,
-                            borderWidth: 1,
-                            borderColor: "gray",
-                            borderRadius: 20,
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 12,
                           }}
                         >
-                          <Text
+                          <View
                             style={{
-                              fontSize: 16,
-                              fontWeight: "500",
-                              color: "#333",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              backgroundColor: "#F39300",
+                              paddingHorizontal: 12,
+                              paddingVertical: 4,
+                              borderRadius: 16,
                             }}
                           >
-                            {formatDate(info?.feedback?.createdAt)}
-                          </Text>
-                        </View>
-                      </View>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          color: "#333",
-                          lineHeight: 24,
-                        }}
-                      >
-                        {info?.feedback?.comment}
-                      </Text>
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        marginHorizontal: 20,
-                        marginBottom: 20,
-                        borderRadius: 10,
-                        backgroundColor: "white",
-                        padding: 16,
-                        elevation: 1,
-                        borderWidth: 1.5,
-                        borderColor: "#e3e3e3",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontStyle: "italic",
-                          fontWeight: "600",
-                          textAlign: "center",
-                          color: "gray",
-                          opacity: 0.7,
-                        }}
-                      >
-                        There's no feedback yet
-                      </Text>
-                      {new Date().toISOString().split("T")[0] <= info.date &&
-                        info.status !== "WAITING" &&
-                        info.status !== "ABSENT" &&
-                        info.status !== "CANCELED" && (
-                          <TouchableOpacity
-                            onPress={() => handleOpenFeedback(info.id)}
-                            activeOpacity={0.6}
+                            <Ionicons name="star" size={16} color="white" />
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                marginLeft: 6,
+                                fontWeight: "bold",
+                                color: "white",
+                              }}
+                            >
+                              {info?.feedback?.rating.toFixed(1)}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              paddingHorizontal: 12,
+                              paddingVertical: 4,
+                              borderWidth: 1,
+                              borderColor: "gray",
+                              borderRadius: 20,
+                            }}
                           >
                             <Text
                               style={{
-                                fontSize: 18,
-                                fontWeight: "bold",
-                                color: "#F39300",
-                                textDecorationLine: "underline",
+                                fontSize: 16,
+                                fontWeight: "500",
+                                color: "#333",
                               }}
                             >
-                              Leave a Review
+                              {formatDate(info?.feedback?.createdAt)}
                             </Text>
-                          </TouchableOpacity>
-                        )}
-                    </View>
-                  )}
+                          </View>
+                        </View>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            lineHeight: 24,
+                          }}
+                        >
+                          {info?.feedback?.comment}
+                        </Text>
+                      </View>
+                    ) : (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          padding: 16,
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          marginBottom: 20,
+                          elevation: 1,
+                          borderWidth: 1.5,
+                          borderColor: "#e3e3e3",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontStyle: "italic",
+                            fontWeight: "600",
+                            textAlign: "center",
+                            color: "gray",
+                            opacity: 0.7,
+                          }}
+                        >
+                          There's no feedback yet
+                        </Text>
+                        {new Date().toISOString().split("T")[0] <= info.date &&
+                          info.status !== "WAITING" &&
+                          info.status !== "ABSENT" &&
+                          info.status !== "CANCELED" && (
+                            <TouchableOpacity
+                              onPress={() => handleOpenFeedback(info.id)}
+                              activeOpacity={0.6}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 18,
+                                  fontWeight: "bold",
+                                  color: "#F39300",
+                                  textDecorationLine: "underline",
+                                }}
+                              >
+                                Leave a Review
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                      </View>
+                    )}
+                  </View>
                 </ScrollView>
               </View>
             </View>
@@ -963,24 +972,19 @@ export default function Schedule() {
                   </Text>
                   <TextInput
                     placeholder="Type message here..."
-                    placeholderTextColor="gray"
-                    keyboardType="default"
-                    multiline={true}
-                    numberOfLines={2}
                     value={value}
                     onChangeText={(value) => setValue(value)}
                     style={{
-                      fontWeight: "600",
-                      fontSize: 16,
-                      opacity: 0.8,
-                      paddingVertical: 8,
-                      textAlignVertical: "top",
-                      paddingHorizontal: 12,
-                      backgroundColor: "#ededed",
-                      borderColor: "gray",
+                      borderColor: "#ccc",
                       borderWidth: 1,
                       borderRadius: 10,
+                      padding: 12,
+                      backgroundColor: "#fff",
+                      fontSize: 16,
+                      textAlignVertical: "top",
                     }}
+                    multiline
+                    numberOfLines={2}
                   />
                 </View>
                 <View style={{ marginVertical: 8 }}>
@@ -1081,63 +1085,4 @@ export default function Schedule() {
       </View>
     </>
   );
-}
-{
-  // <Calendar
-  //   style={{
-  //     marginHorizontal: 12,
-  //     padding: 10,
-  //     borderRadius: 20,
-  //     borderWidth: 1,
-  //     borderColor: "#F39300",
-  //   }}
-  //   enableSwipeMonths
-  //   arrowsHitSlop={4}
-  //   renderArrow={(direction) => {
-  //     return direction === "left" ? (
-  //       <Ionicons name="caret-back-circle-outline" size={30} color="#F39300" />
-  //     ) : (
-  //       <Ionicons
-  //         name="caret-forward-circle-outline"
-  //         size={30}
-  //         color="#F39300"
-  //       />
-  //     );
-  //   }}
-  //   theme={{
-  //     monthTextColor: "#F39300",
-  //     textMonthFontSize: 24,
-  //     textMonthFontWeight: "bold",
-  //     // arrowColor: "#F39300",
-  //     calendarBackground: "#ffe4ec",
-  //     dayTextColor: "black",
-  //     textInactiveColor: "#adadad",
-  //     todayTextColor: "#F39300",
-  //     textSectionTitleColor: "#F39300",
-  //     textDayHeaderFontSize: 14,
-  //     textDayFontSize: 14,
-  //     textDayFontWeight: "semibold",
-  //     textDisabledColor: "#adadad",
-  //   }}
-  //   markingType="period"
-  //   markedDates={{
-  //     // Default markingType
-  //     // '2024-09-15': {selected: true, marked: true, selectedColor: '#F39300'},
-  //     // *Multi-dot
-  //     // '2024-09-16': {selected: true, dots: [{key: 'running', color: 'red', selectedDotColor: 'yellow'}, {key: 'lifting', color: 'blue', selectedDotColor: 'green'}] , selectedColor: "#F39300", selectedTextColor: "white"},
-  //     // *Period
-  //     "2024-09-22": {
-  //       startingDay: true,
-  //       color: "#F39300",
-  //       textColor: "white",
-  //     },
-  //     "2024-09-23": { color: "#FA9F54FF", textColor: "white" },
-  //     "2024-09-24": { color: "#FF9C4BFF", textColor: "white" },
-  //     "2024-09-25": {
-  //       endingDay: true,
-  //       color: "#F39300",
-  //       textColor: "white",
-  //     },
-  //   }}
-  // />
 }

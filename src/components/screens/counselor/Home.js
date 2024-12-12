@@ -17,6 +17,7 @@ import { NotificationContext } from "../../context/NotificationContext";
 import { HomeSkeleton } from "../../layout/Skeleton";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { LinearGradient } from "expo-linear-gradient";
+import Toast from "react-native-toast-message";
 
 export default function Home() {
   const navigation = useNavigation();

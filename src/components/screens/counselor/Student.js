@@ -1429,7 +1429,6 @@ export default function Student() {
                     <TextInput
                       editable={selectedSemester !== ""}
                       placeholder="0.0"
-                      placeholderTextColor="gray"
                       keyboardType="number-pad"
                       value={minGPA}
                       onChangeText={setMinGPA}
@@ -1457,7 +1456,6 @@ export default function Student() {
                     <TextInput
                       editable={selectedSemester !== ""}
                       placeholder="10.0"
-                      placeholderTextColor="gray"
                       keyboardType="number-pad"
                       value={maxGPA}
                       onChangeText={setMaxGPA}
@@ -1604,7 +1602,6 @@ export default function Student() {
                     <TextInput
                       editable={selectedSemester3 !== ""}
                       placeholder="0"
-                      placeholderTextColor="gray"
                       keyboardType="number-pad"
                       value={minSubject2}
                       onChangeText={setMinSubject2}
@@ -1725,7 +1722,6 @@ export default function Student() {
                     <TextInput
                       editable={selectedSemester3 !== ""}
                       placeholder={typeAttendance === "COUNT" ? "0" : "0%"}
-                      placeholderTextColor="gray"
                       keyboardType="number-pad"
                       value={
                         typeAttendance === "COUNT"
@@ -1761,7 +1757,6 @@ export default function Student() {
                     <TextInput
                       editable={selectedSemester3 !== ""}
                       placeholder={typeAttendance === "COUNT" ? "20" : "100%"}
-                      placeholderTextColor="gray"
                       keyboardType="number-pad"
                       value={
                         typeAttendance === "COUNT"
@@ -1965,7 +1960,7 @@ export default function Student() {
                             maxWidth: "80%",
                           }}
                         >
-                          {item?.specialization?.name || "N/A"}
+                          {item?.major?.name || "N/A"}
                         </Text>
                       </View>
                     </View>
@@ -2397,7 +2392,7 @@ export default function Student() {
                 </View>
                 <SectionList
                   sections={Object.entries(
-                    selectedStudent.behaviorTagList.reduce((acc, tag) => {
+                    selectedStudent?.behaviorTagList?.reduce((acc, tag) => {
                       const category = tag.category;
                       if (!acc[category]) {
                         acc[category] = [];
@@ -2669,119 +2664,280 @@ export default function Student() {
                   <ScrollView showsVerticalScrollIndicator={false}>
                     <View
                       style={{
-                        backgroundColor: "#fff",
-                        borderRadius: 10,
-                        padding: 12,
-                        marginBottom: 20,
-                        elevation: 3,
+                        alignItems: "center",
                       }}
                     >
-                      <View style={{ marginVertical: 10 }}>
+                      <View style={{ position: "relative", marginBottom: 12 }}>
+                        <Image
+                          source={{
+                            uri: info.studentProfile.profile.avatarLink,
+                          }}
+                          style={{
+                            width: width * 0.32,
+                            height: width * 0.32,
+                            borderRadius: 100,
+                            backgroundColor: "white",
+                            borderColor: "#F39300",
+                            borderWidth: 2,
+                          }}
+                        />
+                        <Ionicons
+                          name={
+                            info.studentProfile.profile.gender == "MALE"
+                              ? "male"
+                              : "female"
+                          }
+                          size={26}
+                          style={{
+                            position: "absolute",
+                            right: 4,
+                            bottom: 0,
+                            backgroundColor: "#F39300",
+                            color: "white",
+                            padding: 5,
+                            borderRadius: 40,
+                          }}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
                         <Text
                           style={{
-                            color: "#333",
+                            fontSize: 24,
                             fontWeight: "bold",
-                            fontSize: 16,
                             marginBottom: 4,
                           }}
                         >
-                          Full Name:
-                        </Text>
-                        <Text style={{ fontSize: 16, color: "#333" }}>
                           {info.studentProfile.profile.fullName}
                         </Text>
-                      </View>
-                      <View style={{ marginVertical: 10 }}>
                         <Text
                           style={{
-                            color: "#333",
-                            fontWeight: "bold",
-                            fontSize: 16,
-                            marginBottom: 4,
+                            fontSize: 18,
+                            color: "gray",
+                            marginBottom: 16,
                           }}
                         >
-                          Student Code:
-                        </Text>
-                        <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.studentProfile.studentCode}
+                          ID: {info?.studentProfile?.studentCode}
                         </Text>
                       </View>
-                      <View style={{ marginVertical: 10 }}>
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontWeight: "bold",
-                            fontSize: 16,
-                            marginBottom: 4,
-                          }}
-                        >
-                          Phone Number:
-                        </Text>
-                        <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info.studentProfile.profile.phoneNumber}
-                        </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        backgroundColor: "white",
+                        paddingVertical: 8,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          width: "50%",
+                        }}
+                      >
+                        <MaterialIcons
+                          name="cake"
+                          size={24}
+                          color="#F39300"
+                          style={{ marginHorizontal: 12 }}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: "600",
+                              color: "gray",
+                            }}
+                          >
+                            Date of Birth
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {formatDate(
+                              info.studentProfile.profile.dateOfBirth
+                            )}
+                          </Text>
+                        </View>
                       </View>
-                      <View style={{ marginVertical: 10 }}>
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontWeight: "bold",
-                            fontSize: 16,
-                            marginBottom: 4,
-                          }}
-                        >
-                          Date of Birth:
-                        </Text>
-                        <Text style={{ fontSize: 16, color: "#333" }}>
-                          {formatDate(info.studentProfile.profile.dateOfBirth)}
-                        </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          width: "50%",
+                        }}
+                      >
+                        <Ionicons
+                          name="call"
+                          size={24}
+                          color="#F39300"
+                          style={{ marginHorizontal: 12 }}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: "600",
+                              color: "gray",
+                            }}
+                          >
+                            Phone
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {info.studentProfile.profile.phoneNumber}
+                          </Text>
+                        </View>
                       </View>
-                      <View style={{ marginVertical: 10 }}>
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontWeight: "bold",
-                            fontSize: 16,
-                            marginBottom: 4,
-                          }}
-                        >
-                          Department:
-                        </Text>
-                        <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info?.studentProfile?.department?.name} (
-                          {info?.studentProfile?.department?.code})
-                        </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        backgroundColor: "white",
+                        paddingVertical: 8,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name="briefcase"
+                          size={24}
+                          color="#F39300"
+                          style={{ marginHorizontal: 12 }}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: "600",
+                              color: "gray",
+                            }}
+                          >
+                            Department
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {info?.studentProfile?.department?.name} (
+                            {info?.studentProfile?.department?.code})
+                          </Text>
+                        </View>
                       </View>
-                      <View style={{ marginVertical: 10 }}>
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontWeight: "bold",
-                            fontSize: 16,
-                            marginBottom: 4,
-                          }}
-                        >
-                          Major:
-                        </Text>
-                        <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info?.studentProfile?.major?.name} (
-                          {info?.studentProfile?.major?.code})
-                        </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        backgroundColor: "white",
+                        paddingVertical: 8,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name="briefcase"
+                          size={24}
+                          color="#F39300"
+                          style={{ marginHorizontal: 12 }}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: "600",
+                              color: "gray",
+                            }}
+                          >
+                            Major
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {info?.studentProfile?.major?.name} (
+                            {info?.studentProfile?.major?.code})
+                          </Text>
+                        </View>
                       </View>
-                      <View style={{ marginVertical: 10 }}>
-                        <Text
-                          style={{
-                            color: "#333",
-                            fontWeight: "bold",
-                            fontSize: 16,
-                            marginBottom: 4,
-                          }}
-                        >
-                          Specialization:
-                        </Text>
-                        <Text style={{ fontSize: 16, color: "#333" }}>
-                          {info?.studentProfile?.specialization?.name || "N/A"}
-                        </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        backgroundColor: "white",
+                        paddingVertical: 8,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name="briefcase"
+                          size={24}
+                          color="#F39300"
+                          style={{ marginHorizontal: 12 }}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: "600",
+                              color: "gray",
+                            }}
+                          >
+                            Specialization
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {info?.studentProfile?.specialization?.name ||
+                              "N/A"}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </ScrollView>
@@ -3345,85 +3501,11 @@ export default function Student() {
                       </View>
                     ) : info2 && Object.keys(info2).length > 0 ? (
                       <ScrollView showsVerticalScrollIndicator={false}>
-                        {/* {Object.entries(info2).map(([subject, tags], index) => (
-                          <View
-                            key={index}
-                            style={{
-                              backgroundColor: "white",
-                              padding: 16,
-                              borderRadius: 12,
-                              marginBottom: 12,
-                              elevation: 1,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontSize: 20,
-                                fontWeight: "bold",
-                                color: "#333",
-                                marginBottom: 8,
-                              }}
-                            >
-                              {subject}
-                            </Text>
-                            {tags.isNotExcluded.map((tag, tagIndex) => (
-                              <View
-                                key={tagIndex}
-                                style={{
-                                  backgroundColor: tag.contained
-                                    ? "#F39300"
-                                    : "#e3e3e3",
-                                  paddingHorizontal: 12,
-                                  paddingVertical: 8,
-                                  borderRadius: 20,
-                                  marginBottom: 8,
-                                }}
-                              >
-                                <Text
-                                  style={{
-                                    fontSize: 16,
-                                    color: tag.contained ? "white" : "#333",
-                                    fontWeight: tag.contained ? "bold" : "400",
-                                  }}
-                                >
-                                  {tag.problemTagName} x {tag.number}
-                                </Text>
-                              </View>
-                            ))}
-                            {tags.isExcluded.length > 0 &&
-                              tags.isExcluded.map((tag, tagIndex) => (
-                                <View
-                                  key={tagIndex}
-                                  style={{
-                                    backgroundColor: tag.contained
-                                      ? "#F39300"
-                                      : "#f5f5f5",
-                                    paddingHorizontal: 12,
-                                    paddingVertical: 8,
-                                    borderRadius: 20,
-                                    marginBottom: 8,
-                                  }}
-                                >
-                                  <Text
-                                    style={{
-                                      fontSize: 16,
-                                      color: tag.contained ? "white" : "gray",
-                                      fontWeight: tag.contained
-                                        ? "bold"
-                                        : "400",
-                                    }}
-                                  >
-                                    {tag.problemTagName} x {tag.number}
-                                  </Text>
-                                </View>
-                              ))}
-                          </View>
-                        ))} */}
                         {Object.entries(info2).map(([subject, tags], index) => {
                           const combinedTags = [
                             ...tags.isNotExcluded,
                             ...tags.isExcluded,
-                          ].reduce((acc, tag) => {
+                          ]?.reduce((acc, tag) => {
                             if (!acc[tag.category]) {
                               acc[tag.category] = [];
                             }
@@ -4183,7 +4265,7 @@ export default function Student() {
                             >
                               {info5
                                 .filter((subject) => subject.grade !== null)
-                                .reduce(
+                                ?.reduce(
                                   (acc, subject, _, array) =>
                                     acc +
                                     parseFloat(subject.grade) / array.length,
@@ -4688,7 +4770,8 @@ export default function Student() {
                                     marginTop: 2,
                                   }}
                                 >
-                                  {item?.counselorInfo?.specialization?.name}
+                                  {item?.counselorInfo?.major?.name ||
+                                    item?.counselorInfo?.expertise?.name}
                                 </Text>
                               </View>
                               <Image
@@ -4938,10 +5021,7 @@ export default function Student() {
                                       marginBottom: 2,
                                     }}
                                   >
-                                    {
-                                      historyInfo?.studentInfo?.specialization
-                                        ?.name
-                                    }
+                                    {historyInfo?.studentInfo?.major?.name}
                                   </Text>
                                   <Text
                                     style={{
@@ -5364,31 +5444,34 @@ export default function Student() {
                         >
                           <View
                             style={{
+                              backgroundColor: "#F39300",
                               flexDirection: "row",
                               justifyContent: "space-between",
                               alignItems: "center",
                               paddingVertical: 12,
                               paddingHorizontal: 20,
+                              borderTopLeftRadius: 16,
+                              borderTopRightRadius: 16,
                             }}
                           >
                             <Text
                               style={{
-                                fontSize: 22,
+                                fontSize: 24,
                                 fontWeight: "bold",
-                                color: "#333",
+                                color: "white",
                               }}
                             >
                               Appointment Report
                             </Text>
                             <TouchableOpacity
                               style={{
-                                backgroundColor: "#ededed",
+                                backgroundColor: "white",
                                 padding: 4,
                                 borderRadius: 20,
                               }}
                               onPress={() => setOpenReport(false)}
                             >
-                              <Ionicons name="close" size={28} color="#333" />
+                              <Ionicons name="close" size={24} color="#333" />
                             </TouchableOpacity>
                           </View>
                           {report ? (

@@ -12,15 +12,13 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
-import { Dropdown } from "react-native-element-dropdown";
 import { SocketContext } from "../../context/SocketContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
-import Toast from "react-native-toast-message";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
-import * as ImagePicker from "expo-image-picker";
 import RenderHTML from "react-native-render-html";
 import { AuthContext } from "../../context/AuthContext";
+import StudentInfoModal from "../../layout/StudentInfoModal";
 
 export default function PublicQA() {
   const navigation = useNavigation();
@@ -40,6 +38,8 @@ export default function PublicQA() {
   const [sortDirection, setSortDirection] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
+  const [openStudentInfo, setOpenStudentInfo] = useState(false);
+  const [selectedStudentInfo, setSelectedStudentInfo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const scrollViewRef = useRef(null);
 
@@ -509,7 +509,12 @@ export default function PublicQA() {
                         alignItems: "flex-start",
                       }}
                     >
-                      <View
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => (
+                          setOpenStudentInfo(true),
+                          setSelectedStudentInfo(question.student.id)
+                        )}
                         style={{
                           flexDirection: "row",
                           alignSelf: "flex-start",
@@ -542,7 +547,7 @@ export default function PublicQA() {
                               ) + "..."
                             : question.student.profile.fullName}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                     <Text
                       numberOfLines={2}
@@ -750,7 +755,6 @@ export default function PublicQA() {
                           </TouchableOpacity>
                         )}
                       <TouchableOpacity
-                        hitSlop={10}
                         onPress={() => (setInfo(question), setOpenInfo(true))}
                         style={{
                           alignItems: "center",
@@ -1009,7 +1013,12 @@ export default function PublicQA() {
                     >
                       Questioned by
                     </Text>
-                    <View
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => (
+                        setOpenStudentInfo(true),
+                        setSelectedStudentInfo(info?.student?.id)
+                      )}
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
@@ -1093,7 +1102,7 @@ export default function PublicQA() {
                           Phone: {info?.student?.profile?.phoneNumber}
                         </Text>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                   {(info.status == "PENDING" || info.status == "VERIFIED") && (
                     <View
@@ -1175,6 +1184,12 @@ export default function PublicQA() {
             </View>
           </View>
         </Modal>
+        <StudentInfoModal
+          openStudentInfo={openStudentInfo}
+          setOpenStudentInfo={setOpenStudentInfo}
+          selectedStudentInfo={selectedStudentInfo}
+          setSelectedStudentInfo={setSelectedStudentInfo}
+        />
       </View>
     </>
   );

@@ -205,7 +205,6 @@ export default function Login() {
                   />
                   <TextInput
                     placeholder="Your Email"
-                    placeholderTextColor="gray"
                     value={email}
                     onFocus={() => setIsFocused1(true)}
                     onBlur={() => setIsFocused1(false)}
@@ -291,12 +290,10 @@ export default function Login() {
                   />
                   <TextInput
                     placeholder="Password"
-                    placeholderTextColor="gray"
                     value={password}
                     onChangeText={(text) => setPassword(text)}
                     onFocus={() => setIsFocused2(true)}
                     onBlur={() => setIsFocused2(false)}
-                    keyboardType="default"
                     secureTextEntry={!passwordVisible}
                     style={{
                       flex: 1,
@@ -317,6 +314,7 @@ export default function Login() {
                     </TouchableOpacity>
                   )} */}
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     onPress={() => setPasswordVisible(!passwordVisible)}
                     style={{
                       paddingHorizontal: 4,
@@ -331,12 +329,13 @@ export default function Login() {
                 </View>
               </View>
               <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate("ResetPassword")}
                 style={{
                   alignItems: "center",
                   alignSelf: "flex-end",
                   marginVertical: 12,
                 }}
-                onPress={() => navigation.navigate("ResetPassword")}
               >
                 <Text
                   style={{

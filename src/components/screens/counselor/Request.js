@@ -22,6 +22,7 @@ import Pagination from "../../layout/Pagination";
 import { Dropdown } from "react-native-element-dropdown";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import AlertModal from "../../layout/AlertModal";
+import StudentInfoModal from "../../layout/StudentInfoModal";
 
 export default function Request({ route }) {
   const navigation = useNavigation();
@@ -59,6 +60,8 @@ export default function Request({ route }) {
   const [modalMessage, setModalMessage] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
+  const [openStudentInfo, setOpenStudentInfo] = useState(false);
+  const [selectedStudentInfo, setSelectedStudentInfo] = useState(null);
   const [openConfirmDeny, setOpenConfirmDeny] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -294,12 +297,7 @@ export default function Request({ route }) {
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
-              hitSlop={30}
-              onPress={
-                () => navigation.navigate(prevScreen || "Personal")
-                // setDateFrom(""),
-                // setDateTo("")
-              }
+              onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
@@ -1160,8 +1158,6 @@ export default function Request({ route }) {
                             <View>
                               <TextInput
                                 placeholder="Input here"
-                                placeholderTextColor="gray"
-                                keyboardType="default"
                                 value={value}
                                 onChangeText={(value) => setValue(value)}
                                 style={{
@@ -1366,7 +1362,12 @@ export default function Request({ route }) {
                     borderRadius: 16,
                   }}
                 >
-                  <View
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => (
+                      setOpenStudentInfo(true),
+                      setSelectedStudentInfo(info?.student?.id)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -1452,7 +1453,7 @@ export default function Request({ route }) {
                         Phone: {info?.student?.profile?.phoneNumber}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       marginBottom: 20,
@@ -1661,6 +1662,12 @@ export default function Request({ route }) {
             </View>
           </View>
         </Modal>
+        <StudentInfoModal
+          openStudentInfo={openStudentInfo}
+          setOpenStudentInfo={setOpenStudentInfo}
+          selectedStudentInfo={selectedStudentInfo}
+          setSelectedStudentInfo={setSelectedStudentInfo}
+        />
       </View>
     </>
   );

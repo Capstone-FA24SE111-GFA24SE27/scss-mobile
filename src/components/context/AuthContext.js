@@ -2,10 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosJWT, { BASE_URL } from "../../config/Config";
 
-// Create context
 export const AuthContext = createContext();
-
-// Create provider
 export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);

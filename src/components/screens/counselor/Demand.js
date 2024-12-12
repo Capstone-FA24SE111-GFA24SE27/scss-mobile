@@ -28,6 +28,7 @@ import { CalendarProvider, WeekCalendar } from "react-native-calendars";
 import { Dropdown } from "react-native-element-dropdown";
 import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
+import StudentInfoModal from "../../layout/StudentInfoModal";
 
 export default function Demand({ route }) {
   const navigation = useNavigation();
@@ -60,6 +61,8 @@ export default function Demand({ route }) {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedDemand, setSelectedDemand] = useState(null);
   const [openInfo, setOpenInfo] = useState(false);
+  const [openStudentInfo, setOpenStudentInfo] = useState(false);
+  const [selectedStudentInfo, setSelectedStudentInfo] = useState(null);
   const [openHistoryInfo, setOpenHistoryInfo] = useState(false);
   const [historyInfo, setHistoryInfo] = useState(null);
   const [openSolve, setOpenSolve] = useState(false);
@@ -365,6 +368,9 @@ export default function Demand({ route }) {
           type: "success",
           text1: "Success",
           text2: `New appointment with ${selectedStudent.profile.fullName} created`,
+          onPress: () => {
+            Toast.hide();
+          },
         });
         navigation.navigate("Appointment", { prevScreen: "Demand" });
       }
@@ -374,6 +380,9 @@ export default function Demand({ route }) {
         type: "error",
         text1: "Error",
         text2: "Can't create appointment",
+        onPress: () => {
+          Toast.hide();
+        },
       });
     }
   };
@@ -431,6 +440,9 @@ export default function Demand({ route }) {
         type: "error",
         text1: "Error",
         text2: "Can't solve this demand",
+        onPress: () => {
+          Toast.hide();
+        },
       });
     }
   };
@@ -455,7 +467,6 @@ export default function Demand({ route }) {
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
-              hitSlop={30}
               onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
@@ -943,7 +954,12 @@ export default function Demand({ route }) {
                     </Text>
                   </View>
                 </View>
-                <View
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => (
+                    setOpenStudentInfo(true),
+                    setSelectedStudentInfo(demand.student.id)
+                  )}
                   style={{
                     flexDirection: "row",
                     alignItems: "stretch",
@@ -1044,12 +1060,12 @@ export default function Demand({ route }) {
                             maxWidth: "80%",
                           }}
                         >
-                          {demand?.student?.specialization?.name || "N/A"}
+                          {demand?.student?.major?.name || "N/A"}
                         </Text>
                       </View>
                     </View>
                   </View>
-                </View>
+                </TouchableOpacity>
                 <View
                   style={{
                     flexDirection: "row",
@@ -1259,7 +1275,12 @@ export default function Demand({ route }) {
                       >
                         Assigned Student
                       </Text>
-                      <View
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => (
+                          setOpenStudentInfo(true),
+                          setSelectedStudentInfo(selectedDemand?.student?.id)
+                        )}
                         style={{
                           flexDirection: "row",
                         }}
@@ -1322,7 +1343,7 @@ export default function Demand({ route }) {
                               marginBottom: 2,
                             }}
                           >
-                            {selectedDemand?.student?.specialization?.name}
+                            {selectedDemand?.student?.major?.name}
                           </Text>
                           <Text
                             style={{
@@ -1343,7 +1364,7 @@ export default function Demand({ route }) {
                             {selectedDemand?.student?.profile?.phoneNumber}
                           </Text>
                         </View>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                     <View
                       style={{
@@ -1732,7 +1753,8 @@ export default function Demand({ route }) {
                                     marginTop: 2,
                                   }}
                                 >
-                                  {item.counselorInfo.major.name}
+                                  {item.counselorInfo.major.name ||
+                                    item.counselorInfo.expertise.name}
                                 </Text>
                               </View>
                               <Image
@@ -1903,7 +1925,12 @@ export default function Demand({ route }) {
                     backgroundColor: "#f5f7fd",
                   }}
                 >
-                  <View
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => (
+                      setOpenStudentInfo(true),
+                      setSelectedStudentInfo(historyInfo?.studentInfo?.id)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -1972,7 +1999,7 @@ export default function Demand({ route }) {
                           marginBottom: 2,
                         }}
                       >
-                        {historyInfo?.studentInfo?.specialization?.name}
+                        {historyInfo?.studentInfo?.major?.name}
                       </Text>
                       <Text
                         style={{
@@ -1992,7 +2019,7 @@ export default function Demand({ route }) {
                         Phone: {historyInfo?.studentInfo?.profile?.phoneNumber}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       marginBottom: 20,
@@ -2341,6 +2368,12 @@ export default function Demand({ route }) {
             </View>
           </View>
         </Modal>
+        <StudentInfoModal
+          openStudentInfo={openStudentInfo}
+          setOpenStudentInfo={setOpenStudentInfo}
+          selectedStudentInfo={selectedStudentInfo}
+          setSelectedStudentInfo={setSelectedStudentInfo}
+        />
         <Modal
           transparent={true}
           visible={openCreate}
@@ -2638,8 +2671,6 @@ export default function Demand({ route }) {
                               <View>
                                 <TextInput
                                   placeholder="Input here"
-                                  placeholderTextColor="gray"
-                                  keyboardType="default"
                                   value={value}
                                   onChangeText={(value) => setValue(value)}
                                   style={{
@@ -2676,26 +2707,20 @@ export default function Demand({ route }) {
                             </Text>
                             <View>
                               <TextInput
-                                placeholder="Input here"
-                                placeholderTextColor="gray"
-                                keyboardType="default"
-                                multiline={true}
-                                numberOfLines={2}
+                                placeholder="Input your purpose here"
                                 value={reason}
                                 onChangeText={(value) => setReason(value)}
                                 style={{
-                                  flex: 1,
-                                  fontWeight: "600",
-                                  fontSize: 16,
-                                  opacity: 0.8,
-                                  paddingVertical: 8,
-                                  textAlignVertical: "top",
-                                  paddingHorizontal: 12,
-                                  backgroundColor: "#ededed",
-                                  borderColor: "gray",
+                                  borderColor: "#ccc",
                                   borderWidth: 1,
                                   borderRadius: 10,
+                                  padding: 12,
+                                  backgroundColor: "#fff",
+                                  fontSize: 16,
+                                  textAlignVertical: "top",
                                 }}
+                                multiline
+                                numberOfLines={2}
                               />
                             </View>
                           </View>
@@ -2715,7 +2740,12 @@ export default function Demand({ route }) {
                               <Text style={{ color: "#F39300" }}>*</Text>
                             </Text>
                             {selectedStudent && (
-                              <View
+                              <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => (
+                                  setOpenStudentInfo(true),
+                                  setSelectedStudentInfo(selectedStudent.id)
+                                )}
                                 style={{
                                   flexDirection: "row",
                                   alignItems: "stretch",
@@ -2883,7 +2913,7 @@ export default function Demand({ route }) {
                                     </View>
                                   </View>
                                 </View>
-                              </View>
+                              </TouchableOpacity>
                             )}
                           </View>
                         </>
@@ -3026,8 +3056,6 @@ export default function Demand({ route }) {
               <View>
                 <TextInput
                   placeholder="Input here"
-                  placeholderTextColor="gray"
-                  keyboardType="default"
                   value={value}
                   onChangeText={(value) => setValue(value)}
                   style={{
