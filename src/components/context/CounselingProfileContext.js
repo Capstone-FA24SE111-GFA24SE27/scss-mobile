@@ -1,18 +1,15 @@
 import React, { createContext, useEffect, useContext, useState } from "react";
 import axiosJWT, { BASE_URL } from "../../config/Config";
-import { Dimensions, Modal, View } from "react-native";
 import { AuthContext } from "./AuthContext";
 import GatherInfo from "../screens/student/GatherInfo";
 import Toast from "react-native-toast-message";
 
 export const CounselingProfileContext = createContext();
-
 export const CounselingProfileProvider = ({ children }) => {
   const { userData, session } = useContext(AuthContext);
   const [counselingProfile, setCounselingProfile] = useState(null);
   const [formValues, setFormValues] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const { width, height } = Dimensions.get("screen");
 
   const fetchStudentDoc = async () => {
     try {
@@ -56,11 +53,11 @@ export const CounselingProfileProvider = ({ children }) => {
         desiredCounselingFields: formValues.desiredCounselingFields || "",
       };
       await axiosJWT.post(`${BASE_URL}/students/document/info`, profileData);
-      console.log("Information updated successfully!");
+      console.log("Profile updated successfully!");
       Toast.show({
         type: "success",
         text1: "Success",
-        text2: "Information updated successfully!",
+        text2: "Profile updated successfully!",
         onPress: () => {
           Toast.hide();
         }
@@ -68,11 +65,11 @@ export const CounselingProfileProvider = ({ children }) => {
       setShowModal(false);
       fetchStudentDoc();
     } catch (err) {
-      console.log("Can't send counseling profile", err);
+      console.log("Can't update counseling profile", err);
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Can't send counseling profile",
+        text2: "Can't update counseling profile",
         onPress: () => {
           Toast.hide();
         },

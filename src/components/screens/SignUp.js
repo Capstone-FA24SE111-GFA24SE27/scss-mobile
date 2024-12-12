@@ -99,7 +99,6 @@ export default function SignUp() {
               />
               <TextInput
                 placeholder="Enter Username"
-                placeholderTextColor="gray"
                 value={username}
                 onFocus={() => setIsFocused1(true)}
                 onBlur={() => setIsFocused1(false)}
@@ -136,7 +135,6 @@ export default function SignUp() {
               />
               <TextInput
                 placeholder="Enter Email"
-                placeholderTextColor="gray"
                 value={email}
                 onFocus={() => setIsFocused2(true)}
                 onBlur={() => setIsFocused2(false)}
@@ -173,12 +171,10 @@ export default function SignUp() {
               />
               <TextInput
                 placeholder="Enter Password"
-                placeholderTextColor="gray"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setIsFocused3(true)}
                 onBlur={() => setIsFocused3(false)}
-                keyboardType="default"
                 secureTextEntry={!passwordVisible}
                 style={{
                   flex: 1,

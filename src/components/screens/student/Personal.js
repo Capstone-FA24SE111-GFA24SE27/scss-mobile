@@ -2,7 +2,6 @@ import {
   View,
   Text,
   Pressable,
-  ScrollView,
   Image,
   Animated,
   TouchableOpacity,

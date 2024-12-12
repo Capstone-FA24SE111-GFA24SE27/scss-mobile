@@ -62,7 +62,10 @@ export default function ResetPassword() {
         }}
       >
         <View style={{ flex: 1, alignItems: "flex-start" }}>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate("Login")}
+          >
             <Ionicons
               name="chevron-back-circle-outline"
               size={36}
@@ -117,7 +120,6 @@ export default function ResetPassword() {
           />
           <TextInput
             placeholder="Enter Email"
-            placeholderTextColor="gray"
             value={email}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
@@ -129,7 +131,7 @@ export default function ResetPassword() {
             }}
           />
           {email !== "" && (
-            <TouchableOpacity onPress={() => setEmail("")}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => setEmail("")}>
               <Ionicons
                 name="close"
                 size={28}
@@ -153,6 +155,8 @@ export default function ResetPassword() {
           </Text>
         ) : null}
         <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => setOpenConfirm(true)}
           style={{
             backgroundColor: "#F39300",
             paddingHorizontal: 12,
@@ -165,7 +169,6 @@ export default function ResetPassword() {
             borderWidth: 1,
             width: "100%",
           }}
-          onPress={() => setOpenConfirm(true)}
         >
           <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
             Send Reset Link
@@ -222,6 +225,8 @@ export default function ResetPassword() {
               }}
             >
               <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => setOpenConfirm(false)}
                 style={{
                   flex: 1,
                   backgroundColor: "#ededed",
@@ -233,7 +238,6 @@ export default function ResetPassword() {
                   borderWidth: 1,
                   borderColor: "gray",
                 }}
-                onPress={() => setOpenConfirm(false)}
               >
                 <Text
                   style={{
@@ -246,6 +250,8 @@ export default function ResetPassword() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleForgotPassword}
                 style={{
                   flex: 1,
                   backgroundColor: "#F39300",
@@ -254,7 +260,6 @@ export default function ResetPassword() {
                   justifyContent: "center",
                   alignItems: "center",
                 }}
-                onPress={handleForgotPassword}
               >
                 <Text
                   style={{
@@ -325,6 +330,8 @@ export default function ResetPassword() {
               Please check it to start changing your password
             </Text>
             <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate("Login")}
               style={{
                 backgroundColor: "#F39300",
                 paddingVertical: 12,
@@ -333,8 +340,6 @@ export default function ResetPassword() {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => navigation.navigate("Login")}
-              activeOpacity={0.8}
             >
               <Text
                 style={{

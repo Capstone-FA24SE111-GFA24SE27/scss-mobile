@@ -4,11 +4,10 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  TextInput,
   Dimensions,
   Modal,
 } from "react-native";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
@@ -75,198 +74,198 @@ export default function ViewProfile() {
           <View style={{ flex: 1, alignItems: "flex-end" }} />
         </View>
         {extendInfo && (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View
-            style={{
-              paddingHorizontal: 20,
-              paddingTop: 8,
-              paddingBottom: 20,
-              backgroundColor: "#f5f7fd",
-              borderRadius: 16,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#F39300",
-              }}
-            >
-              Specialized Skills
-            </Text>
-            <Markdown style={{ body: { fontSize: 16 } }}>
-              {extendInfo?.specializedSkills}
-            </Markdown>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View
               style={{
-                height: 2,
-                backgroundColor: "gray",
-                marginVertical: 8,
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#F39300",
+                paddingHorizontal: 20,
+                paddingTop: 8,
+                paddingBottom: 20,
+                backgroundColor: "#f5f7fd",
+                borderRadius: 16,
               }}
             >
-              Other Skills
-            </Text>
-            <Markdown style={{ body: { fontSize: 16 } }}>
-              {extendInfo?.otherSkills}
-            </Markdown>
-            <View
-              style={{
-                height: 2,
-                backgroundColor: "gray",
-                marginVertical: 8,
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#F39300",
-              }}
-            >
-              Working History
-            </Text>
-            <Markdown style={{ body: { fontSize: 16 } }}>
-              {extendInfo?.workHistory}
-            </Markdown>
-            <View
-              style={{
-                height: 2,
-                backgroundColor: "gray",
-                marginVertical: 8,
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#F39300",
-              }}
-            >
-              Achievements
-            </Text>
-            <Markdown style={{ body: { fontSize: 16 } }}>
-              {extendInfo?.achievements}
-            </Markdown>
-            <View
-              style={{
-                height: 2,
-                backgroundColor: "gray",
-                marginVertical: 8,
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#F39300",
-                marginBottom: 8,
-              }}
-            >
-              Qualifications
-            </Text>
-            <View>
-              {extendInfo?.qualifications?.map((qualification) => (
-                <View key={qualification.id} style={{ marginBottom: 16 }}>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: "600",
-                      color: "#333",
-                    }}
-                  >
-                    {qualification.degree} in {qualification.fieldOfStudy}
-                  </Text>
-                  <Text
-                    style={{ fontSize: 16, color: "gray", marginBottom: 8 }}
-                  >
-                    {qualification.institution} -{" "}
-                    {qualification.yearOfGraduation}
-                  </Text>
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => openImageModal(qualification.imageUrl)}
-                  >
-                    <Image
-                      source={{ uri: qualification.imageUrl }}
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "#F39300",
+                }}
+              >
+                Specialized Skills
+              </Text>
+              <Markdown style={{ body: { fontSize: 16 } }}>
+                {extendInfo?.specializedSkills}
+              </Markdown>
+              <View
+                style={{
+                  height: 2,
+                  backgroundColor: "gray",
+                  marginVertical: 8,
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "#F39300",
+                }}
+              >
+                Other Skills
+              </Text>
+              <Markdown style={{ body: { fontSize: 16 } }}>
+                {extendInfo?.otherSkills}
+              </Markdown>
+              <View
+                style={{
+                  height: 2,
+                  backgroundColor: "gray",
+                  marginVertical: 8,
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "#F39300",
+                }}
+              >
+                Working History
+              </Text>
+              <Markdown style={{ body: { fontSize: 16 } }}>
+                {extendInfo?.workHistory}
+              </Markdown>
+              <View
+                style={{
+                  height: 2,
+                  backgroundColor: "gray",
+                  marginVertical: 8,
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "#F39300",
+                }}
+              >
+                Achievements
+              </Text>
+              <Markdown style={{ body: { fontSize: 16 } }}>
+                {extendInfo?.achievements}
+              </Markdown>
+              <View
+                style={{
+                  height: 2,
+                  backgroundColor: "gray",
+                  marginVertical: 8,
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "#F39300",
+                  marginBottom: 8,
+                }}
+              >
+                Qualifications
+              </Text>
+              <View>
+                {extendInfo?.qualifications?.map((qualification) => (
+                  <View key={qualification.id} style={{ marginBottom: 16 }}>
+                    <Text
                       style={{
-                        width: "100%",
-                        minHeight: height * 0.3,
-                        height: "auto",
-                        resizeMode: "contain",
-                        marginVertical: 8,
-                        backgroundColor: "white",
-                        borderWidth: 1,
-                        borderColor: "lightgrey",
+                        fontSize: 18,
+                        fontWeight: "600",
+                        color: "#333",
                       }}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </View>
-            <View
-              style={{
-                height: 2,
-                backgroundColor: "gray",
-                marginVertical: 16,
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#F39300",
-                marginBottom: 8,
-              }}
-            >
-              Certifications
-            </Text>
-            <View>
-              {extendInfo?.certifications?.map((certification) => (
-                <View key={certification.id} style={{ marginBottom: 16 }}>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: "600",
-                      color: "#333",
-                    }}
-                  >
-                    {certification.name}
-                  </Text>
-                  <Text
-                    style={{ fontSize: 16, color: "gray", marginBottom: 8 }}
-                  >
-                    {certification.organization}
-                  </Text>
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => openImageModal(certification.imageUrl)}
-                  >
-                    <Image
-                      source={{ uri: certification.imageUrl }}
+                    >
+                      {qualification.degree} in {qualification.fieldOfStudy}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "gray", marginBottom: 8 }}
+                    >
+                      {qualification.institution} -{" "}
+                      {qualification.yearOfGraduation}
+                    </Text>
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      onPress={() => openImageModal(qualification.imageUrl)}
+                    >
+                      <Image
+                        source={{ uri: qualification.imageUrl }}
+                        style={{
+                          width: "100%",
+                          minHeight: height * 0.3,
+                          height: "auto",
+                          resizeMode: "contain",
+                          marginVertical: 8,
+                          backgroundColor: "white",
+                          borderWidth: 1,
+                          borderColor: "lightgrey",
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+              <View
+                style={{
+                  height: 2,
+                  backgroundColor: "gray",
+                  marginVertical: 16,
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "#F39300",
+                  marginBottom: 8,
+                }}
+              >
+                Certifications
+              </Text>
+              <View>
+                {extendInfo?.certifications?.map((certification) => (
+                  <View key={certification.id} style={{ marginBottom: 16 }}>
+                    <Text
                       style={{
-                        width: "100%",
-                        minHeight: height * 0.3,
-                        height: "auto",
-                        resizeMode: "contain",
-                        marginVertical: 8,
-                        backgroundColor: "white",
-                        borderWidth: 1,
-                        borderColor: "lightgrey",
+                        fontSize: 18,
+                        fontWeight: "600",
+                        color: "#333",
                       }}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
+                    >
+                      {certification.name}
+                    </Text>
+                    <Text
+                      style={{ fontSize: 16, color: "gray", marginBottom: 8 }}
+                    >
+                      {certification.organization}
+                    </Text>
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      onPress={() => openImageModal(certification.imageUrl)}
+                    >
+                      <Image
+                        source={{ uri: certification.imageUrl }}
+                        style={{
+                          width: "100%",
+                          minHeight: height * 0.3,
+                          height: "auto",
+                          resizeMode: "contain",
+                          marginVertical: 8,
+                          backgroundColor: "white",
+                          borderWidth: 1,
+                          borderColor: "lightgrey",
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
         )}
       </View>
       <Modal
@@ -294,7 +293,7 @@ export default function ViewProfile() {
             }}
             style={{
               position: "absolute",
-              top: height * 0.045,
+              top: height * 0.03,
               right: width * 0.045,
               alignSelf: "center",
               backgroundColor: "white",

@@ -30,6 +30,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import AlertModal from "../../layout/AlertModal";
+import StudentInfoModal from "../../layout/StudentInfoModal";
 
 export default function Appointment({ route }) {
   const navigation = useNavigation();
@@ -76,6 +77,8 @@ export default function Appointment({ route }) {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
+  const [openStudentInfo, setOpenStudentInfo] = useState(false);
+  const [selectedStudentInfo, setSelectedStudentInfo] = useState(null);
   const [openCancel, setOpenCancel] = useState(false);
   const [openReport, setOpenReport] = useState(false);
   const [report, setReport] = useState(null);
@@ -493,10 +496,18 @@ export default function Appointment({ route }) {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        fetchData();
+        fetchData(filters, { page: currentPage });
         setOpenCancel(false);
         setSelectedAppointment(null);
         setValue("");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Appointment canceled.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       } else {
         Toast.show({
           type: "error",
@@ -680,7 +691,6 @@ export default function Appointment({ route }) {
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
-              hitSlop={30}
               onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
@@ -1268,82 +1278,88 @@ export default function Appointment({ route }) {
                       </Text>
                     </Text>
                   </View>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    {appointment.status === "WAITING" && (
-                      <View
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignSelf: "flex-end",
+                    alignItems: "center",
+                  }}
+                >
+                  {appointment.status === "WAITING" && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => handleOpenCancel(appointment.id)}
+                        activeOpacity={0.6}
                         style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          backgroundColor: "#e3e3e3",
+                          borderRadius: 10,
                           flexDirection: "row",
-                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          borderWidth: 1.5,
+                          borderColor: "#e3e3e3",
                         }}
                       >
-                        <TouchableOpacity
-                          onPress={() => handleOpenCancel(appointment.id)}
-                          activeOpacity={0.6}
+                        <Text
                           style={{
-                            backgroundColor: "#ededed",
-                            paddingHorizontal: 8,
-                            paddingVertical: 2,
-                            marginRight: 4,
-                            borderRadius: 10,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderWidth: 1.5,
-                            borderColor: "#ededed",
+                            fontWeight: "500",
+                            color: "#333",
+                            fontSize: 16,
                           }}
                         >
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: "#333",
-                              fontWeight: "600",
-                            }}
-                          >
-                            Cancel
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                    {appointment.status !== "CANCELED" &&
-                      new Date(appointment.startDateTime)
-                        .toISOString()
-                        .split("T")[0] >=
-                        new Date().toISOString().split("T")[0] && (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setSelectedAppointment(appointment.id);
-                            setOpenAttendance(true);
-                            setValue(appointment.status);
-                          }}
-                          style={{
-                            paddingHorizontal: 8,
-                            paddingVertical: 2,
-                            backgroundColor: "#F39300",
-                            borderRadius: 10,
-                            flexDirection: "row",
-                            alignItems: "center",
-                            borderWidth: 1.5,
-                            borderColor: "#F39300",
-                          }}
-                        >
-                          <MaterialIcons
-                            name="edit-calendar"
-                            size={18}
-                            color="white"
-                          />
+                          Cancel
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  {appointment.status !== "CANCELED" &&
+                    new Date(appointment.startDateTime)
+                      .toISOString()
+                      .split("T")[0] >=
+                      new Date().toISOString().split("T")[0] && (
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedAppointment(appointment.id);
+                          setOpenAttendance(true);
+                          setValue(appointment.status);
+                        }}
+                        style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          marginLeft: 8,
+                          backgroundColor: "#F39300",
+                          borderRadius: 10,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          borderWidth: 1.5,
+                          borderColor: "#F39300",
+                        }}
+                      >
+                        <MaterialIcons
+                          name="edit-calendar"
+                          size={18}
+                          color="white"
+                        />
 
-                          <Text
-                            style={{
-                              fontWeight: "500",
-                              color: "white",
-                              fontSize: 16,
-                              marginLeft: 4,
-                            }}
-                          >
-                            Check
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                  </View>
+                        <Text
+                          style={{
+                            fontWeight: "500",
+                            color: "white",
+                            fontSize: 16,
+                            marginLeft: 4,
+                          }}
+                        >
+                          Check
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                 </View>
               </View>
             ))
@@ -1654,8 +1670,6 @@ export default function Appointment({ route }) {
                               <View>
                                 <TextInput
                                   placeholder="Input here"
-                                  placeholderTextColor="gray"
-                                  keyboardType="default"
                                   value={value}
                                   onChangeText={(value) => setValue(value)}
                                   style={{
@@ -1693,25 +1707,19 @@ export default function Appointment({ route }) {
                             <View>
                               <TextInput
                                 placeholder="Input here"
-                                placeholderTextColor="gray"
-                                keyboardType="default"
-                                multiline={true}
-                                numberOfLines={2}
                                 value={reason}
                                 onChangeText={(value) => setReason(value)}
                                 style={{
-                                  flex: 1,
-                                  fontWeight: "600",
-                                  fontSize: 16,
-                                  opacity: 0.8,
-                                  paddingVertical: 8,
-                                  textAlignVertical: "top",
-                                  paddingHorizontal: 12,
-                                  backgroundColor: "#ededed",
-                                  borderColor: "gray",
+                                  borderColor: "#ccc",
                                   borderWidth: 1,
                                   borderRadius: 10,
+                                  padding: 12,
+                                  backgroundColor: "#fff",
+                                  fontSize: 16,
+                                  textAlignVertical: "top",
                                 }}
+                                multiline
+                                numberOfLines={2}
                               />
                             </View>
                           </View>
@@ -1753,8 +1761,6 @@ export default function Appointment({ route }) {
                               >
                                 <TextInput
                                   placeholder="Input Student Code"
-                                  placeholderTextColor="gray"
-                                  keyboardType="default"
                                   value={value2}
                                   onChangeText={(value) => setValue2(value)}
                                   style={{
@@ -1780,7 +1786,9 @@ export default function Appointment({ route }) {
                               </View>
                               <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={() => fetchStudent(value2)}
+                                onPress={() =>
+                                  fetchStudent(value2.toUpperCase())
+                                }
                                 style={{
                                   backgroundColor: "#F39300",
                                   borderRadius: 40,
@@ -1801,7 +1809,12 @@ export default function Appointment({ route }) {
                               </TouchableOpacity>
                             </View>
                             {selectedStudent && (
-                              <View
+                              <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => (
+                                  setOpenStudentInfo(true),
+                                  setSelectedStudentInfo(selectedStudent?.id)
+                                )}
                                 style={{
                                   flexDirection: "row",
                                   alignItems: "stretch",
@@ -1968,7 +1981,7 @@ export default function Appointment({ route }) {
                                     </View>
                                   </View>
                                 </View>
-                              </View>
+                              </TouchableOpacity>
                             )}
                           </View>
                         </>
@@ -2150,7 +2163,12 @@ export default function Appointment({ route }) {
                     backgroundColor: "#f5f7fd",
                   }}
                 >
-                  <View
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => (
+                      setOpenStudentInfo(true),
+                      setSelectedStudentInfo(info?.studentInfo?.id)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -2238,7 +2256,7 @@ export default function Appointment({ route }) {
                         Phone: {info?.studentInfo?.profile?.phoneNumber}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       marginBottom: 20,
@@ -2526,8 +2544,6 @@ export default function Appointment({ route }) {
                                     <View>
                                       <TextInput
                                         placeholder="Input here"
-                                        placeholderTextColor="gray"
-                                        keyboardType="default"
                                         value={value}
                                         onChangeText={(value) =>
                                           setValue(value)
@@ -2792,6 +2808,12 @@ export default function Appointment({ route }) {
             </View>
           </View>
         </Modal>
+        <StudentInfoModal
+          openStudentInfo={openStudentInfo}
+          setOpenStudentInfo={setOpenStudentInfo}
+          selectedStudentInfo={selectedStudentInfo}
+          setSelectedStudentInfo={setSelectedStudentInfo}
+        />
         <Modal
           transparent={true}
           visible={openAttendance}
@@ -2968,8 +2990,6 @@ export default function Appointment({ route }) {
               <View>
                 <TextInput
                   placeholder="Input here"
-                  placeholderTextColor="gray"
-                  keyboardType="default"
                   value={value}
                   onChangeText={(value) => setValue(value)}
                   style={{
@@ -3067,25 +3087,28 @@ export default function Appointment({ route }) {
             >
               <View
                 style={{
+                  backgroundColor: "#F39300",
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
                   paddingVertical: 12,
                   paddingHorizontal: 20,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
                 }}
               >
                 <Text
                   style={{
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: "bold",
-                    color: "#333",
+                    color: "white",
                   }}
                 >
                   Appointment Report
                 </Text>
                 <TouchableOpacity
                   style={{
-                    backgroundColor: "#ededed",
+                    backgroundColor: "white",
                     padding: 4,
                     borderRadius: 20,
                   }}
@@ -3093,7 +3116,7 @@ export default function Appointment({ route }) {
                     setOpenReport(false), setSelectedAppointment(null)
                   )}
                 >
-                  <Ionicons name="close" size={28} color="#333" />
+                  <Ionicons name="close" size={24} color="#333" />
                 </TouchableOpacity>
               </View>
               {report ? (
@@ -3378,31 +3401,35 @@ export default function Appointment({ route }) {
             >
               <View
                 style={{
+                  backgroundColor: "#F39300",
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
                   paddingVertical: 12,
                   paddingHorizontal: 20,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
                 }}
               >
                 <Text
                   style={{
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: "bold",
-                    color: "#333",
+                    color: "white",
                   }}
                 >
                   Create Report
                 </Text>
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   style={{
-                    backgroundColor: "#ededed",
+                    backgroundColor: "white",
                     padding: 4,
                     borderRadius: 20,
                   }}
                   onPress={() => setOpenCreateReport(false)}
                 >
-                  <Ionicons name="close" size={28} color="#333" />
+                  <Ionicons name="close" size={24} color="#333" />
                 </TouchableOpacity>
               </View>
               <ScrollView

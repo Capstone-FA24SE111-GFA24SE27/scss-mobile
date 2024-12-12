@@ -193,10 +193,18 @@ export default function Appointment({ route }) {
       );
       const data = await response.data;
       if (data && data.status == 200) {
-        fetchData();
+        fetchData(filters, { page: currentPage });
         setOpenCancel(false);
         setSelectedAppointment(null);
         setValue("");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Appointment canceled.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
       } else {
         Toast.show({
           type: "error",
@@ -224,11 +232,6 @@ export default function Appointment({ route }) {
     setValue("");
   };
 
-  const handleOpenFeedback = async (id) => {
-    setOpenFeedback(true);
-    setSelectedAppointment(id);
-  };
-
   const handleTakeFeedback = async () => {
     try {
       const response = await axiosJWT.post(
@@ -246,6 +249,14 @@ export default function Appointment({ route }) {
             rating: rating,
             comment: value,
             createdAt: new Date().toISOString().split("T")[0],
+          },
+        });
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Your feedback has been submitted.",
+          onPress: () => {
+            Toast.hide();
           },
         });
         handleCloseFeedback();
@@ -296,7 +307,6 @@ export default function Appointment({ route }) {
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
-              hitSlop={30}
               onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
@@ -868,74 +878,40 @@ export default function Appointment({ route }) {
                       </Text>
                     </Text>
                   </View>
-                  {appointment.status === "WAITING" && (
-                    <View
+                </View>
+                {appointment.status === "WAITING" && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => handleOpenCancel(appointment.id)}
+                      activeOpacity={0.6}
                       style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "#e3e3e3",
+                        borderRadius: 10,
                         flexDirection: "row",
-                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        borderWidth: 1.5,
+                        borderColor: "#e3e3e3",
                       }}
                     >
-                      <TouchableOpacity
-                        onPress={() => handleOpenCancel(appointment.id)}
-                        activeOpacity={0.6}
-                        style={{
-                          backgroundColor: "#ededed",
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          borderRadius: 10,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "#333",
-                            fontWeight: "600",
-                          }}
-                        >
-                          Cancel
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-                {/* <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  {appointment.meetingType === "ONLINE" ? (
-                    <>
-                      <Ionicons name="videocam" size={20} color="#F39300" />
                       <Text
                         style={{
-                          fontWeight: "bold",
-                          fontSize: 16,
-                          marginLeft: 8,
+                          fontWeight: "500",
                           color: "#333",
+                          fontSize: 16,
                         }}
                       >
-                        {appointment.meetUrl}
+                        Cancel
                       </Text>
-                    </>
-                  ) : (
-                    <>
-                      <MaterialIcons name="place" size={20} color="#F39300" />
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: 16,
-                          marginLeft: 8,
-                          color: "#333",
-                        }}
-                      >
-                        {appointment.address}
-                      </Text>
-                    </>
-                  )}
-                </View> */}
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             ))
           )}
@@ -994,9 +970,11 @@ export default function Appointment({ route }) {
                   }}
                 >
                   <TouchableOpacity
-                  onPress={() => (
-                    setOpenExtendInfo(true), setExtendInfo(info?.counselorInfo)
-                  )}
+                    activeOpacity={0.7}
+                    onPress={() => (
+                      setOpenExtendInfo(true),
+                      setExtendInfo(info?.counselorInfo)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -1466,7 +1444,10 @@ export default function Appointment({ route }) {
                         info.status !== "ABSENT" &&
                         info.status !== "CANCELED" && (
                           <TouchableOpacity
-                            onPress={() => handleOpenFeedback(info.id)}
+                            onPress={() => (
+                              setOpenFeedback(true),
+                              setSelectedAppointment(info?.id)
+                            )}
                             activeOpacity={0.6}
                           >
                             <Text
@@ -1550,8 +1531,6 @@ export default function Appointment({ route }) {
               <View>
                 <TextInput
                   placeholder="Input here"
-                  placeholderTextColor="gray"
-                  keyboardType="default"
                   value={value}
                   onChangeText={(value) => setValue(value)}
                   style={{
@@ -1671,23 +1650,19 @@ export default function Appointment({ route }) {
                 <TextInput
                   placeholder="Type message here..."
                   placeholderTextColor="gray"
-                  keyboardType="default"
-                  multiline={true}
-                  numberOfLines={2}
                   value={value}
                   onChangeText={(value) => setValue(value)}
                   style={{
-                    fontWeight: "600",
-                    fontSize: 16,
-                    opacity: 0.8,
-                    paddingVertical: 8,
-                    textAlignVertical: "top",
-                    paddingHorizontal: 12,
-                    backgroundColor: "#ededed",
-                    borderColor: "gray",
+                    borderColor: "#ccc",
                     borderWidth: 1,
                     borderRadius: 10,
+                    padding: 12,
+                    backgroundColor: "#fff",
+                    fontSize: 16,
+                    textAlignVertical: "top",
                   }}
+                  multiline
+                  numberOfLines={2}
                 />
               </View>
               <View style={{ marginVertical: 8 }}>

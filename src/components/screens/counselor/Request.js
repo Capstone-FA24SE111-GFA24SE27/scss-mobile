@@ -22,6 +22,7 @@ import Pagination from "../../layout/Pagination";
 import { Dropdown } from "react-native-element-dropdown";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import AlertModal from "../../layout/AlertModal";
+import StudentInfoModal from "../../layout/StudentInfoModal";
 
 export default function Request({ route }) {
   const navigation = useNavigation();
@@ -59,6 +60,8 @@ export default function Request({ route }) {
   const [modalMessage, setModalMessage] = useState("");
   const [openInfo, setOpenInfo] = useState(false);
   const [info, setInfo] = useState({});
+  const [openStudentInfo, setOpenStudentInfo] = useState(false);
+  const [selectedStudentInfo, setSelectedStudentInfo] = useState(null);
   const [openConfirmDeny, setOpenConfirmDeny] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -294,12 +297,7 @@ export default function Request({ route }) {
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
-              hitSlop={30}
-              onPress={
-                () => navigation.navigate(prevScreen || "Personal")
-                // setDateFrom(""),
-                // setDateTo("")
-              }
+              onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
             </TouchableOpacity>
@@ -466,12 +464,12 @@ export default function Request({ route }) {
                   )}
                 </View>
                 <AlertModal
-                    showModal={showModal}
-                    setShowModal={setShowModal}
-                    modalMessage={modalMessage}
-                    setModalMessage={setModalMessage}
-                  />              
-                </View>
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                  modalMessage={modalMessage}
+                  setModalMessage={setModalMessage}
+                />
+              </View>
               <View
                 style={{
                   flexDirection: "row",
@@ -953,20 +951,22 @@ export default function Request({ route }) {
                         onPress={() => handleOpenConfirmDeny(request.id)}
                         activeOpacity={0.6}
                         style={{
-                          backgroundColor: "#ededed",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
+                          marginRight: 8,
+                          backgroundColor: "#e3e3e3",
                           borderRadius: 10,
-                          justifyContent: "center",
+                          flexDirection: "row",
                           alignItems: "center",
-                          marginRight: 4,
+                          borderWidth: 1.5,
+                          borderColor: "#e3e3e3",
                         }}
                       >
                         <Text
                           style={{
-                            fontSize: 18,
+                            fontWeight: "500",
                             color: "#333",
-                            fontWeight: "600",
+                            fontSize: 16,
                           }}
                         >
                           Deny
@@ -978,19 +978,21 @@ export default function Request({ route }) {
                         }
                         activeOpacity={0.6}
                         style={{
+                          paddingHorizontal: 8,
+                          paddingVertical: 4,
                           backgroundColor: "#F39300",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
                           borderRadius: 10,
-                          justifyContent: "center",
+                          flexDirection: "row",
                           alignItems: "center",
+                          borderWidth: 1.5,
+                          borderColor: "#F39300",
                         }}
                       >
                         <Text
                           style={{
-                            fontSize: 18,
+                            fontWeight: "500",
                             color: "white",
-                            fontWeight: "600",
+                            fontSize: 16,
                           }}
                         >
                           Approve
@@ -1156,8 +1158,6 @@ export default function Request({ route }) {
                             <View>
                               <TextInput
                                 placeholder="Input here"
-                                placeholderTextColor="gray"
-                                keyboardType="default"
                                 value={value}
                                 onChangeText={(value) => setValue(value)}
                                 style={{
@@ -1362,7 +1362,12 @@ export default function Request({ route }) {
                     borderRadius: 16,
                   }}
                 >
-                  <View
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => (
+                      setOpenStudentInfo(true),
+                      setSelectedStudentInfo(info?.student?.id)
+                    )}
                     style={{
                       flexDirection: "row",
                       padding: 16,
@@ -1448,7 +1453,7 @@ export default function Request({ route }) {
                         Phone: {info?.student?.profile?.phoneNumber}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       marginBottom: 20,
@@ -1657,6 +1662,12 @@ export default function Request({ route }) {
             </View>
           </View>
         </Modal>
+        <StudentInfoModal
+          openStudentInfo={openStudentInfo}
+          setOpenStudentInfo={setOpenStudentInfo}
+          selectedStudentInfo={selectedStudentInfo}
+          setSelectedStudentInfo={setSelectedStudentInfo}
+        />
       </View>
     </>
   );

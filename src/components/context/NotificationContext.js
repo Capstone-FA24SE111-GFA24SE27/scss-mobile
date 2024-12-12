@@ -1,7 +1,6 @@
 import React, {
   createContext,
   useEffect,
-  useRef,
   useContext,
   useState,
 } from "react";
@@ -13,8 +12,6 @@ import { AppState } from "react-native";
 import Toast from "react-native-toast-message";
 import { navigationRef } from "./NavigationContext";
 
-export const NotificationContext = createContext();
-
 // export const navigationRef = createNavigationContainerRef();
 // export function navigate = (name) => {
 //   if (navigationRef.isReady()) {
@@ -22,6 +19,7 @@ export const NotificationContext = createContext();
 //   }
 // };
 
+export const NotificationContext = createContext();
 export const NotificationProvider = ({ children }) => {
   const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
@@ -51,9 +49,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await axiosJWT.put(
         `${BASE_URL}/notification/read/${notificationId}`
       );
-
       const result = response.data;
-
       if (result && result.status === 200) {
         setNotifications((prevNotifications) =>
           prevNotifications.map((notification) =>

@@ -83,7 +83,7 @@ export default function ViewProfile() {
         Toast.show({
           type: "success",
           text1: "Success",
-          text2: "Updated information successfully!",
+          text2: "Profile updated successfully!",
         });
       }
     } catch (err) {
@@ -91,7 +91,7 @@ export default function ViewProfile() {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Can't update these information",
+        text2: "Can't update counseling profile",
       });
     }
   };

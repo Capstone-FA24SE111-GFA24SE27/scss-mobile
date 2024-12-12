@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Animated, TouchableOpacity, View, Text, Platform } from "react-native";
+import React, { useRef, useEffect } from "react";
+import { Animated, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export const FilterToggle = ({ isExpanded, toggleExpanded }) => {

@@ -380,8 +380,8 @@ export default function Profile({ route }) {
           </View>
           <View
             style={{
-              marginHorizontal: width * 0.075,
-              marginVertical: height * 0.005,
+              marginHorizontal: 20,
+              marginBottom: 12,
             }}
           >
             <Text
@@ -482,8 +482,8 @@ export default function Profile({ route }) {
           </View>
           <View
             style={{
-              marginHorizontal: width * 0.075,
-              marginVertical: height * 0.005,
+              marginHorizontal: 20,
+              marginBottom: 12,
             }}
           >
             <Text

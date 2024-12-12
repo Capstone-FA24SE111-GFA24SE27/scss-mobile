@@ -1,4 +1,4 @@
-import { View, Text, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import CounselorRand from "../screens/student/CounselorRand";

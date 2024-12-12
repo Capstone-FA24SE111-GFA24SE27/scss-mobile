@@ -185,26 +185,20 @@ export default function CounselorRand() {
         }}
       >
         <TextInput
-          placeholder="Input here"
-          placeholderTextColor="gray"
-          keyboardType="default"
-          multiline={true}
-          numberOfLines={2}
+          placeholder="Input your reason here"
           value={reason}
           onChangeText={(value) => setReason(value)}
           style={{
-            flex: 1,
-            fontWeight: "600",
-            fontSize: 16,
-            opacity: 0.8,
-            paddingVertical: 8,
-            textAlignVertical: "top",
-            paddingHorizontal: 12,
-            backgroundColor: "#ededed",
-            borderColor: "gray",
+            borderColor: "#ccc",
             borderWidth: 1,
             borderRadius: 10,
+            padding: 12,
+            backgroundColor: "#fff",
+            fontSize: 16,
+            textAlignVertical: "top",
           }}
+          multiline
+          numberOfLines={2}
         />
       </View>
     );
@@ -1195,7 +1189,9 @@ export default function CounselorRand() {
           }
         }
       } else if (typeRes?.data?.message?.includes("INAPPROPRIATE_SENTENCE")) {
-        setError(`Contain meaningless, violate or inappropriate words. Please rewrite your purpose`);
+        setError(
+          `Contain meaningless, violate or inappropriate words. Please rewrite your purpose`
+        );
         Toast.show({
           type: "error",
           text1: "Error",
@@ -1204,12 +1200,18 @@ export default function CounselorRand() {
         });
       }
     } catch (err) {
-      console.log("Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose", err);
-      setError("Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose");
+      console.log(
+        "Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose",
+        err
+      );
+      setError(
+        "Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose"
+      );
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose",
+        text2:
+          "Can't find counselor suitable with your request. Please choose another slot, date, or write a clearer purpose",
         onPress: () => Toast.hide(),
       });
     }
@@ -1726,7 +1728,7 @@ export default function CounselorRand() {
             style={{
               width: 16,
               height: 16,
-              borderRadius: 8,
+              borderRadius: 10,
               backgroundColor: "#034ea2",
               transform: [{ translateY: dot1Anim }],
               marginHorizontal: 4,
@@ -1736,7 +1738,7 @@ export default function CounselorRand() {
             style={{
               width: 16,
               height: 16,
-              borderRadius: 8,
+              borderRadius: 10,
               backgroundColor: "#f37021",
               transform: [{ translateY: dot2Anim }],
               marginHorizontal: 4,
@@ -1746,7 +1748,7 @@ export default function CounselorRand() {
             style={{
               width: 16,
               height: 16,
-              borderRadius: 8,
+              borderRadius: 10,
               backgroundColor: "#51b848",
               transform: [{ translateY: dot3Anim }],
               marginHorizontal: 4,

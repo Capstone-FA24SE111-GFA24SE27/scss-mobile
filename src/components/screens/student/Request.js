@@ -198,7 +198,6 @@ export default function Request({ route }) {
         >
           <View style={{ flex: 1, alignItems: "flex-start" }}>
             <TouchableOpacity
-              hitSlop={30}
               onPress={() => navigation.navigate(prevScreen || "Personal")}
             >
               <Ionicons name="return-up-back" size={36} />
@@ -901,6 +900,7 @@ export default function Request({ route }) {
                   }}
                 >
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     onPress={() => (
                       setOpenExtendInfo(true), setExtendInfo(info?.counselor)
                     )}

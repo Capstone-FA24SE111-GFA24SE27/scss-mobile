@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, Animated, Image } from "react-native";
+import { View, Dimensions, Animated, Image } from "react-native";
 import React, { useEffect, useRef } from "react";
 import logo from "../../assets/logo-fpt.png";
 
@@ -34,6 +34,7 @@ const Loading = ({ loading }) => {
       setTimeout(() => bounceAnimation(dot3Anim, 0), 300);
     }
   }, [loading]);
+  
   return (
     <View
       style={{
@@ -59,7 +60,7 @@ const Loading = ({ loading }) => {
           style={{
             width: 16,
             height: 16,
-            borderRadius: 8,
+            borderRadius: 10,
             backgroundColor: "#034ea2",
             transform: [{ translateY: dot1Anim }],
             marginHorizontal: 4,
@@ -69,7 +70,7 @@ const Loading = ({ loading }) => {
           style={{
             width: 16,
             height: 16,
-            borderRadius: 8,
+            borderRadius: 10,
             backgroundColor: "#f37021",
             transform: [{ translateY: dot2Anim }],
             marginHorizontal: 4,
