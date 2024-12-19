@@ -15,9 +15,11 @@ import axiosJWT, { BASE_URL } from "../../config/Config";
 import Toast from "react-native-toast-message";
 import Loading from "../layout/Loading";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 GoogleSignin.configure({
   webClientId: '300198556722-f57e7s90fkaau34le2fau2ervjm4ohfr.apps.googleusercontent.com',
+  scopes: ['email', 'profile'],
 });
 
 export default function Login() {
@@ -94,27 +96,68 @@ export default function Login() {
     }
   };
 
+
   async function onGoogleButtonPress() {
     // Check if your device supports Google Play
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
     // Get the users ID token
     const signInResult = await GoogleSignin.signIn();
 
-    // Try the new style of google-sign in result, from v13+ of that module
-    idToken = signInResult.data?.idToken;
-    if (!idToken) {
-      // if you are using older versions of google-signin, try old style result
-      idToken = signInResult.idToken;
-    }
-    if (!idToken) {
-      throw new Error('No ID token found');
+    const token = await GoogleSignin.getTokens();
+    const accessToken = token.accessToken;
+
+    // // Try the new style of google-sign in result, from v13+ of that module
+    // let idToken = signInResult.data?.idToken;
+    // if (!idToken) {
+    //   // if you are using older versions of google-signin, try old style result
+    //   idToken = signInResult.idToken;
+    // }
+    // if (!idToken) {
+    //   throw new Error('No ID token found');
+    // }
+
+    // // Create a Google credential with the token
+    // const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    // // Sign-in the user with the credential
+    // const userCredential = await auth().signInWithCredential(googleCredential);
+
+    // const firebaseIdToken = await userCredential.user.getIdTokenResult();
+
+    // console.log('firebaseIdToken', userCredential);    
+    try {
+      setLoading(true);
+      const response = await axiosJWT.post(`${BASE_URL}/auth/login/oauth/google/${accessToken}`);
+      const data = await response.data;
+      if (data && data.status == 200) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Login successfully",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+        login(data.content.account, data.content.accessToken);
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Login failed",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
     }
 
-    // Create a Google credential with the token
-    const googleCredential = auth.GoogleAuthProvider.credential(signInResult.data.token);
-
-    // Sign-in the user with the credential
-    return auth().signInWithCredential(googleCredential);
   }
 
   return (
@@ -409,7 +452,6 @@ export default function Login() {
               <TouchableOpacity
                 onPress={
                   () => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))
-
                 }
                 style={{
                   width: "100%",
