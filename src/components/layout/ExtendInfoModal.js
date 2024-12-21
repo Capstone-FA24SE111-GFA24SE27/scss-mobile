@@ -39,13 +39,13 @@ export default function ExtendInfoModal({
           flex: 1,
           justifyContent: "flex-end",
           alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.2)",
+          backgroundColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
         <View
           style={{
             width: "100%",
-            height: "98%",
+            height: "90%",
             backgroundColor: "#f5f7fd",
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,

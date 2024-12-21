@@ -18,6 +18,7 @@ import { HomeSkeleton } from "../../layout/Skeleton";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { LinearGradient } from "expo-linear-gradient";
 import RenderHTML from "react-native-render-html";
+import Toast from "react-native-toast-message";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -328,7 +329,7 @@ export default function Home() {
           />
           <TextInput
             placeholder="What are you searching for?"
-            placeholderTextColor="#F39300"
+            placeholderTextColor="gray"
             style={{
               fontSize: 18,
               opacity: 0.8,
@@ -881,24 +882,53 @@ export default function Home() {
                               </Text>
                               <TouchableOpacity
                                 disabled={appointment.meetingType !== "ONLINE"}
-                                onPress={() =>
-                                  Linking.openURL(`${appointment.place}`).catch(
-                                    (err) => {
+                                onPress={() => {
+                                  if (
+                                    appointment.date +
+                                      "T" +
+                                      appointment.startTime <=
+                                    new Date().toISOString() <=
+                                    appointment.date + "T" + appointment.endTime
+                                  ) {
+                                    Linking.openURL(
+                                      `${appointment.place}`
+                                    ).catch((err) => {
                                       console.log("Can't open this link", err);
                                       Toast.show({
                                         type: "error",
                                         text1: "Error",
                                         text2: "Can't open this link",
                                       });
-                                    }
-                                  )
-                                }
+                                    });
+                                  } else {
+                                    Toast.show({
+                                      type: "error",
+                                      text1: "Error",
+                                      text2:
+                                        "The meeting time hasn't started yet",
+                                      onPress: () => {
+                                        Toast.hide();
+                                      },
+                                    });
+                                  }
+                                }}
                               >
                                 <Text
                                   style={{
                                     fontSize: 14,
                                     color:
-                                      appointment.meetingType === "ONLINE"
+                                      appointment.meetingType === "ONLINE" &&
+                                      !(
+                                        appointment.date +
+                                          "T" +
+                                          appointment.startTime <=
+                                        new Date().toISOString() <=
+                                        appointment.date +
+                                          "T" +
+                                          appointment.endTime
+                                      )
+                                        ? "gray"
+                                        : appointment.meetingType === "ONLINE"
                                         ? "#F39300"
                                         : "#333",
                                     textDecorationLine:
@@ -908,7 +938,9 @@ export default function Home() {
                                   }}
                                   numberOfLines={1}
                                 >
-                                  {appointment.place}
+                                  {appointment.meetingType === "ONLINE"
+                                    ? "Meet URL"
+                                    : appointment.place}
                                 </Text>
                               </TouchableOpacity>
                             </View>

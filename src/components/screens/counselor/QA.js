@@ -481,7 +481,7 @@ export default function QA() {
               />
               <TextInput
                 placeholder="Search Question"
-                placeholderTextColor="#F39300"
+                placeholderTextColor="gray"
                 value={keyword}
                 onChangeText={(value) => setKeyword(value)}
                 style={{
@@ -1442,13 +1442,13 @@ export default function QA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -2123,7 +2123,7 @@ export default function QA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
@@ -2220,13 +2220,13 @@ export default function QA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -3023,9 +3023,9 @@ export default function QA() {
           </View>
         </Modal>
         <Modal
-          animationType="slide"
           transparent={true}
           visible={openInfo}
+          animationType="slide"
           onRequestClose={() => setOpenInfo(false)}
         >
           <View
@@ -3033,13 +3033,13 @@ export default function QA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,

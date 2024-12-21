@@ -78,8 +78,7 @@ export default function ViewProfile() {
             <View
               style={{
                 paddingHorizontal: 20,
-                paddingTop: 8,
-                paddingBottom: 20,
+                paddingBottom: 12,
                 backgroundColor: "#f5f7fd",
                 borderRadius: 16,
               }}

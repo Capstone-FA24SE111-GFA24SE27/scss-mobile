@@ -637,7 +637,7 @@ export default function AcademicCounselor() {
             />
             <TextInput
               placeholder="Search by Counselor's name"
-              placeholderTextColor="#F39300"
+              placeholderTextColor="gray"
               value={keyword}
               onChangeText={(value) => setKeyword(value)}
               style={{
@@ -1763,14 +1763,14 @@ export default function AcademicCounselor() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             {selectedCounselor && (
               <View
                 style={{
                   width: "100%",
-                  height: "98%",
+                  height: "90%",
                   backgroundColor: "#f5f7fd",
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
@@ -2549,7 +2549,7 @@ export default function AcademicCounselor() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View

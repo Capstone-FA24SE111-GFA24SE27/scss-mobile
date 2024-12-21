@@ -39,7 +39,8 @@ export default function NotificationDetail({ route }) {
         </View>
         <View style={{ flex: 2, alignItems: "center" }}>
           <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-            Notifcation No.{notificationData?.notificationId}
+            {/* Notifcation No.{notificationData?.notificationId} */}
+            Content
           </Text>
         </View>
         <View style={{ flex: 1 }} />

@@ -1420,7 +1420,7 @@ export default function CounselorQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
@@ -1518,7 +1518,7 @@ export default function CounselorQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
@@ -1616,13 +1616,13 @@ export default function CounselorQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -1712,7 +1712,7 @@ export default function CounselorQA() {
                   </View>
                 </View>
                 <TextInput
-                  placeholder="Type your answer here"
+                  placeholder="Type your answer"
                   value={content}
                   onChangeText={setContent}
                   style={{
@@ -1720,8 +1720,11 @@ export default function CounselorQA() {
                     borderWidth: 1,
                     borderRadius: 10,
                     padding: 12,
+                    height: 100,
                     backgroundColor: "#fff",
                     fontSize: 16,
+                    marginTop: 8,
+                    marginBottom: 12,
                     textAlignVertical: "top",
                   }}
                   multiline
@@ -1880,13 +1883,13 @@ export default function CounselorQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -1969,18 +1972,19 @@ export default function CounselorQA() {
                   </View>
                 </View>
                 <TextInput
-                  placeholder="Write your question content here"
+                  placeholder="Type your answer"
                   value={content}
                   onChangeText={setContent}
                   style={{
-                    borderColor: "gray",
+                    borderColor: "#ccc",
                     borderWidth: 1,
                     borderRadius: 10,
                     padding: 12,
                     height: 100,
-                    backgroundColor: "#ededed",
+                    backgroundColor: "#fff",
                     fontSize: 16,
-                    marginVertical: 12,
+                    marginTop: 8,
+                    marginBottom: 12,
                     textAlignVertical: "top",
                   }}
                   multiline
@@ -2174,7 +2178,7 @@ export default function CounselorQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
@@ -2261,9 +2265,9 @@ export default function CounselorQA() {
           </View>
         </Modal>
         <Modal
-          animationType="slide"
           transparent={true}
           visible={openInfo}
+          animationType="slide"
           onRequestClose={() => setOpenInfo(false)}
         >
           <View
@@ -2271,13 +2275,13 @@ export default function CounselorQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -2581,111 +2585,119 @@ export default function CounselorQA() {
                       )}
                     </View>
                   )}
-                  {info.status == "PENDING" && (
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => (
-                          setOpenReject(true),
-                          setSelectedQuestion(info),
-                          setValue("REJECTED")
-                        )}
-                        style={{
-                          width: "49%",
-                          marginRight: 8,
-                          marginBottom: 8,
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          borderWidth: 1.5,
-                          borderColor: "red",
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <MaterialIcons name="cancel" size={20} color="red" />
-                        <Text
-                          style={{
-                            fontWeight: "500",
-                            color: "red",
-                            fontSize: 20,
-                            marginLeft: 4,
-                          }}
-                        >
-                          Cancel
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => (
-                          setOpenFlag(true), setSelectedQuestion(info)
-                        )}
-                        style={{
-                          width: "49%",
-                          marginBottom: 8,
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          borderWidth: 1.5,
-                          borderColor: "gray",
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Ionicons name="flag" size={20} color="gray" />
-                        <Text
-                          style={{
-                            fontWeight: "500",
-                            color: "gray",
-                            fontSize: 20,
-                            marginLeft: 4,
-                          }}
-                        >
-                          Flag
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  {info?.answer !== null && info?.closed == false && (
+                </View>
+              </ScrollView>
+              <View
+                style={{
+                  paddingHorizontal: 20,
+                  paddingVertical: 8,
+                  backgroundColor: "#f5f7fd",
+                }}
+              >
+                {info.status == "PENDING" && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
                     <TouchableOpacity
                       onPress={() => (
-                        setOpenCloseConfirm(true), setSelectedQuestion(info)
+                        setOpenReject(true),
+                        setSelectedQuestion(info),
+                        setValue("REJECTED")
                       )}
                       style={{
+                        width: "49%",
+                        marginRight: 8,
                         marginBottom: 8,
                         paddingHorizontal: 8,
-                        paddingVertical: 8,
+                        paddingVertical: 4,
                         backgroundColor: "white",
                         borderRadius: 10,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
                         borderWidth: 1.5,
-                        borderColor: "#F39300",
+                        borderColor: "red",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                     >
-                      <Ionicons name="lock-closed" size={20} color="#F39300" />
+                      <MaterialIcons name="cancel" size={20} color="red" />
                       <Text
                         style={{
                           fontWeight: "500",
-                          color: "#F39300",
+                          color: "red",
                           fontSize: 20,
-                          marginLeft: 8,
+                          marginLeft: 4,
                         }}
                       >
-                        Close Question
+                        Cancel
                       </Text>
                     </TouchableOpacity>
-                  )}
-                </View>
-              </ScrollView>
+                    <TouchableOpacity
+                      onPress={() => (
+                        setOpenFlag(true), setSelectedQuestion(info)
+                      )}
+                      style={{
+                        width: "49%",
+                        marginBottom: 8,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        borderWidth: 1.5,
+                        borderColor: "gray",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons name="flag" size={20} color="gray" />
+                      <Text
+                        style={{
+                          fontWeight: "500",
+                          color: "gray",
+                          fontSize: 20,
+                          marginLeft: 4,
+                        }}
+                      >
+                        Flag
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {info?.answer !== null && info?.closed == false && (
+                  <TouchableOpacity
+                    onPress={() => (
+                      setOpenCloseConfirm(true), setSelectedQuestion(info)
+                    )}
+                    style={{
+                      marginBottom: 8,
+                      paddingHorizontal: 8,
+                      paddingVertical: 8,
+                      backgroundColor: "white",
+                      borderRadius: 10,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderWidth: 1.5,
+                      borderColor: "#F39300",
+                    }}
+                  >
+                    <Ionicons name="lock-closed" size={20} color="#F39300" />
+                    <Text
+                      style={{
+                        fontWeight: "500",
+                        color: "#F39300",
+                        fontSize: 20,
+                        marginLeft: 8,
+                      }}
+                    >
+                      Close Question
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           </View>
         </Modal>
@@ -2794,9 +2806,9 @@ export default function CounselorQA() {
           </View>
         </Modal>
         <Modal
-          animationType="slide"
           transparent={true}
           visible={openChat}
+          animationType="slide"
           onRequestClose={() => setOpenChat(false)}
           onShow={() => {
             if (scrollViewRef2.current) {
@@ -2811,13 +2823,13 @@ export default function CounselorQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -2857,23 +2869,32 @@ export default function CounselorQA() {
                       style={{
                         flexDirection: "column",
                         alignSelf: "flex-start",
+                        marginLeft: 8,
                       }}
                     >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "bold",
-                          opacity: 0.5,
-                          marginLeft: 8,
-                        }}
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
                       >
-                        Now chatting
-                      </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: "bold",
+                            opacity: 0.5,
+                            marginRight: 8,
+                          }}
+                        >
+                          Now chatting
+                        </Text>
+                        <Ionicons
+                          name="chevron-forward"
+                          size={18}
+                          color="#F39300"
+                        />
+                      </View>
                       <Text
                         style={{
                           fontSize: 20,
                           fontWeight: "bold",
-                          marginLeft: 8,
                         }}
                       >
                         {selectedQuestion?.student?.profile?.fullName?.length >
@@ -2884,9 +2905,6 @@ export default function CounselorQA() {
                             ) + "..."
                           : selectedQuestion?.student?.profile?.fullName}
                       </Text>
-                    </View>
-                    <View style={{ marginLeft: 12 }}>
-                      <Ionicons name="chevron-down" size={20} color="#F39300" />
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity

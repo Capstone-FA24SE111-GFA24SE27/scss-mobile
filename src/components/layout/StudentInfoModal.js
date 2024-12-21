@@ -336,13 +336,13 @@ export default function StudentInfoModal({
           flex: 1,
           justifyContent: "flex-end",
           alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.2)",
+          backgroundColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
         <View
           style={{
             width: "100%",
-            height: "98%",
+            height: "90%",
             backgroundColor: "#f5f7fd",
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
@@ -1289,13 +1289,13 @@ export default function StudentInfoModal({
                       flex: 1,
                       justifyContent: "flex-end",
                       alignItems: "center",
-                      backgroundColor: "rgba(0, 0, 0, 0.2)",
+                      backgroundColor: "rgba(0, 0, 0, 0.1)",
                     }}
                   >
                     <View
                       style={{
                         width: "100%",
-                        height: "98%",
+                        height: "90%",
                         backgroundColor: "#f5f7fd",
                         borderTopLeftRadius: 16,
                         borderTopRightRadius: 16,
@@ -2712,13 +2712,13 @@ export default function StudentInfoModal({
                       flex: 1,
                       justifyContent: "flex-end",
                       alignItems: "center",
-                      backgroundColor: "rgba(0, 0, 0, 0.2)",
+                      backgroundColor: "rgba(0, 0, 0, 0.1)",
                     }}
                   >
                     <View
                       style={{
                         width: "100%",
-                        height: "98%",
+                        height: "90%",
                         backgroundColor: "#f5f7fd",
                         borderTopLeftRadius: 16,
                         borderTopRightRadius: 16,
@@ -3004,7 +3004,7 @@ export default function StudentInfoModal({
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                                marginBottom: 16,
+                                // marginBottom: 16,
                               }}
                             >
                               <View
@@ -3048,7 +3048,7 @@ export default function StudentInfoModal({
                                 </Text>
                               </View>
                             </View>
-                            <View
+                            {/* <View
                               style={{
                                 flexDirection: "row",
                                 justifyContent: "space-between",
@@ -3107,7 +3107,7 @@ export default function StudentInfoModal({
                                     : historyInfo?.address || "N/A"}
                                 </Text>
                               </View>
-                            </View>
+                            </View> */}
                           </View>
                           {historyInfo?.appointmentFeedback !== null ? (
                             <View
@@ -3254,7 +3254,7 @@ export default function StudentInfoModal({
                       flex: 1,
                       justifyContent: "flex-end",
                       alignItems: "center",
-                      backgroundColor: "rgba(0, 0, 0, 0.2)",
+                      backgroundColor: "rgba(0, 0, 0, 0.1)",
                     }}
                   >
                     <View

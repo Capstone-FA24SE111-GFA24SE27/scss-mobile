@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  Pressable,
   ScrollView,
   Image,
   Animated,
@@ -225,12 +224,13 @@ export default function Personal() {
                 </View>
               </View>
             </View>
-            <Pressable
-              style={{ justifyContent: "flex-end" }}
+            <TouchableOpacity
+              activeOpacity={0.7}
               onPress={() => navigation.navigate("Profile")}
+              style={{ justifyContent: "flex-end" }}
             >
               <Ionicons name="arrow-forward-circle" size={40} color="#F39300" />
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
         <View

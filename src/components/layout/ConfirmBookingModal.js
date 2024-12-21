@@ -1,5 +1,12 @@
 import React from "react";
-import { Modal, View, Text, TouchableOpacity, Dimensions } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 export default function ConfirmBookingModal({
@@ -26,12 +33,13 @@ export default function ConfirmBookingModal({
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          backgroundColor: "rgba(0, 0, 0, 0.1)",
         }}
       >
         <View
           style={{
             width: width * 0.9,
+            maxHeight: "90%",
             padding: 20,
             backgroundColor: "white",
             borderRadius: 10,
@@ -48,39 +56,60 @@ export default function ConfirmBookingModal({
           >
             Booking Confirmation
           </Text>
-          <View
-            style={{
-              paddingHorizontal: 8,
-              paddingVertical: 12,
-              borderWidth: 1.5,
-              borderColor: "#e3e3e3",
-              borderRadius: 10,
-            }}
-          >
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
+                paddingHorizontal: 8,
+                paddingVertical: 12,
+                borderWidth: 1.5,
+                borderColor: "#e3e3e3",
+                borderRadius: 10,
               }}
             >
               <View
                 style={{
                   flexDirection: "row",
+                  justifyContent: "space-between",
                   alignItems: "center",
-                  marginBottom: 8,
                 }}
               >
-                <Ionicons name="calendar" size={20} color="#F39300" />
-                <Text
+                <View
                   style={{
-                    fontSize: 16,
-                    fontWeight: "600",
-                    marginLeft: 8,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 8,
                   }}
                 >
-                  {selectedDate}
-                </Text>
+                  <Ionicons name="calendar" size={20} color="#F39300" />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      marginLeft: 8,
+                    }}
+                  >
+                    {selectedDate}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 8,
+                  }}
+                >
+                  <Ionicons name="time" size={20} color="#F39300" />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      marginLeft: 8,
+                    }}
+                  >
+                    {selectedSlot?.startTime?.slice(0, 5)} -{" "}
+                    {selectedSlot?.endTime?.slice(0, 5)}
+                  </Text>
+                </View>
               </View>
               <View
                 style={{
@@ -89,100 +118,82 @@ export default function ConfirmBookingModal({
                   marginBottom: 8,
                 }}
               >
-                <Ionicons name="time" size={20} color="#F39300" />
-                <Text
+                <MaterialIcons name="meeting-room" size={20} color="#F39300" />
+                <View
                   style={{
-                    fontSize: 16,
-                    fontWeight: "600",
+                    backgroundColor: "#F39300",
+                    borderRadius: 20,
+                    paddingVertical: 2,
+                    paddingHorizontal: 12,
                     marginLeft: 8,
                   }}
                 >
-                  {selectedSlot?.startTime?.slice(0, 5)} -{" "}
-                  {selectedSlot?.endTime?.slice(0, 5)}
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      color: "white",
+                    }}
+                  >
+                    {online ? "ONLINE" : "OFFLINE"}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 8,
-              }}
-            >
-              <MaterialIcons name="meeting-room" size={20} color="#F39300" />
               <View
                 style={{
+                  height: 1,
                   backgroundColor: "#F39300",
-                  borderRadius: 20,
-                  paddingVertical: 2,
-                  paddingHorizontal: 12,
-                  marginLeft: 8,
+                  marginBottom: 8,
                 }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "600",
-                    color: "white",
-                  }}
-                >
-                  {online ? "ONLINE" : "OFFLINE"}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                height: 1,
-                backgroundColor: "#F39300",
-                marginBottom: 8,
-              }}
-            />
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-start",
-                marginBottom: 8,
-              }}
-            >
-              <MaterialIcons name="notes" size={20} color="#F39300" />
-              <Text
+              />
+              <View
                 style={{
-                  fontSize: 16,
-                  fontWeight: "400",
-                  marginLeft: 8,
-                  maxWidth: "90%",
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  marginBottom: 8,
                 }}
               >
-                {reason}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-start",
-              }}
-            >
-              <Ionicons name="person" size={20} color="#F39300" />
-              <View style={{ marginLeft: 8, maxWidth: "90%" }}>
+                <MaterialIcons name="notes" size={20} color="#F39300" />
                 <Text
                   style={{
                     fontSize: 16,
-                    fontWeight: "500",
+                    fontWeight: "400",
+                    marginLeft: 8,
+                    maxWidth: "90%",
                   }}
                 >
-                  {selectedCounselor?.profile?.fullName}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: "gray",
-                  }}
-                >
-                  {selectedCounselor?.expertise?.name || selectedCounselor?.major?.name}
+                  {reason}
                 </Text>
               </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Ionicons name="person" size={20} color="#F39300" />
+                <View style={{ marginLeft: 8, maxWidth: "90%" }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "500",
+                    }}
+                  >
+                    {selectedCounselor?.profile?.fullName}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "gray",
+                    }}
+                  >
+                    {selectedCounselor?.expertise?.name ||
+                      selectedCounselor?.major?.name}
+                  </Text>
+                </View>
+              </View>
             </View>
-          </View>
+          </ScrollView>
           <Text
             style={{
               fontSize: 18,

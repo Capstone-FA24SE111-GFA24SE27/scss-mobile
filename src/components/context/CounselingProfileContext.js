@@ -60,8 +60,8 @@ export const CounselingProfileProvider = ({ children }) => {
         text2: "Profile updated successfully!",
         onPress: () => {
           Toast.hide();
-        }
-      })
+        },
+      });
       setShowModal(false);
       fetchStudentDoc();
     } catch (err) {

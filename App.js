@@ -17,7 +17,12 @@ import {
   NotificationContext,
   NotificationProvider,
 } from "./src/components/context/NotificationContext";
-import Toast, { BaseToast, InfoToast, ErrorToast } from "react-native-toast-message";
+import Toast, {
+  BaseToast,
+  InfoToast,
+  ErrorToast,
+} from "react-native-toast-message";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "./src/config/Config";
 import axios from "axios"; // Ensure axios is imported
 import { ChatProvider } from "./src/components/context/ChatContext";
@@ -29,20 +34,31 @@ export default function App() {
       <BaseToast
         {...props}
         style={{
-          borderLeftColor: "#07bc0c",
-          borderLeftWidth: 12,
-          backgroundColor: "white",
+          // borderLeftColor: "#07bc0c",
+          // borderLeftWidth: 12,
+          flexDirection: "row",
+          alignItems: "center",
+          borderLeftWidth: 1,
+          borderRightWidth: 1,
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderColor: "#07bc0c",
+          backgroundColor: "#def1d1",
           borderRadius: 10,
           width: "90%",
-          height: 90,
+          height: 85,
+          paddingHorizontal: 8,
         }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 4 }}
+        renderLeadingIcon={() => (
+          <Ionicons name="checkmark-circle" size={32} color="#07bc0c" />
+        )}
         text1Style={{ fontSize: 20, color: "#07bc0c", fontWeight: "bold" }}
         text2Style={{
           fontSize: 16,
           fontWeight: "600",
-          color: "#333",
-          opacity: 0.85,
+          color: "#07bc0c",
+          opacity: 0.9,
         }}
         text2NumberOfLines={2}
       />
@@ -52,20 +68,31 @@ export default function App() {
       <InfoToast
         {...props}
         style={{
-          borderLeftColor: "#3498db",
-          borderLeftWidth: 12,
-          backgroundColor: "white",
+          // borderLeftColor: "#3498db",
+          // borderLeftWidth: 12,
+          flexDirection: "row",
+          alignItems: "center",
+          borderLeftWidth: 1,
+          borderRightWidth: 1,
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderColor: "#3498db",
+          backgroundColor: "#daeefc",
           borderRadius: 10,
           width: "90%",
-          height: 90,
+          height: 85,
+          paddingHorizontal: 8,
         }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 4 }}
+        renderLeadingIcon={() => (
+          <Ionicons name="information-circle" size={32} color="#3498db" />
+        )}
         text1Style={{ fontSize: 20, color: "#3498db", fontWeight: "bold" }}
         text2Style={{
           fontSize: 16,
           fontWeight: "600",
           color: "#333",
-          opacity: 0.85,
+          opacity: 0.9,
         }}
         text2NumberOfLines={2}
       />
@@ -75,20 +102,31 @@ export default function App() {
       <ErrorToast
         {...props}
         style={{
-          borderLeftColor: "#e74c3c",
-          borderLeftWidth: 12,
-          backgroundColor: "white",
+          // borderLeftColor: "#e74c3c",
+          // borderLeftWidth: 12,
+          flexDirection: "row",
+          alignItems: "center",
+          borderLeftWidth: 1,
+          borderRightWidth: 1,
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderColor: "#e74c3c",
+          backgroundColor: "#f7deda",
           borderRadius: 10,
           width: "90%",
-          height: 90,
+          height: 85,
+          paddingHorizontal: 8,
         }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 4 }}
+        renderLeadingIcon={() => (
+          <MaterialIcons name="error" size={32} color="#e74c3c" />
+        )}
         text1Style={{ fontSize: 20, color: "#e74c3c", fontWeight: "bold" }}
         text2Style={{
           fontSize: 16,
           fontWeight: "600",
-          color: "#333",
-          opacity: 0.85,
+          color: "#e74c3c",
+          opacity: 0.9,
         }}
         text2NumberOfLines={2}
       />
@@ -179,14 +217,14 @@ export default function App() {
       <SocketProvider>
         <NotificationProvider>
           <CounselingProfileProvider>
-          <ChatProvider>
-            <SafeAreaProvider>
-              <NavigationContainer ref={navigationRef} style={{ flex: 1 }}>
-                <Navigation />
-                <Toast config={toastConfig} />
-              </NavigationContainer>
-            </SafeAreaProvider>
-          </ChatProvider>
+            <ChatProvider>
+              <SafeAreaProvider>
+                <NavigationContainer ref={navigationRef} style={{ flex: 1 }}>
+                  <Navigation />
+                  <Toast config={toastConfig} />
+                </NavigationContainer>
+              </SafeAreaProvider>
+            </ChatProvider>
           </CounselingProfileProvider>
         </NotificationProvider>
       </SocketProvider>

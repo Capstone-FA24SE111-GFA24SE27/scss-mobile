@@ -1,7 +1,8 @@
 // Replace localhost with 192.168.x.x on local device
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-export const BASE_URL = "http://localhost:8080/api";
+import { REACT_APP_BASE_URL } from '@env';
+export const BASE_URL = `${REACT_APP_BASE_URL}:8080/api`;
 const axiosJWT = axios.create({
   baseURL: BASE_URL,
 });
