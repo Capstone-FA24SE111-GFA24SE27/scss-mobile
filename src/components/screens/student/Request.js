@@ -174,16 +174,6 @@ export default function Request({ route }) {
     fetchData(resetFilters);
   };
 
-  const handleOpenInfo = (info) => {
-    setInfo(info);
-    setOpenInfo(true);
-  };
-
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
-  };
-
   return (
     <>
       <View style={{ backgroundColor: "#f5f7fd", flex: 1 }}>
@@ -760,7 +750,7 @@ export default function Request({ route }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => handleOpenInfo(request)}
+                    onPress={() => (setInfo(request), setOpenInfo(true))}
                     style={{ position: "absolute", top: 0, right: -4 }}
                   >
                     <Ionicons
@@ -857,20 +847,20 @@ export default function Request({ route }) {
           transparent={true}
           visible={openInfo}
           animationType="slide"
-          onRequestClose={handleCloseInfo}
+          onRequestClose={() => (setInfo(""), setOpenInfo(false))}
         >
           <View
             style={{
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -887,7 +877,7 @@ export default function Request({ route }) {
                   alignSelf: "flex-start",
                   alignItems: "flex-start",
                 }}
-                onPress={handleCloseInfo}
+                onPress={() => (setInfo(""), setOpenInfo(false))}
               >
                 <Ionicons name="chevron-back" size={28} />
               </TouchableOpacity>

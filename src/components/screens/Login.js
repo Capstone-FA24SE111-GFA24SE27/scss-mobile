@@ -40,11 +40,11 @@ export default function Login() {
     setPasswordError("");
 
     if (!email) {
-      setEmailError("Email is empty.");
+      setEmailError("Email is empty");
       return;
     }
     if (!password) {
-      setPasswordError("Password is empty.");
+      setPasswordError("Password is empty");
       return;
     }
 
@@ -80,8 +80,16 @@ export default function Login() {
       // Alert.alert("Error", "An error occurred. Please try again.");
       console.log(error);
       setLoading(false);
-      setEmailError("Email or password incorrect.");
-      setPasswordError("Email or password incorrect.");
+      setEmailError("Email or password incorrect");
+      setPasswordError("Email or password incorrect");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Email or password incorrect",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
     } finally {
       setTimeout(() => {
         setLoading(false);

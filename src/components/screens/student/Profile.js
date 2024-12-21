@@ -143,7 +143,7 @@ export default function Profile({ route }) {
                       backgroundColor: "#F39300",
                       borderRadius: 30,
                       position: "absolute",
-                      right: 12,
+                      right: 20,
                       bottom: 0,
                     }}
                   >
@@ -175,23 +175,6 @@ export default function Profile({ route }) {
                 >
                   {userData?.email}
                 </Text>
-                <TouchableOpacity
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    right: 0,
-                    backgroundColor: "#F39300",
-                    borderRadius: 20,
-                    padding: 8,
-                  }}
-                  onPress={() => navigation.navigate("ViewProfile")}
-                >
-                  <Ionicons
-                    name="expand"
-                    size={20}
-                    style={{ color: "white" }}
-                  />
-                </TouchableOpacity>
               </View>
             </View>
             <View style={{ paddingHorizontal: 20, paddingVertical: 15 }}>
@@ -346,6 +329,45 @@ export default function Profile({ route }) {
                       </Text>
                     </View>
                   </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      marginTop: 16,
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        // position: "absolute",
+                        // bottom: 0,
+                        // right: 0,
+                        flex: 1,
+                        backgroundColor: "#F39300",
+                        borderRadius: 10,
+                        paddingVertical: 8,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexDirection: "row",
+                      }}
+                      onPress={() => navigation.navigate("ViewProfile")}
+                    >
+                      <Text
+                        style={{
+                          fontWeight: "500",
+                          color: "white",
+                          fontSize: 18,
+                          marginRight: 8,
+                        }}
+                      >
+                        Counseling Profile
+                      </Text>
+                      <Ionicons
+                        name="expand"
+                        size={24}
+                        style={{ color: "white" }}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
             </View>
@@ -353,14 +375,14 @@ export default function Profile({ route }) {
           <View
             style={{
               marginHorizontal: 20,
-              marginBottom: 12,
+              marginBottom: 8,
             }}
           >
             <Text
               style={{
                 fontSize: 14,
                 opacity: 0.45,
-                padding: width * 0.03,
+                padding: 12,
               }}
             >
               System
@@ -390,14 +412,14 @@ export default function Profile({ route }) {
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons
                     name="information-circle"
-                    size={width * 0.065}
-                    style={{ color: "#F39300", marginRight: 16 }}
+                    size={30}
+                    style={{ color: "#F39300", marginRight: 20 }}
                   />
                   <Text
                     style={{
                       color: "#333",
                       fontWeight: "600",
-                      fontSize: width * 0.045,
+                      fontSize: 18,
                     }}
                   >
                     Policies and terms
@@ -405,7 +427,7 @@ export default function Profile({ route }) {
                 </View>
                 <Ionicons
                   name="arrow-forward"
-                  size={width * 0.065}
+                  size={30}
                   style={{ color: "#e3e3e3" }}
                 />
               </View>
@@ -416,7 +438,7 @@ export default function Profile({ route }) {
                   marginVertical: 4,
                   width: "90%",
                 }}
-              ></View>
+              />
               <View
                 style={{
                   flexDirection: "row",
@@ -431,14 +453,14 @@ export default function Profile({ route }) {
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons
                     name="help-circle"
-                    size={width * 0.065}
-                    style={{ color: "#F39300", marginRight: 16 }}
+                    size={30}
+                    style={{ color: "#F39300", marginRight: 20 }}
                   />
                   <Text
                     style={{
                       color: "#333",
                       fontWeight: "600",
-                      fontSize: width * 0.045,
+                      fontSize: 18,
                     }}
                   >
                     Help
@@ -446,7 +468,7 @@ export default function Profile({ route }) {
                 </View>
                 <Ionicons
                   name="arrow-forward"
-                  size={width * 0.065}
+                  size={30}
                   style={{ color: "#e3e3e3" }}
                 />
               </View>
@@ -455,14 +477,14 @@ export default function Profile({ route }) {
           <View
             style={{
               marginHorizontal: 20,
-              marginBottom: 12,
+              marginBottom: 8,
             }}
           >
             <Text
               style={{
                 fontSize: 14,
                 opacity: 0.45,
-                padding: width * 0.03,
+                padding: 12,
               }}
             >
               Preferences
@@ -491,14 +513,14 @@ export default function Profile({ route }) {
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons
                     name="notifications-circle"
-                    size={width * 0.065}
+                    size={30}
                     style={{ color: "#F39300", marginRight: 16 }}
                   />
                   <Text
                     style={{
                       color: "#333",
                       fontWeight: "600",
-                      fontSize: width * 0.045,
+                      fontSize: 18,
                     }}
                   >
                     Push notifications
@@ -518,7 +540,7 @@ export default function Profile({ route }) {
                   marginVertical: 4,
                   width: "90%",
                 }}
-              ></View>
+              />
               <TouchableOpacity
                 onPress={() => navigation.navigate("ChangePassword")}
                 style={{
@@ -535,13 +557,13 @@ export default function Profile({ route }) {
                   <Ionicons
                     name="lock-closed"
                     size={width * 0.06}
-                    style={{ color: "#F39300", marginRight: 16 }}
+                    style={{ color: "#F39300", marginRight: 20 }}
                   />
                   <Text
                     style={{
                       color: "#333",
                       fontWeight: "600",
-                      fontSize: width * 0.045,
+                      fontSize: 18,
                     }}
                   >
                     Change password
@@ -549,7 +571,7 @@ export default function Profile({ route }) {
                 </View>
                 <Ionicons
                   name="arrow-forward"
-                  size={width * 0.065}
+                  size={30}
                   style={{ color: "#e3e3e3" }}
                 />
               </TouchableOpacity>
@@ -560,7 +582,7 @@ export default function Profile({ route }) {
                   marginVertical: 4,
                   width: "90%",
                 }}
-              ></View>
+              />
               <TouchableOpacity
                 onPress={handleLogout}
                 style={{
@@ -576,14 +598,14 @@ export default function Profile({ route }) {
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons
                     name="log-out-outline"
-                    size={width * 0.065}
+                    size={30}
                     style={{ color: "#F39300", marginRight: 16 }}
                   />
                   <Text
                     style={{
                       color: "#F39300",
                       fontWeight: "600",
-                      fontSize: width * 0.045,
+                      fontSize: 18,
                     }}
                   >
                     Logout
@@ -601,7 +623,7 @@ export default function Profile({ route }) {
                     flex: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    backgroundColor: "rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <View

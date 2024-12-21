@@ -649,7 +649,7 @@ export default function Student() {
               />
               <TextInput
                 placeholder="Search by Name"
-                placeholderTextColor="#F39300"
+                placeholderTextColor="gray"
                 value={keyword}
                 onChangeText={(value) => setKeyword(value)}
                 style={{
@@ -727,7 +727,7 @@ export default function Student() {
               />
               <TextInput
                 placeholder="Search by Prompt"
-                placeholderTextColor="#F39300"
+                placeholderTextColor="gray"
                 value={promptForBehavior}
                 onChangeText={(value) => setPromptForBehavior(value)}
                 style={{
@@ -2108,7 +2108,7 @@ export default function Student() {
           <View
             style={{
               flex: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -2341,7 +2341,7 @@ export default function Student() {
             <View
               style={{
                 flex: 1,
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -2457,13 +2457,13 @@ export default function Student() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -3421,13 +3421,13 @@ export default function Student() {
                           flex: 1,
                           justifyContent: "flex-end",
                           alignItems: "center",
-                          backgroundColor: "rgba(0, 0, 0, 0.2)",
+                          backgroundColor: "rgba(0, 0, 0, 0.1)",
                         }}
                       >
                         <View
                           style={{
                             width: "100%",
-                            height: "98%",
+                            height: "90%",
                             backgroundColor: "#f5f7fd",
                             borderTopLeftRadius: 16,
                             borderTopRightRadius: 16,
@@ -4881,13 +4881,13 @@ export default function Student() {
                           flex: 1,
                           justifyContent: "flex-end",
                           alignItems: "center",
-                          backgroundColor: "rgba(0, 0, 0, 0.2)",
+                          backgroundColor: "rgba(0, 0, 0, 0.1)",
                         }}
                       >
                         <View
                           style={{
                             width: "100%",
-                            height: "98%",
+                            height: "90%",
                             backgroundColor: "#f5f7fd",
                             borderTopLeftRadius: 16,
                             borderTopRightRadius: 16,
@@ -5180,7 +5180,7 @@ export default function Student() {
                                     flexDirection: "row",
                                     justifyContent: "space-between",
                                     alignItems: "center",
-                                    marginBottom: 16,
+                                    // marginBottom: 16,
                                   }}
                                 >
                                   <View
@@ -5224,7 +5224,7 @@ export default function Student() {
                                     </Text>
                                   </View>
                                 </View>
-                                <View
+                                {/* <View
                                   style={{
                                     flexDirection: "row",
                                     justifyContent: "space-between",
@@ -5283,7 +5283,7 @@ export default function Student() {
                                         : historyInfo?.address || "N/A"}
                                     </Text>
                                   </View>
-                                </View>
+                                </View> */}
                               </View>
                               {historyInfo?.appointmentFeedback !== null ? (
                                 <View
@@ -5430,7 +5430,7 @@ export default function Student() {
                           flex: 1,
                           justifyContent: "flex-end",
                           alignItems: "center",
-                          backgroundColor: "rgba(0, 0, 0, 0.2)",
+                          backgroundColor: "rgba(0, 0, 0, 0.1)",
                         }}
                       >
                         <View

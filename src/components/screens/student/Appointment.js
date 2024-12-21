@@ -935,13 +935,13 @@ export default function Appointment({ route }) {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -1255,35 +1255,54 @@ export default function Appointment({ route }) {
                       </View>
                       <TouchableOpacity
                         disabled={info.meetingType !== "ONLINE"}
-                        onPress={() =>
-                          Linking.openURL(`${info?.meetUrl}`).catch((err) => {
-                            console.log("Can't open this link", err);
+                        onPress={() => {
+                          if (
+                            new Date(info?.startDateTime) <= new Date() &&
+                            new Date() <= new Date(info?.endDateTime)
+                          ) {
+                            Linking.openURL(`${info?.meetUrl}`).catch((err) => {
+                              console.log("Can't open this link", err);
+                              Toast.show({
+                                type: "error",
+                                text1: "Error",
+                                text2: "Can't open this link",
+                                onPress: () => {
+                                  Toast.hide();
+                                },
+                              });
+                            });
+                          } else {
                             Toast.show({
                               type: "error",
                               text1: "Error",
-                              text2: "Can't open this link",
+                              text2: "The meeting time hasn't started yet",
+                              onPress: () => {
+                                Toast.hide();
+                              },
                             });
-                          })
-                        }
-                        style={{ maxWidth: "45%" }}
+                          }
+                        }}
                       >
                         <Text
                           style={{
                             fontSize: 18,
                             fontWeight: "bold",
                             color:
-                              info.meetingType === "ONLINE"
+                              info.meetingType === "ONLINE" &&
+                              (new Date(info?.startDateTime) > new Date() ||
+                                new Date() > new Date(info?.endDateTime))
+                                ? "gray"
+                                : info.meetingType === "ONLINE"
                                 ? "#F39300"
                                 : "#333",
                             textDecorationLine:
                               info.meetingType === "ONLINE"
                                 ? "underline"
                                 : "none",
-                            textAlign: "right",
                           }}
                         >
                           {info.meetingType === "ONLINE"
-                            ? info?.meetUrl || "N/A"
+                            ? "Meet URL" || "N/A"
                             : info?.address || "N/A"}
                         </Text>
                       </TouchableOpacity>
@@ -1614,7 +1633,7 @@ export default function Appointment({ route }) {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View

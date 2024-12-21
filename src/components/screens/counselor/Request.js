@@ -183,16 +183,6 @@ export default function Request({ route }) {
     setIsExpanded(false);
   };
 
-  const handleOpenInfo = (info) => {
-    setInfo(info);
-    setOpenInfo(true);
-  };
-
-  const handleCloseInfo = () => {
-    setInfo("");
-    setOpenInfo(false);
-  };
-
   const handleOpenConfirmDeny = (id) => {
     setOpenConfirmDeny(true);
     setSelectedRequest(id);
@@ -236,6 +226,20 @@ export default function Request({ route }) {
 
   const handleApproveRequest = async () => {
     try {
+      if (method === "ONLINE") {
+        const validFormat = /^https:\/\/meet\.google\.com\//;
+        if (!validFormat.test(value)) {
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "This isn't a valid meeting URL.",
+            onPress: () => {
+              Toast.hide();
+            },
+          });
+          return;
+        }
+      }
       const dataToSend =
         method === "ONLINE" ? { meetUrl: value } : { address: value };
       const response = await axiosJWT.put(
@@ -277,10 +281,6 @@ export default function Request({ route }) {
     setValue("");
     setSelectedRequest(null);
     setOpenConfirm(false);
-  };
-
-  const handleCloseSuccess = () => {
-    setOpenSuccess(false);
   };
 
   return (
@@ -859,7 +859,7 @@ export default function Request({ route }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => handleOpenInfo(request)}
+                    onPress={() => (setInfo(request), setOpenInfo(true))}
                     style={{ position: "absolute", top: 0, right: -4 }}
                   >
                     <Ionicons
@@ -1236,7 +1236,7 @@ export default function Request({ route }) {
                         transparent={true}
                         visible={openSuccess}
                         animationType="fade"
-                        onRequestClose={handleCloseSuccess}
+                        onRequestClose={() => setOpenSuccess(false)}
                       >
                         <View
                           style={{
@@ -1285,7 +1285,7 @@ export default function Request({ route }) {
                                 justifyContent: "center",
                                 alignItems: "center",
                               }}
-                              onPress={handleCloseSuccess}
+                              onPress={() => setOpenSuccess(false)}
                               activeOpacity={0.8}
                             >
                               <Text
@@ -1320,20 +1320,20 @@ export default function Request({ route }) {
           transparent={true}
           visible={openInfo}
           animationType="slide"
-          onRequestClose={handleCloseInfo}
+          onRequestClose={() => (setInfo(""), setOpenInfo(false))}
         >
           <View
             style={{
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
             }}
           >
             <View
               style={{
                 width: "100%",
-                height: "98%",
+                height: "90%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -1350,7 +1350,7 @@ export default function Request({ route }) {
                   alignSelf: "flex-start",
                   alignItems: "flex-start",
                 }}
-                onPress={handleCloseInfo}
+                onPress={() => (setInfo(""), setOpenInfo(false))}
               >
                 <Ionicons name="chevron-back" size={28} />
               </TouchableOpacity>

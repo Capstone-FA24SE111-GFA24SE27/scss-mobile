@@ -398,13 +398,13 @@ export default function Schedule() {
                 flex: 1,
                 justifyContent: "flex-end",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.2)",
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
               }}
             >
               <View
                 style={{
                   width: "100%",
-                  height: "98%",
+                  height: "90%",
                   backgroundColor: "#f5f7fd",
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
@@ -525,7 +525,6 @@ export default function Schedule() {
                     </TouchableOpacity>
                     <View
                       style={{
-                        flexDirection: "row",
                         padding: 16,
                         backgroundColor: "white",
                         borderRadius: 10,
@@ -558,7 +557,6 @@ export default function Schedule() {
                     </View>
                     <View
                       style={{
-                        flexDirection: "row",
                         padding: 16,
                         backgroundColor: "white",
                         borderRadius: 10,
@@ -746,24 +744,48 @@ export default function Schedule() {
                         </View>
                         <TouchableOpacity
                           disabled={info.meetingType !== "ONLINE"}
-                          onPress={() =>
-                            Linking.openURL(`${info.place}`).catch((err) => {
-                              console.log("Can't open this link", err);
+                          onPress={() => {
+                            if (
+                              info.date + "T" + info.startTime <=
+                              new Date().toISOString() <=
+                              info.date + "T" + info.endTime
+                            ) {
+                              Linking.openURL(`${info.place}`).catch((err) => {
+                                console.log("Can't open this link", err);
+                                Toast.show({
+                                  type: "error",
+                                  text1: "Error",
+                                  text2: "Can't open this link",
+                                  onPress: () => {
+                                    Toast.hide();
+                                  },
+                                });
+                              });
+                            } else {
                               Toast.show({
                                 type: "error",
                                 text1: "Error",
-                                text2: "Can't open this link",
+                                text2: "The meeting time hasn't started yet",
+                                onPress: () => {
+                                  Toast.hide();
+                                },
                               });
-                            })
-                          }
-                          style={{ maxWidth: "45%" }}
+                            }
+                          }}
                         >
                           <Text
                             style={{
                               fontSize: 18,
                               fontWeight: "bold",
                               color:
-                                info.meetingType === "ONLINE"
+                                info.meetingType === "ONLINE" &&
+                                !(
+                                  info.date + "T" + info.startTime <=
+                                  new Date().toISOString() <=
+                                  info.date + "T" + info.endTime
+                                )
+                                  ? "gray"
+                                  : info.meetingType === "ONLINE"
                                   ? "#F39300"
                                   : "#333",
                               textDecorationLine:
@@ -772,7 +794,9 @@ export default function Schedule() {
                                   : "none",
                             }}
                           >
-                            {info.place}
+                            {info.meetingType === "ONLINE"
+                              ? "Meet URL"
+                              : info.place}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -872,7 +896,6 @@ export default function Schedule() {
                     ) : (
                       <View
                         style={{
-                          flexDirection: "row",
                           padding: 16,
                           backgroundColor: "white",
                           borderRadius: 10,
@@ -938,7 +961,7 @@ export default function Schedule() {
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
               }}
             >
               <View
