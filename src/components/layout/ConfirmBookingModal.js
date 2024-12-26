@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Modal,
   View,
@@ -8,18 +8,198 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { AuthContext } from "../context/AuthContext";
+import { SocketContext } from "../context/SocketContext";
+import axiosJWT, { BASE_URL } from "../../config/Config";
 
 export default function ConfirmBookingModal({
   openConfirm,
   setOpenConfirm,
   selectedDate,
   selectedSlot,
+  setSelectedSlot,
   online,
   reason,
   selectedCounselor,
   onPress,
 }) {
   const { width, height } = Dimensions.get("screen");
+  const { userData, profile } = useContext(AuthContext);
+  const socket = useContext(SocketContext);
+  const [loading, setLoading] = useState(false);
+  const [slots, setSlots] = useState([]);
+  const [repick, setRepick] = useState(false);
+
+  const fetchSlots = async () => {
+    try {
+      const response = await axiosJWT.get(
+        `${BASE_URL}/counselors/counseling-slot`,
+        {
+          params: {
+            date: selectedDate,
+          },
+        }
+      );
+      setSlots(response.data.content);
+      setLoading(false);
+    } catch (err) {
+      console.log("Can't fetch slots on this day", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't fetch slot on this day",
+        onPress: () => Toast.hide(),
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(`/user/${userData?.id}/appointment`, (data) => {
+        console.log(data);
+        fetchSlots();
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off(`/user/${userData?.id}/appointment`);
+      }
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    fetchSlots();
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (selectedSlot != "" || selectedSlot != null) {
+      setRepick(true);
+    } else {
+      setRepick(false);
+    }
+  }, [selectedSlot]);
+
+  const renderSlotsForSelectedDate = () => {
+    if (loading) {
+      return (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginVertical: width * 0.075,
+          }}
+        >
+          <ActivityIndicator size={40} color="#F39300" animating />
+        </View>
+      );
+    }
+    if (slots.length == 0) {
+      return (
+        <Text
+          style={{
+            fontWeight: "400",
+            fontSize: 18,
+            fontStyle: "italic",
+            fontWeight: "600",
+            textAlign: "center",
+            color: "gray",
+            opacity: 0.7,
+            marginVertical: 8,
+          }}
+        >
+          No available slots for {selectedDate}
+        </Text>
+      );
+    }
+    return (
+      <View
+        style={{
+          flexWrap: "wrap",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginBottom: 8,
+        }}
+      >
+        {slots.map((slot, index) => (
+          <TouchableOpacity
+            key={slot.slotId}
+            onPress={() => {
+              console.log(selectedDate, slot.slotId);
+              setSelectedSlot(slot);
+            }}
+            disabled={
+              slot.status === "EXPIRED" ||
+              slot.myAppointment === true ||
+              slot.status === "UNAVAILABLE"
+            }
+            style={{
+              width: "48%",
+              padding: 6,
+              marginVertical: 4,
+              marginRight: 4,
+              backgroundColor:
+                slot.myAppointment === true
+                  ? "#F39300"
+                  : selectedSlot.slotId === slot.slotId &&
+                    slot.status !== "EXPIRED"
+                  ? "white"
+                  : slot.status === "EXPIRED"
+                  ? "#ededed"
+                  : slot.status === "AVAILABLE"
+                  ? "white"
+                  : "#ededed",
+              alignItems: "center",
+              borderRadius: 10,
+              borderWidth: 1.5,
+              borderColor:
+                slot.myAppointment === true
+                  ? "transparent"
+                  : selectedSlot.slotId === slot.slotId &&
+                    slot.status !== "EXPIRED"
+                  ? "#F39300"
+                  : slot.status === "EXPIRED"
+                  ? "transparent"
+                  : slot.status === "AVAILABLE"
+                  ? "black"
+                  : "transparent",
+            }}
+          >
+            {selectedSlot.slotId === slot.slotId &&
+              slot.status !== "EXPIRED" &&
+              slot.status !== "UNAVAILABLE" &&
+              slot.myAppointment !== true && (
+                <View style={{ position: "absolute", top: -12, right: -8 }}>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={24}
+                    style={{ color: "#F39300" }}
+                  />
+                </View>
+              )}
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "600",
+                color:
+                  slot.myAppointment === true
+                    ? "white"
+                    : selectedSlot.slotId === slot.slotId &&
+                      slot.status !== "EXPIRED"
+                    ? "#F39300"
+                    : slot.status === "EXPIRED"
+                    ? "gray"
+                    : slot.status === "AVAILABLE"
+                    ? "black"
+                    : "gray",
+              }}
+            >
+              {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
 
   return (
     <Modal
@@ -50,7 +230,7 @@ export default function ConfirmBookingModal({
             style={{
               fontSize: 22,
               fontWeight: "bold",
-              marginBottom: 10,
+              marginBottom: 12,
               textAlign: "center",
             }}
           >
@@ -69,48 +249,62 @@ export default function ConfirmBookingModal({
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
                   alignItems: "center",
+                  marginBottom: 8,
                 }}
               >
-                <View
+                <Ionicons name="calendar" size={20} color="#F39300" />
+                <Text
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginBottom: 8,
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginLeft: 8,
                   }}
                 >
-                  <Ionicons name="calendar" size={20} color="#F39300" />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "600",
-                      marginLeft: 8,
-                    }}
-                  >
-                    {selectedDate}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginBottom: 8,
-                  }}
-                >
-                  <Ionicons name="time" size={20} color="#F39300" />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "600",
-                      marginLeft: 8,
-                    }}
-                  >
-                    {selectedSlot?.startTime?.slice(0, 5)} -{" "}
-                    {selectedSlot?.endTime?.slice(0, 5)}
-                  </Text>
-                </View>
+                  {selectedDate}
+                </Text>
               </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 8,
+                }}
+              >
+                <Ionicons name="time" size={20} color="#F39300" />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginLeft: 8,
+                  }}
+                >
+                  {selectedSlot == "" || selectedSlot == null
+                    ? "Select a slot"
+                    : `${selectedSlot?.startTime?.slice(
+                        0,
+                        5
+                      )} - ${selectedSlot?.endTime?.slice(0, 5)}`}
+                </Text>
+                {selectedSlot && (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      setSelectedSlot("");
+                      setRepick(true);
+                    }}
+                  >
+                    <Ionicons
+                      name="refresh"
+                      size={20}
+                      style={{ marginLeft: 8, color: "#F39300" }}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+              {(selectedSlot == "" || selectedSlot == null) &&
+                repick &&
+                renderSlotsForSelectedDate()}
               <View
                 style={{
                   flexDirection: "row",
@@ -242,6 +436,8 @@ export default function ConfirmBookingModal({
                 borderRadius: 10,
                 justifyContent: "center",
                 alignItems: "center",
+                borderWidth: 1,
+                borderColor: "#F39300",
               }}
               onPress={onPress}
             >

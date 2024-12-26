@@ -57,6 +57,7 @@ const GatherInfo = ({
         </Text>
         <TextInput
           value={value}
+          placeholder="Please input here"
           onChangeText={(value) => handleInputChange(key, value)}
           style={{
             fontSize: 18,

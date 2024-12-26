@@ -533,6 +533,7 @@ export default function Schedule() {
                 selectedDayBackgroundColor: "white",
                 selectedDayTextColor: "#F39300",
                 arrowColor: "#F39300",
+                monthTextColor: "#F39300",
                 textDayHeaderFontSize: 14,
                 textDayFontSize: 16,
                 todayTextColor: "black",
@@ -562,122 +563,6 @@ export default function Schedule() {
               }}
             />
           </CalendarProvider>
-          <Modal
-            transparent={true}
-            visible={openAttendance}
-            animationType="slide"
-            onRequestClose={handleCloseTakeAttendance}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <View
-                style={{
-                  width: width * 0.85,
-                  padding: 20,
-                  backgroundColor: "white",
-                  borderRadius: 15,
-                  elevation: 10,
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 20,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 22,
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      color: "#333",
-                    }}
-                  >
-                    Take Attendance
-                  </Text>
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: "#ededed",
-                      padding: 6,
-                      borderRadius: 30,
-                      alignSelf: "flex-end",
-                    }}
-                    onPress={handleCloseTakeAttendance}
-                  >
-                    <Ionicons name="close" size={24} />
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                  }}
-                >
-                  {["ABSENT", "ATTEND"].map((item) => {
-                    const isSelected = item === value;
-                    const itemColor = item === "ATTEND" ? "green" : "red";
-                    return (
-                      <TouchableOpacity
-                        key={item}
-                        onPress={() => setValue(item)}
-                        style={{
-                          flex: 0.5,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          marginVertical: 6,
-                        }}
-                      >
-                        <Ionicons
-                          name={
-                            isSelected ? "radio-button-on" : "radio-button-off"
-                          }
-                          size={22}
-                          color={isSelected ? itemColor : "gray"}
-                          style={{ marginRight: 8 }}
-                        />
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: isSelected ? "600" : "400",
-                            color: isSelected ? itemColor : "black",
-                          }}
-                        >
-                          {item}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-                <TouchableOpacity
-                  onPress={handleTakeAttendance}
-                  style={{
-                    marginTop: 20,
-                    backgroundColor: "#F39300",
-                    paddingVertical: 8,
-                    borderRadius: 10,
-                  }}
-                >
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: 18,
-                    }}
-                  >
-                    Save
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
           <Modal
             transparent={true}
             visible={openInfo}
@@ -896,10 +781,10 @@ export default function Schedule() {
                     </View>
                     <View
                       style={{
-                        backgroundColor: "white",
-                        borderRadius: 10,
-                        padding: 20,
                         marginBottom: 20,
+                        padding: 16,
+                        backgroundColor: "white",
+                        borderRadius: 12,
                         elevation: 1,
                         borderWidth: 1.5,
                         borderColor: "#e3e3e3",
@@ -910,7 +795,7 @@ export default function Schedule() {
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          marginVertical: 12,
+                          marginBottom: 16,
                         }}
                       >
                         <View
@@ -942,17 +827,10 @@ export default function Schedule() {
                       </View>
                       <View
                         style={{
-                          borderTopWidth: 1,
-                          borderColor: "lightgrey",
-                          marginVertical: 4,
-                        }}
-                      />
-                      <View
-                        style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          marginVertical: 12,
+                          marginBottom: 16,
                         }}
                       >
                         <View
@@ -984,17 +862,10 @@ export default function Schedule() {
                       </View>
                       <View
                         style={{
-                          borderTopWidth: 1,
-                          borderColor: "lightgrey",
-                          marginVertical: 4,
-                        }}
-                      />
-                      <View
-                        style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          marginVertical: 12,
+                          marginBottom: 16,
                         }}
                       >
                         <View
@@ -1037,17 +908,9 @@ export default function Schedule() {
                       </View>
                       <View
                         style={{
-                          borderTopWidth: 1,
-                          borderColor: "lightgrey",
-                          marginVertical: 4,
-                        }}
-                      />
-                      <View
-                        style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "flex-start",
-                          marginVertical: 12,
                         }}
                       >
                         <View
@@ -1337,10 +1200,10 @@ export default function Schedule() {
                     {info?.feedback !== null ? (
                       <View
                         style={{
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          padding: 20,
                           marginBottom: 20,
+                          padding: 16,
+                          backgroundColor: "white",
+                          borderRadius: 12,
                           elevation: 1,
                           borderWidth: 1.5,
                           borderColor: "#e3e3e3",
@@ -1425,10 +1288,10 @@ export default function Schedule() {
                     ) : (
                       <View
                         style={{
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          padding: 20,
                           marginBottom: 20,
+                          padding: 16,
+                          backgroundColor: "white",
+                          borderRadius: 12,
                           elevation: 1,
                           borderWidth: 1.5,
                           borderColor: "#e3e3e3",
@@ -1452,6 +1315,122 @@ export default function Schedule() {
                     )}
                   </View>
                 </ScrollView>
+              </View>
+            </View>
+          </Modal>
+          <Modal
+            transparent={true}
+            visible={openAttendance}
+            animationType="slide"
+            onRequestClose={handleCloseTakeAttendance}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <View
+                style={{
+                  width: width * 0.85,
+                  padding: 20,
+                  backgroundColor: "white",
+                  borderRadius: 15,
+                  elevation: 10,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 22,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      color: "#333",
+                    }}
+                  >
+                    Take Attendance
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#ededed",
+                      padding: 6,
+                      borderRadius: 30,
+                      alignSelf: "flex-end",
+                    }}
+                    onPress={handleCloseTakeAttendance}
+                  >
+                    <Ionicons name="close" size={24} />
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                  }}
+                >
+                  {["ABSENT", "ATTEND"].map((item) => {
+                    const isSelected = item === value;
+                    const itemColor = item === "ATTEND" ? "green" : "red";
+                    return (
+                      <TouchableOpacity
+                        key={item}
+                        onPress={() => setValue(item)}
+                        style={{
+                          flex: 0.5,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginVertical: 6,
+                        }}
+                      >
+                        <Ionicons
+                          name={
+                            isSelected ? "radio-button-on" : "radio-button-off"
+                          }
+                          size={22}
+                          color={isSelected ? itemColor : "gray"}
+                          style={{ marginRight: 8 }}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: isSelected ? "600" : "400",
+                            color: isSelected ? itemColor : "black",
+                          }}
+                        >
+                          {item}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+                <TouchableOpacity
+                  onPress={handleTakeAttendance}
+                  style={{
+                    marginTop: 20,
+                    backgroundColor: "#F39300",
+                    paddingVertical: 8,
+                    borderRadius: 10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: 18,
+                    }}
+                  >
+                    Save
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>

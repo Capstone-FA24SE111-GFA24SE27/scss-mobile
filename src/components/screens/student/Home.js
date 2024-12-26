@@ -1174,7 +1174,7 @@ export default function Home() {
                         style={{
                           alignSelf: "flex-start",
                           marginHorizontal: 20,
-                          marginBottom: 4,
+                          marginBottom: 8,
                         }}
                       >
                         {/* <Text

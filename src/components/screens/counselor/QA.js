@@ -168,7 +168,7 @@ export default function QA() {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    setCurrentPage(1);
   }, [debouncedKeyword]);
 
   useEffect(() => {
@@ -238,7 +238,7 @@ export default function QA() {
           html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
             image
               ? `<img src="${image.uri}" style="max-width: ${
-                  width * 0.85
+                  width * 0.7
                 }px; height: auto;">`
               : ""
           }</div>`,
@@ -255,7 +255,7 @@ export default function QA() {
           html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content2}</p>${
             image2
               ? `<img src="${image2.uri}" style="max-width: ${
-                  width * 0.85
+                  width * 0.7
                 }px; height: auto;">`
               : ""
           }</div>`,
@@ -286,12 +286,12 @@ export default function QA() {
     try {
       const imageHTML = image
         ? `<img src="${image.uri}" style="max-width: ${
-            width * 0.85
+            width * 0.7
           }px; height: auto;">`
         : "";
       const imageHTML2 = image2
         ? `<img src="${image2.uri}" style="max-width: ${
-            width * 0.85
+            width * 0.7
           }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
@@ -346,12 +346,12 @@ export default function QA() {
     try {
       const imageHTML = image
         ? `<img src="${image.uri}" style="max-width: ${
-            width * 0.85
+            width * 0.7
           }px; height: auto;">`
         : "";
       const imageHTML2 = image2
         ? `<img src="${image2.uri}" style="max-width: ${
-            width * 0.85
+            width * 0.7
           }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
@@ -943,8 +943,11 @@ export default function QA() {
                             fontSize: 16,
                             fontWeight: "500",
                             color:
-                              item.name == category?.name ? "white" : item.name == "Clear"
-                              ? "red" : "black",
+                              item.name == category?.name
+                                ? "white"
+                                : item.name == "Clear"
+                                ? "red"
+                                : "black",
                           }}
                         >
                           {item.name}
@@ -1033,12 +1036,11 @@ export default function QA() {
               <View
                 key={question.id}
                 style={{
-                  padding: 16,
-                  marginVertical: 8,
+                  paddingHorizontal: 12,
+                  paddingVertical: 16,
                   backgroundColor: "white",
+                  marginVertical: 8,
                   borderRadius: 20,
-                  elevation: 1,
-                  position: "relative",
                   borderWidth: 1.5,
                   borderColor:
                     question?.counselor?.id == userData?.id
@@ -1203,7 +1205,7 @@ export default function QA() {
                             alignItems: "center",
                           }}
                         >
-                          <TouchableOpacity
+                          {/* <TouchableOpacity
                             style={{
                               marginRight: 8,
                               marginBottom: 8,
@@ -1241,7 +1243,7 @@ export default function QA() {
                               size={20}
                               color="#F39300"
                             />
-                          </TouchableOpacity>
+                          </TouchableOpacity> */}
                         </View>
                       )}
                     </View>
@@ -1265,7 +1267,7 @@ export default function QA() {
                   }}
                 >
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View
+                    {/* <View
                       style={{
                         alignItems: "center",
                         justifyContent: "center",
@@ -1330,7 +1332,7 @@ export default function QA() {
                       >
                         {question.status}
                       </Text>
-                    </View>
+                    </View> */}
                     <View
                       style={{
                         backgroundColor: "#F39300",
@@ -1339,7 +1341,7 @@ export default function QA() {
                         flexDirection: "row",
                         paddingVertical: 4,
                         paddingHorizontal: 8,
-                        marginLeft: 8,
+                        // marginLeft: 8,
                         borderRadius: 20,
                         borderWidth: 1.5,
                         borderColor: "transparent",
@@ -1460,8 +1462,8 @@ export default function QA() {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  paddingVertical: 16,
                   paddingHorizontal: 20,
+                  paddingVertical: 16,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
                 }}
@@ -2238,8 +2240,8 @@ export default function QA() {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  paddingVertical: 16,
                   paddingHorizontal: 20,
+                  paddingVertical: 16,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
                 }}

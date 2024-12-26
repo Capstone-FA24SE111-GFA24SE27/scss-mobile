@@ -2,7 +2,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { REACT_APP_BASE_URL } from '@env';
-export const BASE_URL = `${REACT_APP_BASE_URL}:8080/api`;
+export const BASE_URL = `${REACT_APP_BASE_URL}:8080/api`; 
+export const SOCKET_URL = `${REACT_APP_BASE_URL}:9092`;
 const axiosJWT = axios.create({
   baseURL: BASE_URL,
 });
