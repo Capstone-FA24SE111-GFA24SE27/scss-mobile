@@ -7,7 +7,7 @@ import {
   Animated,
   Dimensions,
 } from "react-native";
-import logo from "../../assets/logo-fpt.png";
+import logo from "../../assets/app_logo.jpg";
 
 export default function GettingStart() {
   const navigation = useNavigation();
@@ -44,10 +44,10 @@ export default function GettingStart() {
         padding: 20,
       }}
     >
-      <View style={{ position: "absolute", top: 8, left: 8 }}>
+      <View style={{ position: "absolute", top: 20, left: 20 }}>
         <Image
           source={logo}
-          style={{ width: 200, height: 160, resizeMode: "contain" }}
+          style={{ width: 160, height: 160, resizeMode: "contain", backgroundColor: "#f5f7fd" }}
         />
       </View>
       <View

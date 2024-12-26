@@ -342,7 +342,7 @@ export default function Student() {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    setCurrentPage(1);
   }, [debouncedKeyword, debouncedPromptForBehavior]);
 
   useEffect(() => {

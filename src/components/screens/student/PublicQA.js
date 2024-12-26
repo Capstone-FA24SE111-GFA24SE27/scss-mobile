@@ -109,7 +109,7 @@ export default function PublicQA() {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    setCurrentPage(1);
   }, [debouncedKeyword]);
 
   useEffect(() => {
@@ -492,8 +492,8 @@ export default function PublicQA() {
               <View key={question.id}>
                 <View
                   style={{
-                    paddingVertical: 16,
                     paddingHorizontal: 12,
+                    paddingVertical: 16,
                     backgroundColor: "white",
                     marginVertical: 8,
                     borderRadius: 20,
@@ -587,7 +587,7 @@ export default function PublicQA() {
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      <View
+                      {/* <View
                         style={{
                           alignItems: "center",
                           justifyContent: "center",
@@ -652,7 +652,7 @@ export default function PublicQA() {
                         >
                           {question.status}
                         </Text>
-                      </View>
+                      </View> */}
                       <View
                         style={{
                           backgroundColor: "#F39300",
@@ -661,7 +661,7 @@ export default function PublicQA() {
                           flexDirection: "row",
                           paddingVertical: 4,
                           paddingHorizontal: 8,
-                          marginLeft: 8,
+                          // marginLeft: 8,
                           borderRadius: 20,
                           borderWidth: 1.5,
                           borderColor: "transparent",
@@ -677,7 +677,7 @@ export default function PublicQA() {
                           {question.questionType}
                         </Text>
                       </View>
-                      {question.closed == true && (
+                      {/* {question.closed == true && (
                         <View
                           style={{
                             alignItems: "center",
@@ -693,45 +693,11 @@ export default function PublicQA() {
                         >
                           <Ionicons name="lock-closed" color="gray" size={20} />
                         </View>
-                      )}
+                      )} */}
                     </View>
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      {question.answer === null &&
-                        question.status === "PENDING" && (
-                          <TouchableOpacity
-                            onPress={() => (
-                              setOpenAnswer(true), setSelectedQuestion(question)
-                            )}
-                            style={{
-                              marginRight: 4,
-                              paddingHorizontal: 8,
-                              paddingVertical: 4,
-                              backgroundColor: "white",
-                              borderRadius: 10,
-                              borderWidth: 1.5,
-                              borderColor: "#F39300",
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            {/* <Text
-                              style={{
-                                fontWeight: "500",
-                                color: "white",
-                                fontSize: 16,
-                              }}
-                            >
-                              Answer
-                            </Text> */}
-                            <MaterialIcons
-                              name="question-answer"
-                              size={20}
-                              color="#F39300"
-                            />
-                          </TouchableOpacity>
-                        )}
                       <TouchableOpacity
                         onPress={() => (setInfo(question), setOpenInfo(true))}
                         style={{
@@ -783,62 +749,6 @@ export default function PublicQA() {
                         }}
                       >
                         {renderContent(question.answer)}
-                      </View>
-                    </>
-                  )}
-                  {question.reviewReason !== null && (
-                    <>
-                      <View
-                        style={{
-                          borderTopWidth: 1,
-                          borderColor: "lightgrey",
-                          marginVertical: 12,
-                        }}
-                      />
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignSelf: "flex-start",
-                          alignItems: "center",
-                          marginBottom: 8,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "gray",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {question.status == "REJECTED"
-                            ? "Rejected"
-                            : "Flagged"}{" "}
-                          by{" "}
-                          <Text style={{ fontWeight: "bold", color: "#333" }}>
-                            You
-                          </Text>
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          alignSelf: "flex-start",
-                          backgroundColor: "#ededed",
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
-                          borderRadius: 10,
-                          borderWidth: 0.5,
-                          borderColor: "lightgrey",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "#333",
-                          }}
-                          numberOfLines={2}
-                        >
-                          {question.reviewReason}
-                        </Text>
                       </View>
                     </>
                   )}

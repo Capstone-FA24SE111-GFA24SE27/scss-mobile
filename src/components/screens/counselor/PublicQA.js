@@ -109,7 +109,7 @@ export default function PublicQA() {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    setCurrentPage(1);
   }, [debouncedKeyword]);
 
   useEffect(() => {
@@ -492,8 +492,8 @@ export default function PublicQA() {
               <View key={question.id}>
                 <View
                   style={{
-                    paddingVertical: 16,
                     paddingHorizontal: 12,
+                    paddingVertical: 16,
                     backgroundColor: "white",
                     marginVertical: 8,
                     borderRadius: 20,
@@ -587,7 +587,7 @@ export default function PublicQA() {
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      <View
+                      {/* <View
                         style={{
                           alignItems: "center",
                           justifyContent: "center",
@@ -715,7 +715,31 @@ export default function PublicQA() {
                         >
                           <Ionicons name="lock-closed" color="gray" size={20} />
                         </View>
-                      )}
+                      )} */}
+                      <View
+                        style={{
+                          backgroundColor: "#F39300",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexDirection: "row",
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                          // marginLeft: 8,
+                          borderRadius: 20,
+                          borderWidth: 1.5,
+                          borderColor: "transparent",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            color: "white",
+                          }}
+                        >
+                          {question.questionType}
+                        </Text>
+                      </View>
                     </View>
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}

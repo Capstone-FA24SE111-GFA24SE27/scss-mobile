@@ -233,7 +233,7 @@ export default function AcademicCounselor() {
   useEffect(() => {
     // if (debouncedKeyword) {
     setLoading(true);
-    fetchData();
+    setCurrentPage(1);
     // }
   }, [debouncedKeyword]);
 
@@ -362,7 +362,7 @@ export default function AcademicCounselor() {
 
   const handleCloseBooking = () => {
     setSelectedCounselor({});
-    setSelectedSlot(null);
+    setSelectedSlot("");
     isOnline(null);
     setOpenBooking(false);
   };
@@ -597,7 +597,7 @@ export default function AcademicCounselor() {
 
   const handleCloseSuccess = () => {
     setOpenSuccess(false);
-    setSelectedSlot(null);
+    setSelectedSlot("");
     isOnline(null);
     setReason("");
   };
@@ -2533,6 +2533,7 @@ export default function AcademicCounselor() {
           setOpenConfirm={setOpenConfirm}
           selectedDate={selectedDate2}
           selectedSlot={selectedSlot}
+          setSelectedSlot={setSelectedSlot}
           online={online}
           reason={reason}
           selectedCounselor={selectedCounselor}

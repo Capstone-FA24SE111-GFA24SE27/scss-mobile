@@ -147,7 +147,7 @@ export default function QuestionBoard() {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    setCurrentPage(1);
   }, [debouncedKeyword]);
 
   useEffect(() => {
@@ -704,12 +704,11 @@ export default function QuestionBoard() {
               <View
                 key={question.id}
                 style={{
-                  padding: 16,
-                  marginVertical: 8,
+                  paddingHorizontal: 12,
+                  paddingVertical: 16,
                   backgroundColor: "white",
+                  marginVertical: 8,
                   borderRadius: 20,
-                  elevation: 1,
-                  position: "relative",
                   borderWidth: 1.5,
                   borderColor: "#e3e3e3",
                 }}
@@ -1218,16 +1217,17 @@ export default function QuestionBoard() {
                       Creator's Answer
                     </Text>
                     {info?.answer !== null ? (
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          color: "#333",
-                          fontWeight: "500",
-                          opacity: 0.7,
-                        }}
-                      >
-                        {info?.answer}
-                      </Text>
+                      // <Text
+                      //   style={{
+                      //     fontSize: 20,
+                      //     color: "#333",
+                      //     fontWeight: "500",
+                      //     opacity: 0.7,
+                      //   }}
+                      // >
+                      //   {info?.answer}
+                      // </Text>
+                      renderContent(info?.answer)
                     ) : (
                       <Text
                         style={{

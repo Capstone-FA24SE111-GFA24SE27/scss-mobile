@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useRef, useContext } from "react";
 import io from "socket.io-client";
 import { AuthContext } from "./AuthContext";
-
+import { SOCKET_URL } from "../../config/Config";
 export const SocketContext = createContext();
 export const SocketProvider = ({ children }) => {
   const { userData, isLogin } = useContext(AuthContext);
@@ -24,7 +24,7 @@ export const SocketProvider = ({ children }) => {
 
   const connectSocketIO = (accountId) => {
     // socket.current = io(`http://scss-server.southafricanorth.cloudapp.azure.com:4000`);
-    socket.current = io(`http://localhost:9092`, {
+    socket.current = io(`${SOCKET_URL}`, {
       transports: ["websocket"],
     });
 

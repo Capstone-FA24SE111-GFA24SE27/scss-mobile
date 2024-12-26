@@ -31,7 +31,6 @@ export default function CounselorRand() {
   const scrollViewRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
-  const [progress, setProgress] = useState(new Animated.Value(0));
   const dot1Anim = useRef(new Animated.Value(0)).current;
   const dot2Anim = useRef(new Animated.Value(0)).current;
   const dot3Anim = useRef(new Animated.Value(0)).current;
@@ -44,7 +43,7 @@ export default function CounselorRand() {
     new Date().toISOString().split("T")[0]
   );
   const [selectedSlot, setSelectedSlot] = useState("");
-  const [type, setType] = useState("ACADEMIC");
+  // const [type, setType] = useState("ACADEMIC");
   const [gender, setGender] = useState("");
   const [expanded, setExpanded] = useState(false);
   const [expanded2, setExpanded2] = useState(false);
@@ -95,6 +94,7 @@ export default function CounselorRand() {
         type: "error",
         text1: "Error",
         text2: "Can't fetch slot on this day",
+        onPress: () => Toast.hide(),
       });
     }
   };
@@ -181,7 +181,6 @@ export default function CounselorRand() {
       <View
         style={{
           paddingTop: 4,
-          paddingBottom: 12,
         }}
       >
         <TextInput
@@ -193,12 +192,14 @@ export default function CounselorRand() {
             borderWidth: 1,
             borderRadius: 10,
             padding: 12,
+            height: 80,
             backgroundColor: "#fff",
             fontSize: 16,
+            marginBottom: 8,
             textAlignVertical: "top",
           }}
+          numberOfLines={3}
           multiline
-          numberOfLines={2}
         />
       </View>
     );
@@ -852,35 +853,35 @@ export default function CounselorRand() {
         title: "Select a slot",
         content: renderSlotsForSelectedDate(),
       },
-      {
-        title: "Select counselor type",
-        content: renderCounselorType(),
-      },
+      // {
+      //   title: "Select counselor type",
+      //   content: renderCounselorType(),
+      // },
       {
         title: "Select gender",
         content: renderGender(),
       },
-      ...(type === "ACADEMIC"
-        ? [
-            {
-              title: "Select department",
-              content: renderDepartments(),
-            },
-            selectedDepartment !== "" && {
-              title: "Select major",
-              content: renderMajors(),
-            },
-            // selectedMajor !== "" && {
-            //   title: "Select specialization",
-            //   content: renderSpecializations(),
-            // },
-          ].filter(Boolean)
-        : [
-            // {
-            //   title: "Select expertise",
-            //   content: renderExpertises(),
-            // },
-          ]),
+      // ...(type === "ACADEMIC"
+      //   ? [
+      //       {
+      //         title: "Select department",
+      //         content: renderDepartments(),
+      //       },
+      //       selectedDepartment !== "" && {
+      //         title: "Select major",
+      //         content: renderMajors(),
+      //       },
+      // selectedMajor !== "" && {
+      //   title: "Select specialization",
+      //   content: renderSpecializations(),
+      // },
+      //   ].filter(Boolean)
+      // : [
+      // {
+      //   title: "Select expertise",
+      //   content: renderExpertises(),
+      // },
+      // ]),
     ];
 
     const renderItem = (item, index) => {
@@ -894,9 +895,9 @@ export default function CounselorRand() {
             }}
           >
             {item.title}{" "}
-            {(item.title !== "Select gender" ||
-              item.title !== "Select department" ||
-              item.title !== "Select major") && (
+            {(item.title !== "Select date" ||
+              item.title !== "Select a slot" ||
+              item.title !== "Select gender") && (
               <Text style={{ color: "#F39300" }}>*</Text>
             )}
           </Text>
@@ -1027,7 +1028,6 @@ export default function CounselorRand() {
                   setCurrentPage(0),
                   setSelectedSlot(""),
                   setGender(""),
-                  setType("ACADEMIC"),
                   setSelectedDepartment(""),
                   setSelectedMajor(""),
                   setSelectedSpecialization(""),
@@ -1062,13 +1062,12 @@ export default function CounselorRand() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                disabled={selectedSlot == "" || reason == ""}
+                disabled={reason == ""}
                 onPress={handleMatch}
                 style={{
                   flex: 1,
                   flexDirection: "row",
-                  backgroundColor:
-                    selectedSlot == "" || reason == "" ? "#ededed" : "#F39300",
+                  backgroundColor: reason == "" ? "#ededed" : "#F39300",
                   borderRadius: 10,
                   paddingVertical: 8,
                   marginTop: 12,
@@ -1080,8 +1079,7 @@ export default function CounselorRand() {
                 <Text
                   style={{
                     fontWeight: "500",
-                    color:
-                      selectedSlot == "" || reason == "" ? "gray" : "white",
+                    color: reason == "" ? "gray" : "white",
                     fontSize: 18,
                   }}
                 >
@@ -1137,56 +1135,78 @@ export default function CounselorRand() {
       );
       console.log(typeRes?.data?.message);
       if (typeRes?.data?.message === "OK") {
-        if (type === "ACADEMIC") {
-          const response = await axiosJWT.get(
-            `${BASE_URL}/counselors/academic/random/match/${userData?.id}`,
-            {
-              params: {
-                slotId: selectedSlot.slotId,
-                date: selectedDate,
-                gender: gender,
-                reason: reason,
-                departmentId: selectedDepartment.id,
-                majorId: selectedMajor.id,
-                // specializationId: selectedSpecialization.id,
-              },
-            }
-          );
-          if (response.data && response.data.status == 200) {
-            setMatcher(response.data.content);
-            Toast.show({
-              type: "success",
-              text1: "Success",
-              text2: "A counselor has been found",
-              onPress: () => Toast.hide(),
-            });
-          } else if (response.data && response.data.status == 404) {
-            setError(response.data.message);
+        // if (type === "ACADEMIC") {
+        //   const response = await axiosJWT.get(
+        //     `${BASE_URL}/counselors/academic/random/match/${userData?.id}`,
+        //     {
+        //       params: {
+        //         slotId: selectedSlot.slotId,
+        //         date: selectedDate,
+        //         gender: gender,
+        //         reason: reason,
+        //         departmentId: selectedDepartment.id,
+        //         majorId: selectedMajor.id,
+        //         // specializationId: selectedSpecialization.id,
+        //       },
+        //     }
+        //   );
+        //   if (response.data && response.data.status == 200) {
+        //     setMatcher(response.data.content);
+        //     Toast.show({
+        //       type: "success",
+        //       text1: "Success",
+        //       text2: "A counselor has been found",
+        //       onPress: () => Toast.hide(),
+        //     });
+        //   } else if (response.data && response.data.status == 404) {
+        //     setError(response.data.message);
+        //   }
+        // } else if (type === "NON-ACADEMIC") {
+        //   const response = await axiosJWT.get(
+        //     `${BASE_URL}/counselors/non-academic/random/match`,
+        //     {
+        //       params: {
+        //         slotId: selectedSlot.slotId,
+        //         date: selectedDate,
+        //         gender: gender,
+        //         reason: reason,
+        //         // expertiseId: selectedExpertise.id,
+        //       },
+        //     }
+        //   );
+        //   if (response.data && response.data.status == 200) {
+        //     setMatcher(response.data.content);
+        //     Toast.show({
+        //       type: "success",
+        //       text1: "Success",
+        //       text2: "A counselor has been found",
+        //       onPress: () => Toast.hide(),
+        //     });
+        //   } else if (response.data && response.data.status == 404) {
+        //     setError(response.data.message);
+        //   }
+        // }
+        const response = await axiosJWT.get(
+          `${BASE_URL}/counselors/random/match`,
+          {
+            params: {
+              slotId: selectedSlot.slotId || null,
+              date: selectedDate,
+              gender: gender,
+              reason: reason,
+            },
           }
-        } else if (type === "NON-ACADEMIC") {
-          const response = await axiosJWT.get(
-            `${BASE_URL}/counselors/non-academic/random/match`,
-            {
-              params: {
-                slotId: selectedSlot.slotId,
-                date: selectedDate,
-                gender: gender,
-                reason: reason,
-                // expertiseId: selectedExpertise.id,
-              },
-            }
-          );
-          if (response.data && response.data.status == 200) {
-            setMatcher(response.data.content);
-            Toast.show({
-              type: "success",
-              text1: "Success",
-              text2: "A counselor has been found",
-              onPress: () => Toast.hide(),
-            });
-          } else if (response.data && response.data.status == 404) {
-            setError(response.data.message);
-          }
+        );
+        if (response.data && response.data.status == 200) {
+          setMatcher(response.data.content);
+          Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: "A counselor has been found",
+            onPress: () => Toast.hide(),
+          });
+        } else if (response.data && response.data.status == 404) {
+          setError(response.data.message);
         }
       } else if (typeRes?.data?.message?.includes("INAPPROPRIATE_SENTENCE")) {
         setError(
@@ -1250,41 +1270,6 @@ export default function CounselorRand() {
       }, 1000);
     }
   }, [loading2]);
-
-  // useEffect(() => {
-  //   if (loading2) {
-  //     Animated.sequence([
-  //       Animated.timing(progress, {
-  //         toValue: 0,
-  //         duration: 0,
-  //         useNativeDriver: false,
-  //       }),
-  //       Animated.timing(progress, {
-  //         toValue: 25,
-  //         duration: 75,
-  //         useNativeDriver: false,
-  //       }),
-  //       Animated.timing(progress, {
-  //         toValue: 50,
-  //         duration: 75,
-  //         useNativeDriver: false,
-  //       }),
-  //       Animated.timing(progress, {
-  //         toValue: 75,
-  //         duration: 75,
-  //         useNativeDriver: false,
-  //       }),
-  //       Animated.timing(progress, {
-  //         toValue: 100,
-  //         duration: 75,
-  //         useNativeDriver: false,
-  //       }),
-  //     ]).start();
-  //     setTimeout(() => {
-  //       setLoading2(false);
-  //     }, 500);
-  //   }
-  // }, [loading2]);
 
   const handleCreateRequest = async () => {
     try {
@@ -1591,12 +1576,10 @@ export default function CounselorRand() {
             </View>
             <TouchableOpacity
               activeOpacity={0.7}
-              disabled={selectedSlot === "" || online === null || reason === ""}
+              disabled={online === null || reason === ""}
               style={{
                 backgroundColor:
-                  selectedSlot === "" || online === null || reason === ""
-                    ? "#ededed"
-                    : "#F39300",
+                  online === null || reason === "" ? "#ededed" : "#F39300",
                 borderRadius: 10,
                 paddingVertical: 8,
                 marginTop: 12,
@@ -1610,10 +1593,7 @@ export default function CounselorRand() {
               <Text
                 style={{
                   fontWeight: "500",
-                  color:
-                    selectedSlot === "" || online === null || reason === ""
-                      ? "gray"
-                      : "white",
+                  color: online === null || reason === "" ? "gray" : "white",
                   fontSize: 18,
                   marginRight: 8,
                 }}
@@ -1624,10 +1604,7 @@ export default function CounselorRand() {
                 name="chevron-forward"
                 size={24}
                 style={{
-                  color:
-                    selectedSlot === "" || online === null || reason === ""
-                      ? "gray"
-                      : "white",
+                  color: online === null || reason === "" ? "gray" : "white",
                 }}
               />
             </TouchableOpacity>
@@ -1767,6 +1744,7 @@ export default function CounselorRand() {
         setOpenConfirm={setOpenConfirm}
         selectedDate={selectedDate}
         selectedSlot={selectedSlot}
+        setSelectedSlot={setSelectedSlot}
         online={online}
         reason={reason}
         selectedCounselor={matcher}

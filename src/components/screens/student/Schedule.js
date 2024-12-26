@@ -358,6 +358,7 @@ export default function Schedule() {
                 selectedDayBackgroundColor: "white",
                 selectedDayTextColor: "#F39300",
                 arrowColor: "#F39300",
+                monthTextColor: "#F39300",
                 textDayHeaderFontSize: 14,
                 textDayFontSize: 16,
                 todayTextColor: "black",
@@ -525,10 +526,10 @@ export default function Schedule() {
                     </TouchableOpacity>
                     <View
                       style={{
+                        marginBottom: 20,
                         padding: 16,
                         backgroundColor: "white",
-                        borderRadius: 10,
-                        marginBottom: 20,
+                        borderRadius: 12,
                         elevation: 1,
                         borderWidth: 1.5,
                         borderColor: "#e3e3e3",
@@ -557,10 +558,10 @@ export default function Schedule() {
                     </View>
                     <View
                       style={{
+                        marginBottom: 20,
                         padding: 16,
                         backgroundColor: "white",
-                        borderRadius: 10,
-                        marginBottom: 20,
+                        borderRadius: 12,
                         elevation: 1,
                         borderWidth: 1.5,
                         borderColor: "#e3e3e3",
@@ -571,7 +572,7 @@ export default function Schedule() {
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          marginVertical: 12,
+                          marginBottom: 16,
                         }}
                       >
                         <View
@@ -603,17 +604,10 @@ export default function Schedule() {
                       </View>
                       <View
                         style={{
-                          borderTopWidth: 1,
-                          borderColor: "lightgrey",
-                          marginVertical: 4,
-                        }}
-                      />
-                      <View
-                        style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          marginVertical: 12,
+                          marginBottom: 16,
                         }}
                       >
                         <View
@@ -645,17 +639,10 @@ export default function Schedule() {
                       </View>
                       <View
                         style={{
-                          borderTopWidth: 1,
-                          borderColor: "lightgrey",
-                          marginVertical: 4,
-                        }}
-                      />
-                      <View
-                        style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          marginVertical: 12,
+                          marginBottom: 16,
                         }}
                       >
                         <View
@@ -698,17 +685,9 @@ export default function Schedule() {
                       </View>
                       <View
                         style={{
-                          borderTopWidth: 1,
-                          borderColor: "lightgrey",
-                          marginVertical: 4,
-                        }}
-                      />
-                      <View
-                        style={{
                           flexDirection: "row",
                           justifyContent: "space-between",
                           alignItems: "flex-start",
-                          marginVertical: 12,
                         }}
                       >
                         <View
@@ -805,10 +784,10 @@ export default function Schedule() {
                       <View
                         style={{
                           flexDirection: "row",
+                          marginBottom: 20,
                           padding: 16,
                           backgroundColor: "white",
-                          borderRadius: 10,
-                          marginBottom: 20,
+                          borderRadius: 12,
                           elevation: 1,
                           borderWidth: 1.5,
                           borderColor: "#e3e3e3",
@@ -896,10 +875,10 @@ export default function Schedule() {
                     ) : (
                       <View
                         style={{
+                          marginBottom: 20,
                           padding: 16,
                           backgroundColor: "white",
-                          borderRadius: 10,
-                          marginBottom: 20,
+                          borderRadius: 12,
                           elevation: 1,
                           borderWidth: 1.5,
                           borderColor: "#e3e3e3",

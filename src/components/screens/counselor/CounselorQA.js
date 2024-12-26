@@ -119,7 +119,7 @@ export default function CounselorQA() {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    setCurrentPage(1);
   }, [debouncedKeyword]);
 
   useEffect(() => {
@@ -236,7 +236,7 @@ export default function CounselorQA() {
           html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
             image
               ? `<img src="${image.uri}" style="max-width: ${
-                  width * 0.85
+                  width * 0.7
                 }px; height: auto;">`
               : ""
           }</div>`,
@@ -267,7 +267,7 @@ export default function CounselorQA() {
     try {
       const imageHTML = image
         ? `<img src="${image.uri}" style="max-width: ${
-            width * 0.85
+            width * 0.7
           }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
@@ -312,7 +312,7 @@ export default function CounselorQA() {
     try {
       const imageHTML = image
         ? `<img src="${image.uri}" style="max-width: ${
-            width * 0.85
+            width * 0.7
           }px; height: auto;">`
         : "";
       const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
@@ -819,8 +819,8 @@ export default function CounselorQA() {
               <View key={question.id}>
                 <View
                   style={{
-                    paddingVertical: 16,
                     paddingHorizontal: 12,
+                    paddingVertical: 16,
                     backgroundColor: "white",
                     marginVertical: 8,
                     borderRadius: 20,
@@ -1451,7 +1451,7 @@ export default function CounselorQA() {
                     padding: 4,
                     borderRadius: 20,
                   }}
-                  onPress={() => setOpenReject(false)}
+                  onPress={() => (setOpenReject(false), setContent(""))}
                 >
                   <Ionicons name="close" size={28} color="#333" />
                 </TouchableOpacity>
@@ -1549,7 +1549,7 @@ export default function CounselorQA() {
                     padding: 4,
                     borderRadius: 20,
                   }}
-                  onPress={() => setOpenFlag(false)}
+                  onPress={() => (setOpenFlag(false), setContent(""))}
                 >
                   <Ionicons name="close" size={28} color="#333" />
                 </TouchableOpacity>
@@ -1634,8 +1634,8 @@ export default function CounselorQA() {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  paddingVertical: 16,
                   paddingHorizontal: 20,
+                  paddingVertical: 16,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
                 }}
@@ -1901,8 +1901,8 @@ export default function CounselorQA() {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  paddingVertical: 16,
                   paddingHorizontal: 20,
+                  paddingVertical: 16,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
                 }}
@@ -2966,8 +2966,8 @@ export default function CounselorQA() {
 
                       <View
                         style={{
-                          minWidth: "25%",
-                          maxWidth: "85%",
+                          minWidth: "30%",
+                          maxWidth: "75%",
                           backgroundColor:
                             chat.sender.role === "STUDENT"
                               ? "white"

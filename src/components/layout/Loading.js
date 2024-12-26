@@ -1,6 +1,6 @@
 import { View, Dimensions, Animated, Image } from "react-native";
 import React, { useEffect, useRef } from "react";
-import logo from "../../assets/logo-fpt.png";
+import logo from "../../assets/app_logo.jpg";
 
 const Loading = ({ loading }) => {
   const { width, height } = Dimensions.get("window");
@@ -46,7 +46,7 @@ const Loading = ({ loading }) => {
     >
       <Image
         source={logo}
-        style={{ width: width * 0.8, height: width * 0.2 }}
+        style={{ width: width * 0.5, height: width * 0.5 }}
       />
       <View
         style={{
