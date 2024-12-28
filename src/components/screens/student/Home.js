@@ -1053,7 +1053,7 @@ export default function Home() {
                       <View
                         style={{
                           backgroundColor: "#fff0e0",
-                          paddingHorizontal: 16,
+                          paddingHorizontal: 12,
                           paddingVertical: 16,
                           borderTopLeftRadius: 20,
                           borderTopRightRadius: 20,
@@ -1078,7 +1078,7 @@ export default function Home() {
                                 opacity: 0.7,
                               }}
                             >
-                              {question.createdDate.split("T")[0] +
+                              Asked {question.createdDate.split("T")[0] +
                                 " " +
                                 question.createdDate.split("T")[1].slice(0, 8)}
                             </Text>
@@ -1108,12 +1108,12 @@ export default function Home() {
                             </Text>
                           </View>
                         </View>
-                        <View style={{ marginBottom: 4 }}>
+                        <View style={{ marginBottom: 8 }}>
                           <Text
                             numberOfLines={2}
                             style={{
-                              fontWeight: "bold",
                               fontSize: 18,
+                              fontWeight: "bold",
                             }}
                           >
                             {question.title}
@@ -1125,7 +1125,7 @@ export default function Home() {
                         style={{
                           flexDirection: "row",
                           alignItems: "center",
-                          paddingHorizontal: 20,
+                          paddingHorizontal: 12,
                           paddingVertical: 8,
                           borderBottomRightRadius: 20,
                           borderBottomLeftRadius: 20,
@@ -1173,8 +1173,8 @@ export default function Home() {
                       <View
                         style={{
                           alignSelf: "flex-start",
-                          marginHorizontal: 20,
-                          marginBottom: 8,
+                          marginHorizontal: 12,
+                          marginBottom: 12,
                         }}
                       >
                         {/* <Text

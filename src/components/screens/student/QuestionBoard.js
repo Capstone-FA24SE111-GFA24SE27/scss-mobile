@@ -780,7 +780,7 @@ export default function QuestionBoard() {
                   }}
                 >
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View
+                    {/* <View
                       style={{
                         alignItems: "center",
                         justifyContent: "center",
@@ -845,7 +845,7 @@ export default function QuestionBoard() {
                       >
                         {question.status}
                       </Text>
-                    </View>
+                    </View> */}
                     <View
                       style={{
                         backgroundColor: "#F39300",
@@ -854,7 +854,7 @@ export default function QuestionBoard() {
                         flexDirection: "row",
                         paddingVertical: 4,
                         paddingHorizontal: 8,
-                        marginLeft: 8,
+                        // marginLeft: 8,
                         borderRadius: 20,
                         borderWidth: 1.5,
                         borderColor: "transparent",

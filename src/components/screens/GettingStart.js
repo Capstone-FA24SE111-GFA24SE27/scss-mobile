@@ -44,10 +44,10 @@ export default function GettingStart() {
         padding: 20,
       }}
     >
-      <View style={{ position: "absolute", top: 20, left: 20 }}>
+      <View style={{ position: "absolute", top: 120, left: 20 }}>
         <Image
           source={logo}
-          style={{ width: 160, height: 160, resizeMode: "contain", backgroundColor: "#f5f7fd" }}
+          style={{ width: 80, height: 80, resizeMode: "contain", backgroundColor: "#f5f7fd" }}
         />
       </View>
       <View

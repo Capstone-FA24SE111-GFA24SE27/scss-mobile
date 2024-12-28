@@ -112,12 +112,17 @@ export default function StudentQA() {
   const [loading2, setLoading2] = useState(false);
   const [openInfo2, setOpenInfo2] = useState(false);
   const [info2, setInfo2] = useState({});
+  const [countQuestions, setCountQuestions] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
   const [openCreateChatSessionConfirm, setOpenCreateChatSessionConfirm] =
     useState(false);
   const [openCloseConfirm, setOpenCloseConfirm] = useState(false);
+  const [openAcceptCloseConfirm, setOpenAcceptCloseConfirm] = useState(false);
+  const [openFeedback, setOpenFeedback] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [value, setValue] = useState("");
 
   useFocusEffect(
     React.useCallback(() => {
@@ -126,11 +131,20 @@ export default function StudentQA() {
       }
       fetchData(filters, { page: currentPage });
       fetchBanInfo();
+      fetchOpenQuestions();
       fetchDepartment();
       setDepartment(profile?.department);
       setMajor(profile?.major);
     }, [debouncedKeyword, filters, currentPage])
   );
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   // const fetchData = async (filters = {}) => {
   //   try {
@@ -439,6 +453,24 @@ export default function StudentQA() {
     }
   };
 
+  const fetchOpenQuestions = async () => {
+    try {
+      const countQuestionsRes = await axiosJWT.get(
+        `${BASE_URL}/question-cards/count-open/${userData?.id}`
+      );
+      const countQuestionsData = countQuestionsRes?.data?.content || [];
+      setCountQuestions(countQuestionsData);
+    } catch (err) {
+      console.log(err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't count opened questions",
+        onPress: () => Toast.hide(),
+      });
+    }
+  };
+
   const handleCreateQuestion = async () => {
     try {
       // const imageHTML = image
@@ -466,6 +498,14 @@ export default function StudentQA() {
       });
       const data = await response.data;
       if (data && data.status == 200) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "New question has been created",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
         setOpenCreate(false);
         setOpenConfirm(false);
         setOpenSuggestion(false);
@@ -479,14 +519,6 @@ export default function StudentQA() {
         setSpecialization("");
         setExpertise("");
         fetchData(filters, { page: currentPage });
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: "New question has been created",
-          onPress: () => {
-            Toast.hide();
-          },
-        });
       }
     } catch (err) {
       if (err.status === 404) {
@@ -598,37 +630,6 @@ export default function StudentQA() {
     }
   };
 
-  // const handleCloseQuestion = async (questionId) => {
-  //   try {
-  //     await axiosJWT.post(
-  //       `${BASE_URL}/question-cards/student/close/${questionId}`
-  //     );
-  //     setOpenInfo(false);
-  //     setOpenChat(false);
-  //     setOpenCloseConfirm(false);
-  //     setSelectedQuestion(null);
-  //     Toast.show({
-  //       type: "success",
-  //       text1: "Success",
-  //       text2: "Your question has been closed",
-  //       onPress: () => {
-  //         Toast.hide();
-  //       },
-  //     });
-  //     fetchData(filters);
-  //   } catch (err) {
-  //     console.log("Can't close question", err);
-  //     Toast.show({
-  //       type: "error",
-  //       text1: "Error",
-  //       text2: "Can't close question",
-  //       onPress: () => {
-  //         Toast.hide();
-  //       },
-  //     });
-  //   }
-  // };
-
   const handleCreateChatSession = async (questionId) => {
     try {
       await axiosJWT.post(
@@ -700,6 +701,117 @@ export default function StudentQA() {
         },
       });
     }
+  };
+
+  // const handleCloseQuestion = async (questionId) => {
+  //   try {
+  //     await axiosJWT.post(
+  //       `${BASE_URL}/question-cards/student/close/${questionId}`
+  //     );
+  //     setOpenInfo(false);
+  //     setOpenChat(false);
+  //     setOpenCloseConfirm(false);
+  //     setSelectedQuestion(null);
+  //     Toast.show({
+  //       type: "success",
+  //       text1: "Success",
+  //       text2: "Your question has been closed",
+  //       onPress: () => {
+  //         Toast.hide();
+  //       },
+  //     });
+  //     fetchData(filters);
+  //   } catch (err) {
+  //     console.log("Can't close question", err);
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Error",
+  //       text2: "Can't close question",
+  //       onPress: () => {
+  //         Toast.hide();
+  //       },
+  //     });
+  //   }
+  // };
+
+  const handleAcceptCloseQuestion = async (questionId) => {
+    try {
+      const response = await axiosJWT.post(
+        `${BASE_URL}/question-cards/accept/${questionId}`
+      );
+      const data = await response.data;
+      if (data && data.status == 200) {
+        setOpenAcceptCloseConfirm(false);
+        setOpenInfo(false);
+        setSelectedQuestion(null);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2:
+            "You accepted to close this question. Counselor will close this question later",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+        fetchData(filters);
+      }
+    } catch (err) {
+      console.log("Can't accept this question to close", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't accept this question to close",
+        onPress: () => {
+          Toast.hide();
+        },
+      });
+    }
+  };
+
+  const handleTakeFeedback = async (questionId) => {
+    try {
+      const response = await axiosJWT.post(
+        `${BASE_URL}/question-cards/feedback/${questionId}`,
+        {
+          rating: rating,
+          comment: value,
+        }
+      );
+      const data = await response.data;
+      if (data && data.status == 200) {
+        setInfo({
+          ...info,
+          feedback: {
+            rating: rating,
+            comment: value,
+            createdAt: new Date().toISOString().split("T")[0],
+          },
+        });
+        handleCloseFeedback();
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Your feedback has been submitted.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
+      }
+    } catch (err) {
+      console.log("Can't feedback this appointment", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't feedback this appointment",
+      });
+    }
+  };
+
+  const handleCloseFeedback = () => {
+    setSelectedQuestion(null);
+    setRating(0);
+    setValue("");
+    setOpenFeedback(false);
   };
 
   return (
@@ -839,6 +951,14 @@ export default function StudentQA() {
                 onPress={() =>
                   banInfo?.ban === true
                     ? setOpenBanInfo(true)
+                    : countQuestions >= 3
+                    ? Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2:
+                          "Current opened questions is 3. Can't create more question",
+                        onPress: () => Toast.hide(),
+                      })
                     : setOpenCreate(true)
                 }
               >
@@ -1698,8 +1818,46 @@ export default function StudentQA() {
                               </Text>
                             </TouchableOpacity>
                           )} */}
+                        {question.accepted == false &&
+                          question.closed == false && (
+                            <TouchableOpacity
+                              activeOpacity={0.7}
+                              onPress={() => (
+                                setOpenAcceptCloseConfirm(true),
+                                setSelectedQuestion(question)
+                              )}
+                              style={{
+                                paddingHorizontal: 8,
+                                paddingVertical: 4,
+                                marginRight: 8,
+                                backgroundColor: "white",
+                                borderRadius: 10,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                borderWidth: 1.5,
+                                borderColor: "#F39300",
+                              }}
+                            >
+                              <Ionicons
+                                name="checkmark"
+                                size={16}
+                                color="#F39300"
+                              />
+                              <Text
+                                style={{
+                                  fontWeight: "500",
+                                  color: "#F39300",
+                                  fontSize: 16,
+                                  marginLeft: 8,
+                                }}
+                              >
+                                Accept Answer
+                              </Text>
+                            </TouchableOpacity>
+                          )}
                         {question.chatSession !== null && (
                           <TouchableOpacity
+                            activeOpacity={0.7}
                             onPress={() => {
                               fetchQuestionCard(question.id);
                               setTimeout(() => {
@@ -1735,6 +1893,7 @@ export default function StudentQA() {
                           question.closed === false &&
                           question.status === "VERIFIED" && (
                             <TouchableOpacity
+                              activeOpacity={0.7}
                               onPress={() => {
                                 setOpenCreateChatSessionConfirm(true);
                                 setSelectedQuestion(question);
@@ -3106,79 +3265,12 @@ export default function StudentQA() {
                             >
                               <View
                                 style={{
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  flexDirection: "row",
-                                  paddingVertical: 4,
-                                  paddingHorizontal: 8,
-                                  borderRadius: 20,
-                                  borderWidth: 1.5,
-                                  borderColor:
-                                    question.status === "VERIFIED"
-                                      ? "green"
-                                      : question.status === "UNVERIFIED"
-                                      ? "#F39300"
-                                      : question.status === "REJECTED"
-                                      ? "red"
-                                      : question.status === "FLAGGED"
-                                      ? "gray"
-                                      : "#e3e3e3",
-                                }}
-                              >
-                                <Ionicons
-                                  name={
-                                    question.status === "VERIFIED"
-                                      ? "checkmark-circle"
-                                      : question.status === "UNVERIFIED"
-                                      ? "time-outline"
-                                      : question.status === "REJECTED"
-                                      ? "close-circle"
-                                      : question.status === "FLAGGED"
-                                      ? "flag-outline"
-                                      : "help"
-                                  }
-                                  color={
-                                    question.status === "VERIFIED"
-                                      ? "green"
-                                      : question.status === "UNVERIFIED"
-                                      ? "#F39300"
-                                      : question.status === "REJECTED"
-                                      ? "red"
-                                      : question.status === "FLAGGED"
-                                      ? "gray"
-                                      : "#e3e3e3"
-                                  }
-                                  size={20}
-                                />
-                                <Text
-                                  style={{
-                                    fontSize: 14,
-                                    fontWeight: "600",
-                                    marginLeft: 4,
-                                    color:
-                                      question.status === "VERIFIED"
-                                        ? "green"
-                                        : question.status === "UNVERIFIED"
-                                        ? "#F39300"
-                                        : question.status === "REJECTED"
-                                        ? "red"
-                                        : question.status === "FLAGGED"
-                                        ? "gray"
-                                        : "#e3e3e3",
-                                  }}
-                                >
-                                  {question.status}
-                                </Text>
-                              </View>
-                              <View
-                                style={{
                                   backgroundColor: "#F39300",
                                   alignItems: "center",
                                   justifyContent: "center",
                                   flexDirection: "row",
-                                  paddingVertical: 4,
                                   paddingHorizontal: 8,
-                                  marginLeft: 8,
+                                  paddingVertical: 4,
                                   borderRadius: 20,
                                   borderWidth: 1.5,
                                   borderColor: "transparent",
@@ -3853,11 +3945,11 @@ export default function StudentQA() {
             </View>
           </View>
         </Modal>
-        {/* <Modal
+        <Modal
           transparent={true}
-          visible={openCloseConfirm}
+          visible={openAcceptCloseConfirm}
           animationType="fade"
-          onRequestClose={() => setOpenCloseConfirm(false)}
+          onRequestClose={() => setOpenAcceptCloseConfirm(false)}
         >
           <View
             style={{
@@ -3884,7 +3976,7 @@ export default function StudentQA() {
                   textAlign: "center",
                 }}
               >
-                Close Question Confirmation
+                Accept Answer Confirmation
               </Text>
               <Text
                 style={{
@@ -3893,8 +3985,8 @@ export default function StudentQA() {
                   textAlign: "center",
                 }}
               >
-                Are you sure you want to close this question? You can't undo the
-                change
+                Are you sure you satisfy with counselor's answer? This will
+                permit counselor to close this question anytime they want.
               </Text>
               <View
                 style={{
@@ -3914,7 +4006,7 @@ export default function StudentQA() {
                     borderWidth: 1,
                     borderColor: "gray",
                   }}
-                  onPress={() => setOpenCloseConfirm(false)}
+                  onPress={() => setOpenAcceptCloseConfirm(false)}
                 >
                   <Text
                     style={{
@@ -3935,7 +4027,9 @@ export default function StudentQA() {
                     justifyContent: "center",
                     alignItems: "center",
                   }}
-                  onPress={() => handleCloseQuestion(selectedQuestion?.id)}
+                  onPress={() =>
+                    handleAcceptCloseQuestion(selectedQuestion?.id)
+                  }
                 >
                   <Text
                     style={{
@@ -3950,7 +4044,165 @@ export default function StudentQA() {
               </View>
             </View>
           </View>
-        </Modal> */}
+        </Modal>
+        <Modal
+          transparent={true}
+          visible={openFeedback}
+          animationType="slide"
+          onRequestClose={handleCloseFeedback}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <View
+              style={{
+                width: width * 0.85,
+                padding: 20,
+                backgroundColor: "white",
+                borderRadius: 10,
+                elevation: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginVertical: 12,
+                  textAlign: "center",
+                }}
+              >
+                Write a Review
+              </Text>
+              <View style={{ marginVertical: 8 }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    color: "#333",
+                    marginBottom: 8,
+                  }}
+                >
+                  What do you think?
+                </Text>
+                <TextInput
+                  placeholder="Type message here..."
+                  placeholderTextColor="gray"
+                  value={value}
+                  onChangeText={(value) => setValue(value)}
+                  style={{
+                    borderColor: "#ccc",
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    padding: 12,
+                    backgroundColor: "#fff",
+                    fontSize: 16,
+                    textAlignVertical: "top",
+                  }}
+                  multiline
+                  numberOfLines={2}
+                />
+              </View>
+              <View style={{ marginVertical: 8 }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "600",
+                    marginBottom: 8,
+                  }}
+                >
+                  Give a rating
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  {[1, 2, 3, 4, 5].map((star, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      activeOpacity={0.7}
+                      onPress={() => setRating(star)}
+                    >
+                      <Ionicons
+                        name="star"
+                        size={24}
+                        color={rating >= star ? "#F39300" : "gray"}
+                        style={{ marginHorizontal: 2 }}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-end",
+                  marginTop: 8,
+                }}
+              >
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={handleCloseFeedback}
+                  style={{
+                    backgroundColor: "#ededed",
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 10,
+                    marginRight: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "gray",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={value === "" || rating === 0}
+                  activeOpacity={0.7}
+                  onPress={() => handleTakeFeedback(selectedQuestion?.id)}
+                  style={{
+                    backgroundColor:
+                      value === "" || rating === 0 ? "#ededed" : "#F39300",
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor:
+                      value === "" || rating === 0 ? "gray" : "#F39300",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: value === "" || rating === 0 ? "gray" : "white",
+                    }}
+                  >
+                    Save
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
         <Modal
           transparent={true}
           visible={openCreateChatSessionConfirm}
@@ -4629,6 +4881,143 @@ export default function StudentQA() {
                       )}
                     </View>
                   )}
+                  {info?.feedback !== null ? (
+                    <View
+                      style={{
+                        marginBottom: 20,
+                        borderRadius: 10,
+                        backgroundColor: "white",
+                        padding: 16,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "lightgrey",
+                      }}
+                    >
+                      <View style={{ marginBottom: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            fontWeight: "500",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: "#F39300",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            You
+                          </Text>{" "}
+                          had leave a review
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 12,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            backgroundColor: "#F39300",
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderRadius: 16,
+                          }}
+                        >
+                          <Ionicons name="star" size={16} color="white" />
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              marginLeft: 6,
+                              fontWeight: "bold",
+                              color: "white",
+                            }}
+                          >
+                            {info?.feedback?.rating.toFixed(1)}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderWidth: 1,
+                            borderColor: "gray",
+                            borderRadius: 20,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "500",
+                              color: "#333",
+                            }}
+                          >
+                            {formatDate(info?.feedback?.createdAt)}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: "#333",
+                          lineHeight: 24,
+                        }}
+                      >
+                        {info?.feedback?.comment}
+                      </Text>
+                    </View>
+                  ) : (
+                    info.status == "VERIFIED" &&
+                    info.closed && (
+                      <View
+                        style={{
+                          marginBottom: 20,
+                          borderRadius: 10,
+                          backgroundColor: "white",
+                          padding: 16,
+                          borderWidth: 1.5,
+                          borderColor: "lightgrey",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontStyle: "italic",
+                            fontWeight: "600",
+                            textAlign: "center",
+                            color: "gray",
+                            opacity: 0.7,
+                          }}
+                        >
+                          There's no feedback yet
+                        </Text>
+                        <TouchableOpacity
+                          activeOpacity={0.7}
+                          onPress={() => (
+                            setOpenFeedback(true), setSelectedQuestion(info)
+                          )}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              color: "#F39300",
+                              textDecorationLine: "underline",
+                            }}
+                          >
+                            Leave a Review
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )
+                  )}
                 </View>
               </ScrollView>
               <View
@@ -5080,8 +5469,7 @@ export default function StudentQA() {
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
-                paddingHorizontal: 20,
-                paddingVertical: 20,
+                paddingBottom: 12,
               }}
             >
               {selectedQuestion && (
@@ -5089,15 +5477,20 @@ export default function StudentQA() {
                   style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    marginBottom: 20,
+                    alignItems: "center",
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
+                    paddingHorizontal: 20,
+                    paddingVertical: 8,
                   }}
                 >
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     onPress={() => (
                       setInfo(selectedQuestion), setOpenInfo(true)
                     )}
                     style={{
-                      backgroundColor: "#ededed",
+                      backgroundColor: "#fff0e0",
                       flexDirection: "row",
                       alignSelf: "flex-start",
                       alignItems: "center",
@@ -5110,7 +5503,7 @@ export default function StudentQA() {
                       source={{
                         uri: selectedQuestion?.counselor?.profile?.avatarLink,
                       }}
-                      style={{ width: 50, height: 50, borderRadius: 40 }}
+                      style={{ width: 40, height: 40, borderRadius: 40 }}
                     />
                     <View
                       style={{
@@ -5124,9 +5517,10 @@ export default function StudentQA() {
                       >
                         <Text
                           style={{
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: "bold",
-                            opacity: 0.5,
+                            color: "#333",
+                            opacity: 0.7,
                             marginRight: 8,
                           }}
                         >
@@ -5134,14 +5528,15 @@ export default function StudentQA() {
                         </Text>
                         <Ionicons
                           name="chevron-forward"
-                          size={18}
+                          size={16}
                           color="#F39300"
                         />
                       </View>
                       <Text
                         style={{
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: "bold",
+                          color: "#333",
                         }}
                       >
                         {selectedQuestion?.counselor?.profile?.fullName
@@ -5155,12 +5550,11 @@ export default function StudentQA() {
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     style={{
-                      backgroundColor: "#ededed",
+                      backgroundColor: "white",
                       padding: 4,
                       borderRadius: 20,
-                      alignSelf: "flex-start",
-                      marginTop: -4,
                     }}
                     onPress={() => (
                       setOpenChat(false),
@@ -5172,9 +5566,15 @@ export default function StudentQA() {
                   </TouchableOpacity>
                 </View>
               )}
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: "lightgrey",
+                }}
+              />
               <ScrollView
                 ref={scrollViewRef2}
-                style={{ marginVertical: 8 }}
+                style={{ paddingHorizontal: 20, marginVertical: 4 }}
                 showsVerticalScrollIndicator={false}
               >
                 {selectedQuestion?.chatSession?.messages?.map((chat, index) => {
@@ -5205,7 +5605,7 @@ export default function StudentQA() {
                             style={{
                               width: 40,
                               height: 40,
-                              borderRadius: 20,
+                              borderRadius: 40,
                               marginRight: 10,
                             }}
                           />
@@ -5258,6 +5658,13 @@ export default function StudentQA() {
                   );
                 })}
               </ScrollView>
+              <View
+                style={{
+                  height: 1,
+                  marginTop: 8,
+                  backgroundColor: "lightgrey",
+                }}
+              />
               {selectedQuestion?.closed == true ? (
                 <View
                   style={{
@@ -5265,6 +5672,7 @@ export default function StudentQA() {
                     alignItems: "center",
                     justifyContent: "center",
                     padding: 8,
+                    marginHorizontal: 20,
                     backgroundColor: "#ededed",
                     borderRadius: 10,
                     borderWidth: 1,
@@ -5290,17 +5698,27 @@ export default function StudentQA() {
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    backgroundColor: "#e3e3e3",
+                    backgroundColor: "#fdfdfd",
                     marginTop: 12,
                     padding: 12,
+                    marginHorizontal: 20,
                     borderRadius: 10,
+                    borderWidth: 1.5,
+                    borderColor: "#e3e3e3",
                   }}
                 >
                   <TextInput
                     placeholder="Send a message"
+                    placeholderTextColor="gray"
                     value={content}
                     onChangeText={(value) => setContent(value)}
-                    style={{ flex: 1, paddingRight: 8, fontSize: 18 }}
+                    style={{
+                      flex: 1,
+                      paddingRight: 8,
+                      fontSize: 18,
+                      maxHeight: 50,
+                    }}
+                    multiline
                   />
                   <TouchableOpacity
                     disabled={content.trim() === ""}

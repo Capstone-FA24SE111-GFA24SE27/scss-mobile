@@ -69,7 +69,7 @@ export default function ConfirmBookingModal({
 
   useEffect(() => {
     fetchSlots();
-  }, [selectedDate]);
+  }, [selectedDate, openConfirm]);
 
   useEffect(() => {
     if (selectedSlot != "" || selectedSlot != null) {

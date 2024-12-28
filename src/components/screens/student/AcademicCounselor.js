@@ -48,8 +48,8 @@ export default function AcademicCounselor() {
   const [filters, setFilters] = useState({
     availableFrom: "",
     availableTo: "",
-    ratingFrom: 0,
-    ratingTo: 5,
+    // ratingFrom: 0,
+    // ratingTo: 5,
     SortDirection: "",
     gender: "",
     departmentId: "",
@@ -65,9 +65,9 @@ export default function AcademicCounselor() {
   const [availableTo, setAvailableTo] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [selectedFrom, setSelectedFrom] = useState(0);
-  const [selectedTo, setSelectedTo] = useState(5);
-  const ratings = [0, 1, 2, 3, 4, 5];
+  // const [selectedFrom, setSelectedFrom] = useState(0);
+  // const [selectedTo, setSelectedTo] = useState(5);
+  // const ratings = [0, 1, 2, 3, 4, 5];
   const [sortDirection, setSortDirection] = useState("");
   const [gender, setGender] = useState("");
   const [expanded, setExpanded] = useState(false);
@@ -188,8 +188,8 @@ export default function AcademicCounselor() {
     const newFilters = {
       availableFrom: availableFrom,
       availableTo: availableTo,
-      ratingFrom: selectedFrom,
-      ratingTo: selectedTo,
+      // ratingFrom: selectedFrom,
+      // ratingTo: selectedTo,
       SortDirection: sortDirection,
       gender: gender,
       departmentId: selectedDepartment.id,
@@ -207,8 +207,8 @@ export default function AcademicCounselor() {
     const resetFilters = {
       availableFrom: "",
       availableTo: "",
-      ratingFrom: 0,
-      ratingTo: 5,
+      // ratingFrom: 0,
+      // ratingTo: 5,
       SortDirection: "",
       gender: "",
       departmentId: "",
@@ -218,8 +218,8 @@ export default function AcademicCounselor() {
     setKeyword("");
     setAvailableFrom(resetFilters.availableFrom);
     setAvailableTo(resetFilters.availableTo);
-    setSelectedFrom(resetFilters.ratingFrom);
-    setSelectedTo(resetFilters.ratingTo);
+    // setSelectedFrom(resetFilters.ratingFrom);
+    // setSelectedTo(resetFilters.ratingTo);
     setSortDirection(resetFilters.SortDirection);
     setGender(resetFilters.gender);
     setSelectedDepartment(resetFilters.departmentId);
@@ -856,7 +856,7 @@ export default function AcademicCounselor() {
                     setModalMessage={setModalMessage}
                   />
                 </View>
-                <View
+                {/* <View
                   style={{
                     paddingVertical: 12,
                     flexDirection: "row",
@@ -982,7 +982,7 @@ export default function AcademicCounselor() {
                       ))}
                     </View>
                   </View>
-                </View>
+                </View> */}
                 <View
                   style={{
                     flex: 1,
@@ -1607,7 +1607,7 @@ export default function AcademicCounselor() {
                       >
                         {item.profile.fullName}
                       </Text>
-                      <View
+                      {/* <View
                         style={{
                           flexDirection: "row",
                           alignItems: "center",
@@ -1628,7 +1628,7 @@ export default function AcademicCounselor() {
                         >
                           {item.rating}
                         </Text>
-                      </View>
+                      </View> */}
                     </View>
                     <Text
                       style={{
@@ -2422,7 +2422,6 @@ export default function AcademicCounselor() {
                                       height: 100,
                                       backgroundColor: "#fff",
                                       fontSize: 16,
-                                      marginTop: 8,
                                       marginBottom: 12,
                                       textAlignVertical: "top",
                                     }}

@@ -45,8 +45,6 @@ export default function NonAcademicCounselor() {
   const [filters, setFilters] = useState({
     availableFrom: "",
     availableTo: "",
-    ratingFrom: 0,
-    ratingTo: 5,
     SortDirection: "",
     gender: "",
     expertiseId: "",
@@ -60,9 +58,6 @@ export default function NonAcademicCounselor() {
   const [availableTo, setAvailableTo] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [selectedFrom, setSelectedFrom] = useState(0);
-  const [selectedTo, setSelectedTo] = useState(5);
-  const ratings = [0, 1, 2, 3, 4, 5];
   const [sortDirection, setSortDirection] = useState("");
   const [gender, setGender] = useState("");
   const [expertises, setExpertises] = useState([]);
@@ -140,8 +135,6 @@ export default function NonAcademicCounselor() {
     const newFilters = {
       availableFrom: availableFrom,
       availableTo: availableTo,
-      ratingFrom: selectedFrom,
-      ratingTo: selectedTo,
       SortDirection: sortDirection,
       gender: gender,
       expertiseId: selectedExpertise.id,
@@ -157,8 +150,6 @@ export default function NonAcademicCounselor() {
     const resetFilters = {
       availableFrom: "",
       availableTo: "",
-      ratingFrom: 0,
-      ratingTo: 5,
       SortDirection: "",
       gender: "",
       expertiseId: "",
@@ -166,8 +157,6 @@ export default function NonAcademicCounselor() {
     setKeyword("");
     setAvailableFrom(resetFilters.availableFrom);
     setAvailableTo(resetFilters.availableTo);
-    setSelectedFrom(resetFilters.ratingFrom);
-    setSelectedTo(resetFilters.ratingTo);
     setSortDirection(resetFilters.SortDirection);
     setGender(resetFilters.gender);
     setSelectedExpertise(resetFilters.expertiseId);
@@ -724,133 +713,6 @@ export default function NonAcademicCounselor() {
                 </View>
                 <View
                   style={{
-                    paddingVertical: 12,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginLeft: 4,
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        marginBottom: 8,
-                        marginRight: 4,
-                      }}
-                    >
-                      Rating From:
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      {ratings.map((item, index) => (
-                        <View key={index}>
-                          {item < selectedTo && (
-                            <TouchableOpacity
-                              key={`From: ${index}`}
-                              onPress={() => {
-                                if (item < selectedTo) setSelectedFrom(item);
-                              }}
-                              disabled={item >= selectedTo}
-                              style={[
-                                {
-                                  paddingHorizontal: 10,
-                                  paddingVertical: 4,
-                                  borderRadius: 20,
-                                  marginRight: 3,
-                                  backgroundColor: "white",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  elevation: 2,
-                                  opacity: item >= selectedTo ? 0.6 : 1,
-                                },
-                                selectedFrom === item && {
-                                  backgroundColor: "#F39300",
-                                },
-                              ]}
-                            >
-                              <Text
-                                style={{
-                                  color:
-                                    selectedFrom === item ? "white" : "black",
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                }}
-                              >
-                                {item}
-                              </Text>
-                            </TouchableOpacity>
-                          )}
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                  <View style={{ flex: 1, paddingLeft: 10 }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        marginBottom: 8,
-                        marginRight: 4,
-                      }}
-                    >
-                      Rating To:
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      {ratings.map((item, index) => (
-                        <View key={index}>
-                          {item > selectedFrom && (
-                            <TouchableOpacity
-                              key={`To: ${index}`}
-                              onPress={() => {
-                                if (item > selectedFrom) setSelectedTo(item);
-                              }}
-                              disabled={item <= selectedFrom}
-                              style={[
-                                {
-                                  paddingHorizontal: 10,
-                                  paddingVertical: 4,
-                                  borderRadius: 20,
-                                  marginRight: 3,
-                                  backgroundColor: "white",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  elevation: 2,
-                                  // opacity: item <= selectedFrom ? 0.6 : 1
-                                },
-                                selectedTo === item && {
-                                  backgroundColor: "#F39300",
-                                },
-                              ]}
-                            >
-                              <Text
-                                style={{
-                                  color:
-                                    selectedTo === item ? "white" : "black",
-                                  fontSize: 14,
-                                  fontWeight: "600",
-                                }}
-                              >
-                                {item}
-                              </Text>
-                            </TouchableOpacity>
-                          )}
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                </View>
-                <View
-                  style={{
                     flex: 1,
                     flexDirection: "row",
                     alignItems: "center",
@@ -1252,28 +1114,6 @@ export default function NonAcademicCounselor() {
                       >
                         {item.profile.fullName}
                       </Text>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          backgroundColor: "#F39300",
-                          paddingHorizontal: 12,
-                          paddingVertical: 2,
-                          borderRadius: 20,
-                        }}
-                      >
-                        <Ionicons name="star" size={16} color="white" />
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            marginLeft: 4,
-                            fontWeight: "bold",
-                            color: "white",
-                          }}
-                        >
-                          {item.rating}
-                        </Text>
-                      </View>
                     </View>
                     <Text
                       style={{
@@ -1921,7 +1761,6 @@ export default function NonAcademicCounselor() {
                                       height: 100,
                                       backgroundColor: "#fff",
                                       fontSize: 16,
-                                      marginTop: 8,
                                       marginBottom: 12,
                                       textAlignVertical: "top",
                                     }}
