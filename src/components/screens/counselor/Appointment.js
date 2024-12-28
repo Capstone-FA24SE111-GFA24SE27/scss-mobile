@@ -481,11 +481,6 @@ export default function Appointment({ route }) {
     setOpenCreate(false);
   };
 
-  const handleOpenCancel = (id) => {
-    setOpenCancel(true);
-    setSelectedAppointment(id);
-  };
-
   const handleCancelAppointment = async () => {
     try {
       const response = await axiosJWT.post(
@@ -1308,8 +1303,11 @@ export default function Appointment({ route }) {
                       }}
                     >
                       <TouchableOpacity
-                        onPress={() => handleOpenCancel(appointment.id)}
-                        activeOpacity={0.6}
+                        activeOpacity={0.7}
+                        onPress={() => (
+                          setOpenCancel(true),
+                          setSelectedAppointment(appointment.id)
+                        )}
                         style={{
                           paddingHorizontal: 8,
                           paddingVertical: 4,
@@ -2003,6 +2001,20 @@ export default function Appointment({ route }) {
                   </View>
                 </ScrollView>
                 <TouchableOpacity
+                  disabled={
+                    slots[selectedDate2]?.length === 0 ||
+                    slots[selectedDate2]?.every(
+                      (item) => item.status === "EXPIRED"
+                    ) ||
+                    selectedSlot === "" ||
+                    online === null ||
+                    setValue === "" ||
+                    setValue2 === "" ||
+                    reason === "" ||
+                    selectedStudent === null
+                  }
+                  activeOpacity={0.7}
+                  onPress={handleCreateAppointment}
                   style={{
                     backgroundColor:
                       slots[selectedDate2]?.length === 0 ||
@@ -2025,20 +2037,6 @@ export default function Appointment({ route }) {
                     marginHorizontal: 20,
                     marginVertical: 16,
                   }}
-                  disabled={
-                    slots[selectedDate2]?.length === 0 ||
-                    slots[selectedDate2]?.every(
-                      (item) => item.status === "EXPIRED"
-                    ) ||
-                    selectedSlot === "" ||
-                    online === null ||
-                    setValue === "" ||
-                    setValue2 === "" ||
-                    reason === "" ||
-                    selectedStudent === null
-                  }
-                  onPress={handleCreateAppointment}
-                  activeOpacity={0.8}
                 >
                   <Text
                     style={{

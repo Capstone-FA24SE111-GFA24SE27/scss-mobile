@@ -55,6 +55,7 @@ export default function CounselorRand() {
   const [currentPage, setCurrentPage] = useState(0);
   const [online, isOnline] = useState(null);
   const [reason, setReason] = useState("");
+  const [matchers, setMatchers] = useState([]);
   const [matcher, setMatcher] = useState(null);
   const [error, setError] = useState(null);
   const [openExtendInfo, setOpenExtendInfo] = useState(false);
@@ -195,7 +196,6 @@ export default function CounselorRand() {
             height: 80,
             backgroundColor: "#fff",
             fontSize: 16,
-            marginBottom: 8,
             textAlignVertical: "top",
           }}
           numberOfLines={3}
@@ -232,6 +232,7 @@ export default function CounselorRand() {
             selectedDayBackgroundColor: "#F39300",
             selectedDayTextColor: "white",
             arrowColor: "#F39300",
+            monthTextColor: "#F39300",
             textDayHeaderFontSize: 14,
             textDayFontSize: 16,
             todayTextColor: "#F39300",
@@ -842,6 +843,109 @@ export default function CounselorRand() {
     );
   };
 
+  const renderMethod = () => {
+    return (
+      <View
+        style={{
+          paddingTop: 12,
+          marginHorizontal: 8,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: "600",
+          }}
+        >
+          Meeting method <Text style={{ color: "#F39300" }}>*</Text>
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              width: "50%",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => isOnline(true)}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                backgroundColor: online == true ? "white" : "#ededed",
+                borderRadius: 10,
+                paddingHorizontal: 12,
+                paddingVertical: 4,
+                marginTop: 10,
+                borderWidth: 1.5,
+                borderColor: online == true ? "#F39300" : "transparent",
+              }}
+            >
+              <Ionicons
+                name={online == true ? "checkmark-circle" : "radio-button-off"}
+                size={24}
+                color={online == true ? "#F39300" : "gray"}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: online == true ? "#F39300" : "black",
+                  fontWeight: online == true ? "600" : "0",
+                }}
+              >
+                Online
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "50%",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => isOnline(false)}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                backgroundColor: online == false ? "white" : "#ededed",
+                borderRadius: 10,
+                paddingHorizontal: 12,
+                paddingVertical: 4,
+                marginTop: 10,
+                borderWidth: 1.5,
+                borderColor: online == false ? "#F39300" : "transparent",
+              }}
+            >
+              <Ionicons
+                name={online == false ? "checkmark-circle" : "radio-button-off"}
+                size={24}
+                color={online == false ? "#F39300" : "gray"}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: online == false ? "#F39300" : "black",
+                  fontWeight: online == false ? "600" : "0",
+                }}
+              >
+                Offline
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   const renderCarousel = () => {
     const items = [
       { title: "What are your concerns?", content: renderReason() },
@@ -934,7 +1038,7 @@ export default function CounselorRand() {
           // height: height * 0.6,
         }}
       >
-        {!matcher && renderPage()}
+        {matchers.length <= 0 && renderPage()}
         <View
           style={{
             flexDirection: "row",
@@ -942,7 +1046,7 @@ export default function CounselorRand() {
             alignItems: "center",
           }}
         >
-          {!matcher && (
+          {matchers.length <= 0 && (
             <>
               {currentPage > 0 ? (
                 <TouchableOpacity
@@ -1021,7 +1125,7 @@ export default function CounselorRand() {
             justifyContent: "space-between",
           }}
         >
-          {!matcher ? (
+          {matchers.length <= 0 ? (
             <>
               <TouchableOpacity
                 onPress={() => (
@@ -1032,6 +1136,7 @@ export default function CounselorRand() {
                   setSelectedMajor(""),
                   setSelectedSpecialization(""),
                   setSelectedExpertise(""),
+                  setMatchers([]),
                   setMatcher(null),
                   setError(null),
                   isOnline(null),
@@ -1088,32 +1193,35 @@ export default function CounselorRand() {
               </TouchableOpacity>
             </>
           ) : (
-            <TouchableOpacity
-              onPress={() => setMatcher(null)}
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                backgroundColor: "white",
-                borderRadius: 10,
-                paddingVertical: 8,
-                justifyContent: "center",
-                alignItems: "center",
-                borderWidth: 1.5,
-                borderColor: "lightgrey",
-              }}
-            >
-              <Text
+            <View style={{ flexDirection: "column"}}>
+              <TouchableOpacity
+                onPress={() => (setMatchers([]), setMatcher(null), isOnline(null))}
                 style={{
-                  fontWeight: "500",
-                  color: "#333",
-                  fontSize: 18,
-                  marginRight: 8,
+                  flex: 1,
+                  flexDirection: "row",
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  paddingVertical: 8,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 1.5,
+                  borderColor: "lightgrey",
                 }}
               >
-                Find again
-              </Text>
-              <Ionicons name="refresh" size={20} color="#333" />
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    color: "#333",
+                    fontSize: 18,
+                    marginRight: 8,
+                  }}
+                >
+                  Find again
+                </Text>
+                <Ionicons name="refresh" size={20} color="#333" />
+              </TouchableOpacity>
+              {renderMethod()}
+            </View>
           )}
         </View>
       </View>
@@ -1121,6 +1229,7 @@ export default function CounselorRand() {
   };
 
   const handleMatch = async () => {
+    setMatchers([]);
     setMatcher(null);
     setError(null);
     setLoading2(true);
@@ -1186,7 +1295,7 @@ export default function CounselorRand() {
         //     setError(response.data.message);
         //   }
         // }
-        const response = await axiosJWT.get(
+        const matchersRes = await axiosJWT.get(
           `${BASE_URL}/counselors/random/match`,
           {
             params: {
@@ -1197,16 +1306,16 @@ export default function CounselorRand() {
             },
           }
         );
-        if (response.data && response.data.status == 200) {
-          setMatcher(response.data.content);
+        if (matchersRes.data && matchersRes.data.status == 200) {
+          setMatchers(matchersRes.data.content);
           Toast.show({
             type: "success",
             text1: "Success",
-            text2: "A counselor has been found",
+            text2: "Counselor(s) found",
             onPress: () => Toast.hide(),
           });
-        } else if (response.data && response.data.status == 404) {
-          setError(response.data.message);
+        } else if (matchersRes.data && matchersRes.data.status == 404) {
+          setError(matchersRes.data.message);
         }
       } else if (typeRes?.data?.message?.includes("INAPPROPRIATE_SENTENCE")) {
         setError(
@@ -1304,6 +1413,8 @@ export default function CounselorRand() {
 
   const handleCloseSuccess = () => {
     setOpenSuccess(false);
+    setMatchers([]);
+    setMatcher(null);
     isOnline(null);
     setReason("");
     fetchSlots();
@@ -1325,290 +1436,166 @@ export default function CounselorRand() {
         <View style={{ paddingVertical: 8, paddingHorizontal: 20 }}>
           {renderCarousel()}
         </View>
-        {matcher && loading2 == false ? (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => (setOpenExtendInfo(true), setExtendInfo(matcher))}
-            key={matcher.id}
-            style={{
-              backgroundColor: "white",
-              borderRadius: 20,
-              paddingHorizontal: 8,
-              paddingVertical: 12,
-              marginVertical: 12,
-              marginHorizontal: 20,
-              elevation: 1,
-              borderWidth: 0.75,
-              borderColor: "#e3e3e3",
-            }}
-          >
-            <View style={{ flexDirection: "row", marginHorizontal: 8 }}>
-              <View>
-                <Image
-                  source={{ uri: matcher.profile.avatarLink }}
-                  style={{
-                    width: width * 0.14,
-                    height: width * 0.14,
-                    marginRight: 8,
-                    borderRadius: 40,
-                  }}
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Text
+        {matchers.length > 0 && loading2 == false ? (
+          matchers?.map((item, index) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => (setOpenExtendInfo(true), setExtendInfo(item))}
+              key={item.id}
+              style={{
+                backgroundColor: "white",
+                borderRadius: 20,
+                paddingHorizontal: 8,
+                paddingVertical: 12,
+                marginVertical: 12,
+                marginHorizontal: 20,
+                elevation: 1,
+                borderWidth: 0.75,
+                borderColor: "#e3e3e3",
+              }}
+            >
+              <View style={{ flexDirection: "row", marginHorizontal: 8 }}>
+                <View>
+                  <Image
+                    source={{ uri: item.profile.avatarLink }}
                     style={{
-                      fontSize: 20,
-                      fontWeight: "bold",
-                      color: "#333",
+                      width: width * 0.14,
+                      height: width * 0.14,
+                      marginRight: 8,
+                      borderRadius: 40,
                     }}
-                  >
-                    {matcher.profile.fullName}
-                  </Text>
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
                   <View
                     style={{
                       flexDirection: "row",
-                      alignItems: "center",
-                      backgroundColor: "#F39300",
-                      paddingHorizontal: 12,
-                      paddingVertical: 2,
-                      borderRadius: 20,
+                      justifyContent: "space-between",
                     }}
                   >
-                    <Ionicons name="star" size={18} color="white" />
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      {item.profile.fullName}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: "gray",
+                      marginVertical: 2,
+                    }}
+                  >
+                    {item?.expertise?.name || item?.major?.name}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: 10,
+                  paddingVertical: 8,
+                  marginTop: 8,
+                  marginHorizontal: 8,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons name="mail" size={20} color="black" />
                     <Text
                       style={{
                         fontSize: 16,
-                        marginLeft: 6,
-                        fontWeight: "bold",
-                        color: "white",
+                        fontWeight: "600",
+                        marginLeft: 8,
                       }}
                     >
-                      {matcher.rating}
+                      Email
                     </Text>
                   </View>
+                  <Text style={{ marginTop: 8, color: "#555" }}>
+                    {item.email}
+                  </Text>
                 </View>
+                <View
+                  style={{
+                    borderLeftWidth: 0.75,
+                    borderColor: "#ccc",
+                    height: "90%",
+                    marginVertical: 4,
+                  }}
+                />
+                <View
+                  style={{
+                    flex: 1,
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons name="call" size={20} color="black" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "600",
+                        marginLeft: 8,
+                      }}
+                    >
+                      Contact
+                    </Text>
+                  </View>
+                  <Text style={{ marginTop: 8, color: "#555" }}>
+                    {item.profile.phoneNumber}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                disabled={online === null || reason === ""}
+                style={{
+                  backgroundColor:
+                    online === null || reason === "" ? "#ededed" : "#F39300",
+                  borderRadius: 10,
+                  paddingVertical: 8,
+                  marginTop: 12,
+                  marginHorizontal: 8,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+                onPress={() => (setMatcher(item), setOpenConfirm(true))}
+              >
                 <Text
                   style={{
+                    fontWeight: "500",
+                    color: online === null || reason === "" ? "gray" : "white",
                     fontSize: 18,
-                    color: "gray",
-                    marginVertical: 2,
+                    marginRight: 8,
                   }}
                 >
-                  {matcher?.expertise?.name || matcher?.major?.name}
+                  Book Appointment
                 </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                backgroundColor: "#f0f0f0",
-                borderRadius: 10,
-                paddingVertical: 8,
-                marginTop: 8,
-                marginHorizontal: 8,
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Ionicons name="mail" size={20} color="black" />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "600",
-                      marginLeft: 8,
-                    }}
-                  >
-                    Email
-                  </Text>
-                </View>
-                <Text style={{ marginTop: 8, color: "#555" }}>
-                  {matcher.email}
-                </Text>
-              </View>
-              <View
-                style={{
-                  borderLeftWidth: 0.75,
-                  borderColor: "#ccc",
-                  height: "90%",
-                  marginVertical: 4,
-                }}
-              />
-              <View
-                style={{
-                  flex: 1,
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Ionicons name="call" size={20} color="black" />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "600",
-                      marginLeft: 8,
-                    }}
-                  >
-                    Contact
-                  </Text>
-                </View>
-                <Text style={{ marginTop: 8, color: "#555" }}>
-                  {matcher.profile.phoneNumber}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                paddingVertical: 12,
-                marginHorizontal: 8,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "600",
-                }}
-              >
-                Meeting method <Text style={{ color: "#F39300" }}>*</Text>
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                }}
-              >
-                <View
+                <Ionicons
+                  name="chevron-forward"
+                  size={24}
                   style={{
-                    flexDirection: "row",
-                    width: "50%",
-                    alignItems: "center",
+                    color: online === null || reason === "" ? "gray" : "white",
                   }}
-                >
-                  <TouchableOpacity
-                    onPress={() => isOnline(true)}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      backgroundColor: online == true ? "white" : "#ededed",
-                      borderRadius: 10,
-                      paddingHorizontal: 12,
-                      paddingVertical: 4,
-                      marginTop: 10,
-                      borderWidth: 1.5,
-                      borderColor: online == true ? "#F39300" : "transparent",
-                    }}
-                  >
-                    <Ionicons
-                      name={
-                        online == true ? "checkmark-circle" : "radio-button-off"
-                      }
-                      size={24}
-                      color={online == true ? "#F39300" : "gray"}
-                      style={{ marginRight: 8 }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: online == true ? "#F39300" : "black",
-                        fontWeight: online == true ? "600" : "0",
-                      }}
-                    >
-                      Online
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    width: "50%",
-                    alignItems: "center",
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => isOnline(false)}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      backgroundColor: online == false ? "white" : "#ededed",
-                      borderRadius: 10,
-                      paddingHorizontal: 12,
-                      paddingVertical: 4,
-                      marginTop: 10,
-                      borderWidth: 1.5,
-                      borderColor: online == false ? "#F39300" : "transparent",
-                    }}
-                  >
-                    <Ionicons
-                      name={
-                        online == false
-                          ? "checkmark-circle"
-                          : "radio-button-off"
-                      }
-                      size={24}
-                      color={online == false ? "#F39300" : "gray"}
-                      style={{ marginRight: 8 }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: online == false ? "#F39300" : "black",
-                        fontWeight: online == false ? "600" : "0",
-                      }}
-                    >
-                      Offline
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              disabled={online === null || reason === ""}
-              style={{
-                backgroundColor:
-                  online === null || reason === "" ? "#ededed" : "#F39300",
-                borderRadius: 10,
-                paddingVertical: 8,
-                marginTop: 12,
-                marginHorizontal: 8,
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "row",
-              }}
-              onPress={() => setOpenConfirm(true)}
-            >
-              <Text
-                style={{
-                  fontWeight: "500",
-                  color: online === null || reason === "" ? "gray" : "white",
-                  fontSize: 18,
-                  marginRight: 8,
-                }}
-              >
-                Book Appointment
-              </Text>
-              <Ionicons
-                name="chevron-forward"
-                size={24}
-                style={{
-                  color: online === null || reason === "" ? "gray" : "white",
-                }}
-              />
+                />
+              </TouchableOpacity>
             </TouchableOpacity>
-          </TouchableOpacity>
+          ))
         ) : (
           <>
             {error && loading2 == false ? (
@@ -1640,54 +1627,6 @@ export default function CounselorRand() {
         )}
       </ScrollView>
       {loading2 && (
-        // <View
-        //   style={{
-        //     position: "absolute",
-        //     top: 0,
-        //     left: 0,
-        //     right: 0,
-        //     bottom: 0,
-        //     justifyContent: "center",
-        //     alignItems: "center",
-        //   }}
-        // >
-        //   <Animated.View
-        //     style={{
-        //       width: 90,
-        //       height: 90,
-        //       borderRadius: 50,
-        //       borderWidth: 10,
-        //       borderColor: progress.interpolate({
-        //         inputRange: [0, 25, 50, 75, 100],
-        //         outputRange: [
-        //           "#888888",
-        //           "#aaaaaa",
-        //           "#cccccc",
-        //           "#eeeeee",
-        //           "#F39300",
-        //         ],
-        //       }),
-        //       justifyContent: "center",
-        //       alignItems: "center",
-        //       transform: [
-        //         {
-        //           rotate: progress.interpolate({
-        //             inputRange: [0, 25, 50, 75, 100],
-        //             outputRange: [
-        //               "0deg",
-        //               "90deg",
-        //               "180deg",
-        //               "270deg",
-        //               "360deg",
-        //             ],
-        //           }),
-        //         },
-        //       ],
-        //     }}
-        //   >
-        //     <Ionicons name="hourglass" size={40} color="#F39300" />
-        //   </Animated.View>
-        // </View>
         <View
           style={{
             flexDirection: "row",

@@ -2044,7 +2044,7 @@ export default function Student() {
                             borderRadius: 20,
                             paddingHorizontal: 12,
                             paddingVertical: 8,
-                            marginHorizontal: 4,
+                            marginRight: 4,
                             marginTop: 8,
                             alignSelf: "flex-start",
                           }}

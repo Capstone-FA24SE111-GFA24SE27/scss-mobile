@@ -178,11 +178,6 @@ export default function Appointment({ route }) {
     setIsExpanded(false);
   };
 
-  const handleOpenCancel = (id) => {
-    setOpenCancel(true);
-    setSelectedAppointment(id);
-  };
-
   const handleCancelAppointment = async () => {
     try {
       const response = await axiosJWT.post(
@@ -887,8 +882,11 @@ export default function Appointment({ route }) {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleOpenCancel(appointment.id)}
-                      activeOpacity={0.6}
+                      activeOpacity={0.7}
+                      onPress={() => (
+                        setOpenCancel(true),
+                        setSelectedAppointment(appointment.id)
+                      )}
                       style={{
                         paddingHorizontal: 8,
                         paddingVertical: 4,
@@ -1463,11 +1461,11 @@ export default function Appointment({ route }) {
                         info.status !== "ABSENT" &&
                         info.status !== "CANCELED" && (
                           <TouchableOpacity
+                            activeOpacity={0.7}
                             onPress={() => (
                               setOpenFeedback(true),
                               setSelectedAppointment(info?.id)
                             )}
-                            activeOpacity={0.6}
                           >
                             <Text
                               style={{
@@ -1703,7 +1701,7 @@ export default function Appointment({ route }) {
                   {[1, 2, 3, 4, 5].map((star, index) => (
                     <TouchableOpacity
                       key={index}
-                      activeOpacity={0.6}
+                      activeOpacity={0.7}
                       onPress={() => setRating(star)}
                     >
                       <Ionicons
@@ -1725,6 +1723,8 @@ export default function Appointment({ route }) {
                 }}
               >
                 <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={handleCloseFeedback}
                   style={{
                     backgroundColor: "#ededed",
                     paddingHorizontal: 12,
@@ -1736,7 +1736,6 @@ export default function Appointment({ route }) {
                     borderWidth: 1,
                     borderColor: "gray",
                   }}
-                  onPress={handleCloseFeedback}
                 >
                   <Text
                     style={{
@@ -1750,6 +1749,8 @@ export default function Appointment({ route }) {
                 </TouchableOpacity>
                 <TouchableOpacity
                   disabled={value === "" || rating === 0}
+                  activeOpacity={0.7}
+                  onPress={handleTakeFeedback}
                   style={{
                     backgroundColor:
                       value === "" || rating === 0 ? "#ededed" : "#F39300",
@@ -1762,7 +1763,6 @@ export default function Appointment({ route }) {
                     borderColor:
                       value === "" || rating === 0 ? "gray" : "#F39300",
                   }}
-                  onPress={handleTakeFeedback}
                 >
                   <Text
                     style={{

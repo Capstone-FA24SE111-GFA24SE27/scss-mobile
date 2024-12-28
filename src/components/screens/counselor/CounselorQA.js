@@ -80,6 +80,14 @@ export default function CounselorQA() {
     }, [debouncedKeyword, filters, currentPage])
   );
 
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedKeyword(keyword);
@@ -1263,47 +1271,62 @@ export default function CounselorQA() {
                       </View>
                       <View
                         style={{
-                          alignSelf: "flex-end",
                           flexDirection: "row",
+                          justifyContent: "space-between",
                           alignItems: "center",
                           marginTop: 12,
                         }}
                       >
-                        {question.closed == false && (
-                          <TouchableOpacity
-                            onPress={() => (
-                              setOpenCloseConfirm(true),
-                              setSelectedQuestion(question)
-                            )}
-                            style={{
-                              marginRight: 8,
-                              paddingHorizontal: 8,
-                              paddingVertical: 4,
-                              backgroundColor: "white",
-                              borderRadius: 10,
-                              flexDirection: "row",
-                              alignItems: "center",
-                              borderWidth: 1.5,
-                              borderColor: "#F39300",
-                            }}
-                          >
-                            <Ionicons
-                              name="lock-closed"
-                              size={16}
-                              color="#F39300"
-                            />
-                            <Text
-                              style={{
-                                fontWeight: "500",
-                                color: "#F39300",
-                                fontSize: 16,
-                                marginLeft: 4,
-                              }}
-                            >
-                              Close
-                            </Text>
-                          </TouchableOpacity>
-                        )}
+                        {question.accepted == true &&
+                          question.closed == false && (
+                            <>
+                              <View style={{ alignSelf: "flex-start" }}>
+                                <Text
+                                  style={{
+                                    fontSize: 14,
+                                    color: "#F39300",
+                                    fontWeight: "600",
+                                  }}
+                                >
+                                  Your answer is accepted
+                                </Text>
+                              </View>
+                              <TouchableOpacity
+                                onPress={() => (
+                                  setOpenCloseConfirm(true),
+                                  setSelectedQuestion(question)
+                                )}
+                                style={{
+                                  marginRight: 8,
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 4,
+                                  backgroundColor: "white",
+                                  borderRadius: 10,
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  alignSelf: "flex-end",
+                                  borderWidth: 1.5,
+                                  borderColor: "#F39300",
+                                }}
+                              >
+                                <Ionicons
+                                  name="lock-closed"
+                                  size={16}
+                                  color="#F39300"
+                                />
+                                <Text
+                                  style={{
+                                    fontWeight: "500",
+                                    color: "#F39300",
+                                    fontSize: 16,
+                                    marginLeft: 4,
+                                  }}
+                                >
+                                  Close
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          )}
                         {question.chatSession !== null && (
                           <TouchableOpacity
                             onPress={() => {
@@ -1320,6 +1343,7 @@ export default function CounselorQA() {
                               borderRadius: 10,
                               flexDirection: "row",
                               alignItems: "center",
+                              alignSelf: "flex-end",
                               borderWidth: 1.5,
                               borderColor: "#F39300",
                             }}
@@ -2585,6 +2609,98 @@ export default function CounselorQA() {
                       )}
                     </View>
                   )}
+                  {info?.feedback !== null && (
+                    <View
+                      style={{
+                        marginBottom: 20,
+                        borderRadius: 10,
+                        backgroundColor: "white",
+                        padding: 16,
+                        elevation: 1,
+                        borderWidth: 1.5,
+                        borderColor: "lightgrey",
+                      }}
+                    >
+                      <View style={{ marginBottom: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "#333",
+                            fontWeight: "500",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: "#F39300",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {info?.student?.profile?.fullName}
+                          </Text>{" "}
+                          had leave a review
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 12,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            backgroundColor: "#F39300",
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderRadius: 16,
+                          }}
+                        >
+                          <Ionicons name="star" size={16} color="white" />
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              marginLeft: 6,
+                              fontWeight: "bold",
+                              color: "white",
+                            }}
+                          >
+                            {info?.feedback?.rating.toFixed(1)}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 4,
+                            borderWidth: 1,
+                            borderColor: "gray",
+                            borderRadius: 20,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: "500",
+                              color: "#333",
+                            }}
+                          >
+                            {formatDate(info?.feedback?.createdAt)}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: "#333",
+                          lineHeight: 24,
+                        }}
+                      >
+                        {info?.feedback?.comment}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </ScrollView>
               <View
@@ -2833,24 +2949,29 @@ export default function CounselorQA() {
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
-                paddingHorizontal: 20,
-                paddingVertical: 20,
+                paddingBottom: 12,
               }}
             >
               {selectedQuestion && (
                 <View
                   style={{
+                    backgroundColor: "#F39300",
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    marginBottom: 20,
+                    alignItems: "center",
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
+                    paddingHorizontal: 20,
+                    paddingVertical: 8,
                   }}
                 >
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     onPress={() => (
                       setInfo(selectedQuestion), setOpenInfo(true)
                     )}
                     style={{
-                      backgroundColor: "#ededed",
+                      backgroundColor: "#fff0e0",
                       flexDirection: "row",
                       alignSelf: "flex-start",
                       alignItems: "center",
@@ -2863,7 +2984,7 @@ export default function CounselorQA() {
                       source={{
                         uri: selectedQuestion?.student?.profile?.avatarLink,
                       }}
-                      style={{ width: 50, height: 50, borderRadius: 40 }}
+                      style={{ width: 40, height: 40, borderRadius: 40 }}
                     />
                     <View
                       style={{
@@ -2877,9 +2998,10 @@ export default function CounselorQA() {
                       >
                         <Text
                           style={{
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: "bold",
-                            opacity: 0.5,
+                            color: "#333",
+                            opacity: 0.7,
                             marginRight: 8,
                           }}
                         >
@@ -2887,14 +3009,15 @@ export default function CounselorQA() {
                         </Text>
                         <Ionicons
                           name="chevron-forward"
-                          size={18}
+                          size={16}
                           color="#F39300"
                         />
                       </View>
                       <Text
                         style={{
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: "bold",
+                          color: "#333",
                         }}
                       >
                         {selectedQuestion?.student?.profile?.fullName?.length >
@@ -2908,12 +3031,11 @@ export default function CounselorQA() {
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     style={{
-                      backgroundColor: "#ededed",
+                      backgroundColor: "white",
                       padding: 4,
                       borderRadius: 20,
-                      alignSelf: "flex-start",
-                      marginTop: -4,
                     }}
                     onPress={() => (
                       setOpenChat(false),
@@ -2925,9 +3047,15 @@ export default function CounselorQA() {
                   </TouchableOpacity>
                 </View>
               )}
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: "lightgrey",
+                }}
+              />
               <ScrollView
                 ref={scrollViewRef2}
-                style={{ marginVertical: 8 }}
+                style={{ paddingHorizontal: 20, marginVertical: 4 }}
                 showsVerticalScrollIndicator={false}
               >
                 {selectedQuestion?.chatSession?.messages?.map((chat, index) => {
@@ -2958,12 +3086,11 @@ export default function CounselorQA() {
                             style={{
                               width: 40,
                               height: 40,
-                              borderRadius: 20,
+                              borderRadius: 40,
                               marginRight: 10,
                             }}
                           />
                         )}
-
                       <View
                         style={{
                           minWidth: "30%",
@@ -3012,6 +3139,13 @@ export default function CounselorQA() {
                   );
                 })}
               </ScrollView>
+              <View
+                style={{
+                  height: 1,
+                  marginTop: 8,
+                  backgroundColor: "lightgrey",
+                }}
+              />
               {selectedQuestion?.closed == true ? (
                 <View
                   style={{
@@ -3019,6 +3153,7 @@ export default function CounselorQA() {
                     alignItems: "center",
                     justifyContent: "center",
                     padding: 8,
+                    marginHorizontal: 20,
                     backgroundColor: "#ededed",
                     borderRadius: 10,
                     borderWidth: 1,
@@ -3044,17 +3179,27 @@ export default function CounselorQA() {
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    backgroundColor: "#e3e3e3",
+                    backgroundColor: "#fdfdfd",
                     marginTop: 12,
                     padding: 12,
+                    marginHorizontal: 20,
                     borderRadius: 10,
+                    borderWidth: 1.5,
+                    borderColor: "#e3e3e3",
                   }}
                 >
                   <TextInput
                     placeholder="Send a message"
+                    placeholderTextColor="gray"
                     value={content}
                     onChangeText={(value) => setContent(value)}
-                    style={{ flex: 1, paddingRight: 8, fontSize: 18 }}
+                    style={{
+                      flex: 1,
+                      paddingRight: 8,
+                      fontSize: 18,
+                      maxHeight: 50,
+                    }}
+                    multiline
                   />
                   <TouchableOpacity
                     disabled={content.trim() === ""}

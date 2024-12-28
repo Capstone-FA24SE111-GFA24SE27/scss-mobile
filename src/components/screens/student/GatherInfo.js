@@ -89,7 +89,7 @@ const GatherInfo = ({
             width: width * 0.95,
             backgroundColor: "white",
             borderRadius: 10,
-            marginTop: 20,
+            marginTop: height * 0.09,
           }}
         >
           <ScrollView
@@ -400,6 +400,7 @@ const GatherInfo = ({
             }}
           >
             <TouchableOpacity
+              activeOpacity={0.7}
               onPress={handleSkip}
               style={{
                 paddingHorizontal: 12,
@@ -424,6 +425,7 @@ const GatherInfo = ({
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              activeOpacity={0.7}
               disabled={
                 !Object.values(formValues).some((value) => value !== "")
               }
