@@ -8,6 +8,7 @@ import {
   ScrollView,
   Linking,
   TextInput,
+  Animated,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -262,6 +263,14 @@ export default function Schedule() {
           ...info,
           place: value,
         });
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Appointment updated.",
+          onPress: () => {
+            Toast.hide();
+          },
+        });
         handleCloseUpdateAppointment();
       } else {
         Toast.show({
@@ -409,108 +418,393 @@ export default function Schedule() {
     }
   }, [selectedAppointment, openReport]);
 
-  const renderItem = ({ item }) => (
-    <>
+  // const renderItem = ({ item }) => (
+  //   <>
+  //     <TouchableOpacity
+  //       onPress={() => (
+  //         setInfo(item), setOpenInfo(true), setSelectedAppointment(item.id)
+  //       )}
+  //       activeOpacity={0.7}
+  //       style={{
+  //         backgroundColor: "white",
+  //         padding: 16,
+  //         borderRadius: 10,
+  //         margin: 8,
+  //         elevation: 3,
+  //       }}
+  //     >
+  //       <View
+  //         style={{
+  //           flexDirection: "row",
+  //           alignItems: "center",
+  //         }}
+  //       >
+  //         <Image
+  //           source={{ uri: item.studentImage }}
+  //           style={{
+  //             width: width * 0.14,
+  //             height: width * 0.14,
+  //             borderRadius: width * 0.07,
+  //             marginRight: 16,
+  //             borderWidth: 1.5,
+  //             borderColor: "#F39300",
+  //           }}
+  //         />
+  //         <View style={{ flex: 1 }}>
+  //           <Text
+  //             style={{
+  //               fontSize: 20,
+  //               fontWeight: "bold",
+  //               color: "#333",
+  //             }}
+  //           >
+  //             {item.studentName}
+  //           </Text>
+  //           <Text
+  //             style={{
+  //               fontSize: 16,
+  //               fontWeight: "500",
+  //               color: "#555",
+  //               marginTop: 4,
+  //             }}
+  //           >
+  //             {item.startTime} - {item.endTime}
+  //           </Text>
+  //         </View>
+  //         <View
+  //           style={{
+  //             position: "absolute",
+  //             bottom: 0,
+  //             right: 0,
+  //           }}
+  //         >
+  //           <TouchableOpacity
+  //             disabled={item.date < new Date().toISOString().split("T")[0]}
+  //             activeOpacity={0.7}
+  //             onPress={() => handleOpenTakeAttendance(item.id, item.status)}
+  //             style={[
+  //               item.status === "ATTEND" && { borderColor: "green" },
+  //               item.status === "WAITING" && { borderColor: "#F39300" },
+  //               item.status === "ABSENT" && { borderColor: "red" },
+  //               item.status === "CANCELED" && { borderColor: "gray" },
+  //               {
+  //                 backgroundColor: "#fdfdfd",
+  //                 borderRadius: 20,
+  //                 paddingVertical: 6,
+  //                 borderWidth: 1.5,
+  //                 paddingHorizontal: 12,
+  //                 flexDirection: "row",
+  //                 elevation: 1,
+  //               },
+  //             ]}
+  //           >
+  //             {item.date >= new Date().toISOString().split("T")[0] && (
+  //               <>
+  //                 <MaterialIcons name="edit-calendar" size={20} color="gray" />
+  //                 <Text style={{ fontSize: 16, marginHorizontal: 6 }}>-</Text>
+  //               </>
+  //             )}
+  //             <Text
+  //               style={[
+  //                 { fontSize: 16, fontWeight: "bold" },
+  //                 item.status === "ATTEND" && { color: "green" },
+  //                 item.status === "WAITING" && { color: "#F39300" },
+  //                 item.status === "ABSENT" && { color: "red" },
+  //                 item.status === "CANCELED" && { color: "gray" },
+  //               ]}
+  //             >
+  //               {item.status}
+  //             </Text>
+  //           </TouchableOpacity>
+  //         </View>
+  //       </View>
+  //     </TouchableOpacity>
+  //   </>
+  // );
+
+  const MemoizedItem = React.memo(
+    ({
+      item,
+      handleOpenTakeAttendance,
+      setInfo,
+      setOpenInfo,
+      setSelectedAppointment,
+    }) => (
       <TouchableOpacity
         onPress={() => (
           setInfo(item), setOpenInfo(true), setSelectedAppointment(item.id)
         )}
-        activeOpacity={0.8}
+        activeOpacity={0.7}
         style={{
           backgroundColor: "white",
-          padding: 16,
+          paddingHorizontal: 12,
+          paddingVertical: 16,
+          marginHorizontal: 12,
+          marginVertical: 4,
           borderRadius: 10,
-          margin: 8,
-          elevation: 3,
+          elevation: 1,
         }}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <Image
-            source={{ uri: item.studentImage }}
-            style={{
-              width: width * 0.14,
-              height: width * 0.14,
-              borderRadius: width * 0.07,
-              marginRight: 16,
-              borderWidth: 1.5,
-              borderColor: "#F39300",
-            }}
-          />
-          <View style={{ flex: 1 }}>
-            <Text
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "column" }}>
+            <View
               style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#333",
-              }}
-            >
-              {item.studentName}
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                color: "#555",
+                flexDirection: "row",
+                alignItems: "flex-start",
+                minWidth: "30%",
                 marginTop: 4,
               }}
             >
-              {item.startTime} - {item.endTime}
-            </Text>
+              {/* <Ionicons
+                name="time-outline"
+                size={20}
+                style={{ color: "#F39300", marginTop: 8, marginRight: 4 }}
+              /> */}
+              <Animated.View
+                style={{
+                  marginTop: 12,
+                  marginHorizontal: -10,
+                  transform: [{ rotate: "-90deg" }],
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "600",
+                    color: "#F39300",
+                  }}
+                >
+                  {item.meetingType}
+                </Text>
+              </Animated.View>
+              <View style={{ alignItems: "center", marginRight: 8 }}>
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: "#F39300",
+                  }}
+                />
+                <View
+                  style={{
+                    width: 1.5,
+                    height: 24,
+                    backgroundColor: "#F39300",
+                  }}
+                />
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: "#F39300",
+                  }}
+                />
+              </View>
+              <View style={{ marginLeft: 2 }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "500",
+                    color: "gray",
+                    opacity: 0.7,
+                    marginTop: -8,
+                    marginBottom: 12,
+                  }}
+                >
+                  {item.startTime}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "500",
+                    opacity: 0.7,
+                    color: "gray",
+                  }}
+                >
+                  {item.endTime}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: 8,
+              }}
+            >
+              <TouchableOpacity
+                disabled={item.date < new Date().toISOString().split("T")[0]}
+                activeOpacity={0.7}
+                onPress={() => handleOpenTakeAttendance(item.id, item.status)}
+                style={[
+                  item.status === "ATTEND" && { borderColor: "green" },
+                  item.status === "WAITING" && { borderColor: "#F39300" },
+                  item.status === "ABSENT" && { borderColor: "red" },
+                  item.status === "CANCELED" && { borderColor: "gray" },
+                  {
+                    backgroundColor: "#fdfdfd",
+                    borderRadius: 20,
+                    paddingVertical: 4,
+                    borderWidth: 1.5,
+                    paddingHorizontal: 8,
+                    flexDirection: "row",
+                    alignSelf: "center",
+                    elevation: 1,
+                  },
+                ]}
+              >
+                {item.date >= new Date().toISOString().split("T")[0] && (
+                  <>
+                    <MaterialIcons
+                      name="edit-calendar"
+                      size={18}
+                      color="gray"
+                    />
+                    <Text style={{ fontSize: 16, marginHorizontal: 4 }}>-</Text>
+                  </>
+                )}
+                <Text
+                  style={[
+                    { fontSize: 14, fontWeight: "bold" },
+                    item.status === "ATTEND" && { color: "green" },
+                    item.status === "WAITING" && { color: "#F39300" },
+                    item.status === "ABSENT" && { color: "red" },
+                    item.status === "CANCELED" && { color: "gray" },
+                  ]}
+                >
+                  {item.status}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <View
             style={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
+              width: 1.5,
+              backgroundColor: "lightgrey",
+              marginLeft: 12,
+              marginRight: 8,
             }}
-          >
-            <TouchableOpacity
-              onPress={() => handleOpenTakeAttendance(item.id, item.status)}
-              disabled={item.date < new Date().toISOString().split("T")[0]}
-              activeOpacity={0.6}
-              style={[
-                item.status === "ATTEND" && { borderColor: "green" },
-                item.status === "WAITING" && { borderColor: "#F39300" },
-                item.status === "ABSENT" && { borderColor: "red" },
-                item.status === "CANCELED" && { borderColor: "gray" },
-                {
-                  backgroundColor: "#fdfdfd",
-                  borderRadius: 20,
-                  paddingVertical: 6,
-                  borderWidth: 1.5,
-                  paddingHorizontal: 12,
-                  flexDirection: "row",
-                  elevation: 1,
-                },
-              ]}
+          />
+          <View style={{ flexDirection: "column" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: -4,
+                marginBottom: 8,
+              }}
             >
-              {item.date >= new Date().toISOString().split("T")[0] && (
-                <>
-                  <MaterialIcons name="edit-calendar" size={20} color="gray" />
-                  <Text style={{ fontSize: 16, marginHorizontal: 6 }}>-</Text>
-                </>
-              )}
+              <Image
+                source={{ uri: item.studentImage }}
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 40,
+                  marginRight: 8,
+                  borderWidth: 1.5,
+                  borderColor: "#F39300",
+                }}
+              />
               <Text
-                style={[
-                  { fontSize: 16, fontWeight: "bold" },
-                  item.status === "ATTEND" && { color: "green" },
-                  item.status === "WAITING" && { color: "#F39300" },
-                  item.status === "ABSENT" && { color: "red" },
-                  item.status === "CANCELED" && { color: "gray" },
-                ]}
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: "#333",
+                }}
               >
-                {item.status}
+                {item.studentName}
               </Text>
-            </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "column", maxWidth: "85%" }}>
+              <View
+                style={{
+                  backgroundColor:
+                    item.meetingType === "ONLINE" &&
+                    !(
+                      item.date + "T" + item.startTime <=
+                      new Date().toISOString() <=
+                      item.date + "T" + item.endTime
+                    )
+                      ? "#ededed"
+                      : "#fff0e0",
+                  borderRadius: 8,
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  marginTop: 4,
+                  alignSelf: "flex-start",
+                }}
+              >
+                <TouchableOpacity
+                  disabled={item.meetingType !== "ONLINE"}
+                  onPress={() => {
+                    if (
+                      item.date + "T" + item.startTime <=
+                      new Date().toISOString() <=
+                      item.date + "T" + item.endTime
+                    ) {
+                      Linking.openURL(`${item.place}`).catch((err) => {
+                        console.log("Can't open this link", err);
+                        Toast.show({
+                          type: "error",
+                          text1: "Error",
+                          text2: "Can't open this link",
+                          onPress: () => {
+                            Toast.hide();
+                          },
+                        });
+                      });
+                    } else {
+                      Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: "This isn't meeting time",
+                        onPress: () => {
+                          Toast.hide();
+                        },
+                      });
+                    }
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: "500",
+                      color:
+                        item.meetingType === "ONLINE" &&
+                        !(
+                          item.date + "T" + item.startTime <=
+                          new Date().toISOString() <=
+                          item.date + "T" + item.endTime
+                        )
+                          ? "gray"
+                          : item.meetingType === "ONLINE"
+                          ? "#F39300"
+                          : "#333",
+                      textDecorationLine:
+                        item.meetingType === "ONLINE" ? "underline" : "none",
+                    }}
+                  >
+                    {item.meetingType === "ONLINE"
+                      ? "Meet URL"
+                      : "Meet at: " + `${item.place}`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
       </TouchableOpacity>
-    </>
+    )
+  );
+
+  const renderItem = ({ item }) => (
+    <MemoizedItem
+      item={item}
+      handleOpenTakeAttendance={handleOpenTakeAttendance}
+      setInfo={setInfo}
+      setOpenInfo={setOpenInfo}
+      setSelectedAppointment={setSelectedAppointment}
+    />
   );
 
   return (
@@ -978,147 +1272,6 @@ export default function Schedule() {
                                     color="#F39300"
                                   />
                                 </TouchableOpacity>
-                                <Modal
-                                  transparent={true}
-                                  visible={openUpdate}
-                                  animationType="fade"
-                                  onRequestClose={handleCloseUpdateAppointment}
-                                >
-                                  <View
-                                    style={{
-                                      flex: 1,
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      backgroundColor: "rgba(0, 0, 0, 0.1)",
-                                    }}
-                                  >
-                                    <View
-                                      style={{
-                                        width: width * 0.8,
-                                        padding: 20,
-                                        backgroundColor: "white",
-                                        borderRadius: 10,
-                                        elevation: 10,
-                                      }}
-                                    >
-                                      <Text
-                                        style={{
-                                          fontSize: 22,
-                                          fontWeight: "bold",
-                                          marginBottom: 10,
-                                          textAlign: "center",
-                                        }}
-                                      >
-                                        Update Confirmation
-                                      </Text>
-                                      <Text
-                                        style={{
-                                          fontSize: 18,
-                                          marginBottom: 30,
-                                          textAlign: "left",
-                                        }}
-                                      >
-                                        Are you sure you want to update this
-                                        appointment? Your schedule will be
-                                        updated
-                                      </Text>
-                                      <Text
-                                        style={{
-                                          fontSize: 16,
-                                          marginBottom: 10,
-                                          fontWeight: "600",
-                                        }}
-                                      >
-                                        Please provide the meeting
-                                        {info.meetingType === "ONLINE"
-                                          ? "'s Google Meet URL"
-                                          : "'s address"}{" "}
-                                        <Text
-                                          style={{
-                                            color: "#F39300",
-                                            fontSize: 20,
-                                          }}
-                                        >
-                                          *
-                                        </Text>
-                                      </Text>
-                                      <View>
-                                        <TextInput
-                                          placeholder="Input here"
-                                          value={value}
-                                          onChangeText={(value) =>
-                                            setValue(value)
-                                          }
-                                          style={{
-                                            fontWeight: "600",
-                                            fontSize: 16,
-                                            opacity: 0.8,
-                                            paddingVertical: 8,
-                                            textAlignVertical: "center",
-                                            paddingHorizontal: 12,
-                                            backgroundColor: "#ededed",
-                                            borderColor: "gray",
-                                            borderWidth: 1,
-                                            borderRadius: 10,
-                                            marginBottom: 20,
-                                          }}
-                                        />
-                                      </View>
-                                      <View
-                                        style={{
-                                          flexDirection: "row",
-                                          justifyContent: "space-between",
-                                        }}
-                                      >
-                                        <TouchableOpacity
-                                          style={{
-                                            flex: 1,
-                                            backgroundColor: "#ededed",
-                                            padding: 10,
-                                            borderRadius: 10,
-                                            marginRight: 10,
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            borderWidth: 1,
-                                            borderColor: "gray",
-                                          }}
-                                          onPress={handleCloseUpdateAppointment}
-                                        >
-                                          <Text
-                                            style={{
-                                              fontSize: 18,
-                                              color: "#333",
-                                              fontWeight: "600",
-                                            }}
-                                          >
-                                            No
-                                          </Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                          style={{
-                                            flex: 1,
-                                            backgroundColor: "#F39300",
-                                            padding: 10,
-                                            borderRadius: 10,
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                          }}
-                                          onPress={handleUpdateAppointment}
-                                        >
-                                          <Text
-                                            style={{
-                                              fontSize: 18,
-                                              color: "white",
-                                              fontWeight: "600",
-                                            }}
-                                          >
-                                            Yes
-                                          </Text>
-                                        </TouchableOpacity>
-                                      </View>
-                                    </View>
-                                  </View>
-                                </Modal>
                               </View>
                             )}
                           <TouchableOpacity
@@ -1146,7 +1299,7 @@ export default function Schedule() {
                                 Toast.show({
                                   type: "error",
                                   text1: "Error",
-                                  text2: "The meeting time hasn't started yet",
+                                  text2: "This isn't meeting time",
                                   onPress: () => {
                                     Toast.hide();
                                   },
@@ -1315,6 +1468,144 @@ export default function Schedule() {
                     )}
                   </View>
                 </ScrollView>
+              </View>
+            </View>
+          </Modal>
+          <Modal
+            transparent={true}
+            visible={openUpdate}
+            animationType="fade"
+            onRequestClose={handleCloseUpdateAppointment}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <View
+                style={{
+                  width: width * 0.8,
+                  padding: 20,
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  elevation: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    marginBottom: 10,
+                    textAlign: "center",
+                  }}
+                >
+                  Update Confirmation
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    marginBottom: 30,
+                    textAlign: "left",
+                  }}
+                >
+                  Are you sure you want to update this appointment? Your
+                  schedule will be updated
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    marginBottom: 10,
+                    fontWeight: "600",
+                  }}
+                >
+                  Please provide the meeting
+                  {info.meetingType === "ONLINE"
+                    ? "'s Google Meet URL"
+                    : "'s address"}{" "}
+                  <Text
+                    style={{
+                      color: "#F39300",
+                      fontSize: 20,
+                    }}
+                  >
+                    *
+                  </Text>
+                </Text>
+                <View>
+                  <TextInput
+                    placeholder="Input here"
+                    value={value}
+                    onChangeText={(value) => setValue(value)}
+                    style={{
+                      fontWeight: "600",
+                      fontSize: 16,
+                      opacity: 0.8,
+                      paddingVertical: 8,
+                      textAlignVertical: "center",
+                      paddingHorizontal: 12,
+                      backgroundColor: "#ededed",
+                      borderColor: "gray",
+                      borderWidth: 1,
+                      borderRadius: 10,
+                      marginBottom: 20,
+                    }}
+                  />
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      backgroundColor: "#ededed",
+                      padding: 10,
+                      borderRadius: 10,
+                      marginRight: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: "gray",
+                    }}
+                    onPress={handleCloseUpdateAppointment}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        color: "#333",
+                        fontWeight: "600",
+                      }}
+                    >
+                      No
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      backgroundColor: "#F39300",
+                      padding: 10,
+                      borderRadius: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onPress={handleUpdateAppointment}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        color: "white",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Yes
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </Modal>

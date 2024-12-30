@@ -53,20 +53,14 @@ export default function QANavigation() {
   return (
     <>
       {userData.role === "STUDENT" ? (
-        <Tab.Navigator
-          initialRouteName="My Q&A"
-          screenOptions={screenOptions}
-        >
+        <Tab.Navigator initialRouteName="My Q&A" screenOptions={screenOptions}>
           <Tab.Screen name="My Q&A" component={StudentQA} />
           <Tab.Screen name="Public Q&A" component={StudentPublicQA} />
           <Tab.Screen name="FAQ" component={StudentQuestionBoard} />
         </Tab.Navigator>
       ) : userData.role === "ACADEMIC_COUNSELOR" ||
         userData.role === "NON_ACADEMIC_COUNSELOR" ? (
-        <Tab.Navigator
-          initialRouteName="My Q&A"
-          screenOptions={screenOptions}
-        >
+        <Tab.Navigator initialRouteName="My Q&A" screenOptions={screenOptions}>
           <Tab.Screen name="My Q&A" component={CounselorQA} />
           <Tab.Screen name="Public Q&A" component={CounselorPublicQA} />
           <Tab.Screen name="FAQ" component={CounselorQuestionBoard} />

@@ -72,7 +72,7 @@ export const ChatProvider = ({ children }) => {
     } catch (err) {
       console.log("Can't fetch questions", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -181,10 +181,14 @@ export const ChatProvider = ({ children }) => {
                 }
               },
             });
-            if (openChat && foundedQuestion?.chatSession?.id === chatSessionId && selectedQuestion?.chatSession?.id === chatSessionId) {
+            if (
+              openChat &&
+              foundedQuestion?.chatSession?.id === chatSessionId &&
+              selectedQuestion?.chatSession?.id === chatSessionId
+            ) {
               fetchQuestionCard(foundedQuestion?.id);
               handleReadMessage(foundedQuestion?.chatSession?.id);
-              Toast.hide()
+              Toast.hide();
             }
           }
           if (
@@ -219,10 +223,14 @@ export const ChatProvider = ({ children }) => {
                 }
               },
             });
-            if (openChat && foundedQuestion?.chatSession?.id === chatSessionId && selectedQuestion?.chatSession?.id === chatSessionId) {
+            if (
+              openChat &&
+              foundedQuestion?.chatSession?.id === chatSessionId &&
+              selectedQuestion?.chatSession?.id === chatSessionId
+            ) {
               fetchQuestionCard(foundedQuestion?.id);
               handleReadMessage(foundedQuestion?.chatSession?.id);
-              Toast.hide()
+              Toast.hide();
             }
           }
         });

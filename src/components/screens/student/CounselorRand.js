@@ -948,7 +948,7 @@ export default function CounselorRand() {
 
   const renderCarousel = () => {
     const items = [
-      { title: "What are your concerns?", content: renderReason() },
+      { title: "Enter Reason", content: renderReason() },
       {
         title: "Select date",
         content: renderCalendar(),

@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   Linking,
+  Animated,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -245,62 +246,359 @@ export default function Schedule() {
     }
   };
 
-  const renderItem = ({ item }) => (
-    <>
-      <TouchableOpacity
-        onPress={() => (setInfo(item), setOpenInfo(true))}
-        activeOpacity={0.8}
-        style={{
-          backgroundColor: "white",
-          padding: 16,
-          borderRadius: 10,
-          margin: 8,
-          elevation: 3,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <Image
-            source={{ uri: item.counselorImage }}
+  // const renderItem = ({ item }) => (
+  //   <>
+  //     <TouchableOpacity
+  //       onPress={() => (setInfo(item), setOpenInfo(true))}
+  //       activeOpacity={0.7}
+  //       style={{
+  //         backgroundColor: "white",
+  //         paddingHorizontal: 12,
+  //         paddingVertical: 16,
+  //         marginHorizontal: 12,
+  //         marginVertical: 4,
+  //         borderRadius: 10,
+  //         elevation: 1,
+  //       }}
+  //     >
+  //       <View style={{ flexDirection: "row" }}>
+  //         <View style={{ flexDirection: "column" }}>
+  //           <View
+  //             style={{
+  //               flexDirection: "row",
+  //               alignItems: "flex-start",
+  //               minWidth: "25%",
+  //               marginTop: 4,
+  //             }}
+  //           >
+  //             {/* <Ionicons
+  //                 name="time-outline"
+  //                 size={20}
+  //                 style={{ color: "#F39300", marginTop: 8, marginRight: 4 }}
+  //               /> */}
+  //             <Animated.View
+  //               style={{
+  //                 marginTop: 12,
+  //                 marginHorizontal: -10,
+  //                 transform: [{ rotate: "-90deg" }],
+  //               }}
+  //             >
+  //               <Text
+  //                 style={{
+  //                   fontSize: 12,
+  //                   fontWeight: "600",
+  //                   color: "#F39300",
+  //                 }}
+  //               >
+  //                 {item.meetingType}
+  //               </Text>
+  //             </Animated.View>
+  //             <View style={{ alignItems: "center", marginRight: 8 }}>
+  //               <View
+  //                 style={{
+  //                   width: 8,
+  //                   height: 8,
+  //                   borderRadius: 4,
+  //                   backgroundColor: "#F39300",
+  //                 }}
+  //               />
+  //               <View
+  //                 style={{
+  //                   width: 1.5,
+  //                   height: 24,
+  //                   backgroundColor: "#F39300",
+  //                 }}
+  //               />
+  //               <View
+  //                 style={{
+  //                   width: 8,
+  //                   height: 8,
+  //                   borderRadius: 4,
+  //                   backgroundColor: "#F39300",
+  //                 }}
+  //               />
+  //             </View>
+  //             <View style={{ marginLeft: 2 }}>
+  //               <Text
+  //                 style={{
+  //                   fontSize: 16,
+  //                   fontWeight: "500",
+  //                   color: "gray",
+  //                   opacity: 0.7,
+  //                   marginTop: -8,
+  //                   marginBottom: 12,
+  //                 }}
+  //               >
+  //                 {item.startTime}
+  //               </Text>
+  //               <Text
+  //                 style={{
+  //                   fontSize: 16,
+  //                   fontWeight: "500",
+  //                   opacity: 0.7,
+  //                   color: "gray",
+  //                 }}
+  //               >
+  //                 {item.endTime}
+  //               </Text>
+  //             </View>
+  //           </View>
+  //           <View
+  //             style={{
+  //               marginTop: 8,
+  //             }}
+  //           >
+  //             <View
+  //               style={[
+  //                 item.status === "ATTEND" && { borderColor: "green" },
+  //                 item.status === "WAITING" && { borderColor: "#F39300" },
+  //                 item.status === "ABSENT" && { borderColor: "red" },
+  //                 item.status === "CANCELED" && { borderColor: "gray" },
+  //                 {
+  //                   backgroundColor: "#fdfdfd",
+  //                   borderRadius: 20,
+  //                   paddingVertical: 4,
+  //                   borderWidth: 1.5,
+  //                   paddingHorizontal: 12,
+  //                   flexDirection: "row",
+  //                   alignSelf: "center",
+  //                   elevation: 1,
+  //                 },
+  //               ]}
+  //             >
+  //               <Text
+  //                 style={[
+  //                   { fontSize: 14, fontWeight: "bold" },
+  //                   item.status === "ATTEND" && { color: "green" },
+  //                   item.status === "WAITING" && { color: "#F39300" },
+  //                   item.status === "ABSENT" && { color: "red" },
+  //                   item.status === "CANCELED" && { color: "gray" },
+  //                 ]}
+  //               >
+  //                 {item.status}
+  //               </Text>
+  //             </View>
+  //           </View>
+  //         </View>
+  //         <View
+  //           style={{
+  //             width: 1.5,
+  //             backgroundColor: "lightgrey",
+  //             marginLeft: 12,
+  //             marginRight: 8,
+  //           }}
+  //         />
+  //         <View style={{ flexDirection: "column" }}>
+  //           <View
+  //             style={{
+  //               flexDirection: "row",
+  //               alignItems: "center",
+  //               marginTop: -4,
+  //               marginBottom: 8,
+  //             }}
+  //           >
+  //             <Image
+  //               source={{ uri: item.counselorImage }}
+  //               style={{
+  //                 width: 28,
+  //                 height: 28,
+  //                 borderRadius: 40,
+  //                 marginRight: 8,
+  //                 borderWidth: 1.5,
+  //                 borderColor: "#F39300",
+  //               }}
+  //             />
+  //             <Text
+  //               style={{
+  //                 fontSize: 16,
+  //                 fontWeight: "bold",
+  //                 color: "#333",
+  //               }}
+  //             >
+  //               {item.counselorName}
+  //             </Text>
+  //           </View>
+  //           <View style={{ flexDirection: "column", maxWidth: "85%" }}>
+  //             <View
+  //               style={{
+  //                 backgroundColor:
+  //                   item.meetingType === "ONLINE" &&
+  //                   !(
+  //                     item.date + "T" + item.startTime <=
+  //                     new Date().toISOString() <=
+  //                     item.date + "T" + item.endTime
+  //                   )
+  //                     ? "#ededed"
+  //                     : "#fff0e0",
+  //                 borderRadius: 8,
+  //                 paddingHorizontal: 12,
+  //                 paddingVertical: 6,
+  //                 marginTop: 4,
+  //                 alignSelf: "flex-start",
+  //               }}
+  //             >
+  //               <TouchableOpacity
+  //                 disabled={item.meetingType !== "ONLINE"}
+  //                 onPress={() => {
+  //                   if (
+  //                     item.date + "T" + item.startTime <=
+  //                     new Date().toISOString() <=
+  //                     item.date + "T" + item.endTime
+  //                   ) {
+  //                     Linking.openURL(`${item.place}`).catch((err) => {
+  //                       console.log("Can't open this link", err);
+  //                       Toast.show({
+  //                         type: "error",
+  //                         text1: "Error",
+  //                         text2: "Can't open this link",
+  //                         onPress: () => {
+  //                           Toast.hide();
+  //                         },
+  //                       });
+  //                     });
+  //                   } else {
+  //                     Toast.show({
+  //                       type: "error",
+  //                       text1: "Error",
+  //                       text2: "This isn't meeting time",
+  //                       onPress: () => {
+  //                         Toast.hide();
+  //                       },
+  //                     });
+  //                   }
+  //                 }}
+  //               >
+  //                 <Text
+  //                   style={{
+  //                     fontSize: 14,
+  //                     fontWeight: "500",
+  //                     color:
+  //                       item.meetingType === "ONLINE" &&
+  //                       !(
+  //                         item.date + "T" + item.startTime <=
+  //                         new Date().toISOString() <=
+  //                         item.date + "T" + item.endTime
+  //                       )
+  //                         ? "gray"
+  //                         : item.meetingType === "ONLINE"
+  //                         ? "#F39300"
+  //                         : "#333",
+  //                     textDecorationLine:
+  //                       item.meetingType === "ONLINE" ? "underline" : "none",
+  //                   }}
+  //                 >
+  //                   {item.meetingType === "ONLINE"
+  //                     ? "Meet URL"
+  //                     : "Meet at: " + `${item.place}`}
+  //                 </Text>
+  //               </TouchableOpacity>
+  //             </View>
+  //           </View>
+  //         </View>
+  //       </View>
+  //     </TouchableOpacity>
+  //   </>
+  // );
+
+  const MemoizedItem = React.memo(({ item, setInfo, setOpenInfo }) => (
+    <TouchableOpacity
+      onPress={() => (setInfo(item), setOpenInfo(true))}
+      activeOpacity={0.7}
+      style={{
+        backgroundColor: "white",
+        paddingHorizontal: 12,
+        paddingVertical: 16,
+        marginHorizontal: 12,
+        marginVertical: 4,
+        borderRadius: 10,
+        elevation: 1,
+      }}
+    >
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "column" }}>
+          <View
             style={{
-              width: width * 0.14,
-              height: width * 0.14,
-              borderRadius: width * 0.07,
-              marginRight: 16,
-              borderWidth: 1.5,
-              borderColor: "#F39300",
+              flexDirection: "row",
+              alignItems: "flex-start",
+              minWidth: "25%",
+              marginTop: 4,
             }}
-          />
-          <View style={{ flex: 1 }}>
-            <Text
+          >
+            {/* <Ionicons
+                  name="time-outline"
+                  size={20}
+                  style={{ color: "#F39300", marginTop: 8, marginRight: 4 }}
+                /> */}
+            <Animated.View
               style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: "#333",
+                marginTop: 12,
+                marginHorizontal: -10,
+                transform: [{ rotate: "-90deg" }],
               }}
             >
-              {item.counselorName}
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                color: "#555",
-                marginTop: 4,
-              }}
-            >
-              {item.startTime} - {item.endTime}
-            </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: "600",
+                  color: "#F39300",
+                }}
+              >
+                {item.meetingType}
+              </Text>
+            </Animated.View>
+            <View style={{ alignItems: "center", marginRight: 8 }}>
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: "#F39300",
+                }}
+              />
+              <View
+                style={{
+                  width: 1.5,
+                  height: 24,
+                  backgroundColor: "#F39300",
+                }}
+              />
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: "#F39300",
+                }}
+              />
+            </View>
+            <View style={{ marginLeft: 2 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "500",
+                  color: "gray",
+                  opacity: 0.7,
+                  marginTop: -8,
+                  marginBottom: 12,
+                }}
+              >
+                {item.startTime}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "500",
+                  opacity: 0.7,
+                  color: "gray",
+                }}
+              >
+                {item.endTime}
+              </Text>
+            </View>
           </View>
           <View
             style={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
+              marginTop: 8,
             }}
           >
             <View
@@ -312,17 +610,18 @@ export default function Schedule() {
                 {
                   backgroundColor: "#fdfdfd",
                   borderRadius: 20,
-                  paddingVertical: 6,
+                  paddingVertical: 4,
                   borderWidth: 1.5,
                   paddingHorizontal: 12,
                   flexDirection: "row",
+                  alignSelf: "center",
                   elevation: 1,
                 },
               ]}
             >
               <Text
                 style={[
-                  { fontSize: 16, fontWeight: "bold" },
+                  { fontSize: 14, fontWeight: "bold" },
                   item.status === "ATTEND" && { color: "green" },
                   item.status === "WAITING" && { color: "#F39300" },
                   item.status === "ABSENT" && { color: "red" },
@@ -334,8 +633,127 @@ export default function Schedule() {
             </View>
           </View>
         </View>
-      </TouchableOpacity>
-    </>
+        <View
+          style={{
+            width: 1.5,
+            backgroundColor: "lightgrey",
+            marginLeft: 12,
+            marginRight: 8,
+          }}
+        />
+        <View style={{ flexDirection: "column" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: -4,
+              marginBottom: 8,
+            }}
+          >
+            <Image
+              source={{ uri: item.counselorImage }}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 40,
+                marginRight: 8,
+                borderWidth: 1.5,
+                borderColor: "#F39300",
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#333",
+              }}
+            >
+              {item.counselorName}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "column", maxWidth: "85%" }}>
+            <View
+              style={{
+                backgroundColor:
+                  item.meetingType === "ONLINE" &&
+                  !(
+                    item.date + "T" + item.startTime <=
+                    new Date().toISOString() <=
+                    item.date + "T" + item.endTime
+                  )
+                    ? "#ededed"
+                    : "#fff0e0",
+                borderRadius: 8,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                marginTop: 4,
+                alignSelf: "flex-start",
+              }}
+            >
+              <TouchableOpacity
+                disabled={item.meetingType !== "ONLINE"}
+                onPress={() => {
+                  if (
+                    item.date + "T" + item.startTime <=
+                    new Date().toISOString() <=
+                    item.date + "T" + item.endTime
+                  ) {
+                    Linking.openURL(`${item.place}`).catch((err) => {
+                      console.log("Can't open this link", err);
+                      Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: "Can't open this link",
+                        onPress: () => {
+                          Toast.hide();
+                        },
+                      });
+                    });
+                  } else {
+                    Toast.show({
+                      type: "error",
+                      text1: "Error",
+                      text2: "This isn't meeting time",
+                      onPress: () => {
+                        Toast.hide();
+                      },
+                    });
+                  }
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "500",
+                    color:
+                      item.meetingType === "ONLINE" &&
+                      !(
+                        item.date + "T" + item.startTime <=
+                        new Date().toISOString() <=
+                        item.date + "T" + item.endTime
+                      )
+                        ? "gray"
+                        : item.meetingType === "ONLINE"
+                        ? "#F39300"
+                        : "#333",
+                    textDecorationLine:
+                      item.meetingType === "ONLINE" ? "underline" : "none",
+                  }}
+                >
+                  {item.meetingType === "ONLINE"
+                    ? "Meet URL"
+                    : "Meet at: " + `${item.place}`}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  ));
+
+  const renderItem = ({ item }) => (
+    <MemoizedItem item={item} setInfo={setInfo} setOpenInfo={setOpenInfo} />
   );
 
   return (
@@ -707,7 +1125,6 @@ export default function Schedule() {
                               color="#F39300"
                             />
                           )}
-
                           <Text
                             style={{
                               fontSize: 18,
@@ -721,63 +1138,73 @@ export default function Schedule() {
                               : "Address"}
                           </Text>
                         </View>
-                        <TouchableOpacity
-                          disabled={info.meetingType !== "ONLINE"}
-                          onPress={() => {
-                            if (
-                              info.date + "T" + info.startTime <=
-                              new Date().toISOString() <=
-                              info.date + "T" + info.endTime
-                            ) {
-                              Linking.openURL(`${info.place}`).catch((err) => {
-                                console.log("Can't open this link", err);
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            maxWidth: "45%",
+                          }}
+                        >
+                          <TouchableOpacity
+                            disabled={info.meetingType !== "ONLINE"}
+                            onPress={() => {
+                              if (
+                                info.date + "T" + info.startTime <=
+                                new Date().toISOString() <=
+                                info.date + "T" + info.endTime
+                              ) {
+                                Linking.openURL(`${info.place}`).catch(
+                                  (err) => {
+                                    console.log("Can't open this link", err);
+                                    Toast.show({
+                                      type: "error",
+                                      text1: "Error",
+                                      text2: "Can't open this link",
+                                      onPress: () => {
+                                        Toast.hide();
+                                      },
+                                    });
+                                  }
+                                );
+                              } else {
                                 Toast.show({
                                   type: "error",
                                   text1: "Error",
-                                  text2: "Can't open this link",
+                                  text2: "This isn't meeting time",
                                   onPress: () => {
                                     Toast.hide();
                                   },
                                 });
-                              });
-                            } else {
-                              Toast.show({
-                                type: "error",
-                                text1: "Error",
-                                text2: "The meeting time hasn't started yet",
-                                onPress: () => {
-                                  Toast.hide();
-                                },
-                              });
-                            }
-                          }}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              fontWeight: "bold",
-                              color:
-                                info.meetingType === "ONLINE" &&
-                                !(
-                                  info.date + "T" + info.startTime <=
-                                  new Date().toISOString() <=
-                                  info.date + "T" + info.endTime
-                                )
-                                  ? "gray"
-                                  : info.meetingType === "ONLINE"
-                                  ? "#F39300"
-                                  : "#333",
-                              textDecorationLine:
-                                info.meetingType === "ONLINE"
-                                  ? "underline"
-                                  : "none",
+                              }
                             }}
                           >
-                            {info.meetingType === "ONLINE"
-                              ? "Meet URL"
-                              : info.place}
-                          </Text>
-                        </TouchableOpacity>
+                            <Text
+                              style={{
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                color:
+                                  info.meetingType === "ONLINE" &&
+                                  !(
+                                    info.date + "T" + info.startTime <=
+                                    new Date().toISOString() <=
+                                    info.date + "T" + info.endTime
+                                  )
+                                    ? "gray"
+                                    : info.meetingType === "ONLINE"
+                                    ? "#F39300"
+                                    : "#333",
+                                textDecorationLine:
+                                  info.meetingType === "ONLINE"
+                                    ? "underline"
+                                    : "none",
+                              }}
+                            >
+                              {info.meetingType === "ONLINE"
+                                ? "Meet URL"
+                                : info.place}
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
                     {info?.feedback !== null ? (
