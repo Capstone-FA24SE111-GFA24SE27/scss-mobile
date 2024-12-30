@@ -1745,7 +1745,7 @@ export default function NonAcademicCounselor() {
                                     marginBottom: 12,
                                   }}
                                 >
-                                  What are your concerns?{" "}
+                                  Enter Reason{" "}
                                   <Text style={{ color: "#F39300" }}>*</Text>
                                 </Text>
                                 <View>

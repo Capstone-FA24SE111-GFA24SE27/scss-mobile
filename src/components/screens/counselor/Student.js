@@ -1951,31 +1951,6 @@ export default function Student() {
                           width: "50%",
                         }}
                       >
-                        <Ionicons name="briefcase" size={16} color="#F39300" />
-                        <Text
-                          style={{
-                            fontSize: 14,
-                            marginLeft: 4,
-                            color: "#333",
-                            maxWidth: "80%",
-                          }}
-                        >
-                          {item?.major?.name || "N/A"}
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          width: "50%",
-                        }}
-                      >
                         <Ionicons name="call" size={16} color="#F39300" />
                         <Text
                           style={{
@@ -1988,7 +1963,31 @@ export default function Student() {
                           {item.profile.phoneNumber}
                         </Text>
                       </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap"
+                      }}
+                    >
                       <View
+                        style={{
+                          flexDirection: "row",
+                          maxWidth: "80%",
+                        }}
+                      >
+                        <Ionicons name="briefcase" size={16} color="#F39300" />
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            marginLeft: 4,
+                            color: "#333",
+                          }}
+                        >
+                          {item?.major?.name || "N/A"}
+                        </Text>
+                      </View>
+                      {/* <View
                         style={{
                           flexDirection: "row",
                           width: "50%",
@@ -2005,7 +2004,7 @@ export default function Student() {
                         >
                           {formatDate(item.profile.dateOfBirth)}
                         </Text>
-                      </View>
+                      </View> */}
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -2283,6 +2282,7 @@ export default function Student() {
                 }}
               >
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   onPress={() => setTagsList([])}
                   style={{
                     width: "49%",
@@ -2304,6 +2304,7 @@ export default function Student() {
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   onPress={() => handleSaveTags()}
                   style={{
                     width: "49%",

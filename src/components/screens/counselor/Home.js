@@ -56,33 +56,47 @@ export default function Home() {
 
   useEffect(() => {
     Animated.loop(
-      Animated.sequence([
-        Animated.delay(5000),
-        Animated.timing(ringing, {
-          toValue: -1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(ringing, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(ringing, {
-          toValue: -1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(ringing, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(ringing, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
+      Animated.parallel([
+        Animated.sequence([
+          Animated.delay(5000),
+          Animated.timing(ringing, {
+            toValue: -1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(ringing, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(ringing, {
+            toValue: -1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(ringing, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(ringing, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.sequence([
+          Animated.timing(blinking, {
+            toValue: 0.5,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(blinking, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+        ]),
       ])
     ).start();
   }, []);
@@ -91,23 +105,6 @@ export default function Home() {
     inputRange: [-1, 1],
     outputRange: ["-30deg", "30deg"],
   });
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(blinking, {
-          toValue: 0.5,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(blinking, {
-          toValue: 1,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
 
   useEffect(() => {
     fetchProfile();
@@ -317,6 +314,7 @@ export default function Home() {
                   Pending Requests
                 </Text>
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   onPress={() =>
                     navigation.navigate("Request", { prevScreen: "Home" })
                   }
@@ -418,8 +416,7 @@ export default function Home() {
                                 color: "white",
                               }}
                             >
-                              {request.meetingType.charAt(0).toUpperCase() +
-                                request.meetingType.slice(1)}
+                              {request.meetingType}
                             </Text>
                           </View>
                         </View>
@@ -525,8 +522,9 @@ export default function Home() {
                   Upcoming Appointments
                 </Text>
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   onPress={() =>
-                    navigation.navigate("Appointment", { prevScreen: "Home" })
+                    navigation.navigate("Schedule", { prevScreen: "Home" })
                   }
                 >
                   <Text
@@ -555,7 +553,9 @@ export default function Home() {
                     ).length;
                     return (
                       <TouchableOpacity
+                        disabled={selectedDate === dateString}
                         key={index}
+                        activeOpacity={0.7}
                         onPress={() => setSelectedDate(dateString)}
                         style={{
                           flexDirection: "row",
@@ -739,9 +739,7 @@ export default function Home() {
                                   fontWeight: "600",
                                 }}
                               >
-                                {appointment.meetingType === "ONLINE"
-                                  ? "Online"
-                                  : "Offline"}
+                                {appointment.meetingType}
                               </Text>
                               <TouchableOpacity
                                 disabled={appointment.meetingType !== "ONLINE"}
@@ -780,11 +778,15 @@ export default function Home() {
                                   style={{
                                     fontSize: 14,
                                     color:
-                                      appointment.meetingType === "ONLINE"&&
+                                      appointment.meetingType === "ONLINE" &&
                                       !(
-                                        appointment.date + "T" + appointment.startTime <=
+                                        appointment.date +
+                                          "T" +
+                                          appointment.startTime <=
                                         new Date().toISOString() <=
-                                        appointment.date + "T" + appointment.endTime
+                                        appointment.date +
+                                          "T" +
+                                          appointment.endTime
                                       )
                                         ? "gray"
                                         : appointment.meetingType === "ONLINE"
@@ -853,6 +855,7 @@ export default function Home() {
                   Assigned Demands
                 </Text>
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   onPress={() =>
                     navigation.navigate("Demand", { prevScreen: "Home" })
                   }

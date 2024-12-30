@@ -2656,7 +2656,7 @@ export default function Appointment({ route }) {
                               Toast.show({
                                 type: "error",
                                 text1: "Error",
-                                text2: "The meeting time hasn't started yet",
+                                text2: "This isn't meeting time",
                                 onPress: () => {
                                   Toast.hide();
                                 },

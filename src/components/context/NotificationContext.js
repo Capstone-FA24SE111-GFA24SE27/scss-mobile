@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useEffect,
-  useContext,
-  useState,
-} from "react";
+import React, { createContext, useEffect, useContext, useState } from "react";
 import * as Notifications from "expo-notifications";
 import { AuthContext } from "./AuthContext";
 import { SocketContext } from "./SocketContext";

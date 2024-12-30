@@ -336,96 +336,161 @@ const StudentSkeleton = () => {
     <View
       style={{
         flex: 1,
-        flexDirection: "row",
-        alignItems: "flex-start",
+        alignItems: "stretch",
         backgroundColor: "#e3e3e3",
         borderRadius: 20,
         marginVertical: 8,
       }}
     >
-      <View
-        style={{
-          backgroundColor: "#ededed",
-          padding: 12,
-          marginLeft: 4,
-          marginRight: 2,
-          marginTop: 4,
-          marginBottom: 4,
-          borderTopLeftRadius: 18,
-          borderBottomLeftRadius: 18,
-        }}
-      >
-        <Animated.View style={{ opacity: opacity }}>
-          <LinearGradient
-            colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-            style={{
-              width: 70,
-              height: 70,
-              borderRadius: 40,
-              borderColor: "#e3e3e3",
-              borderWidth: 2,
-            }}
-          />
-        </Animated.View>
-      </View>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "white",
-          borderTopRightRadius: 18,
-          borderBottomRightRadius: 18,
-          padding: 12,
-          marginTop: 4,
-          marginBottom: 4,
-          marginRight: 4,
-        }}
-      >
-        <View style={{ flexDirection: "row", marginBottom: 8 }}>
+      <View style={{ flexDirection: "row" }}>
+        <View
+          style={{
+            backgroundColor: "#ededed",
+            padding: 12,
+            marginLeft: 4,
+            marginRight: 2,
+            marginTop: 4,
+            marginBottom: 2,
+            // marginBottom: 4,
+            borderTopLeftRadius: 18,
+            // borderBottomLeftRadius: 18,
+          }}
+        >
           <Animated.View style={{ opacity: opacity }}>
             <LinearGradient
               colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-              style={{ width: width * 0.5, height: 24, borderRadius: 4 }}
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 40,
+                borderColor: "#e3e3e3",
+                borderWidth: 2,
+              }}
             />
           </Animated.View>
         </View>
         <View
           style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            marginBottom: 4,
+            flex: 1,
+            backgroundColor: "white",
+            borderTopRightRadius: 18,
+            // borderBottomRightRadius: 18,
+            padding: 12,
+            marginTop: 4,
+            marginBottom: 2,
+            // marginBottom: 4,
+            marginRight: 4,
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              width: "50%",
-            }}
-          >
+          <View style={{ flexDirection: "row", marginBottom: 8 }}>
             <Animated.View style={{ opacity: opacity }}>
               <LinearGradient
                 colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-                style={{
-                  width: 16,
-                  height: 18,
-                  borderRadius: 4,
-                }}
-              />
-            </Animated.View>
-            <Animated.View style={{ opacity: opacity }}>
-              <LinearGradient
-                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-                style={{
-                  width: width * 0.15,
-                  height: 18,
-                  borderRadius: 4,
-                  marginLeft: 4,
-                }}
+                style={{ width: width * 0.5, height: 24, borderRadius: 4 }}
               />
             </Animated.View>
           </View>
           <View
             style={{
               flexDirection: "row",
+              flexWrap: "wrap",
+              marginBottom: 4,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                width: "50%",
+              }}
+            >
+              <Animated.View style={{ opacity: opacity }}>
+                <LinearGradient
+                  colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                  style={{
+                    width: 16,
+                    height: 18,
+                    borderRadius: 4,
+                  }}
+                />
+              </Animated.View>
+              <Animated.View style={{ opacity: opacity }}>
+                <LinearGradient
+                  colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                  style={{
+                    width: width * 0.15,
+                    height: 18,
+                    borderRadius: 4,
+                    marginLeft: 4,
+                  }}
+                />
+              </Animated.View>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "50%",
+              }}
+            >
+              <Animated.View style={{ opacity: opacity }}>
+                <LinearGradient
+                  colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                  style={{
+                    width: 16,
+                    height: 18,
+                    borderRadius: 4,
+                  }}
+                />
+              </Animated.View>
+              <Animated.View style={{ opacity: opacity }}>
+                <LinearGradient
+                  colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                  style={{
+                    width: width * 0.15,
+                    height: 18,
+                    borderRadius: 4,
+                    marginLeft: 4,
+                  }}
+                />
+              </Animated.View>
+            </View>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                maxWidth: "80%",
+              }}
+            >
+              <Animated.View style={{ opacity: opacity }}>
+                <LinearGradient
+                  colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                  style={{
+                    width: 16,
+                    height: 18,
+                    borderRadius: 4,
+                  }}
+                />
+              </Animated.View>
+              <Animated.View style={{ opacity: opacity }}>
+                <LinearGradient
+                  colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+                  style={{
+                    width: width * 0.45,
+                    height: 18,
+                    borderRadius: 4,
+                    marginLeft: 4,
+                  }}
+                />
+              </Animated.View>
+            </View>
+            {/* <View
+            style={{
+              flexDirection: "row",
               width: "50%",
             }}
           >
@@ -450,71 +515,38 @@ const StudentSkeleton = () => {
                 }}
               />
             </Animated.View>
+          </View> */}
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              width: "50%",
-            }}
-          >
-            <Animated.View style={{ opacity: opacity }}>
-              <LinearGradient
-                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-                style={{
-                  width: 16,
-                  height: 18,
-                  borderRadius: 4,
-                }}
-              />
-            </Animated.View>
-            <Animated.View style={{ opacity: opacity }}>
-              <LinearGradient
-                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-                style={{
-                  width: width * 0.15,
-                  height: 18,
-                  borderRadius: 4,
-                  marginLeft: 4,
-                }}
-              />
-            </Animated.View>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              width: "50%",
-            }}
-          >
-            <Animated.View style={{ opacity: opacity }}>
-              <LinearGradient
-                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-                style={{
-                  width: 16,
-                  height: 18,
-                  borderRadius: 4,
-                }}
-              />
-            </Animated.View>
-            <Animated.View style={{ opacity: opacity }}>
-              <LinearGradient
-                colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
-                style={{
-                  width: width * 0.15,
-                  height: 18,
-                  borderRadius: 4,
-                  marginLeft: 4,
-                }}
-              />
-            </Animated.View>
-          </View>
-        </View>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          backgroundColor: "white",
+          borderBottomLeftRadius: 18,
+          borderBottomRightRadius: 18,
+          paddingHorizontal: 12,
+          paddingVertical: 8,
+          marginHorizontal: 4,
+          marginBottom: 4,
+        }}
+      >
+        {[...Array(3)].map((_, index) => (
+          <Animated.View key={index} style={{ opacity: opacity }}>
+            <LinearGradient
+              colors={["#e3e3e3", "#ededed", "#e3e3e3"]}
+              style={{
+                width: width * 0.75,
+                height: 24,
+                borderRadius: 20,
+                marginRight: 4,
+                marginTop: 8,
+              }}
+            />
+          </Animated.View>
+        ))}
       </View>
     </View>
   );
@@ -697,7 +729,7 @@ const QASkeleton = () => {
 
 const RequestSkeleton = () => {
   const opacity = SkeletonAnimated();
-  
+
   return (
     <View
       style={{

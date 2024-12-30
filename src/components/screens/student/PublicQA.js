@@ -914,84 +914,84 @@ export default function PublicQA() {
                           marginVertical: 12,
                         }}
                       >
-                      <View style={{ width: "40%" }}>
-                        <View style={{ position: "relative" }}>
-                          <Image
-                            source={{
-                              uri: info?.counselor?.profile?.avatarLink,
-                            }}
-                            style={{
-                              width: width * 0.28,
-                              height: width * 0.28,
-                              borderRadius: 100,
-                              marginBottom: 12,
-                              borderColor: "#F39300",
-                              borderWidth: 2,
-                            }}
-                          />
-                          <View
-                            style={{
-                              padding: 5,
-                              backgroundColor: "#F39300",
-                              borderRadius: 30,
-                              position: "absolute",
-                              right: 20,
-                              bottom: 12,
-                            }}
-                          >
-                            <Ionicons
-                              name={
-                                info?.counselor?.profile?.gender == "MALE"
-                                  ? "male"
-                                  : "female"
-                              }
-                              size={24}
-                              style={{ color: "white" }}
+                        <View style={{ width: "40%" }}>
+                          <View style={{ position: "relative" }}>
+                            <Image
+                              source={{
+                                uri: info?.counselor?.profile?.avatarLink,
+                              }}
+                              style={{
+                                width: width * 0.28,
+                                height: width * 0.28,
+                                borderRadius: 100,
+                                marginBottom: 12,
+                                borderColor: "#F39300",
+                                borderWidth: 2,
+                              }}
                             />
+                            <View
+                              style={{
+                                padding: 5,
+                                backgroundColor: "#F39300",
+                                borderRadius: 30,
+                                position: "absolute",
+                                right: 20,
+                                bottom: 12,
+                              }}
+                            >
+                              <Ionicons
+                                name={
+                                  info?.counselor?.profile?.gender == "MALE"
+                                    ? "male"
+                                    : "female"
+                                }
+                                size={24}
+                                style={{ color: "white" }}
+                              />
+                            </View>
                           </View>
                         </View>
-                      </View>
-                      <View style={{ width: "60%" }}>
-                        <Text
-                          style={{
-                            fontSize: 24,
-                            fontWeight: "bold",
-                            color: "#333",
-                            marginBottom: 4,
-                          }}
-                        >
-                          {info?.counselor?.profile?.fullName}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            fontWeight: "500",
-                            color: "#333",
-                            marginBottom: 2,
-                          }}
-                        >
-                          {info?.counselor?.major?.name ||
-                            info?.counselor?.expertise?.name}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "grey",
-                            marginBottom: 2,
-                          }}
-                        >
-                          Email: {info?.counselor?.email}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: "grey",
-                          }}
-                        >
-                          Phone: {info?.counselor?.profile?.phoneNumber}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
+                        <View style={{ width: "60%" }}>
+                          <Text
+                            style={{
+                              fontSize: 24,
+                              fontWeight: "bold",
+                              color: "#333",
+                              marginBottom: 4,
+                            }}
+                          >
+                            {info?.counselor?.profile?.fullName}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              fontWeight: "500",
+                              color: "#333",
+                              marginBottom: 2,
+                            }}
+                          >
+                            {info?.counselor?.major?.name ||
+                              info?.counselor?.expertise?.name}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: "grey",
+                              marginBottom: 2,
+                            }}
+                          >
+                            Email: {info?.counselor?.email}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: "grey",
+                            }}
+                          >
+                            Phone: {info?.counselor?.profile?.phoneNumber}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
                     ) : (
                       <Text
                         style={{

@@ -1251,59 +1251,69 @@ export default function Appointment({ route }) {
                             : "Address"}
                         </Text>
                       </View>
-                      <TouchableOpacity
-                        disabled={info.meetingType !== "ONLINE"}
-                        onPress={() => {
-                          if (
-                            new Date(info?.startDateTime) <= new Date() &&
-                            new Date() <= new Date(info?.endDateTime)
-                          ) {
-                            Linking.openURL(`${info?.meetUrl}`).catch((err) => {
-                              console.log("Can't open this link", err);
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "flex-end",
+                          maxWidth: "45%",
+                        }}
+                      >
+                        <TouchableOpacity
+                          disabled={info.meetingType !== "ONLINE"}
+                          onPress={() => {
+                            if (
+                              new Date(info?.startDateTime) <= new Date() &&
+                              new Date() <= new Date(info?.endDateTime)
+                            ) {
+                              Linking.openURL(`${info?.meetUrl}`).catch(
+                                (err) => {
+                                  console.log("Can't open this link", err);
+                                  Toast.show({
+                                    type: "error",
+                                    text1: "Error",
+                                    text2: "Can't open this link",
+                                    onPress: () => {
+                                      Toast.hide();
+                                    },
+                                  });
+                                }
+                              );
+                            } else {
                               Toast.show({
                                 type: "error",
                                 text1: "Error",
-                                text2: "Can't open this link",
+                                text2: "This isn't meeting time",
                                 onPress: () => {
                                   Toast.hide();
                                 },
                               });
-                            });
-                          } else {
-                            Toast.show({
-                              type: "error",
-                              text1: "Error",
-                              text2: "The meeting time hasn't started yet",
-                              onPress: () => {
-                                Toast.hide();
-                              },
-                            });
-                          }
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color:
-                              info.meetingType === "ONLINE" &&
-                              (new Date(info?.startDateTime) > new Date() ||
-                                new Date() > new Date(info?.endDateTime))
-                                ? "gray"
-                                : info.meetingType === "ONLINE"
-                                ? "#F39300"
-                                : "#333",
-                            textDecorationLine:
-                              info.meetingType === "ONLINE"
-                                ? "underline"
-                                : "none",
+                            }
                           }}
                         >
-                          {info.meetingType === "ONLINE"
-                            ? "Meet URL" || "N/A"
-                            : info?.address || "N/A"}
-                        </Text>
-                      </TouchableOpacity>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              color:
+                                info.meetingType === "ONLINE" &&
+                                (new Date(info?.startDateTime) > new Date() ||
+                                  new Date() > new Date(info?.endDateTime))
+                                  ? "gray"
+                                  : info.meetingType === "ONLINE"
+                                  ? "#F39300"
+                                  : "#333",
+                              textDecorationLine:
+                                info.meetingType === "ONLINE"
+                                  ? "underline"
+                                  : "none",
+                            }}
+                          >
+                            {info.meetingType === "ONLINE"
+                              ? "Meet URL" || "N/A"
+                              : info?.address || "N/A"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                   {info?.cancelReason !== null && (

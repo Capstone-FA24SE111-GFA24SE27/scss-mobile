@@ -24,7 +24,7 @@ export default function ConfirmBookingModal({
   onPress,
 }) {
   const { width, height } = Dimensions.get("screen");
-  const { userData, profile } = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
   const socket = useContext(SocketContext);
   const [loading, setLoading] = useState(false);
   const [slots, setSlots] = useState([]);
