@@ -63,7 +63,8 @@ export default function GettingStart() {
             color: "#F39300",
           }}
         >
-          EduSupport
+          {/* EduSupport */}
+          SCSS
         </Animated.Text>
         <Animated.Text
           style={{

@@ -124,6 +124,18 @@ export default function PublicQA() {
         source={{
           html: source,
         }}
+        tagsStyles={{
+          body: {
+            fontSize: 16,
+            marginTop: -4,
+          },
+          p: {
+            fontSize: 16,
+          },
+          img: {
+            marginTop: 12,
+          },
+        }}
         contentWidth={width * 0.9}
       />
     );
@@ -981,13 +993,13 @@ export default function PublicQA() {
                         marginBottom: 4,
                       }}
                     >
-                      Title
+                      Question
                     </Text>
                     <Text
                       style={{
                         fontSize: 20,
                         color: "#333",
-                        fontWeight: "500",
+                        fontWeight: "bold",
                       }}
                     >
                       {info?.title}
@@ -1012,7 +1024,7 @@ export default function PublicQA() {
                         marginBottom: 4,
                       }}
                     >
-                      Question
+                      Content
                     </Text>
                     {renderContent(info?.content)}
                   </View>

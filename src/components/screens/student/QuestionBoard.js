@@ -13,9 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import axiosJWT, { BASE_URL } from "../../../config/Config";
 import { Dropdown } from "react-native-element-dropdown";
-import { AuthContext } from "../../context/AuthContext";
 import { SocketContext } from "../../context/SocketContext";
-import { ChatContext } from "../../context/ChatContext";
 import { QASkeleton } from "../../layout/Skeleton";
 import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
@@ -162,6 +160,18 @@ export default function QuestionBoard() {
         source={{
           html: source,
         }}
+        tagsStyles={{
+          body: {
+            fontSize: 16,
+            marginTop: -4,
+          },
+          p: {
+            fontSize: 16,
+          },
+          img: {
+            marginTop: 12,
+          },
+        }}
         contentWidth={width * 0.9}
       />
     );
@@ -299,90 +309,6 @@ export default function QuestionBoard() {
                     minWidth: "20%",
                   }}
                 >
-                  Status:
-                </Text>
-                <Dropdown
-                  style={{
-                    backgroundColor: "white",
-                    borderColor: expanded ? "#F39300" : "black",
-                    flex: 1,
-                    height: 30,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 10,
-                    paddingHorizontal: 12,
-                    marginLeft: 16,
-                  }}
-                  placeholderStyle={{ fontSize: 14 }}
-                  selectedTextStyle={{
-                    fontSize: 14,
-                    color: status ? "black" : "white",
-                  }}
-                  maxHeight={250}
-                  data={statusList}
-                  labelField="name"
-                  value={status}
-                  placeholder={status != "" ? status : "Select Status"}
-                  onFocus={() => setExpanded(true)}
-                  onBlur={() => setExpanded(false)}
-                  onChange={(item) => {
-                    setStatus(item.name);
-                    setExpanded(false);
-                  }}
-                  renderRightIcon={() => (
-                    <Ionicons
-                      color={expanded ? "#F39300" : "black"}
-                      name={expanded ? "caret-up" : "caret-down"}
-                      size={20}
-                    />
-                  )}
-                  renderItem={(item) => {
-                    return (
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          paddingHorizontal: 16,
-                          paddingVertical: 8,
-                          backgroundColor:
-                            item.name == status ? "#F39300" : "white",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            fontWeight: "500",
-                            color: item.name == status ? "white" : "black",
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                        {status == item.name && (
-                          <Ionicons color="white" name="checkmark" size={20} />
-                        )}
-                      </View>
-                    );
-                  }}
-                />
-              </View> */}
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 4,
-                  marginLeft: 4,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: "#333",
-                    minWidth: "20%",
-                  }}
-                >
                   Sort:
                 </Text>
                 <View style={{ flexDirection: "row" }}>
@@ -453,7 +379,7 @@ export default function QuestionBoard() {
                     </TouchableOpacity>
                   </View>
                 </View>
-              </View>
+              </View> */}
               <View
                 style={{
                   flex: 1,
@@ -1025,13 +951,13 @@ export default function QuestionBoard() {
                         marginBottom: 4,
                       }}
                     >
-                      Title
+                      Question
                     </Text>
                     <Text
                       style={{
                         fontSize: 20,
                         color: "#333",
-                        fontWeight: "500",
+                        fontWeight: "bold",
                       }}
                     >
                       {info?.title}
@@ -1056,7 +982,7 @@ export default function QuestionBoard() {
                         marginBottom: 4,
                       }}
                     >
-                      Question
+                      Content
                     </Text>
                     {/* <Text
                       style={{

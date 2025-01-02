@@ -31,6 +31,7 @@ import Pagination from "../../layout/Pagination";
 import { FilterAccordion, FilterToggle } from "../../layout/FilterSection";
 import AlertModal from "../../layout/AlertModal";
 import StudentInfoModal from "../../layout/StudentInfoModal";
+import RenderHTML from "react-native-render-html";
 
 export default function Appointment({ route }) {
   const navigation = useNavigation();
@@ -634,6 +635,25 @@ export default function Appointment({ route }) {
     }
   };
 
+  const renderContent = (source) => {
+    return (
+      <RenderHTML
+        source={{
+          html: source,
+        }}
+        tagsStyles={{
+          body: {
+            fontSize: 16,
+          },
+          p: {
+            fontSize: 16,
+          },
+        }}
+        contentWidth={width * 0.9}
+      />
+    );
+  };
+
   const handleCreateAppointmentReport = async () => {
     try {
       const reportRes = await axiosJWT.post(
@@ -643,27 +663,27 @@ export default function Appointment({ route }) {
         }
       );
       setOpenCreateReport(false);
-      setFormValues({
-        intervention: {
-          type: "",
-          description: "",
-        },
-        consultationGoal: {
-          specificGoal: "",
-          reason: "",
-        },
-        consultationContent: {
-          summaryOfDiscussion: "",
-          mainIssues: "",
-          studentEmotions: "",
-          studentReactions: "",
-        },
-        consultationConclusion: {
-          counselorConclusion: "",
-          followUpNeeded: false,
-          followUpNotes: "",
-        },
-      });
+      // setFormValues({
+      //   intervention: {
+      //     type: "",
+      //     description: "",
+      //   },
+      //   consultationGoal: {
+      //     specificGoal: "",
+      //     reason: "",
+      //   },
+      //   consultationContent: {
+      //     summaryOfDiscussion: "",
+      //     mainIssues: "",
+      //     studentEmotions: "",
+      //     studentReactions: "",
+      //   },
+      //   consultationConclusion: {
+      //     counselorConclusion: "",
+      //     followUpNeeded: false,
+      //     followUpNotes: "",
+      //   },
+      // });
       Toast.show({
         type: "success",
         text1: "Success",
@@ -2288,7 +2308,7 @@ export default function Appointment({ route }) {
                         marginBottom: 4,
                       }}
                     >
-                      Appointment Topic
+                      Reason
                     </Text>
                     <Text
                       style={{
@@ -3114,7 +3134,7 @@ export default function Appointment({ route }) {
             <View
               style={{
                 width: "100%",
-                height: report ? "98%" : "20%",
+                height: report ? "90%" : "20%",
                 backgroundColor: "#f5f7fd",
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
@@ -3126,8 +3146,8 @@ export default function Appointment({ route }) {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  paddingVertical: 12,
                   paddingHorizontal: 20,
+                  paddingVertical: 16,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
                 }}
@@ -3142,6 +3162,7 @@ export default function Appointment({ route }) {
                   Appointment Report
                 </Text>
                 <TouchableOpacity
+                  activeOpacity={0.7}
                   style={{
                     backgroundColor: "white",
                     padding: 4,
@@ -3196,18 +3217,18 @@ export default function Appointment({ route }) {
                     }}
                   >
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>• Type:</Text>
                       {"\n"}
-                      {report.intervention.type}
+                      {renderContent(report.intervention.type)}
                     </Text>
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>• Description:</Text>
                       {"\n"}
-                      {report.intervention.description}
+                      {renderContent(report.intervention.description)}
                     </Text>
                   </View>
                   <View
@@ -3243,20 +3264,20 @@ export default function Appointment({ route }) {
                     }}
                   >
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>
                         • Specific Goal:
                       </Text>
                       {"\n"}
-                      {report.consultationGoal.specificGoal}
+                      {renderContent(report.consultationGoal.specificGoal)}
                     </Text>
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>• Reason:</Text>
                       {"\n"}
-                      {report.consultationGoal.reason}
+                      {renderContent(report.consultationGoal.reason)}
                     </Text>
                   </View>
                   <View
@@ -3292,38 +3313,44 @@ export default function Appointment({ route }) {
                     }}
                   >
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>
                         • Summary of Discussion:
                       </Text>
                       {"\n"}
-                      {report.consultationContent.summaryOfDiscussion}
+                      {renderContent(
+                        report.consultationContent.summaryOfDiscussion
+                      )}
                     </Text>
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>• Main Issues:</Text>
                       {"\n"}
-                      {report.consultationContent.mainIssues}
+                      {renderContent(report.consultationContent.mainIssues)}
                     </Text>
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>
                         • Student Emotions:
                       </Text>
                       {"\n"}
-                      {report.consultationContent.studentEmotions}
+                      {renderContent(
+                        report.consultationContent.studentEmotions
+                      )}
                     </Text>
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>
                         • Student Reactions:
                       </Text>
                       {"\n"}
-                      {report.consultationContent.studentReactions}
+                      {renderContent(
+                        report.consultationContent.studentReactions
+                      )}
                     </Text>
                   </View>
                   <View
@@ -3359,16 +3386,18 @@ export default function Appointment({ route }) {
                     }}
                   >
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>
                         • Counselor Conclusion:
                       </Text>
                       {"\n"}
-                      {report.consultationConclusion.counselorConclusion}
+                      {renderContent(
+                        report.consultationConclusion.counselorConclusion
+                      )}
                     </Text>
                     <Text
-                      style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                      style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                     >
                       <Text style={{ fontWeight: "600" }}>
                         • Follow-up Needed:
@@ -3383,14 +3412,16 @@ export default function Appointment({ route }) {
                         style={{
                           fontSize: 16,
                           color: "#333",
-                          marginBottom: 8,
+                          marginBottom: 4,
                         }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Follow-up Notes:
                         </Text>
                         {"\n"}
-                        {report.consultationConclusion.followUpNotes}
+                        {renderContent(
+                          report.consultationConclusion.followUpNotes
+                        )}
                       </Text>
                     )}
                   </View>
@@ -3399,11 +3430,20 @@ export default function Appointment({ route }) {
                 <View
                   style={{
                     flex: 1,
+                    justifyContent: "center",
                     alignItems: "center",
-                    marginTop: 20,
                   }}
                 >
-                  <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontStyle: "italic",
+                      fontWeight: "600",
+                      textAlign: "center",
+                      color: "gray",
+                      opacity: 0.7,
+                    }}
+                  >
                     This appointment has no report yet
                   </Text>
                 </View>
@@ -3440,8 +3480,8 @@ export default function Appointment({ route }) {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  paddingVertical: 12,
                   paddingHorizontal: 20,
+                  paddingVertical: 16,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
                 }}

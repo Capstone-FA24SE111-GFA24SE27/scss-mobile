@@ -1967,7 +1967,7 @@ export default function Student() {
                     <View
                       style={{
                         flexDirection: "row",
-                        flexWrap: "wrap"
+                        flexWrap: "wrap",
                       }}
                     >
                       <View
@@ -3553,8 +3553,8 @@ export default function Student() {
                                         style={{
                                           backgroundColor: tag.contained
                                             ? "#F39300"
-                                            : tag.excluded
-                                            ? "#f5f5f5"
+                                            // : tag.excluded
+                                            // ? "#f5f5f5"
                                             : "#e3e3e3",
                                           paddingHorizontal: 12,
                                           paddingVertical: 8,
@@ -3567,8 +3567,8 @@ export default function Student() {
                                             fontSize: 16,
                                             color: tag.contained
                                               ? "white"
-                                              : tag.excluded
-                                              ? "gray"
+                                              // : tag.excluded
+                                              // ? "gray"
                                               : "#333",
                                             fontWeight: tag.contained
                                               ? "bold"
@@ -4965,7 +4965,7 @@ export default function Student() {
                                   <View style={{ position: "relative" }}>
                                     <Image
                                       source={{
-                                        uri: historyInfo?.studentInfo?.profile
+                                        uri: historyInfo?.counselorInfo?.profile
                                           ?.avatarLink,
                                       }}
                                       style={{
@@ -4989,7 +4989,7 @@ export default function Student() {
                                     >
                                       <Ionicons
                                         name={
-                                          historyInfo?.studentInfo?.profile
+                                          historyInfo?.counselorInfo?.profile
                                             ?.gender == "MALE"
                                             ? "male"
                                             : "female"
@@ -5010,7 +5010,7 @@ export default function Student() {
                                     }}
                                   >
                                     {
-                                      historyInfo?.studentInfo?.profile
+                                      historyInfo?.counselorInfo?.profile
                                         ?.fullName
                                     }
                                   </Text>
@@ -5022,7 +5022,9 @@ export default function Student() {
                                       marginBottom: 2,
                                     }}
                                   >
-                                    {historyInfo?.studentInfo?.major?.name}
+                                    {historyInfo?.counselorInfo?.major?.name ||
+                                      historyInfo?.counselorInfo?.expertise
+                                        ?.name}
                                   </Text>
                                   <Text
                                     style={{
@@ -5031,7 +5033,7 @@ export default function Student() {
                                       marginBottom: 2,
                                     }}
                                   >
-                                    ID: {historyInfo?.studentInfo?.studentCode}
+                                    Email: {historyInfo?.counselorInfo?.email}
                                   </Text>
                                   <Text
                                     style={{
@@ -5041,7 +5043,7 @@ export default function Student() {
                                   >
                                     Phone:{" "}
                                     {
-                                      historyInfo?.studentInfo?.profile
+                                      historyInfo?.counselorInfo?.profile
                                         ?.phoneNumber
                                     }
                                   </Text>
@@ -5066,7 +5068,7 @@ export default function Student() {
                                     marginBottom: 4,
                                   }}
                                 >
-                                  Appointment Topic
+                                  Reason
                                 </Text>
                                 <Text
                                   style={{
@@ -5778,12 +5780,19 @@ export default function Student() {
                             <View
                               style={{
                                 flex: 1,
+                                justifyContent: "center",
                                 alignItems: "center",
-                                marginTop: 20,
                               }}
                             >
                               <Text
-                                style={{ fontWeight: "bold", fontSize: 20 }}
+                                style={{
+                                  fontSize: 18,
+                                  fontStyle: "italic",
+                                  fontWeight: "600",
+                                  textAlign: "center",
+                                  color: "gray",
+                                  opacity: 0.7,
+                                }}
                               >
                                 This appointment has no report yet
                               </Text>

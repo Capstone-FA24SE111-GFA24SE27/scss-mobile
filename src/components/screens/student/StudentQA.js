@@ -384,14 +384,23 @@ export default function StudentQA() {
   const renderPreviewContent = () => {
     return (
       <RenderHTML
+        // source={{
+        //   html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
+        //     image
+        //       ? `<img src="${image.uri}" style="max-width: ${
+        //           width * 0.7
+        //         }px; height: auto;">`
+        //       : ""
+        //   }</div>`,
+        // }}
         source={{
-          html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
+          html: `<p style="font-size: 18px;">${content}${
             image
               ? `<img src="${image.uri}" style="max-width: ${
                   width * 0.7
-                }px; height: auto;">`
+                }px; height: auto; margin-top: 12px">`
               : ""
-          }</div>`,
+          }</p>`,
         }}
         contentWidth={width * 0.9}
       />
@@ -403,6 +412,18 @@ export default function StudentQA() {
       <RenderHTML
         source={{
           html: source,
+        }}
+        tagsStyles={{
+          body: {
+            fontSize: 16,
+            marginTop: -4,
+          },
+          p: {
+            fontSize: 16,
+          },
+          img: {
+            marginTop: 12,
+          },
         }}
         contentWidth={width * 0.9}
       />
@@ -483,18 +504,19 @@ export default function StudentQA() {
             width * 0.7
           }px; height: auto;">`
         : "";
-      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      // const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      const finalContent = `<p>${content}${imageHTML}</p>`;
       const response = await axiosJWT.post(`${BASE_URL}/question-cards`, {
         title: title,
         content: finalContent,
         questionType: counselorType,
-        // ...(counselorType === "ACADEMIC"
-        //   ? {
-        //       departmentId: department?.id,
-        //       majorId: major?.id,
-        //       specializationId: specialization?.id || "",
-        //     }
-        //   : { expertiseId: expertise?.id }),
+        ...(counselorType === "ACADEMIC"
+          ? {
+              departmentId: department?.id,
+              majorId: major?.id,
+              // specializationId: specialization?.id || "",
+            }
+          : { expertiseId: expertise?.id }),
       });
       const data = await response.data;
       if (data && data.status == 200) {
@@ -557,7 +579,8 @@ export default function StudentQA() {
             width * 0.7
           }px; height: auto;">`
         : "";
-      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      // const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      const finalContent = `<p>${content}${imageHTML}</p>`;
       const response = await axiosJWT.put(
         `${BASE_URL}/question-cards/edit/${questionId}`,
         {
@@ -959,7 +982,9 @@ export default function StudentQA() {
                           "Current opened questions is 3. Can't create more question",
                         onPress: () => Toast.hide(),
                       })
-                    : setOpenCreate(true)
+                    : (setOpenCreate(true),
+                      setDepartment(profile?.department),
+                      setMajor(profile?.major))
                 }
               >
                 <Ionicons
@@ -1470,12 +1495,17 @@ export default function StudentQA() {
                                 setOpenEditQuestion(true);
                                 setSelectedQuestion(question);
                                 setTitle(question.title);
+                                // setContent(
+                                //   question.content
+                                //     .split(
+                                //       '<p style="font-size: 16px; font-weight: 400;">'
+                                //     )[1]
+                                //     ?.split("</p>")[0] || ""
+                                // );
                                 setContent(
                                   question.content
-                                    .split(
-                                      '<p style="font-size: 16px; font-weight: 400;">'
-                                    )[1]
-                                    ?.split("</p>")[0] || ""
+                                    .split("<p>")[1]
+                                    ?.split("<")[0] || ""
                                 );
                                 const imgTag = question.content.includes(
                                   '<img src="'
@@ -2063,7 +2093,7 @@ export default function StudentQA() {
                 <Text
                   style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                 >
-                  Title <Text style={{ color: "#F39300" }}>*</Text>
+                  Your Question <Text style={{ color: "#F39300" }}>*</Text>
                 </Text>
                 <TextInput
                   placeholder="Write your title here"
@@ -2093,7 +2123,7 @@ export default function StudentQA() {
                   <Text
                     style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                   >
-                    Your question <Text style={{ color: "#F39300" }}>*</Text>
+                    Content <Text style={{ color: "#F39300" }}>*</Text>
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity
@@ -2682,86 +2712,97 @@ export default function StudentQA() {
                   </>
                 ) : (
                   <>
-                    {/* <Text
-                    style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
-                  >
-                    Expertise <Text style={{ color: "#F39300" }}>*</Text>
-                  </Text>
-                  <Dropdown
-                    style={{
-                      backgroundColor: "white",
-                      borderColor: expanded2 ? "#F39300" : "black",
-                      height: 40,
-                      borderWidth: 1,
-                      borderColor: "grey",
-                      borderRadius: 10,
-                      paddingHorizontal: 12,
-                      marginTop: 8,
-                      marginBottom: 12,
-                    }}
-                    placeholderStyle={{ fontSize: 14 }}
-                    selectedTextStyle={{
-                      fontSize: 14,
-                      color: expertise ? "black" : "white",
-                    }}
-                    maxHeight={150}
-                    data={expertises}
-                    labelField="name"
-                    search
-                    value={
-                      expertise !== "" ? expertise.name : "Select Expertise"
-                    }
-                    placeholder={
-                      expertise !== "" ? expertise.name : "Select Expertise"
-                    }
-                    searchPlaceholder="Search Expertise"
-                    onFocus={() => setExpanded2(true)}
-                    onBlur={() => setExpanded2(false)}
-                    onChange={(item) => {
-                      setExpertise(item);
-                      setExpanded2(false);
-                    }}
-                    renderRightIcon={() => (
-                      <Ionicons
-                        color={expanded2 ? "#F39300" : "black"}
-                        name={expanded2 ? "caret-up" : "caret-down"}
-                        size={20}
-                      />
-                    )}
-                    renderItem={(item) => {
-                      return (
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingHorizontal: 16,
-                            paddingVertical: 8,
-                            backgroundColor:
-                              item.name == expertise.name ? "#F39300" : "white",
-                          }}
-                        >
-                          <Text
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                      }}
+                    >
+                      Expertise <Text style={{ color: "#F39300" }}>*</Text>
+                    </Text>
+                    <Dropdown
+                      style={{
+                        backgroundColor: "white",
+                        borderColor: expanded2 ? "#F39300" : "black",
+                        height: 40,
+                        borderWidth: 1,
+                        borderColor: "grey",
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                        marginTop: 8,
+                        marginBottom: 12,
+                      }}
+                      placeholderStyle={{ fontSize: 14 }}
+                      selectedTextStyle={{
+                        fontSize: 14,
+                        color: expertise ? "black" : "white",
+                      }}
+                      maxHeight={150}
+                      data={[{ name: "Clear" }, ...expertises]}
+                      labelField="name"
+                      search
+                      value={
+                        expertise !== "" ? expertise.name : "Select Expertise"
+                      }
+                      placeholder={
+                        expertise !== "" ? expertise.name : "Select Expertise"
+                      }
+                      searchPlaceholder="Search Expertise"
+                      onFocus={() => setExpanded2(true)}
+                      onBlur={() => setExpanded2(false)}
+                      onChange={(item) => {
+                        setExpertise(item);
+                        setExpanded2(false);
+                      }}
+                      renderRightIcon={() => (
+                        <Ionicons
+                          color={expanded2 ? "#F39300" : "black"}
+                          name={expanded2 ? "caret-up" : "caret-down"}
+                          size={20}
+                        />
+                      )}
+                      renderItem={(item) => {
+                        return (
+                          <View
                             style={{
-                              fontSize: 16,
-                              fontWeight: "500",
-                              color:
-                                item.name == expertise.name ? "white" : "black",
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 16,
+                              paddingVertical: 8,
+                              backgroundColor:
+                                item.name == expertise.name
+                                  ? "#F39300"
+                                  : "white",
                             }}
                           >
-                            {item.name}
-                          </Text>
-                          {expertise.name == item.name && (
-                            <Ionicons
-                              color="white"
-                              name="checkmark"
-                              size={20}
-                            />
-                          )}
-                        </View>
-                      );
-                    }}
-                  /> */}
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "500",
+                                color:
+                                  item.name == expertise.name
+                                    ? "white"
+                                    : item.name == "Clear"
+                                    ? "red"
+                                    : "black",
+                              }}
+                            >
+                              {item.name}
+                            </Text>
+                            {item.name == expertise.name &&
+                              item.name !== "Clear" && (
+                                <Ionicons
+                                  color="white"
+                                  name="checkmark"
+                                  size={20}
+                                />
+                              )}
+                          </View>
+                        );
+                      }}
+                    />
                   </>
                 )}
               </ScrollView>
@@ -2773,7 +2814,7 @@ export default function StudentQA() {
                   counselorType === "" ||
                   counselorType === "ACADEMIC"
                     ? department === "" || major === ""
-                    : null
+                    : expertise === ""
                 }
                 style={{
                   backgroundColor:
@@ -2782,7 +2823,7 @@ export default function StudentQA() {
                     counselorType === "" ||
                     (counselorType === "ACADEMIC"
                       ? department === "" || major === ""
-                      : null)
+                      : expertise === "")
                       ? "#ededed"
                       : "#F39300",
                   marginHorizontal: 20,
@@ -2806,7 +2847,7 @@ export default function StudentQA() {
                       counselorType === "" ||
                       (counselorType === "ACADEMIC"
                         ? department === "" || major === ""
-                        : null)
+                        : expertise === "")
                         ? "gray"
                         : "white",
                     fontWeight: "bold",
@@ -3568,7 +3609,7 @@ export default function StudentQA() {
                 <Text
                   style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                 >
-                  Title <Text style={{ color: "#F39300" }}>*</Text>
+                  Your Question <Text style={{ color: "#F39300" }}>*</Text>
                 </Text>
                 <TextInput
                   placeholder="Write your title here"
@@ -3598,7 +3639,7 @@ export default function StudentQA() {
                   <Text
                     style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                   >
-                    Your question <Text style={{ color: "#F39300" }}>*</Text>
+                    Content <Text style={{ color: "#F39300" }}>*</Text>
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity
@@ -4626,13 +4667,13 @@ export default function StudentQA() {
                         marginBottom: 4,
                       }}
                     >
-                      Title
+                      Your Question
                     </Text>
                     <Text
                       style={{
                         fontSize: 20,
                         color: "#333",
-                        fontWeight: "500",
+                        fontWeight: "bold",
                       }}
                     >
                       {info?.title}
@@ -4657,7 +4698,7 @@ export default function StudentQA() {
                         marginBottom: 4,
                       }}
                     >
-                      Your Question
+                      Content
                     </Text>
                     {/* <Text
                       style={{
@@ -5039,12 +5080,15 @@ export default function StudentQA() {
                         setOpenEditQuestion(true);
                         setSelectedQuestion(info);
                         setTitle(info?.title);
+                        // setContent(
+                        //   info?.content
+                        //     .split(
+                        //       '<p style="font-size: 16px; font-weight: 400;">'
+                        //     )[1]
+                        //     ?.split("</p>")[0] || ""
+                        // );
                         setContent(
-                          info?.content
-                            .split(
-                              '<p style="font-size: 16px; font-weight: 400;">'
-                            )[1]
-                            ?.split("</p>")[0] || ""
+                          info?.content.split("<p>")[1]?.split("<")[0] || ""
                         );
                         const imgTag = info?.content.includes('<img src="')
                           ? info?.content.split('<img src="')[1]?.split('"')[0]
