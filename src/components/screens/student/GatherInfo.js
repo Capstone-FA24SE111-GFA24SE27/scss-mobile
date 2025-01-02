@@ -89,7 +89,7 @@ const GatherInfo = ({
             width: width * 0.95,
             backgroundColor: "white",
             borderRadius: 10,
-            marginTop: height * 0.09,
+            marginTop: height * 0.05,
           }}
         >
           <ScrollView
@@ -104,7 +104,6 @@ const GatherInfo = ({
               style={{
                 width: width * 0.95,
                 paddingHorizontal: 20,
-                paddingTop: 20,
                 paddingBottom: 8,
               }}
             >
@@ -148,7 +147,6 @@ const GatherInfo = ({
               style={{
                 width: width * 0.95,
                 paddingHorizontal: 20,
-                paddingTop: 20,
                 paddingBottom: 8,
               }}
             >
@@ -181,7 +179,6 @@ const GatherInfo = ({
               style={{
                 width: width * 0.95,
                 paddingHorizontal: 20,
-                paddingTop: 20,
                 paddingBottom: 8,
               }}
             >
@@ -212,7 +209,6 @@ const GatherInfo = ({
               style={{
                 width: width * 0.95,
                 paddingHorizontal: 20,
-                paddingTop: 20,
                 paddingBottom: 8,
               }}
             >
@@ -246,7 +242,6 @@ const GatherInfo = ({
               style={{
                 width: width * 0.95,
                 paddingHorizontal: 20,
-                paddingTop: 20,
                 paddingBottom: 8,
               }}
             >
@@ -276,7 +271,6 @@ const GatherInfo = ({
               style={{
                 width: width * 0.95,
                 paddingHorizontal: 20,
-                paddingTop: 20,
                 paddingBottom: 8,
               }}
             >

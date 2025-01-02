@@ -11,11 +11,13 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
 import { SocketContext } from "../context/SocketContext";
 import axiosJWT, { BASE_URL } from "../../config/Config";
+import Toast from "react-native-toast-message";
 
 export default function ConfirmBookingModal({
   openConfirm,
   setOpenConfirm,
   selectedDate,
+  type,
   selectedSlot,
   setSelectedSlot,
   online,
@@ -44,12 +46,12 @@ export default function ConfirmBookingModal({
       setLoading(false);
     } catch (err) {
       console.log("Can't fetch slots on this day", err);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Can't fetch slot on this day",
-        onPress: () => Toast.hide(),
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: "Error",
+      //   text2: "Can't fetch slot on this day",
+      //   onPress: () => Toast.hide(),
+      // });
     }
   };
 
@@ -120,6 +122,8 @@ export default function ConfirmBookingModal({
           marginBottom: 8,
         }}
       >
+        {/* {Array.isArray(slots)
+          ?  */}
         {slots.map((slot, index) => (
           <TouchableOpacity
             key={slot.slotId}
@@ -197,6 +201,83 @@ export default function ConfirmBookingModal({
             </Text>
           </TouchableOpacity>
         ))}
+        {/* : slots[selectedDate].map((slot, index) => (
+              <TouchableOpacity
+                key={slot.slotId}
+                onPress={() => {
+                  console.log(selectedDate, slot.slotId);
+                  setSelectedSlot(slot);
+                }}
+                disabled={
+                  slot.status === "EXPIRED" ||
+                  slot.myAppointment === true ||
+                  slot.status === "UNAVAILABLE"
+                }
+                style={{
+                  width: "48%",
+                  padding: 6,
+                  marginVertical: 4,
+                  marginRight: 4,
+                  backgroundColor:
+                    slot.myAppointment === true
+                      ? "#F39300"
+                      : selectedSlot.slotId === slot.slotId &&
+                        slot.status !== "EXPIRED"
+                      ? "white"
+                      : slot.status === "EXPIRED"
+                      ? "#ededed"
+                      : slot.status === "AVAILABLE"
+                      ? "white"
+                      : "#ededed",
+                  alignItems: "center",
+                  borderRadius: 10,
+                  borderWidth: 1.5,
+                  borderColor:
+                    slot.myAppointment === true
+                      ? "transparent"
+                      : selectedSlot.slotId === slot.slotId &&
+                        slot.status !== "EXPIRED"
+                      ? "#F39300"
+                      : slot.status === "EXPIRED"
+                      ? "transparent"
+                      : slot.status === "AVAILABLE"
+                      ? "black"
+                      : "transparent",
+                }}
+              >
+                {selectedSlot.slotId === slot.slotId &&
+                  slot.status !== "EXPIRED" &&
+                  slot.status !== "UNAVAILABLE" &&
+                  slot.myAppointment !== true && (
+                    <View style={{ position: "absolute", top: -12, right: -8 }}>
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={24}
+                        style={{ color: "#F39300" }}
+                      />
+                    </View>
+                  )}
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "600",
+                    color:
+                      slot.myAppointment === true
+                        ? "white"
+                        : selectedSlot.slotId === slot.slotId &&
+                          slot.status !== "EXPIRED"
+                        ? "#F39300"
+                        : slot.status === "EXPIRED"
+                        ? "gray"
+                        : slot.status === "AVAILABLE"
+                        ? "black"
+                        : "gray",
+                  }}
+                >
+                  {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
+                </Text>
+              </TouchableOpacity>
+            ))} */}
       </View>
     );
   };
@@ -286,7 +367,7 @@ export default function ConfirmBookingModal({
                         5
                       )} - ${selectedSlot?.endTime?.slice(0, 5)}`}
                 </Text>
-                {selectedSlot && (
+                {selectedSlot && type === "RAND" && (
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
@@ -429,22 +510,32 @@ export default function ConfirmBookingModal({
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              disabled={selectedSlot == "" || selectedSlot == null}
               style={{
                 flex: 1,
-                backgroundColor: "#F39300",
+                backgroundColor:
+                  selectedSlot == "" || selectedSlot == null
+                    ? "#ededed"
+                    : "#F39300",
                 padding: 10,
                 borderRadius: 10,
                 justifyContent: "center",
                 alignItems: "center",
                 borderWidth: 1,
-                borderColor: "#F39300",
+                borderColor:
+                  selectedSlot == "" || selectedSlot == null
+                    ? "#ededed"
+                    : "#F39300",
               }}
               onPress={onPress}
             >
               <Text
                 style={{
                   fontSize: 18,
-                  color: "white",
+                  color:
+                    selectedSlot == "" || selectedSlot == null
+                      ? "gray"
+                      : "white",
                   fontWeight: "600",
                 }}
               >

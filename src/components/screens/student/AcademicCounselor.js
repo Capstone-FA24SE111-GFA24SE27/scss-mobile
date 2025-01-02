@@ -2531,6 +2531,7 @@ export default function AcademicCounselor() {
           openConfirm={openConfirm}
           setOpenConfirm={setOpenConfirm}
           selectedDate={selectedDate2}
+          type="SPEC"
           selectedSlot={selectedSlot}
           setSelectedSlot={setSelectedSlot}
           online={online}

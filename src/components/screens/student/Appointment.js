@@ -1081,7 +1081,7 @@ export default function Appointment({ route }) {
                         marginBottom: 4,
                       }}
                     >
-                      Appointment Topic
+                      Reason
                     </Text>
                     <Text
                       style={{

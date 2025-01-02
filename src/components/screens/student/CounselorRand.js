@@ -303,9 +303,10 @@ export default function CounselorRand() {
             }
             style={{
               width: "auto",
-              padding: 8,
-              marginVertical: 6,
-              marginRight: 6,
+              paddingHorizontal: 6,
+              paddingVertical: 8,
+              marginVertical: 4,
+              marginRight: 4,
               backgroundColor:
                 slot.myAppointment === true
                   ? "#F39300"
@@ -1193,9 +1194,11 @@ export default function CounselorRand() {
               </TouchableOpacity>
             </>
           ) : (
-            <View style={{ flexDirection: "column"}}>
+            <View style={{ flexDirection: "column" }}>
               <TouchableOpacity
-                onPress={() => (setMatchers([]), setMatcher(null), isOnline(null))}
+                onPress={() => (
+                  setMatchers([]), setMatcher(null), isOnline(null)
+                )}
                 style={{
                   flex: 1,
                   flexDirection: "row",
@@ -1367,8 +1370,8 @@ export default function CounselorRand() {
       };
 
       bounceAnimation(dot1Anim, 0);
-      setTimeout(() => bounceAnimation(dot2Anim, 0), 250);
-      setTimeout(() => bounceAnimation(dot3Anim, 0), 500);
+      setTimeout(() => bounceAnimation(dot2Anim, 100), 100);
+      setTimeout(() => bounceAnimation(dot3Anim, 200), 200);
       setTimeout(() => {
         setLoading2(false);
       }, 1000);
@@ -1682,6 +1685,7 @@ export default function CounselorRand() {
         openConfirm={openConfirm}
         setOpenConfirm={setOpenConfirm}
         selectedDate={selectedDate}
+        type="RAND"
         selectedSlot={selectedSlot}
         setSelectedSlot={setSelectedSlot}
         online={online}

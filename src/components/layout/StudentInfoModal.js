@@ -1416,8 +1416,8 @@ export default function StudentInfoModal({
                                     style={{
                                       backgroundColor: tag.contained
                                         ? "#F39300"
-                                        : tag.excluded
-                                        ? "#f5f5f5"
+                                        // : tag.excluded
+                                        // ? "#f5f5f5"
                                         : "#e3e3e3",
                                       paddingHorizontal: 12,
                                       paddingVertical: 8,
@@ -1430,8 +1430,8 @@ export default function StudentInfoModal({
                                         fontSize: 16,
                                         color: tag.contained
                                           ? "white"
-                                          : tag.excluded
-                                          ? "gray"
+                                          // : tag.excluded
+                                          // ? "gray"
                                           : "#333",
                                         fontWeight: tag.contained
                                           ? "bold"
@@ -2794,7 +2794,7 @@ export default function StudentInfoModal({
                               <View style={{ position: "relative" }}>
                                 <Image
                                   source={{
-                                    uri: historyInfo?.studentInfo?.profile
+                                    uri: historyInfo?.counselorInfo?.profile
                                       ?.avatarLink,
                                   }}
                                   style={{
@@ -2818,7 +2818,7 @@ export default function StudentInfoModal({
                                 >
                                   <Ionicons
                                     name={
-                                      historyInfo?.studentInfo?.profile
+                                      historyInfo?.counselorInfo?.profile
                                         ?.gender == "MALE"
                                         ? "male"
                                         : "female"
@@ -2838,7 +2838,7 @@ export default function StudentInfoModal({
                                   marginBottom: 4,
                                 }}
                               >
-                                {historyInfo?.studentInfo?.profile?.fullName}
+                                {historyInfo?.counselorInfo?.profile?.fullName}
                               </Text>
                               <Text
                                 style={{
@@ -2848,7 +2848,8 @@ export default function StudentInfoModal({
                                   marginBottom: 2,
                                 }}
                               >
-                                {historyInfo?.studentInfo?.major?.name}
+                                {historyInfo?.counselorInfo?.major?.name ||
+                                  historyInfo?.counselorInfo?.expertise?.name}
                               </Text>
                               <Text
                                 style={{
@@ -2857,7 +2858,7 @@ export default function StudentInfoModal({
                                   marginBottom: 2,
                                 }}
                               >
-                                ID: {historyInfo?.studentInfo?.studentCode}
+                                Email: {historyInfo?.counselorInfo?.email}
                               </Text>
                               <Text
                                 style={{
@@ -2866,7 +2867,10 @@ export default function StudentInfoModal({
                                 }}
                               >
                                 Phone:{" "}
-                                {historyInfo?.studentInfo?.profile?.phoneNumber}
+                                {
+                                  historyInfo?.counselorInfo?.profile
+                                    ?.phoneNumber
+                                }
                               </Text>
                             </View>
                           </View>
@@ -3592,11 +3596,20 @@ export default function StudentInfoModal({
                         <View
                           style={{
                             flex: 1,
+                            justifyContent: "center",
                             alignItems: "center",
-                            marginTop: 20,
                           }}
                         >
-                          <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontStyle: "italic",
+                              fontWeight: "600",
+                              textAlign: "center",
+                              color: "gray",
+                              opacity: 0.7,
+                            }}
+                          >
                             This appointment has no report yet
                           </Text>
                         </View>

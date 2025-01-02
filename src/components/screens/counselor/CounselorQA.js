@@ -219,7 +219,7 @@ export default function CounselorQA() {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsEditing: false,
       quality: 0.75,
     });
     if (!result.canceled) {
@@ -241,13 +241,13 @@ export default function CounselorQA() {
     return (
       <RenderHTML
         source={{
-          html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
+          html: `<p style="font-size: 18px;">${content}${
             image
               ? `<img src="${image.uri}" style="max-width: ${
                   width * 0.7
-                }px; height: auto;">`
+                }px; height: auto; margin-top: 12px">`
               : ""
-          }</div>`,
+          }</p>`,
         }}
         contentWidth={width * 0.9}
       />
@@ -259,6 +259,18 @@ export default function CounselorQA() {
       <RenderHTML
         source={{
           html: source,
+        }}
+        tagsStyles={{
+          body: {
+            fontSize: 16,
+            marginTop: -4,
+          },
+          p: {
+            fontSize: 16,
+          },
+          img: {
+            marginTop: 12,
+          },
         }}
         contentWidth={width * 0.9}
       />
@@ -278,7 +290,8 @@ export default function CounselorQA() {
             width * 0.7
           }px; height: auto;">`
         : "";
-      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      // const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      const finalContent = `<p>${content}${imageHTML}</p>`;
       const response = await axiosJWT.post(
         `${BASE_URL}/question-cards/answer/${questionId}`,
         {
@@ -323,8 +336,7 @@ export default function CounselorQA() {
             width * 0.7
           }px; height: auto;">`
         : "";
-      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
-      console.log(finalContent);
+      const finalContent = `<p>${content}${imageHTML}</p>`;
       const response = await axiosJWT.put(
         `${BASE_URL}/question-cards/answer/edit/${questionId}`,
         {
@@ -1221,10 +1233,8 @@ export default function CounselorQA() {
                               setSelectedQuestion(question);
                               setContent(
                                 question.answer
-                                  .split(
-                                    '<p style="font-size: 16px; font-weight: 400;">'
-                                  )[1]
-                                  ?.split("</p>")[0] || ""
+                                  .split("<p>")[1]
+                                  ?.split("<img")[0] || ""
                               );
                               const imgTag = question.answer.includes(
                                 '<img src="'
@@ -2367,13 +2377,13 @@ export default function CounselorQA() {
                         marginBottom: 4,
                       }}
                     >
-                      Title
+                      Question
                     </Text>
                     <Text
                       style={{
                         fontSize: 20,
                         color: "#333",
-                        fontWeight: "500",
+                        fontWeight: "bold",
                       }}
                     >
                       {info?.title}
@@ -2398,7 +2408,7 @@ export default function CounselorQA() {
                         marginBottom: 4,
                       }}
                     >
-                      Question
+                      Content
                     </Text>
                     {/* <Text
                       style={{
@@ -2782,37 +2792,39 @@ export default function CounselorQA() {
                     </TouchableOpacity>
                   </View>
                 )}
-                {info?.answer !== null && info?.closed == false && (
-                  <TouchableOpacity
-                    onPress={() => (
-                      setOpenCloseConfirm(true), setSelectedQuestion(info)
-                    )}
-                    style={{
-                      marginBottom: 8,
-                      paddingHorizontal: 8,
-                      paddingVertical: 8,
-                      backgroundColor: "white",
-                      borderRadius: 10,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderWidth: 1.5,
-                      borderColor: "#F39300",
-                    }}
-                  >
-                    <Ionicons name="lock-closed" size={20} color="#F39300" />
-                    <Text
+                {info?.answer !== null &&
+                  info?.accepted == true &&
+                  info?.closed == false && (
+                    <TouchableOpacity
+                      onPress={() => (
+                        setOpenCloseConfirm(true), setSelectedQuestion(info)
+                      )}
                       style={{
-                        fontWeight: "500",
-                        color: "#F39300",
-                        fontSize: 20,
-                        marginLeft: 8,
+                        marginBottom: 8,
+                        paddingHorizontal: 8,
+                        paddingVertical: 8,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderWidth: 1.5,
+                        borderColor: "#F39300",
                       }}
                     >
-                      Close Question
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                      <Ionicons name="lock-closed" size={20} color="#F39300" />
+                      <Text
+                        style={{
+                          fontWeight: "500",
+                          color: "#F39300",
+                          fontSize: 20,
+                          marginLeft: 8,
+                        }}
+                      >
+                        Close Question
+                      </Text>
+                    </TouchableOpacity>
+                  )}
               </View>
             </View>
           </View>

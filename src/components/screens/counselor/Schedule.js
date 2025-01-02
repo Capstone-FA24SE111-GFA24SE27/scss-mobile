@@ -23,6 +23,7 @@ import { SocketContext } from "../../context/SocketContext";
 import { AuthContext } from "../../context/AuthContext";
 import Toast from "react-native-toast-message";
 import StudentInfoModal from "../../layout/StudentInfoModal";
+import RenderHTML from "react-native-render-html";
 
 export default function Schedule() {
   const navigation = useNavigation();
@@ -354,6 +355,25 @@ export default function Schedule() {
     }
   };
 
+  const renderContent = (source) => {
+    return (
+      <RenderHTML
+        source={{
+          html: source,
+        }}
+        tagsStyles={{
+          body: {
+            fontSize: 16,
+          },
+          p: {
+            fontSize: 16,
+          },
+        }}
+        contentWidth={width * 0.9}
+      />
+    );
+  };
+
   const fetchAppointmentReport = async () => {
     try {
       const reportRes = await axiosJWT.get(
@@ -375,27 +395,27 @@ export default function Schedule() {
         }
       );
       setOpenCreateReport(false);
-      setFormValues({
-        intervention: {
-          type: "",
-          description: "",
-        },
-        consultationGoal: {
-          specificGoal: "",
-          reason: "",
-        },
-        consultationContent: {
-          summaryOfDiscussion: "",
-          mainIssues: "",
-          studentEmotions: "",
-          studentReactions: "",
-        },
-        consultationConclusion: {
-          counselorConclusion: "",
-          followUpNeeded: false,
-          followUpNotes: "",
-        },
-      });
+      // setFormValues({
+      //   intervention: {
+      //     type: "",
+      //     description: "",
+      //   },
+      //   consultationGoal: {
+      //     specificGoal: "",
+      //     reason: "",
+      //   },
+      //   consultationContent: {
+      //     summaryOfDiscussion: "",
+      //     mainIssues: "",
+      //     studentEmotions: "",
+      //     studentReactions: "",
+      //   },
+      //   consultationConclusion: {
+      //     counselorConclusion: "",
+      //     followUpNeeded: false,
+      //     followUpNotes: "",
+      //   },
+      // });
       Toast.show({
         type: "success",
         text1: "Success",
@@ -538,20 +558,24 @@ export default function Schedule() {
         style={{
           backgroundColor: "white",
           paddingHorizontal: 12,
-          paddingVertical: 16,
           marginHorizontal: 12,
           marginVertical: 4,
           borderRadius: 10,
+          borderWidth: 1.5,
+          borderColor: "#e3e3e3",
           elevation: 1,
         }}
       >
         <View style={{ flexDirection: "row" }}>
-          <View style={{ flexDirection: "column" }}>
+          <View style={{ flexDirection: "column", paddingVertical: 16 }}>
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "flex-start",
-                minWidth: "30%",
+                minWidth:
+                  item.date < new Date().toISOString().split("T")[0]
+                    ? "25%"
+                    : "30%",
                 marginTop: 4,
               }}
             >
@@ -646,7 +670,7 @@ export default function Schedule() {
                     borderRadius: 20,
                     paddingVertical: 4,
                     borderWidth: 1.5,
-                    paddingHorizontal: 8,
+                    paddingHorizontal: item.date < new Date().toISOString().split("T")[0] ? 12 : 8,
                     flexDirection: "row",
                     alignSelf: "center",
                     elevation: 1,
@@ -680,12 +704,18 @@ export default function Schedule() {
           <View
             style={{
               width: 1.5,
-              backgroundColor: "lightgrey",
+              backgroundColor: "#e3e3e3",
               marginLeft: 12,
               marginRight: 8,
             }}
           />
-          <View style={{ flexDirection: "column" }}>
+          <View
+            style={{
+              flexDirection: "column",
+              maxWidth: "75%",
+              paddingVertical: 16,
+            }}
+          >
             <View
               style={{
                 flexDirection: "row",
@@ -715,7 +745,7 @@ export default function Schedule() {
                 {item.studentName}
               </Text>
             </View>
-            <View style={{ flexDirection: "column", maxWidth: "85%" }}>
+            <View style={{ flexDirection: "row" }}>
               <View
                 style={{
                   backgroundColor:
@@ -1060,7 +1090,7 @@ export default function Schedule() {
                           marginBottom: 4,
                         }}
                       >
-                        Appointment Topic
+                        Reason
                       </Text>
                       <Text
                         style={{
@@ -1748,7 +1778,7 @@ export default function Schedule() {
               <View
                 style={{
                   width: "100%",
-                  height: report ? "98%" : "20%",
+                  height: report ? "90%" : "20%",
                   backgroundColor: "#f5f7fd",
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
@@ -1760,8 +1790,8 @@ export default function Schedule() {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    paddingVertical: 12,
                     paddingHorizontal: 20,
+                    paddingVertical: 16,
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
                   }}
@@ -1776,6 +1806,7 @@ export default function Schedule() {
                     Appointment Report
                   </Text>
                   <TouchableOpacity
+                    activeOpacity={0.7}
                     style={{
                       backgroundColor: "white",
                       padding: 4,
@@ -1830,20 +1861,20 @@ export default function Schedule() {
                       }}
                     >
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>• Type:</Text>
                         {"\n"}
-                        {report.intervention.type}
+                        {renderContent(report.intervention.type)}
                       </Text>
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Description:
                         </Text>
                         {"\n"}
-                        {report.intervention.description}
+                        {renderContent(report.intervention.description)}
                       </Text>
                     </View>
                     <View
@@ -1879,20 +1910,20 @@ export default function Schedule() {
                       }}
                     >
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Specific Goal:
                         </Text>
                         {"\n"}
-                        {report.consultationGoal.specificGoal}
+                        {renderContent(report.consultationGoal.specificGoal)}
                       </Text>
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>• Reason:</Text>
                         {"\n"}
-                        {report.consultationGoal.reason}
+                        {renderContent(report.consultationGoal.reason)}
                       </Text>
                     </View>
                     <View
@@ -1928,40 +1959,46 @@ export default function Schedule() {
                       }}
                     >
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Summary of Discussion:
                         </Text>
                         {"\n"}
-                        {report.consultationContent.summaryOfDiscussion}
+                        {renderContent(
+                          report.consultationContent.summaryOfDiscussion
+                        )}
                       </Text>
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Main Issues:
                         </Text>
                         {"\n"}
-                        {report.consultationContent.mainIssues}
+                        {renderContent(report.consultationContent.mainIssues)}
                       </Text>
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Student Emotions:
                         </Text>
                         {"\n"}
-                        {report.consultationContent.studentEmotions}
+                        {renderContent(
+                          report.consultationContent.studentEmotions
+                        )}
                       </Text>
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Student Reactions:
                         </Text>
                         {"\n"}
-                        {report.consultationContent.studentReactions}
+                        {renderContent(
+                          report.consultationContent.studentReactions
+                        )}
                       </Text>
                     </View>
                     <View
@@ -1997,21 +2034,23 @@ export default function Schedule() {
                       }}
                     >
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Counselor Conclusion:
                         </Text>
                         {"\n"}
-                        {report.consultationConclusion.counselorConclusion}
+                        {renderContent(
+                          report.consultationConclusion.counselorConclusion
+                        )}
                       </Text>
                       <Text
-                        style={{ fontSize: 16, color: "#333", marginBottom: 8 }}
+                        style={{ fontSize: 16, color: "#333", marginBottom: 4 }}
                       >
                         <Text style={{ fontWeight: "600" }}>
                           • Follow-up Needed:
                         </Text>
-                        {"\n"}
+                        {/* {"\n"} */}
                         {report.consultationConclusion.followUpNeeded
                           ? "Yes"
                           : "No"}
@@ -2021,14 +2060,16 @@ export default function Schedule() {
                           style={{
                             fontSize: 16,
                             color: "#333",
-                            marginBottom: 8,
+                            marginBottom: 4,
                           }}
                         >
                           <Text style={{ fontWeight: "600" }}>
                             • Follow-up Notes:
                           </Text>
                           {"\n"}
-                          {report.consultationConclusion.followUpNotes}
+                          {renderContent(
+                            report.consultationConclusion.followUpNotes
+                          )}
                         </Text>
                       )}
                     </View>
@@ -2037,11 +2078,20 @@ export default function Schedule() {
                   <View
                     style={{
                       flex: 1,
+                      justifyContent: "center",
                       alignItems: "center",
-                      marginTop: 20,
                     }}
                   >
-                    <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        fontStyle: "italic",
+                        fontWeight: "600",
+                        textAlign: "center",
+                        color: "gray",
+                        opacity: 0.7,
+                      }}
+                    >
                       This appointment has no report yet
                     </Text>
                   </View>
@@ -2078,8 +2128,8 @@ export default function Schedule() {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    paddingVertical: 12,
                     paddingHorizontal: 20,
+                    paddingVertical: 16,
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
                   }}

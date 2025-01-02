@@ -195,7 +195,7 @@ export default function Home() {
               </Text>
             )}
             <Text style={{ fontSize: 24, fontWeight: "bold", color: "white" }}>
-              Ready to discover
+              Welcome to SCSS
             </Text>
           </View>
           <View
@@ -331,7 +331,7 @@ export default function Home() {
                   </Text>
                 </TouchableOpacity>
               </View>
-              {requests?.data?.length === 0 ? (
+              {requests?.data?.length === 0 || requests?.data?.every((request) => request.status !== "WAITING") ? (
                 <View
                   style={{
                     width: width,
@@ -358,7 +358,7 @@ export default function Home() {
                 </View>
               ) : (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {requests?.data?.map((request, index) => (
+                  {requests?.data?.filter((request) => request.status === "WAITING").map((request, index) => (
                     <View
                       key={request.id}
                       style={{

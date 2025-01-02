@@ -13,7 +13,6 @@ const Pagination = ({ currentPage, setCurrentPage, length, totalPages }) => {
       }}
     >
       <TouchableOpacity
-        activeOpacity={0.7}
         style={{
           paddingHorizontal: 12,
           paddingVertical: 8,
@@ -32,7 +31,6 @@ const Pagination = ({ currentPage, setCurrentPage, length, totalPages }) => {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        activeOpacity={0.7}
         style={{
           paddingHorizontal: 12,
           paddingVertical: 8,
@@ -68,7 +66,6 @@ const Pagination = ({ currentPage, setCurrentPage, length, totalPages }) => {
         </Text>
       </View>
       <TouchableOpacity
-        activeOpacity={0.7}
         style={{
           paddingHorizontal: 12,
           paddingVertical: 8,
@@ -88,7 +85,6 @@ const Pagination = ({ currentPage, setCurrentPage, length, totalPages }) => {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        activeOpacity={0.7}
         style={{
           paddingHorizontal: 12,
           paddingVertical: 8,

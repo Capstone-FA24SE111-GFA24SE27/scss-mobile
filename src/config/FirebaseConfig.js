@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from 'firebase/storage';
+import { REACT_APP_API_KEY, REACT_APP_AUTH_DOMAIN, REACT_APP_PROJECT_ID, REACT_APP_STORAGE_BUCKET, REACT_APP_MESSAGING_SENDER_ID, REACT_APP_APP_ID, REACT_APP_MEASUREMENT_ID } from '@env';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -8,13 +9,13 @@ import { getStorage } from 'firebase/storage';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDY91T99SNrqrGj9C9NBgL9iCE-0oVL7wA",
-  authDomain: "scss-e9511.firebaseapp.com",
-  projectId: "scss-e9511",
-  storageBucket: "scss-e9511.firebasestorage.app",
-  messagingSenderId: "300198556722",
-  appId: "1:300198556722:web:15802cf8af7d327292382b",
-  measurementId: "G-XFPTWZ59QK"
+  apiKey: REACT_APP_API_KEY,  
+  authDomain: REACT_APP_AUTH_DOMAIN,  
+  projectId: REACT_APP_PROJECT_ID,  
+  storageBucket: REACT_APP_STORAGE_BUCKET,  
+  messagingSenderId: REACT_APP_MESSAGING_SENDER_ID,  
+  appId: REACT_APP_APP_ID,  
+  measurementId: REACT_APP_MEASUREMENT_ID,
 };
 
 // Initialize Firebase

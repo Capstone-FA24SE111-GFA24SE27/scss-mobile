@@ -1863,6 +1863,7 @@ export default function NonAcademicCounselor() {
           openConfirm={openConfirm}
           setOpenConfirm={setOpenConfirm}
           selectedDate={selectedDate2}
+          type="SPEC"
           selectedSlot={selectedSlot}
           setSelectedSlot={setSelectedSlot}
           online={online}

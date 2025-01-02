@@ -235,13 +235,13 @@ export default function QA() {
     return (
       <RenderHTML
         source={{
-          html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${
+          html: `<p style="font-size: 18px;">${content}${
             image
               ? `<img src="${image.uri}" style="max-width: ${
                   width * 0.7
-                }px; height: auto;">`
+                }px; height: auto; margin-top: 12px">`
               : ""
-          }</div>`,
+          }</p>`,
         }}
         contentWidth={width * 0.9}
       />
@@ -252,13 +252,13 @@ export default function QA() {
     return (
       <RenderHTML
         source={{
-          html: `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content2}</p>${
+          html: `<p style="font-size: 18px;">${content2}${
             image2
               ? `<img src="${image2.uri}" style="max-width: ${
                   width * 0.7
-                }px; height: auto;">`
+                }px; height: auto; margin-top: 12px">`
               : ""
-          }</div>`,
+          }</p>`,
         }}
         contentWidth={width * 0.9}
       />
@@ -270,6 +270,18 @@ export default function QA() {
       <RenderHTML
         source={{
           html: source,
+        }}
+        tagsStyles={{
+          body: {
+            fontSize: 16,
+            marginTop: -4,
+          },
+          p: {
+            fontSize: 16,
+          },
+          img: {
+            marginTop: 12,
+          },
         }}
         contentWidth={width * 0.9}
       />
@@ -294,8 +306,10 @@ export default function QA() {
             width * 0.7
           }px; height: auto;">`
         : "";
-      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
-      const finalContent2 = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content2}</p>${imageHTML2}</div>`;
+      // const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
+      // const finalContent2 = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content2}</p>${imageHTML2}</div>`;
+      const finalContent = `<p>${content}${imageHTML}</p>`;
+      const finalContent2 = `<p>${content2}${imageHTML2}</p>`;
       const response = await axiosJWT.post(
         `${BASE_URL}/contribution-question-cards`,
         {
@@ -354,8 +368,8 @@ export default function QA() {
             width * 0.7
           }px; height: auto;">`
         : "";
-      const finalContent = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content}</p>${imageHTML}</div>`;
-      const finalContent2 = `<div style="margin-top: -24px"><p style="font-size: 16px; font-weight: 400;">${content2}</p>${imageHTML2}</div>`;
+      const finalContent = `<p>${content}${imageHTML}</p>`;
+      const finalContent2 = `<p>${content2}${imageHTML2}</p>`;
       const response = await axiosJWT.put(
         `${BASE_URL}/contribution-question-cards/${questionId}`,
         {
@@ -685,7 +699,7 @@ export default function QA() {
                   }}
                 />
               </View>
-              <View
+              {/* <View
                 style={{
                   flex: 1,
                   flexDirection: "row",
@@ -772,7 +786,7 @@ export default function QA() {
                     </TouchableOpacity>
                   </View>
                 </View>
-              </View>
+              </View> */}
               <View
                 style={{
                   flex: 1,
@@ -1115,10 +1129,8 @@ export default function QA() {
                               setTitle(question.title);
                               setContent(
                                 question?.question
-                                  ?.split(
-                                    '<p style="font-size: 16px; font-weight: 400;">'
-                                  )[1]
-                                  ?.split("</p>")[0] || ""
+                                  ?.split("<p>")[1]
+                                  ?.split("<")[0] || ""
                               );
                               const imgTag = question?.question?.includes(
                                 '<img src="'
@@ -1137,10 +1149,8 @@ export default function QA() {
                               }
                               setContent2(
                                 question?.answer
-                                  ?.split(
-                                    '<p style="font-size: 16px; font-weight: 400;">'
-                                  )[1]
-                                  ?.split("</p>")[0] || ""
+                                  ?.split("<p>")[1]
+                                  ?.split("<")[0] || ""
                               );
                               const imgTag2 = question?.answer?.includes(
                                 '<img src="'
@@ -1160,6 +1170,7 @@ export default function QA() {
                               // setType(question.category.type);
                               setSelectedCategory(question.category);
                               setOpenPreview(true);
+                              setOpenPreview2(true);
                             }}
                             style={{
                               marginRight: 8,
@@ -1500,7 +1511,7 @@ export default function QA() {
                 <Text
                   style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                 >
-                  Title <Text style={{ color: "#F39300" }}>*</Text>
+                  Your Question <Text style={{ color: "#F39300" }}>*</Text>
                 </Text>
                 <TextInput
                   placeholder="Write your title here"
@@ -1530,7 +1541,7 @@ export default function QA() {
                   <Text
                     style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                   >
-                    Your question <Text style={{ color: "#F39300" }}>*</Text>
+                    Content <Text style={{ color: "#F39300" }}>*</Text>
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity
@@ -2269,7 +2280,7 @@ export default function QA() {
                 <Text
                   style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                 >
-                  Title <Text style={{ color: "#F39300" }}>*</Text>
+                  Your Question <Text style={{ color: "#F39300" }}>*</Text>
                 </Text>
                 <TextInput
                   placeholder="Write your title here"
@@ -2299,7 +2310,7 @@ export default function QA() {
                   <Text
                     style={{ fontSize: 16, fontWeight: "bold", color: "#333" }}
                   >
-                    Your question <Text style={{ color: "#F39300" }}>*</Text>
+                    Content <Text style={{ color: "#F39300" }}>*</Text>
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity
@@ -3104,13 +3115,13 @@ export default function QA() {
                         marginBottom: 4,
                       }}
                     >
-                      Title
+                      Question
                     </Text>
                     <Text
                       style={{
                         fontSize: 20,
                         color: "#333",
-                        fontWeight: "500",
+                        fontWeight: "bold",
                       }}
                     >
                       {info?.title}
@@ -3135,7 +3146,7 @@ export default function QA() {
                         marginBottom: 4,
                       }}
                     >
-                      Question
+                      Content
                     </Text>
                     {/* <Text
                       style={{
@@ -3321,127 +3332,121 @@ export default function QA() {
                       </Text>
                     )}
                   </View>
-                  {info?.counselor?.id == userData?.id && (
-                    <View
+                </View>
+              </ScrollView>
+              <View
+                style={{
+                  paddingHorizontal: 20,
+                  paddingVertical: 8,
+                  backgroundColor: "#f5f7fd",
+                }}
+              >
+                {info?.counselor?.id == userData?.id && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => {
+                        setOpenEditQuestion(true);
+                        setSelectedQuestion(info);
+                        setTitle(info.title);
+                        setContent(
+                          info?.question?.split("<p>")[1]?.split("<")[0] || ""
+                        );
+                        const imgTag = info?.question?.includes('<img src="')
+                          ? info?.question
+                              ?.split('<img src="')[1]
+                              ?.split('"')[0]
+                          : null;
+
+                        if (imgTag) {
+                          setImage({
+                            uri: imgTag,
+                          });
+                        } else {
+                          setImage(null);
+                        }
+                        setContent2(
+                          info?.answer?.split("<p>")[1]?.split("<")[0] || ""
+                        );
+                        const imgTag2 = info?.answer?.includes('<img src="')
+                          ? info?.answer?.split('<img src="')[1]?.split('"')[0]
+                          : null;
+
+                        if (imgTag2) {
+                          setImage2({
+                            uri: imgTag2,
+                          });
+                        } else {
+                          setImage2(null);
+                        }
+                        setSelectedCategory(info.category);
+                        setOpenPreview(true);
+                        setOpenPreview2(true);
+                      }}
                       style={{
+                        width: "49%",
+                        marginRight: 8,
+                        marginBottom: 8,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "#F39300",
+                        borderRadius: 10,
+                        borderWidth: 1.5,
+                        borderColor: "#F39300",
                         flexDirection: "row",
+                        justifyContent: "center",
                         alignItems: "center",
                       }}
                     >
-                      <TouchableOpacity
-                        onPress={() => {
-                          setOpenEditQuestion(true);
-                          setSelectedQuestion(info);
-                          setTitle(info.title);
-                          setContent(
-                            info?.question
-                              ?.split(
-                                '<p style="font-size: 16px; font-weight: 400;">'
-                              )[1]
-                              ?.split("</p>")[0] || ""
-                          );
-                          const imgTag = info?.question?.includes('<img src="')
-                            ? info?.question
-                                ?.split('<img src="')[1]
-                                ?.split('"')[0]
-                            : null;
-
-                          if (imgTag) {
-                            setImage({
-                              uri: imgTag,
-                            });
-                          } else {
-                            setImage(null);
-                          }
-                          setContent2(
-                            info?.answer
-                              ?.split(
-                                '<p style="font-size: 16px; font-weight: 400;">'
-                              )[1]
-                              ?.split("</p>")[0] || ""
-                          );
-                          const imgTag2 = info?.answer?.includes('<img src="')
-                            ? info?.answer
-                                ?.split('<img src="')[1]
-                                ?.split('"')[0]
-                            : null;
-
-                          if (imgTag2) {
-                            setImage2({
-                              uri: imgTag2,
-                            });
-                          } else {
-                            setImage2(null);
-                          }
-                          setSelectedCategory(info.category);
-                          setOpenPreview(true);
-                          setOpenPreview2(true);
-                        }}
+                      <MaterialIcons name="edit-note" size={24} color="white" />
+                      <Text
                         style={{
-                          width: "49%",
-                          marginRight: 8,
-                          marginBottom: 8,
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          backgroundColor: "#F39300",
-                          borderRadius: 10,
-                          borderWidth: 1.5,
-                          borderColor: "#F39300",
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
+                          fontWeight: "500",
+                          color: "white",
+                          fontSize: 20,
+                          marginLeft: 4,
                         }}
                       >
-                        <MaterialIcons
-                          name="edit-note"
-                          size={24}
-                          color="white"
-                        />
-                        <Text
-                          style={{
-                            fontWeight: "500",
-                            color: "white",
-                            fontSize: 20,
-                            marginLeft: 4,
-                          }}
-                        >
-                          Edit
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => (
-                          setOpenDeleteConfirm(true), setSelectedQuestion(info)
-                        )}
+                        Edit
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => (
+                        setOpenDeleteConfirm(true), setSelectedQuestion(info)
+                      )}
+                      style={{
+                        width: "49%",
+                        marginBottom: 8,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        borderWidth: 1.5,
+                        borderColor: "red",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Ionicons name="trash" size={24} color="red" />
+                      <Text
                         style={{
-                          width: "49%",
-                          marginBottom: 8,
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          borderWidth: 1.5,
-                          borderColor: "red",
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
+                          fontWeight: "500",
+                          color: "red",
+                          fontSize: 20,
+                          marginLeft: 4,
                         }}
                       >
-                        <Ionicons name="trash" size={24} color="red" />
-                        <Text
-                          style={{
-                            fontWeight: "500",
-                            color: "red",
-                            fontSize: 20,
-                            marginLeft: 4,
-                          }}
-                        >
-                          Delete
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              </ScrollView>
+                        Delete
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
             </View>
           </View>
         </Modal>

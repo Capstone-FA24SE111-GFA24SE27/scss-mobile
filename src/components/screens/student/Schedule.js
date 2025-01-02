@@ -143,7 +143,7 @@ export default function Schedule() {
               counselorEmail: appointment?.counselorInfo?.email,
               counselorGender: appointment?.counselorInfo?.profile?.gender,
               counselorPhone: appointment?.counselorInfo?.profile?.phoneNumber,
-              counselorMajor: appointment?.counselorInfo?.major?.name,
+              counselorMajor: appointment?.counselorInfo?.major?.name || appointment?.counselorInfo?.expertise?.name,
               status: appointment?.status,
               feedback: appointment?.appointmentFeedback,
               extendInfo: appointment?.counselorInfo,
@@ -507,15 +507,16 @@ export default function Schedule() {
       style={{
         backgroundColor: "white",
         paddingHorizontal: 12,
-        paddingVertical: 16,
         marginHorizontal: 12,
         marginVertical: 4,
         borderRadius: 10,
+        borderWidth: 1.5,
+        borderColor: "#e3e3e3",
         elevation: 1,
       }}
     >
       <View style={{ flexDirection: "row" }}>
-        <View style={{ flexDirection: "column" }}>
+        <View style={{ flexDirection: "column", paddingVertical: 16 }}>
           <View
             style={{
               flexDirection: "row",
@@ -636,12 +637,12 @@ export default function Schedule() {
         <View
           style={{
             width: 1.5,
-            backgroundColor: "lightgrey",
+            backgroundColor: "#e3e3e3",
             marginLeft: 12,
             marginRight: 8,
           }}
         />
-        <View style={{ flexDirection: "column" }}>
+        <View style={{ flexDirection: "column", maxWidth: "75%", paddingVertical: 16 }}>
           <View
             style={{
               flexDirection: "row",
@@ -671,7 +672,7 @@ export default function Schedule() {
               {item.counselorName}
             </Text>
           </View>
-          <View style={{ flexDirection: "column", maxWidth: "85%" }}>
+          <View style={{ flexDirection: "column" }}>
             <View
               style={{
                 backgroundColor:
@@ -687,7 +688,7 @@ export default function Schedule() {
                 paddingHorizontal: 12,
                 paddingVertical: 6,
                 marginTop: 4,
-                alignSelf: "flex-start",
+                alignSelf: "flex-start"
               }}
             >
               <TouchableOpacity
@@ -961,7 +962,7 @@ export default function Schedule() {
                           marginBottom: 4,
                         }}
                       >
-                        Appointment Topic
+                        Reason
                       </Text>
                       <Text
                         style={{
@@ -1210,7 +1211,6 @@ export default function Schedule() {
                     {info?.feedback !== null ? (
                       <View
                         style={{
-                          flexDirection: "row",
                           marginBottom: 20,
                           padding: 16,
                           backgroundColor: "white",
@@ -1309,6 +1309,7 @@ export default function Schedule() {
                           elevation: 1,
                           borderWidth: 1.5,
                           borderColor: "#e3e3e3",
+                          alignItems: "center",
                         }}
                       >
                         <Text
