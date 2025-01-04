@@ -2730,6 +2730,50 @@ export default function Student() {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        backgroundColor: "white",
+                        paddingVertical: 8,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name="mail"
+                          size={24}
+                          color="#F39300"
+                          style={{ marginHorizontal: 12 }}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: "600",
+                              color: "gray",
+                            }}
+                          >
+                            Email
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "bold",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {info?.studentProfile?.email}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
                         backgroundColor: "white",
                         paddingVertical: 8,
                         borderRadius: 10,
@@ -3553,9 +3597,9 @@ export default function Student() {
                                         style={{
                                           backgroundColor: tag.contained
                                             ? "#F39300"
-                                            // : tag.excluded
-                                            // ? "#f5f5f5"
-                                            : "#e3e3e3",
+                                            : // : tag.excluded
+                                              // ? "#f5f5f5"
+                                              "#e3e3e3",
                                           paddingHorizontal: 12,
                                           paddingVertical: 8,
                                           borderRadius: 20,
@@ -3567,9 +3611,9 @@ export default function Student() {
                                             fontSize: 16,
                                             color: tag.contained
                                               ? "white"
-                                              // : tag.excluded
-                                              // ? "gray"
-                                              : "#333",
+                                              : // : tag.excluded
+                                                // ? "gray"
+                                                "#333",
                                             fontWeight: tag.contained
                                               ? "bold"
                                               : "400",

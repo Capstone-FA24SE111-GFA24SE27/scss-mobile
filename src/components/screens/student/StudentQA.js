@@ -108,7 +108,7 @@ export default function StudentQA() {
   const [openSuggestion, setOpenSuggestion] = useState(false);
   const [suggestQuestions, setSuggestQuestions] = useState([]);
   const [suggestQuestions2, setSuggestQuestions2] = useState([]);
-  const [currentTab, setCurrentTab] = useState("Public Q&A");
+  const [currentTab, setCurrentTab] = useState("FAQ");
   const [loading2, setLoading2] = useState(false);
   const [openInfo2, setOpenInfo2] = useState(false);
   const [info2, setInfo2] = useState({});
@@ -2911,6 +2911,7 @@ export default function StudentQA() {
                     setOpenSuggestion(false);
                     setSuggestQuestions([]);
                     setSuggestQuestions2([]);
+                    setCurrentTab("FAQ")
                   }}
                 >
                   <Ionicons name="close" size={24} color="#333" />
@@ -2938,6 +2939,30 @@ export default function StudentQA() {
                   >
                     <TouchableOpacity
                       activeOpacity={0.7}
+                      onPress={() => setCurrentTab("FAQ")}
+                      style={{
+                        flex: 1,
+                        paddingVertical: 4,
+                        backgroundColor:
+                          currentTab === "FAQ" ? "#F39300" : "#e3e3e3",
+                        alignItems: "center",
+                        borderTopLeftRadius: 10,
+                        borderBottomLeftRadius: 10,
+                        elevation: 1,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: currentTab === "FAQ" ? "white" : "black",
+                          fontWeight: currentTab === "FAQ" ? "600" : "400",
+                        }}
+                      >
+                        FAQ
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
                       onPress={() => setCurrentTab("Public Q&A")}
                       style={{
                         flex: 1,
@@ -2945,8 +2970,8 @@ export default function StudentQA() {
                         backgroundColor:
                           currentTab === "Public Q&A" ? "#F39300" : "#e3e3e3",
                         alignItems: "center",
-                        borderTopLeftRadius: 10,
-                        borderBottomLeftRadius: 10,
+                        borderTopRightRadius: 10,
+                        borderBottomRightRadius: 10,
                         elevation: 1,
                       }}
                     >
@@ -2959,31 +2984,7 @@ export default function StudentQA() {
                             currentTab === "Public Q&A" ? "600" : "400",
                         }}
                       >
-                        Public QA
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => setCurrentTab("FAQ")}
-                      style={{
-                        flex: 1,
-                        paddingVertical: 4,
-                        backgroundColor:
-                          currentTab === "FAQ" ? "#F39300" : "#e3e3e3",
-                        alignItems: "center",
-                        borderTopRightRadius: 10,
-                        borderBottomRightRadius: 10,
-                        elevation: 1,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          color: currentTab === "FAQ" ? "white" : "black",
-                          fontWeight: currentTab === "FAQ" ? "600" : "400",
-                        }}
-                      >
-                        FAQ
+                        Public Q&A
                       </Text>
                     </TouchableOpacity>
                   </View>
