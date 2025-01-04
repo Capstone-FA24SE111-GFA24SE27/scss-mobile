@@ -34,18 +34,22 @@ export default function ConfirmBookingModal({
 
   const fetchSlots = async () => {
     try {
+      // const response = await axiosJWT.get(
+      //   `${BASE_URL}/counselors/counseling-slot`,
+      //   {
+      //     params: {
+      //       date: selectedDate,
+      //     },
+      //   }
+      // );
+      // setSlots(response.data.content);
       const response = await axiosJWT.get(
-        `${BASE_URL}/counselors/counseling-slot`,
-        {
-          params: {
-            date: selectedDate,
-          },
-        }
+        `${BASE_URL}/counselors/daily-slots/${selectedCounselor?.id}?from=${selectedDate}&to=${selectedDate}`
       );
       setSlots(response.data.content);
       setLoading(false);
     } catch (err) {
-      console.log("Can't fetch slots on this day", err);
+      // console.log("Can't fetch slots on this day", err);
       // Toast.show({
       //   type: "error",
       //   text1: "Error",
@@ -82,6 +86,7 @@ export default function ConfirmBookingModal({
   }, [selectedSlot]);
 
   const renderSlotsForSelectedDate = () => {
+    const daySlots = slots[selectedDate] || [];
     if (loading) {
       return (
         <View
@@ -95,7 +100,7 @@ export default function ConfirmBookingModal({
         </View>
       );
     }
-    if (slots.length == 0) {
+    if (daySlots.length == 0) {
       return (
         <Text
           style={{
@@ -123,8 +128,85 @@ export default function ConfirmBookingModal({
         }}
       >
         {/* {Array.isArray(slots)
-          ?  */}
-        {slots.map((slot, index) => (
+          ? 
+        slots.map((slot, index) => (
+          <TouchableOpacity
+            key={slot.slotId}
+            onPress={() => {
+              console.log(selectedDate, slot.slotId);
+              setSelectedSlot(slot);
+            }}
+            disabled={
+              slot.status === "EXPIRED" ||
+              slot.myAppointment === true ||
+              slot.status === "UNAVAILABLE"
+            }
+            style={{
+              width: "48%",
+              padding: 6,
+              marginVertical: 4,
+              marginRight: 4,
+              backgroundColor:
+                slot.myAppointment === true
+                  ? "#F39300"
+                  : selectedSlot.slotId === slot.slotId &&
+                    slot.status !== "EXPIRED"
+                  ? "white"
+                  : slot.status === "EXPIRED"
+                  ? "#ededed"
+                  : slot.status === "AVAILABLE"
+                  ? "white"
+                  : "#ededed",
+              alignItems: "center",
+              borderRadius: 10,
+              borderWidth: 1.5,
+              borderColor:
+                slot.myAppointment === true
+                  ? "transparent"
+                  : selectedSlot.slotId === slot.slotId &&
+                    slot.status !== "EXPIRED"
+                  ? "#F39300"
+                  : slot.status === "EXPIRED"
+                  ? "transparent"
+                  : slot.status === "AVAILABLE"
+                  ? "black"
+                  : "transparent",
+            }}
+          >
+            {selectedSlot.slotId === slot.slotId &&
+              slot.status !== "EXPIRED" &&
+              slot.status !== "UNAVAILABLE" &&
+              slot.myAppointment !== true && (
+                <View style={{ position: "absolute", top: -12, right: -8 }}>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={24}
+                    style={{ color: "#F39300" }}
+                  />
+                </View>
+              )}
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "600",
+                color:
+                  slot.myAppointment === true
+                    ? "white"
+                    : selectedSlot.slotId === slot.slotId &&
+                      slot.status !== "EXPIRED"
+                    ? "#F39300"
+                    : slot.status === "EXPIRED"
+                    ? "gray"
+                    : slot.status === "AVAILABLE"
+                    ? "black"
+                    : "gray",
+              }}
+            >
+              {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
+            </Text>
+          </TouchableOpacity>
+        )) : */}
+        {daySlots.map((slot, index) => (
           <TouchableOpacity
             key={slot.slotId}
             onPress={() => {
@@ -201,83 +283,6 @@ export default function ConfirmBookingModal({
             </Text>
           </TouchableOpacity>
         ))}
-        {/* : slots[selectedDate].map((slot, index) => (
-              <TouchableOpacity
-                key={slot.slotId}
-                onPress={() => {
-                  console.log(selectedDate, slot.slotId);
-                  setSelectedSlot(slot);
-                }}
-                disabled={
-                  slot.status === "EXPIRED" ||
-                  slot.myAppointment === true ||
-                  slot.status === "UNAVAILABLE"
-                }
-                style={{
-                  width: "48%",
-                  padding: 6,
-                  marginVertical: 4,
-                  marginRight: 4,
-                  backgroundColor:
-                    slot.myAppointment === true
-                      ? "#F39300"
-                      : selectedSlot.slotId === slot.slotId &&
-                        slot.status !== "EXPIRED"
-                      ? "white"
-                      : slot.status === "EXPIRED"
-                      ? "#ededed"
-                      : slot.status === "AVAILABLE"
-                      ? "white"
-                      : "#ededed",
-                  alignItems: "center",
-                  borderRadius: 10,
-                  borderWidth: 1.5,
-                  borderColor:
-                    slot.myAppointment === true
-                      ? "transparent"
-                      : selectedSlot.slotId === slot.slotId &&
-                        slot.status !== "EXPIRED"
-                      ? "#F39300"
-                      : slot.status === "EXPIRED"
-                      ? "transparent"
-                      : slot.status === "AVAILABLE"
-                      ? "black"
-                      : "transparent",
-                }}
-              >
-                {selectedSlot.slotId === slot.slotId &&
-                  slot.status !== "EXPIRED" &&
-                  slot.status !== "UNAVAILABLE" &&
-                  slot.myAppointment !== true && (
-                    <View style={{ position: "absolute", top: -12, right: -8 }}>
-                      <Ionicons
-                        name="checkmark-circle"
-                        size={24}
-                        style={{ color: "#F39300" }}
-                      />
-                    </View>
-                  )}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "600",
-                    color:
-                      slot.myAppointment === true
-                        ? "white"
-                        : selectedSlot.slotId === slot.slotId &&
-                          slot.status !== "EXPIRED"
-                        ? "#F39300"
-                        : slot.status === "EXPIRED"
-                        ? "gray"
-                        : slot.status === "AVAILABLE"
-                        ? "black"
-                        : "gray",
-                  }}
-                >
-                  {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
-                </Text>
-              </TouchableOpacity>
-            ))} */}
       </View>
     );
   };

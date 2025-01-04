@@ -15,7 +15,6 @@ export const CounselingProfileProvider = ({ children }) => {
     try {
       const docRes = await axiosJWT.get(`${BASE_URL}/students/document/info`);
       const docData = docRes?.data?.content?.counselingProfile;
-      console.log(docData + "1");
       if (docData === null) {
         setShowModal(true);
       }

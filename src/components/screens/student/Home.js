@@ -167,17 +167,17 @@ export default function Home() {
         source={{
           html: source,
         }}
-        tagsStyles={{ 
+        tagsStyles={{
           body: {
             fontSize: 16,
             marginTop: -4,
           },
-          p: {  
-           fontSize: 16,  
-          },  
+          p: {
+            fontSize: 16,
+          },
           img: {
             marginTop: 12,
-          }
+          },
         }}
         contentWidth={width * 0.9}
       />
@@ -477,7 +477,10 @@ export default function Home() {
                   </Text>
                 </TouchableOpacity>
               </View>
-              {requests?.data?.length === 0 || requests?.data?.every((request) => request.status !== "WAITING") ? (
+              {requests?.data?.length === 0 ||
+              requests?.data?.every(
+                (request) => request.status !== "WAITING"
+              ) ? (
                 <View
                   style={{
                     width: width,
@@ -504,159 +507,169 @@ export default function Home() {
                 </View>
               ) : (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {requests?.data?.filter((request) => request.status === "WAITING").map((request, index) => (
-                    <View
-                      key={request.id}
-                      style={{
-                        width: width * 0.65,
-                        height: "auto",
-                        backgroundColor: "white",
-                        borderRadius: 20,
-                        padding: 12,
-                        marginVertical: 12,
-                        marginRight: 12,
-                        borderWidth: 1.5,
-                        borderColor: "#F39300",
-                        overflow: "hidden",
-                        position: "relative",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <View style={{ flexDirection: "row", marginBottom: 16 }}>
-                        <Image
-                          source={{
-                            uri: request.counselor.profile.avatarLink,
-                          }}
-                          style={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: 40,
-                            borderColor: "#F39300",
-                            borderWidth: 2,
-                          }}
-                        />
-                        <View style={{ marginLeft: 12 }}>
-                          <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                            {request.counselor.profile.fullName.length > 12
-                              ? request.counselor.profile.fullName.substring(
-                                  0,
-                                  12
-                                ) + "..."
-                              : request.counselor.profile.fullName}
-                          </Text>
+                  {requests?.data
+                    ?.filter((request) => request.status === "WAITING")
+                    .map((request, index) => (
+                      <View
+                        key={request.id}
+                        style={{
+                          width: width * 0.65,
+                          height: "auto",
+                          backgroundColor: "white",
+                          borderRadius: 20,
+                          padding: 12,
+                          marginVertical: 12,
+                          marginRight: 12,
+                          borderWidth: 1.5,
+                          borderColor: "#F39300",
+                          overflow: "hidden",
+                          position: "relative",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", marginBottom: 16 }}
+                        >
+                          <Image
+                            source={{
+                              uri: request.counselor.profile.avatarLink,
+                            }}
+                            style={{
+                              width: 60,
+                              height: 60,
+                              borderRadius: 40,
+                              borderColor: "#F39300",
+                              borderWidth: 2,
+                            }}
+                          />
+                          <View style={{ marginLeft: 12 }}>
+                            <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+                              {request.counselor.profile.fullName.length > 12
+                                ? request.counselor.profile.fullName.substring(
+                                    0,
+                                    12
+                                  ) + "..."
+                                : request.counselor.profile.fullName}
+                            </Text>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                alignSelf: "flex-start",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "#F39300",
+                                borderRadius: 20,
+                                paddingVertical: 4,
+                                paddingHorizontal: 12,
+                                marginTop: 4,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  fontWeight: "bold",
+                                  color: "white",
+                                }}
+                              >
+                                {/* {request.meetingType.charAt(0).toUpperCase() +
+                                request.meetingType.slice(1)} */}
+                                {request.meetingType}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                        <View>
                           <View
                             style={{
                               flexDirection: "row",
-                              alignSelf: "flex-start",
                               alignItems: "center",
-                              justifyContent: "center",
-                              backgroundColor: "#F39300",
-                              borderRadius: 20,
-                              paddingVertical: 4,
-                              paddingHorizontal: 12,
-                              marginTop: 4,
+                              marginBottom: 8,
                             }}
                           >
+                            <Ionicons
+                              name="calendar"
+                              size={20}
+                              color="#F39300"
+                            />
                             <Text
                               style={{
                                 fontSize: 16,
-                                fontWeight: "bold",
-                                color: "white",
+                                fontWeight: "600",
+                                marginLeft: 8,
                               }}
                             >
-                              {/* {request.meetingType.charAt(0).toUpperCase() +
-                                request.meetingType.slice(1)} */}
-                              {request.meetingType}
+                              {request.requireDate}
                             </Text>
                           </View>
-                        </View>
-                      </View>
-                      <View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            marginBottom: 8,
-                          }}
-                        >
-                          <Ionicons name="calendar" size={20} color="#F39300" />
-                          <Text
+                          <View
                             style={{
-                              fontSize: 16,
-                              fontWeight: "600",
-                              marginLeft: 8,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              marginBottom: 8,
                             }}
                           >
-                            {request.requireDate}
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            marginBottom: 8,
-                          }}
-                        >
-                          <Ionicons name="time" size={20} color="#F39300" />
-                          <Text
+                            <Ionicons name="time" size={20} color="#F39300" />
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "600",
+                                marginLeft: 8,
+                              }}
+                            >
+                              {request?.startTime?.slice(0, 5)} -{" "}
+                              {request?.endTime?.slice(0, 5)}
+                            </Text>
+                          </View>
+                          <View
                             style={{
-                              fontSize: 16,
-                              fontWeight: "600",
-                              marginLeft: 8,
+                              flexDirection: "row",
+                              flexWrap: "wrap",
+                              justifyContent: "space-between",
+                              marginBottom: 8,
                             }}
                           >
-                            {request?.startTime?.slice(0, 5)} -{" "}
-                            {request?.endTime?.slice(0, 5)}
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            justifyContent: "space-between",
-                            marginBottom: 8,
-                          }}
-                        >
-                          <View>
-                            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                              Status:{" "}
+                            <View>
                               <Text
-                                style={[
-                                  request.status === "APPROVED" && {
-                                    color: "green",
-                                  },
-                                  request.status === "WAITING" && {
-                                    color: "#F39300",
-                                  },
-                                  request.status === "DENIED" && {
-                                    color: "red",
-                                  },
-                                ]}
+                                style={{ fontSize: 16, fontWeight: "bold" }}
                               >
-                                {request.status}
+                                Status:{" "}
+                                <Text
+                                  style={[
+                                    request.status === "APPROVED" && {
+                                      color: "green",
+                                    },
+                                    request.status === "WAITING" && {
+                                      color: "#F39300",
+                                    },
+                                    request.status === "DENIED" && {
+                                      color: "red",
+                                    },
+                                  ]}
+                                >
+                                  {request.status}
+                                </Text>
                               </Text>
-                            </Text>
+                            </View>
                           </View>
                         </View>
+                        <View
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            backgroundColor: "#F39300",
+                            paddingVertical: 4,
+                            paddingLeft: 8,
+                            paddingRight: 4,
+                            borderBottomLeftRadius: 16,
+                          }}
+                        >
+                          <Text style={{ fontSize: 16, color: "white" }}>
+                            New
+                          </Text>
+                        </View>
                       </View>
-                      <View
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          right: 0,
-                          backgroundColor: "#F39300",
-                          paddingVertical: 4,
-                          paddingLeft: 8,
-                          paddingRight: 4,
-                          borderBottomLeftRadius: 16,
-                        }}
-                      >
-                        <Text style={{ fontSize: 16, color: "white" }}>
-                          New
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
+                    ))}
                 </ScrollView>
               )}
             </View>
@@ -1159,7 +1172,7 @@ export default function Home() {
                               fontWeight: "500",
                             }}
                           >
-                            Answered by{" "}
+                            Answered by
                           </Text>
                           <Image
                             source={{
@@ -1171,7 +1184,7 @@ export default function Home() {
                               borderRadius: 20,
                               borderColor: "#F39300",
                               borderWidth: 2,
-                              marginHorizontal: 4,
+                              marginHorizontal: 8,
                             }}
                           />
                           <Text

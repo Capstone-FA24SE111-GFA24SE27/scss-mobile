@@ -2555,7 +2555,7 @@ export default function AcademicCounselor() {
           >
             <View
               style={{
-                width: width * 0.85,
+                width: width * 0.9,
                 padding: 20,
                 backgroundColor: "white",
                 borderRadius: 20,

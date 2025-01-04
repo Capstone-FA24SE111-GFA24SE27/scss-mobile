@@ -1288,55 +1288,57 @@ export default function CounselorQA() {
                         }}
                       >
                         {question.accepted == true &&
-                          question.closed == false && (
-                            <>
-                              <View style={{ alignSelf: "flex-start" }}>
-                                <Text
-                                  style={{
-                                    fontSize: 14,
-                                    color: "#F39300",
-                                    fontWeight: "600",
-                                  }}
-                                >
-                                  Your answer is accepted
-                                </Text>
-                              </View>
-                              <TouchableOpacity
-                                onPress={() => (
-                                  setOpenCloseConfirm(true),
-                                  setSelectedQuestion(question)
-                                )}
+                        question.closed == false ? (
+                          <>
+                            <View style={{ alignSelf: "flex-start" }}>
+                              <Text
                                 style={{
-                                  marginRight: 8,
-                                  paddingHorizontal: 8,
-                                  paddingVertical: 4,
-                                  backgroundColor: "white",
-                                  borderRadius: 10,
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                  alignSelf: "flex-end",
-                                  borderWidth: 1.5,
-                                  borderColor: "#F39300",
+                                  fontSize: 14,
+                                  color: "#F39300",
+                                  fontWeight: "600",
                                 }}
                               >
-                                <Ionicons
-                                  name="lock-closed"
-                                  size={16}
-                                  color="#F39300"
-                                />
-                                <Text
-                                  style={{
-                                    fontWeight: "500",
-                                    color: "#F39300",
-                                    fontSize: 16,
-                                    marginLeft: 4,
-                                  }}
-                                >
-                                  Close
-                                </Text>
-                              </TouchableOpacity>
-                            </>
-                          )}
+                                Your answer is accepted
+                              </Text>
+                            </View>
+                            <TouchableOpacity
+                              onPress={() => (
+                                setOpenCloseConfirm(true),
+                                setSelectedQuestion(question)
+                              )}
+                              style={{
+                                marginRight: 8,
+                                paddingHorizontal: 8,
+                                paddingVertical: 4,
+                                backgroundColor: "white",
+                                borderRadius: 10,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                alignSelf: "flex-end",
+                                borderWidth: 1.5,
+                                borderColor: "#F39300",
+                              }}
+                            >
+                              <Ionicons
+                                name="lock-closed"
+                                size={16}
+                                color="#F39300"
+                              />
+                              <Text
+                                style={{
+                                  fontWeight: "500",
+                                  color: "#F39300",
+                                  fontSize: 16,
+                                  marginLeft: 4,
+                                }}
+                              >
+                                Close
+                              </Text>
+                            </TouchableOpacity>
+                          </>
+                        ) : (
+                          <View style={{ flex: 1 }} />
+                        )}
                         {question.chatSession !== null && (
                           <TouchableOpacity
                             onPress={() => {
