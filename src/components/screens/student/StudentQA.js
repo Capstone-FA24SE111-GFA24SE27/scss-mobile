@@ -482,7 +482,7 @@ export default function StudentQA() {
       const countQuestionsData = countQuestionsRes?.data?.content || [];
       setCountQuestions(countQuestionsData);
     } catch (err) {
-      console.log(err);
+      console.log("Can't count opened questions", err);
       Toast.show({
         type: "error",
         text1: "Error",
@@ -979,7 +979,7 @@ export default function StudentQA() {
                         type: "error",
                         text1: "Error",
                         text2:
-                          "Current opened questions is 3. Can't create more question",
+                          "Current opened questions are 3. Can't create more question",
                         onPress: () => Toast.hide(),
                       })
                     : (setOpenCreate(true),
@@ -2039,7 +2039,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -2871,7 +2871,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -3466,7 +3466,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -3563,7 +3563,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -3898,7 +3898,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -3998,7 +3998,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -4098,7 +4098,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -4256,7 +4256,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -4357,7 +4357,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -4600,7 +4600,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -5214,7 +5214,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -5504,7 +5504,7 @@ export default function StudentQA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View

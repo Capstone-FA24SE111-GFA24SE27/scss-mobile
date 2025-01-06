@@ -1156,7 +1156,7 @@ export default function Demand({ route }) {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -1863,7 +1863,7 @@ export default function Demand({ route }) {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -2385,7 +2385,7 @@ export default function Demand({ route }) {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -2954,7 +2954,7 @@ export default function Demand({ route }) {
                     selectedStudent === null
                   }
                   onPress={handleCreateAppointment}
-                  activeOpacity={0.8}
+                  activeOpacity={0.7}
                 >
                   <Text
                     style={{
@@ -3011,7 +3011,7 @@ export default function Demand({ route }) {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View

@@ -761,8 +761,20 @@ export default function Home() {
                                     appointment.date +
                                       "T" +
                                       appointment.startTime <=
-                                    new Date().toISOString() <=
-                                    appointment.date + "T" + appointment.endTime
+                                      new Date(
+                                        new Date().getTime() +
+                                          7 * 60 * 60 * 1000
+                                      )
+                                        .toISOString()
+                                        .slice(0, 16) &&
+                                    new Date(
+                                      new Date().getTime() + 7 * 60 * 60 * 1000
+                                    )
+                                      .toISOString()
+                                      .slice(0, 16) <=
+                                      appointment.date +
+                                        "T" +
+                                        appointment.endTime
                                   ) {
                                     Linking.openURL(
                                       `${appointment.place}`
@@ -779,7 +791,7 @@ export default function Home() {
                                       type: "error",
                                       text1: "Error",
                                       text2:
-                                        "The meeting time hasn't started yet",
+                                        "This isn't meeting time",
                                       onPress: () => {
                                         Toast.hide();
                                       },
@@ -796,10 +808,21 @@ export default function Home() {
                                         appointment.date +
                                           "T" +
                                           appointment.startTime <=
-                                        new Date().toISOString() <=
-                                        appointment.date +
-                                          "T" +
-                                          appointment.endTime
+                                          new Date(
+                                            new Date().getTime() +
+                                              7 * 60 * 60 * 1000
+                                          )
+                                            .toISOString()
+                                            .slice(0, 16) &&
+                                        new Date(
+                                          new Date().getTime() +
+                                            7 * 60 * 60 * 1000
+                                        )
+                                          .toISOString()
+                                          .slice(0, 16) <=
+                                          appointment.date +
+                                            "T" +
+                                            appointment.endTime
                                       )
                                         ? "gray"
                                         : appointment.meetingType === "ONLINE"

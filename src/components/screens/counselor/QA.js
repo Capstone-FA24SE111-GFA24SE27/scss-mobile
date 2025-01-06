@@ -1455,7 +1455,7 @@ export default function QA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -2136,7 +2136,7 @@ export default function QA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -2233,7 +2233,7 @@ export default function QA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -2946,7 +2946,7 @@ export default function QA() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -3046,7 +3046,7 @@ export default function QA() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View

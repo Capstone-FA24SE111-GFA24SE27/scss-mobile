@@ -81,7 +81,7 @@ const GatherInfo = ({
           flex: 1,
           justifyContent: "flex-start",
           alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.1)",
+          backgroundColor: "rgba(0, 0, 0, 0.05)",
         }}
       >
         <View

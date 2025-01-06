@@ -1009,7 +1009,7 @@ export default function Request({ route }) {
                             flex: 1,
                             justifyContent: "center",
                             alignItems: "center",
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
+                            backgroundColor: "rgba(0, 0, 0, 0.05)",
                           }}
                         >
                           <View
@@ -1107,7 +1107,7 @@ export default function Request({ route }) {
                             flex: 1,
                             justifyContent: "center",
                             alignItems: "center",
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
+                            backgroundColor: "rgba(0, 0, 0, 0.05)",
                           }}
                         >
                           <View
@@ -1243,7 +1243,7 @@ export default function Request({ route }) {
                             flex: 1,
                             justifyContent: "center",
                             alignItems: "center",
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
+                            backgroundColor: "rgba(0, 0, 0, 0.05)",
                           }}
                         >
                           <View
@@ -1286,7 +1286,7 @@ export default function Request({ route }) {
                                 alignItems: "center",
                               }}
                               onPress={() => setOpenSuccess(false)}
-                              activeOpacity={0.8}
+                              activeOpacity={0.7}
                             >
                               <Text
                                 style={{
@@ -1327,7 +1327,7 @@ export default function Request({ route }) {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View

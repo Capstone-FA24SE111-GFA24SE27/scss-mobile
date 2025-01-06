@@ -190,7 +190,7 @@ export default function Student() {
   const fetchTag = async () => {
     try {
       const tagsRes = await axiosJWT.get(
-        `${BASE_URL}/problem-tags/filter?size=1000`
+        `${BASE_URL}/problem-tags/filter?size=200`
       );
       const tagsData = tagsRes?.data.content || [];
       setTags(tagsData);
@@ -2107,7 +2107,7 @@ export default function Student() {
           <View
             style={{
               flex: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -2117,7 +2117,7 @@ export default function Student() {
                 backgroundColor: "white",
                 borderRadius: 10,
                 width: "90%",
-                height: "90%",
+                height: "80%",
               }}
             >
               <View
@@ -2151,7 +2151,7 @@ export default function Student() {
                     alignItems: "flex-end",
                   }}
                 >
-                  <Ionicons name="close" size={24} color="#F39300" />
+                  <Ionicons name="close" size={24} color="#333" />
                 </TouchableOpacity>
               </View>
               <View
@@ -2342,7 +2342,7 @@ export default function Student() {
             <View
               style={{
                 flex: 1,
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -2352,7 +2352,7 @@ export default function Student() {
                   backgroundColor: "white",
                   borderRadius: 10,
                   width: "90%",
-                  height: "85%",
+                  height: "80%",
                 }}
               >
                 <View
@@ -2388,7 +2388,7 @@ export default function Student() {
                       alignItems: "flex-end",
                     }}
                   >
-                    <Ionicons name="close" size={24} color="#F39300" />
+                    <Ionicons name="close" size={24} color="#333" />
                   </TouchableOpacity>
                 </View>
                 <SectionList
@@ -2458,7 +2458,7 @@ export default function Student() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -3466,7 +3466,7 @@ export default function Student() {
                           flex: 1,
                           justifyContent: "flex-end",
                           alignItems: "center",
-                          backgroundColor: "rgba(0, 0, 0, 0.1)",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
                         }}
                       >
                         <View
@@ -4926,7 +4926,7 @@ export default function Student() {
                           flex: 1,
                           justifyContent: "flex-end",
                           alignItems: "center",
-                          backgroundColor: "rgba(0, 0, 0, 0.1)",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
                         }}
                       >
                         <View
@@ -5477,7 +5477,7 @@ export default function Student() {
                           flex: 1,
                           justifyContent: "flex-end",
                           alignItems: "center",
-                          backgroundColor: "rgba(0, 0, 0, 0.1)",
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
                         }}
                       >
                         <View
