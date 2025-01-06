@@ -60,8 +60,10 @@ export default function CounselorRand() {
   const [error, setError] = useState(null);
   const [openExtendInfo, setOpenExtendInfo] = useState(false);
   const [extendInfo, setExtendInfo] = useState(null);
+  const [countRequests, setCountRequests] = useState(null);
+  const [countAppointments, setCountAppointments] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [openSucess, setOpenSuccess] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -73,6 +75,7 @@ export default function CounselorRand() {
       fetchSlots();
       setSelectedDepartment(profile?.department);
       setSelectedMajor(profile?.major);
+      fetchOpenRequestsAndAppointments();
       // fetchExpertise();
     }, [selectedDate])
   );
@@ -1383,6 +1386,33 @@ export default function CounselorRand() {
     }
   }, [loading2]);
 
+  useEffect(() => {
+    fetchOpenRequestsAndAppointments();
+  }, [countRequests, countAppointments, openSuccess]);
+
+  const fetchOpenRequestsAndAppointments = async () => {
+    try {
+      const countRequestsRes = await axiosJWT.get(
+        `${BASE_URL}/booking-counseling/request/count-open/${userData?.id}`
+      );
+      const countAppointmentsRes = await axiosJWT.get(
+        `${BASE_URL}/booking-counseling/appointment/count-open/${userData?.id}`
+      );
+      const countRequestsData = countRequestsRes?.data?.content || [];
+      const countAppointmentsData = countAppointmentsRes?.data?.content || [];
+      setCountRequests(countRequestsData);
+      setCountAppointments(countAppointmentsData);
+    } catch (err) {
+      console.log("Can't count pending requests or waiting appointments", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't count pending requests or waiting appointments",
+        onPress: () => Toast.hide(),
+      });
+    }
+  };
+
   const handleCreateRequest = async () => {
     try {
       const response = await axiosJWT.post(
@@ -1577,7 +1607,25 @@ export default function CounselorRand() {
                   alignItems: "center",
                   flexDirection: "row",
                 }}
-                onPress={() => (setMatcher(item), setOpenConfirm(true))}
+                onPress={() => {
+                  countRequests >= 3
+                    ? Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2:
+                          "Current pending requests are 3. Can't send more requests",
+                        onPress: () => Toast.hide(),
+                      })
+                    : countAppointments >= 3
+                    ? Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2:
+                          "Current waiting appointments are 3. Can't send more requests",
+                        onPress: () => Toast.hide(),
+                      })
+                    : (setMatcher(item), setOpenConfirm(true));
+                }}
               >
                 <Text
                   style={{
@@ -1695,7 +1743,7 @@ export default function CounselorRand() {
       />
       <Modal
         transparent={true}
-        visible={openSucess}
+        visible={openSuccess}
         animationType="fade"
         onRequestClose={handleCloseSuccess}
       >
@@ -1704,7 +1752,7 @@ export default function CounselorRand() {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.1)",
+            backgroundColor: "rgba(0, 0, 0, 0.05)",
           }}
         >
           <View
@@ -1765,9 +1813,10 @@ export default function CounselorRand() {
             <TouchableOpacity
               style={{
                 backgroundColor: "#F39300",
+                paddingHorizontal: 20,
                 paddingVertical: 12,
-                paddingHorizontal: 16,
                 borderRadius: 30,
+                flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -1782,17 +1831,19 @@ export default function CounselorRand() {
                 setReason("");
                 navigation.navigate("Request", { prevScreen: "Quick Booking" });
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.7}
             >
               <Text
                 style={{
                   fontSize: 18,
                   color: "white",
                   fontWeight: "600",
+                  marginHorizontal: 8,
                 }}
               >
                 See your request
               </Text>
+              <Ionicons name="chevron-forward" size={24} color="white" />
             </TouchableOpacity>
           </View>
         </View>

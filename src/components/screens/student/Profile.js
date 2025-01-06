@@ -500,7 +500,7 @@ export default function Profile({ route }) {
                 alignItems: "center",
               }}
             >
-              <View
+              {/* <View
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -532,15 +532,7 @@ export default function Profile({ route }) {
                   onValueChange={toggleSwitch}
                   value={isEnabled}
                 />
-              </View>
-              <View
-                style={{
-                  borderBottomWidth: 1,
-                  borderBottomColor: "lightgrey",
-                  marginVertical: 4,
-                  width: "90%",
-                }}
-              />
+              </View> */}
               <TouchableOpacity
                 onPress={() => navigation.navigate("ChangePassword")}
                 style={{
@@ -623,7 +615,7 @@ export default function Profile({ route }) {
                     flex: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "rgba(0, 0, 0, 0.05)",
                   }}
                 >
                   <View

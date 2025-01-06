@@ -670,7 +670,10 @@ export default function Schedule() {
                     borderRadius: 20,
                     paddingVertical: 4,
                     borderWidth: 1.5,
-                    paddingHorizontal: item.date < new Date().toISOString().split("T")[0] ? 12 : 8,
+                    paddingHorizontal:
+                      item.date < new Date().toISOString().split("T")[0]
+                        ? 12
+                        : 8,
                     flexDirection: "row",
                     alignSelf: "center",
                     elevation: 1,
@@ -752,8 +755,13 @@ export default function Schedule() {
                     item.meetingType === "ONLINE" &&
                     !(
                       item.date + "T" + item.startTime <=
-                      new Date().toISOString() <=
-                      item.date + "T" + item.endTime
+                        new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+                          .toISOString()
+                          .slice(0, 16) &&
+                      new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+                        .toISOString()
+                        .slice(0, 16) <=
+                        item.date + "T" + item.endTime
                     )
                       ? "#ededed"
                       : "#fff0e0",
@@ -769,8 +777,13 @@ export default function Schedule() {
                   onPress={() => {
                     if (
                       item.date + "T" + item.startTime <=
-                      new Date().toISOString() <=
-                      item.date + "T" + item.endTime
+                        new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+                          .toISOString()
+                          .slice(0, 16) &&
+                      new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+                        .toISOString()
+                        .slice(0, 16) <=
+                        item.date + "T" + item.endTime
                     ) {
                       Linking.openURL(`${item.place}`).catch((err) => {
                         console.log("Can't open this link", err);
@@ -803,8 +816,13 @@ export default function Schedule() {
                         item.meetingType === "ONLINE" &&
                         !(
                           item.date + "T" + item.startTime <=
-                          new Date().toISOString() <=
-                          item.date + "T" + item.endTime
+                            new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+                              .toISOString()
+                              .slice(0, 16) &&
+                          new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+                            .toISOString()
+                            .slice(0, 16) <=
+                            item.date + "T" + item.endTime
                         )
                           ? "gray"
                           : item.meetingType === "ONLINE"
@@ -898,7 +916,7 @@ export default function Schedule() {
                 flex: 1,
                 justifyContent: "flex-end",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
               }}
             >
               <View
@@ -1308,9 +1326,18 @@ export default function Schedule() {
                             disabled={info.meetingType !== "ONLINE"}
                             onPress={() => {
                               if (
-                                info.date + "T" + info.startTime <=
-                                new Date().toISOString() <=
-                                info.date + "T" + info.endTime
+                                info?.date + "T" + info?.startTime <=
+                                  new Date(
+                                    new Date().getTime() + 7 * 60 * 60 * 1000
+                                  )
+                                    .toISOString()
+                                    .slice(0, 16) &&
+                                new Date(
+                                  new Date().getTime() + 7 * 60 * 60 * 1000
+                                )
+                                  .toISOString()
+                                  .slice(0, 16) <=
+                                  info?.date + "T" + info?.endTime
                               ) {
                                 Linking.openURL(`${info.place}`).catch(
                                   (err) => {
@@ -1344,9 +1371,19 @@ export default function Schedule() {
                                 color:
                                   info.meetingType === "ONLINE" &&
                                   !(
-                                    info.date + "T" + info.startTime <=
-                                    new Date().toISOString() <=
-                                    info.date + "T" + info.endTime
+                                    info?.date + "T" + info?.startTime <=
+                                      new Date(
+                                        new Date().getTime() +
+                                          7 * 60 * 60 * 1000
+                                      )
+                                        .toISOString()
+                                        .slice(0, 16) &&
+                                    new Date(
+                                      new Date().getTime() + 7 * 60 * 60 * 1000
+                                    )
+                                      .toISOString()
+                                      .slice(0, 16) <=
+                                      info?.date + "T" + info?.endTime
                                   )
                                     ? "gray"
                                     : info.meetingType === "ONLINE"
@@ -1512,7 +1549,7 @@ export default function Schedule() {
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
               }}
             >
               <View
@@ -1650,7 +1687,7 @@ export default function Schedule() {
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
               }}
             >
               <View
@@ -1772,7 +1809,7 @@ export default function Schedule() {
                 flex: 1,
                 justifyContent: "flex-end",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
               }}
             >
               <View
@@ -2110,7 +2147,7 @@ export default function Schedule() {
                 flex: 1,
                 justifyContent: "flex-end",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
               }}
             >
               <View

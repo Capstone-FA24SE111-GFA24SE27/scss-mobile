@@ -46,7 +46,7 @@ export default function App() {
           backgroundColor: "#def1d1",
           borderRadius: 10,
           width: "90%",
-          height: 70,
+          height: 75,
           paddingHorizontal: 8,
         }}
         contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 4 }}
@@ -80,7 +80,7 @@ export default function App() {
           backgroundColor: "#daeefc",
           borderRadius: 10,
           width: "90%",
-          height: 70,
+          height: 75,
           paddingHorizontal: 8,
         }}
         contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 4 }}
@@ -114,7 +114,7 @@ export default function App() {
           backgroundColor: "#f7deda",
           borderRadius: 10,
           width: "90%",
-          height: 70,
+          height: 75,
           paddingHorizontal: 8,
         }}
         contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 4 }}

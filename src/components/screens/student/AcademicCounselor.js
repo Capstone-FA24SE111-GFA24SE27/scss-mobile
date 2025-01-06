@@ -93,6 +93,8 @@ export default function AcademicCounselor() {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [online, isOnline] = useState(null);
   const [reason, setReason] = useState("");
+  const [countRequests, setCountRequests] = useState(null);
+  const [countAppointments, setCountAppointments] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -105,6 +107,7 @@ export default function AcademicCounselor() {
       }
       fetchData(filters, { page: currentPage });
       fetchDepartment();
+      fetchOpenRequestsAndAppointments();
     }, [debouncedKeyword, filters, currentPage])
   );
 
@@ -554,6 +557,33 @@ export default function AcademicCounselor() {
     },
     [socket, selectedDate2, selectedCounselor, userData]
   );
+
+  useEffect(() => {
+    fetchOpenRequestsAndAppointments();
+  }, [countRequests, countAppointments, openSuccess]);
+
+  const fetchOpenRequestsAndAppointments = async () => {
+    try {
+      const countRequestsRes = await axiosJWT.get(
+        `${BASE_URL}/booking-counseling/request/count-open/${userData?.id}`
+      );
+      const countAppointmentsRes = await axiosJWT.get(
+        `${BASE_URL}/booking-counseling/appointment/count-open/${userData?.id}`
+      );
+      const countRequestsData = countRequestsRes?.data?.content || [];
+      const countAppointmentsData = countAppointmentsRes?.data?.content || [];
+      setCountRequests(countRequestsData);
+      setCountAppointments(countAppointmentsData);
+    } catch (err) {
+      console.log("Can't count pending requests or waiting appointments", err);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Can't count pending requests or waiting appointments",
+        onPress: () => Toast.hide(),
+      });
+    }
+  };
 
   const handleCreateRequest = async () => {
     try {
@@ -1763,7 +1793,7 @@ export default function AcademicCounselor() {
               flex: 1,
               justifyContent: "flex-end",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             {selectedCounselor && (
@@ -2478,8 +2508,26 @@ export default function AcademicCounselor() {
                     online === null ||
                     reason === ""
                   }
-                  onPress={() => setOpenConfirm(true)}
-                  activeOpacity={0.8}
+                  onPress={() => {
+                    countRequests >= 3
+                      ? Toast.show({
+                          type: "error",
+                          text1: "Error",
+                          text2:
+                            "Current pending requests are 3. Can't send more requests",
+                          onPress: () => Toast.hide(),
+                        })
+                      : countAppointments >= 3
+                      ? Toast.show({
+                          type: "error",
+                          text1: "Error",
+                          text2:
+                            "Current waiting appointments are 3. Can't send more requests",
+                          onPress: () => Toast.hide(),
+                        })
+                      : setOpenConfirm(true);
+                  }}
+                  activeOpacity={0.7}
                 >
                   <Text
                     style={{
@@ -2550,7 +2598,7 @@ export default function AcademicCounselor() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
             }}
           >
             <View
@@ -2602,9 +2650,10 @@ export default function AcademicCounselor() {
               <TouchableOpacity
                 style={{
                   backgroundColor: "#F39300",
+                  paddingHorizontal: 20,
                   paddingVertical: 12,
-                  paddingHorizontal: 16,
                   borderRadius: 30,
+                  flexDirection: "row",
                   justifyContent: "center",
                   alignItems: "center",
                 }}
@@ -2615,17 +2664,19 @@ export default function AcademicCounselor() {
                     prevScreen: "Academic",
                   })
                 )}
-                activeOpacity={0.8}
+                activeOpacity={0.7}
               >
                 <Text
                   style={{
                     fontSize: 18,
                     color: "white",
                     fontWeight: "600",
+                    marginHorizontal: 8,
                   }}
                 >
                   See your request
                 </Text>
+                <Ionicons name="chevron-forward" size={24} color="white" />
               </TouchableOpacity>
             </View>
           </View>
