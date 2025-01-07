@@ -560,7 +560,7 @@ export default function AcademicCounselor() {
 
   useEffect(() => {
     fetchOpenRequestsAndAppointments();
-  }, [countRequests, countAppointments, openSuccess]);
+  }, [openSuccess]);
 
   const fetchOpenRequestsAndAppointments = async () => {
     try {
