@@ -1388,7 +1388,7 @@ export default function CounselorRand() {
 
   useEffect(() => {
     fetchOpenRequestsAndAppointments();
-  }, [countRequests, countAppointments, openSuccess]);
+  }, [openSuccess]);
 
   const fetchOpenRequestsAndAppointments = async () => {
     try {

@@ -453,7 +453,7 @@ export default function NonAcademicCounselor() {
 
   useEffect(() => {
     fetchOpenRequestsAndAppointments();
-  }, [countRequests, countAppointments, openSuccess]);
+  }, [openSuccess]);
 
   const fetchOpenRequestsAndAppointments = async () => {
     try {
